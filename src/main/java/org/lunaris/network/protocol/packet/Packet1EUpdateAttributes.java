@@ -33,9 +33,9 @@ public class Packet1EUpdateAttributes extends MinePacket {
     public void write(MineBuffer buffer) {
         buffer.putVarLong(this.entityId);
         if(this.attributes == null)
-            buffer.writeVarInt(0);
+            buffer.writeVarLong(0);
         else {
-            buffer.writeVarInt(this.attributes.length);
+            buffer.writeVarLong(this.attributes.length);
             for(Attribute a : this.attributes) {
                 buffer.writeLFloat(a.getMinValue());
                 buffer.writeLFloat(a.getMaxValue());

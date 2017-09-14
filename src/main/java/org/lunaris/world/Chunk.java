@@ -49,7 +49,7 @@ public abstract class Chunk {
         if(Math.abs(this.x) < 2 && Math.abs(this.z) < 12)
             for(int x = 0; x < 16; ++x)
                 for(int z = 0; z < 16; ++z)
-                    setBlock(x, 32, z, Material.GRASS, 0);
+                    setBlock(x, 32, z, x == 7 || x == 8 || z == 7 || z == 8 ? Material.STONE : Material.GRASS, 0);
     }
 
     void tick() {

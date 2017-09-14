@@ -136,29 +136,29 @@ public class Lunaris implements IServer {
 //            this.logger.info("Chunk {%d;%d}: %s", cx, cz, loc.getWorld().isChunkLoadedAt(cx, cz) ? "loaded" : "not loaded");
 //        }, 1, 1, TimeUnit.SECONDS);
 
-        this.eventManager.register(new Listener() {
-
-            @EventHandler
-            public void onSending(PacketSendingAsyncEvent e) {
-//                if(e.getPacket().getId() == 0x27) {
-//                    Packet27SetEntityData packet = (Packet27SetEntityData) e.getPacket();
-//                    LongEntityData led = (LongEntityData) packet.getMetadata().getMap().get(0);
-//                    long value = led.data;
-//                    logger.info("Sent %d %s", value, Long.toHexString(value));
-//                }
-                if(e.getPacket().getId() == 0x13)
-                    return;
-                logger.info("Sent packet %s", e.getPacket().getClass().getSimpleName());
-            }
-
-            @EventHandler
-            public void onReceiving(PacketReceivedAsyncEvent e) {
-                if(e.getPacket().getId() == 0x13)
-                    return;
-                logger.info("Received packet %s", e.getPacket().getClass().getSimpleName());
-            }
-
-        });
+//        this.eventManager.register(new Listener() {
+//
+//            @EventHandler
+//            public void onSending(PacketSendingAsyncEvent e) {
+////                if(e.getPacket().getId() == 0x27) {
+////                    Packet27SetEntityData packet = (Packet27SetEntityData) e.getPacket();
+////                    LongEntityData led = (LongEntityData) packet.getMetadata().getMap().get(0);
+////                    long value = led.data;
+////                    logger.info("Sent %d %s", value, Long.toHexString(value));
+////                }
+//                if(e.getPacket().getId() == 0x13)
+//                    return;
+//                logger.info("Sent packet %s", e.getPacket().getClass().getSimpleName());
+//            }
+//
+//            @EventHandler
+//            public void onReceiving(PacketReceivedAsyncEvent e) {
+//                if(e.getPacket().getId() == 0x13)
+//                    return;
+//                logger.info("Received packet %s", e.getPacket().getClass().getSimpleName());
+//            }
+//
+//        });
     }
 
     private void runConsole(ConsoleReader consoleReader) {

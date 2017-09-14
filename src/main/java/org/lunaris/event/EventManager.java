@@ -44,7 +44,7 @@ public class EventManager {
 
     @Deprecated
     public void callSynchronously(Event event) {
-        this.server.getScheduler().schedule(() -> call(event));
+        this.server.getScheduler().addSyncTask(() -> call(event));
     }
 
     public void register(Listener listener) {

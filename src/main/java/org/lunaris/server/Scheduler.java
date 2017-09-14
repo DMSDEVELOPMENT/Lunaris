@@ -25,17 +25,18 @@ public class Scheduler {
     public Scheduler(IServer server) {
         this.server = server;
         schedule(() -> {
+            List<Runnable> copied;
             synchronized(syncTasks) {
-                List<Runnable> copied = new ArrayList<>(this.syncTasks);
+                copied = new ArrayList<>(this.syncTasks);
                 this.syncTasks.clear();
-                copied.forEach(task -> {
-                    try {
-                        task.run();
-                    }catch(Exception ex) {
-                        new TaskInvocationException(ex).printStackTrace();
-                    }
-                });
             }
+            copied.forEach(task -> {
+                try {
+                    task.run();
+                }catch(Exception ex) {
+                    new TaskInvocationException(ex).printStackTrace();
+                }
+            });
         }, 0L, 50L, TimeUnit.MILLISECONDS);
     }
 

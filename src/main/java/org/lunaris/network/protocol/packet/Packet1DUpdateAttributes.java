@@ -7,21 +7,22 @@ import org.lunaris.network.protocol.MinePacket;
 /**
  * Created by RINES on 14.09.17.
  */
-public class Packet1EUpdateAttributes extends MinePacket {
+//SOMETHING IS REALLY WRONG
+public class Packet1DUpdateAttributes extends MinePacket {
 
     private Attribute[] attributes;
     private long entityId;
 
-    public Packet1EUpdateAttributes() {}
+    public Packet1DUpdateAttributes() {}
 
-    public Packet1EUpdateAttributes(long entityId, Attribute... attributes) {
+    public Packet1DUpdateAttributes(long entityId, Attribute... attributes) {
         this.entityId = entityId;
         this.attributes = attributes;
     }
 
     @Override
     public int getId() {
-        return 0x1e;
+        return 0x1d;
     }
 
     @Override
@@ -33,9 +34,9 @@ public class Packet1EUpdateAttributes extends MinePacket {
     public void write(MineBuffer buffer) {
         buffer.putVarLong(this.entityId);
         if(this.attributes == null)
-            buffer.writeVarLong(0);
+            buffer.writeVarInt(0);
         else {
-            buffer.writeVarLong(this.attributes.length);
+            buffer.writeVarInt(this.attributes.length);
             for(Attribute a : this.attributes) {
                 buffer.writeLFloat(a.getMinValue());
                 buffer.writeLFloat(a.getMaxValue());

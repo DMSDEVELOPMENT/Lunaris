@@ -147,7 +147,8 @@ public class MinePacketHandler {
                 p.sendPacket(new Packet2DRespawn((float) spawn.getX(), (float) spawn.getY(), (float) spawn.getZ()));
 
                 break;
-            }case DIMENSION_CHANGE: {
+            }case CONTINUE_BREAK: {
+
 //                this.server.getPlayerProvider().setupPlayer(p);
                 break;
             }

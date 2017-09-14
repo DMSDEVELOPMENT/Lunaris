@@ -62,7 +62,7 @@ public class World {
         this.players.remove(player);
     }
 
-    public boolean isChunkLoadedAt(int x, int z) {
+    public synchronized boolean isChunkLoadedAt(int x, int z) {
         return this.chunks.containsKey(hash(x, z));
     }
 
@@ -74,20 +74,20 @@ public class World {
         return loadChunk(x >> 4, z >> 4).getBlock(x, y, z);
     }
 
-    public Chunk getChunkAt(int x, int z) {
+    public synchronized Chunk getChunkAt(int x, int z) {
         return this.chunks.get(hash(x, z));
     }
 
-    public Chunk loadChunk(int x, int z) {
+    public synchronized Chunk loadChunk(int x, int z) {
         Chunk chunk = getChunkAt(x, z);
         if(chunk != null)
             return chunk;
         chunk = new TestChunk(this, x, z);
-        this.chunks.put(hash(x, z), chunk);
+        this.chunks.put(hash(x, z), chunk); //NPE
         return chunk;
     }
 
-    public void unloadChunk(Chunk chunk) {
+    public synchronized  void unloadChunk(Chunk chunk) {
         if(chunk == null)
             return;
         this.chunks.remove(hash(chunk.getX(), chunk.getZ()));

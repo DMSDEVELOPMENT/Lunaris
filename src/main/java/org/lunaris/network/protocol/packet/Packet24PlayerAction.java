@@ -57,6 +57,7 @@ public class Packet24PlayerAction extends MinePacket {
     }
 
     public enum Action {
+        UNKNOWN,
         START_BREAK,
         ABORT_BREAK,
         STOP_BREAK,
@@ -67,9 +68,8 @@ public class Packet24PlayerAction extends MinePacket {
         JUMP,
         START_SPRINT,
         STOP_SPRINT,
-        START_SNEAK,
         STOP_SNEAK,
-        DIMENSION_CHANGE,
+        START_SNEAK,
         DIMENSION_CHANGE_ACK,
         START_GLIDE,
         STOP_GLIDE,

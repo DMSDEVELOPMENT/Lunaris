@@ -232,10 +232,11 @@ public class MineBuffer {
     }
 
     public void writeStringUnlimited(String value) {
-        if(value == null)
-            value = "null";
-        int length = value.length();
-        writeVarInt(length);
+//        if(value == null)
+//            value = "null";
+//        int length = value.length();
+//        writeVarInt(length);
+//        writeString(value);
         writeString(value);
     }
 

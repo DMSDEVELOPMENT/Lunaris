@@ -9,11 +9,9 @@ import org.lunaris.event.player.PlayerLoginEvent;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.world.Location;
-import org.lunaris.world.World;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by RINES on 13.09.17.
@@ -103,36 +101,33 @@ public class PlayerProvider {
         player.setDataFlag(false, EntityDataFlag.BREATHING, true, false);
         player.setDataFlag(false, EntityDataFlag.GRAVITY, true, false);
         player.sendPacket(new Packet27SetEntityData(-1, player.getDataProperties()));
-        player.sendPacket(new Packet1EUpdateAttributes(
-                -1,
-                player.getAttribute(Attribute.MAX_HEALTH),
-                player.getAttribute(Attribute.MAX_HUNGER),
-                player.getAttribute(Attribute.MOVEMENT_SPEED),
-                player.getAttribute(Attribute.EXPERIENCE_LEVEL),
-                player.getAttribute(Attribute.EXPERIENCE)
-        ));
         player.sendPacket(startGame);
         player.sendPacket(new Packet0ASetTime(loc.getWorld().getTime()));
-        sendAdventureSettings(player);
         player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
         player.sendPacket(new Packet0ASetTime(player.getWorld().getTime()));
         player.sendPacket(new Packet3BSetCommandsEnabled(true));
         player.sendPacket(new Packet3FPlayerList(Packet3FPlayerList.Type.ADD, this.server.getOnlinePlayers().stream().map(Packet3FPlayerList.Entry::new).toArray(Packet3FPlayerList.Entry[]::new)));
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.PLAYER_RESPAWN));
         player.getWorld().addPlayerToWorld(player);
-        player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
-        player.sendPacket(new Packet13MovePlayer(player));
         PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
         this.server.getEventManager().call(joinEvent);
         player.sendPacket(new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
+        player.sendPacket(new Packet1DUpdateAttributes(
+                player.getEntityID(),
+                player.getAttribute(Attribute.MAX_HEALTH),
+                player.getAttribute(Attribute.MAX_HUNGER),
+                player.getAttribute(Attribute.MOVEMENT_SPEED),
+                player.getAttribute(Attribute.EXPERIENCE_LEVEL),
+                player.getAttribute(Attribute.EXPERIENCE)
+        ));
         player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
         player.sendPacket(new Packet13MovePlayer(player));
-        player.sendPacket(new Packet0ASetTime(loc.getWorld().getTime()));
+        sendAdventureSettings(player);
     }
 
     private void sendAdventureSettings(Player player) {
         Packet37AdventureSettings packet = new Packet37AdventureSettings();
-        packet.flags = this.server.getServerSettings().getAdventureSettingsFlag();
+        packet.flags = 0;
         packet.worldImmutable = false;
         packet.autoJump = false;
         packet.allowFlight = false;

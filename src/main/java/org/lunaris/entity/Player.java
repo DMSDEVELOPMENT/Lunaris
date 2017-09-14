@@ -8,7 +8,7 @@ import org.lunaris.event.player.PlayerKickEvent;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet01Login;
 import org.lunaris.network.protocol.packet.Packet05Disconnect;
-import org.lunaris.network.protocol.packet.Packet1EUpdateAttributes;
+import org.lunaris.network.protocol.packet.Packet1DUpdateAttributes;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.world.util.LongHash;
@@ -72,7 +72,7 @@ public class Player extends LivingEntity {
     @Override
     public void setAttribute(int id, float value) {
         super.setAttribute(id, value);
-        sendPacket(new Packet1EUpdateAttributes(getEntityID(), getAttribute(id)));
+        sendPacket(new Packet1DUpdateAttributes(getEntityID(), getAttribute(id)));
     }
 
     public boolean isOnline() {

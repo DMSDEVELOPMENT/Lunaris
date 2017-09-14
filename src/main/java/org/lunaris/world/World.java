@@ -50,6 +50,12 @@ public class World {
         if(this.players.contains(player))
             return;
         this.players.add(player);
+        Location loc = player.getLocation();
+        int cx = loc.getBlockX() >> 4, cz = loc.getBlockZ() >> 4;
+        int r = player.getChunksView();
+        for(int x = cx - r; x <= cx + r; ++x)
+            for(int z = cz - r; z <= cz + r; ++z)
+                loadChunk(x, z).sendTo(player);
     }
 
     public void removePlayerFromWorld(Player player) {
@@ -78,10 +84,6 @@ public class World {
             return chunk;
         chunk = new TestChunk(this, x, z);
         this.chunks.put(hash(x, z), chunk);
-        for(Player p : this.players) {
-            if(isInRangeOfView(p, chunk))
-                chunk.sendTo(p);
-        }
         return chunk;
     }
 
@@ -102,6 +104,7 @@ public class World {
         if(this.killerTask != null)
             this.killerTask.tick();
         this.followerTask.tick();
+        this.players.forEach(Player::tick);
     }
 
     public int getTime() {
@@ -126,7 +129,7 @@ public class World {
     }
 
     public boolean isInRangeOfView(Player player, double x, double z) {
-        return Math.hypot(player.getLocation().getX() - x, player.getLocation().getZ() - z) <= this.server.getServerSettings().getChunksView() << 4;
+        return Math.hypot(player.getLocation().getX() - x, player.getLocation().getZ() - z) <= player.getChunksView() << 4;
     }
 
     public boolean isInRangeOfView(Player player, Chunk chunk) {

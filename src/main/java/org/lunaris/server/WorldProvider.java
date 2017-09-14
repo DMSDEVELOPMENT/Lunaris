@@ -16,7 +16,7 @@ public class WorldProvider {
     private final List<World> worlds = new ArrayList<>();
 
     public WorldProvider(IServer server) {
-        this.worlds.add(new World(server, "Lunaris", Dimension.OVERWORLD, Difficulty.PEACEFUL));
+        this.worlds.add(new World(server, "Test World", Dimension.OVERWORLD, Difficulty.PEACEFUL));
         server.getScheduler().schedule(this::tick, 0L, 50L, TimeUnit.MILLISECONDS);
     }
 

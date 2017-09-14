@@ -7,6 +7,8 @@ import org.lunaris.event.player.PlayerConnectAsyncEvent;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet01Login;
+import org.lunaris.network.protocol.packet.PacketFFBatch;
+import org.lunaris.network.raknet.RakNet;
 import org.lunaris.network.raknet.RakNetPacket;
 import org.lunaris.network.raknet.identifier.MCPEIdentifier;
 import org.lunaris.network.raknet.protocol.Reliability;
@@ -18,6 +20,7 @@ import org.lunaris.network.util.ZLib;
 import org.lunaris.server.IServer;
 import org.lunaris.server.ServerSettings;
 
+import java.util.Collection;
 import java.util.Random;
 
 /**
@@ -48,7 +51,7 @@ public class RakNetProvider {
                         server.getOnlinePlayers().size(),
                         settings.getMaxPlayersOnServer(),
                         this.guid,
-                        "Net World",
+                        server.getWorldProvider().getWorld(0).getName(),
                         "Survival"
                 )
         );
@@ -114,6 +117,29 @@ public class RakNetProvider {
 
     public void disable() {
         this.rakNet.shutdown();
+    }
+
+    public void sendPacket(Collection<RakNetClientSession> sessions, MinePacket packet) {
+        try {
+            MineBuffer packetBuffer = new MineBuffer(1 << 4);
+            packet.write(packetBuffer);
+            byte[] bytes = packetBuffer.readBytes(packetBuffer.readableBytes());
+            packetBuffer.release();
+            MineBuffer buffer = new MineBuffer(1 << 5);
+            buffer.writeVarIntLonger(bytes.length + 3); //byte id + short (2 bytes)
+            buffer.writeByte(packet.getByteId());
+            buffer.writeShort((short) 0);
+            buffer.writeBytes(bytes);
+            bytes = buffer.readBytes(buffer.remaining());
+            buffer.release();
+            bytes = ZLib.deflate(bytes, this.compressionLevel);
+            byte[] result = new byte[bytes.length + 1];
+            result[0] = this.prefixedId;
+            System.arraycopy(bytes, 0, result, 1, bytes.length);
+            sessions.forEach(s -> s.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(result))); //check whether rak net packet can be only 1
+        }catch(Exception ex) {
+            new Exception("Can not send packet", ex).printStackTrace();
+        }
     }
 
     public void sendPacket(RakNetClientSession session, MinePacket packet) {

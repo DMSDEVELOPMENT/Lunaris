@@ -2,19 +2,24 @@ package org.lunaris;
 
 import jline.console.ConsoleReader;
 import org.lunaris.entity.Player;
+import org.lunaris.entity.data.LongEntityData;
 import org.lunaris.event.EventHandler;
 import org.lunaris.event.EventManager;
 import org.lunaris.event.Listener;
 import org.lunaris.event.network.PacketReceivedAsyncEvent;
 import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.network.NetworkManager;
+import org.lunaris.network.protocol.packet.Packet27SetEntityData;
+import org.lunaris.network.protocol.packet.Packet3AFullChunkData;
 import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.server.*;
 import org.lunaris.util.configuration.ConfigurationManager;
 import org.lunaris.util.logger.FormatLogger;
+import org.lunaris.world.Location;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by RINES on 12.09.17.
@@ -118,34 +123,52 @@ public class Lunaris implements IServer {
         this.eventManager = new EventManager(this);
         this.entityProvider = new EntityProvider();
         this.playerProvider = new PlayerProvider(this);
+        this.worldProvider = new WorldProvider(this);
         this.networkManager = new NetworkManager(this);
         this.resourcePackManager = new ResourcePackManager();
-        this.worldProvider = new WorldProvider(this);
         this.banChecker = new BanChecker(this);
 
-//        this.eventManager.register(new Listener() {
-//
-//            @EventHandler
-//            public void onSending(PacketSendingAsyncEvent e) {
-//                logger.info("Sent packet %s", e.getPacket().getClass().getSimpleName());
-//            }
-//
-//            @EventHandler
-//            public void onReceiving(PacketReceivedAsyncEvent e) {
-//                logger.info("Received packet %s", e.getPacket().getClass().getSimpleName());
-//            }
-//
-//        });
+//        this.scheduler.schedule(() -> {
+//            if(getOnlinePlayers().isEmpty())
+//                return;
+//            Location loc = getOnlinePlayers().iterator().next().getLocation();
+//            int cx = loc.getBlockX() >> 4, cz = loc.getBlockZ() >> 4;
+//            this.logger.info("Chunk {%d;%d}: %s", cx, cz, loc.getWorld().isChunkLoadedAt(cx, cz) ? "loaded" : "not loaded");
+//        }, 1, 1, TimeUnit.SECONDS);
+
+        this.eventManager.register(new Listener() {
+
+            @EventHandler
+            public void onSending(PacketSendingAsyncEvent e) {
+//                if(e.getPacket().getId() == 0x27) {
+//                    Packet27SetEntityData packet = (Packet27SetEntityData) e.getPacket();
+//                    LongEntityData led = (LongEntityData) packet.getMetadata().getMap().get(0);
+//                    long value = led.data;
+//                    logger.info("Sent %d %s", value, Long.toHexString(value));
+//                }
+                if(e.getPacket().getId() == 0x13)
+                    return;
+                logger.info("Sent packet %s", e.getPacket().getClass().getSimpleName());
+            }
+
+            @EventHandler
+            public void onReceiving(PacketReceivedAsyncEvent e) {
+                if(e.getPacket().getId() == 0x13)
+                    return;
+                logger.info("Received packet %s", e.getPacket().getClass().getSimpleName());
+            }
+
+        });
     }
 
     private void runConsole(ConsoleReader consoleReader) {
-        scheduler.getUnsafe().getExecutor().execute(() -> {
+        this.scheduler.runAsync(() -> {
             while (!shuttingDown) {
                 try {
                     String line = consoleReader.readLine("> ");
                     if (line != null) {
                         if(line.equals("stop"))
-                            disable();
+                            this.scheduler.addSyncTask(this::disable);
                         String[] spl = line.split(" ");
                         String[] args1 = new String[spl.length - 1];
                         for (int i = 1; i < spl.length; ++i)

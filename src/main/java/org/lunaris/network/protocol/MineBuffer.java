@@ -5,7 +5,10 @@ import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.lunaris.network.util.VarInt;
+import org.lunaris.util.math.LMath;
+import org.lunaris.util.math.Vector3f;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -125,6 +128,14 @@ public class MineBuffer {
         writeVarIntLonger(VarInt.encodeZigZag32(v));
     }
 
+    public int getVarInt() {
+        return VarInt.decodeZigZag32(readVarInt());
+    }
+
+    public long getVarLong() {
+        return VarInt.decodeZigZag64(readVarLong());
+    }
+
     public void putVarLong(long v) {
         writeVarLong(VarInt.encodeZigZag64(v));
     }
@@ -133,6 +144,20 @@ public class MineBuffer {
         writeLFloat(x);
         writeLFloat(y);
         writeLFloat(z);
+    }
+
+    public Vector3f getVector3f() {
+        return new Vector3f(getLFloat(), getLFloat(), getLFloat());
+    }
+
+    public float getLFloat() {
+        int accuracy = 4;
+        float val = Float.intBitsToFloat(readLInt());
+        if (accuracy > -1) {
+            return (float) LMath.round(val, accuracy);
+        } else {
+            return val;
+        }
     }
 
     public void writeBlockVector(int x, int y, int z) {
@@ -155,6 +180,20 @@ public class MineBuffer {
                 break;
         }
         return i;
+    }
+
+    public long readVarLong() {
+        long value = 0;
+        int size = 0;
+        int b;
+        while (((b = readByte()) & 0x80) == 0x80) {
+            value |= (long) (b & 0x7F) << (size++ * 7);
+            if (size >= 10) {
+                throw new IllegalArgumentException("VarLong too big");
+            }
+        }
+
+        return value | ((long) (b & 0x7F) << (size * 7));
     }
 
     public void writeBytes(byte[] bytes) {
@@ -254,6 +293,36 @@ public class MineBuffer {
 
     public short readShort() {
         return buffer.readShort();
+    }
+
+    public void putUUID(UUID uuid) {
+        writeBytes(appendBytes(lfu(uuid.getMostSignificantBits()), lfu(uuid.getLeastSignificantBits())));
+    }
+
+    public byte[] appendBytes(byte[] bytes1, byte[]... bytes2) {
+        int length = bytes1.length;
+        for (byte[] bytes : bytes2) {
+            length += bytes.length;
+        }
+        ByteBuffer buffer = ByteBuffer.allocate(length);
+        buffer.put(bytes1);
+        for (byte[] bytes : bytes2) {
+            buffer.put(bytes);
+        }
+        return buffer.array();
+    }
+
+    private byte[] lfu(long l) {
+        return new byte[]{
+                (byte) (l),
+                (byte) (l >>> 8),
+                (byte) (l >>> 16),
+                (byte) (l >>> 24),
+                (byte) (l >>> 32),
+                (byte) (l >>> 40),
+                (byte) (l >>> 48),
+                (byte) (l >>> 56),
+        };
     }
 
     public void writeBoolean(boolean value) {

@@ -7,6 +7,9 @@ import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.MinePacketProvider;
 import org.lunaris.server.IServer;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 /**
  * Created by RINES on 13.09.17.
  */
@@ -23,7 +26,7 @@ public class NetworkManager {
     public NetworkManager(IServer server) {
         this.server = server;
         this.rakNet = new RakNetProvider(this, (Lunaris) server);
-        this.mineProvider = new MinePacketProvider(server);
+        this.mineProvider = new MinePacketProvider(server, this);
     }
 
     public void disable() {
@@ -36,6 +39,15 @@ public class NetworkManager {
         if(event.isCancelled())
             return;
         this.rakNet.sendPacket(player.getSession(), packet);
+    }
+
+    public void sendPacket(Collection<Player> players, MinePacket packet) {
+        players.removeIf(p -> {
+            PacketSendingAsyncEvent event = new PacketSendingAsyncEvent(p, packet);
+            this.server.getEventManager().call(event);
+            return event.isCancelled();
+        });
+        this.rakNet.sendPacket(players.stream().map(Player::getSession).collect(Collectors.toSet()), packet);
     }
 
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Scheduler {
 
-    private final Executor executor = Executors.newCachedThreadPool();
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     private final Unsafe unsafe = new Unsafe();
 
@@ -49,28 +50,23 @@ public class Scheduler {
     }
 
     public void schedule(Runnable task, long delay, TimeUnit unit) {
-        this.executor.execute(() -> {
-            sleep(unit.toMillis(delay));
+        this.executor.schedule(() -> {
             try {
                 task.run();
             }catch(Exception ex) {
                 throw new TaskInvocationException(ex);
             }
-        });
+        }, delay, unit);
     }
 
     public void schedule(Runnable task, long delay, long repeatDelay, TimeUnit unit) {
-        this.executor.execute(() -> {
-            sleep(unit.toMillis(delay));
-            while(true) {
-                try {
-                    task.run();
-                }catch(Exception ex) {
-                    throw new TaskInvocationException(ex);
-                }
-                sleep(unit.toMillis(repeatDelay));
+        this.executor.scheduleAtFixedRate(() -> {
+            try {
+                task.run();
+            } catch (Exception ex) {
+                throw new TaskInvocationException(ex);
             }
-        });
+        }, delay, repeatDelay, unit);
     }
 
     public void schedule(Runnable task) {

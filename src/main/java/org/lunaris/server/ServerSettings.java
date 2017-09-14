@@ -1,6 +1,7 @@
 package org.lunaris.server;
 
 import org.lunaris.entity.data.Gamemode;
+import org.lunaris.network.protocol.packet.Packet37AdventureSettings;
 import org.lunaris.util.configuration.FileConfiguration;
 
 /**
@@ -29,6 +30,8 @@ public class ServerSettings {
 
     private final boolean unloadChunks;
 
+    private final int adventureSettingsFlag;
+
     public ServerSettings(IServer server, FileConfiguration config) {
         try {
             String host = config.getOrSetString("bind-address", "0.0.0.0:19132");
@@ -43,6 +46,22 @@ public class ServerSettings {
             this.defaultGamemode = Gamemode.values()[config.getOrSetInt("default-gamemode", 2)];
             this.chunksView = config.getOrSetInt("chunks-view", 6);
             this.unloadChunks = config.getOrSetBoolean("unload-chunks", true);
+            int adventureFlag = 0;
+            if(config.getOrSetBoolean("player-access.build-and-mine", true))
+                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_BUILD_AND_MINE;
+            if(config.getOrSetBoolean("player-access.doors-and-switches", true))
+                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_DOORS_AND_SWITCHES;
+            if(config.getOrSetBoolean("player-access.open-containers", true))
+                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_OPEN_CONTAINERS;
+            if(config.getOrSetBoolean("player-access.attack-players", true))
+                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_ATTACK_PLAYERS;
+            if(config.getOrSetBoolean("player-access.attack-monsters", true))
+                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_ATTACK_MOBS;
+            if(config.getOrSetBoolean("player-access.teleport", true))
+                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_TELEPORT;
+            if(config.getOrSetBoolean("player-access.default-level-perms", true))
+                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_DEFAULT_LEVEL_PERMISSIONS;
+            this.adventureSettingsFlag = adventureFlag;
             server.getConfigurationManager().saveConfig();
         }catch(Exception ex) {
             throw new IllegalArgumentException("Server Settings file can not be loaded", ex);
@@ -91,5 +110,9 @@ public class ServerSettings {
 
     public boolean isUnloadChunks() {
         return unloadChunks;
+    }
+
+    public int getAdventureSettingsFlag() {
+        return adventureSettingsFlag;
     }
 }

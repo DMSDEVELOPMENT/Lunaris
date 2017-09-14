@@ -14,7 +14,7 @@ public class ChunkSection {
 
     ChunkSection() {
         this(new byte[1 << 13], new byte[1 << 12], true);
-        Arrays.fill(this.datas, (byte) -1);
+        Arrays.fill(this.datas, (byte) 0);
     }
 
     ChunkSection(byte[] ids, byte[] datas, boolean empty) {

@@ -1,21 +1,19 @@
 package org.lunaris.server;
 
 import org.lunaris.entity.Player;
+import org.lunaris.entity.data.Attribute;
+import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.event.player.PlayerDisconnectEvent;
 import org.lunaris.event.player.PlayerJoinEvent;
 import org.lunaris.event.player.PlayerLoginEvent;
-import org.lunaris.nbt.tag.CompoundTag;
-import org.lunaris.nbt.tag.DoubleTag;
-import org.lunaris.nbt.tag.FloatTag;
-import org.lunaris.nbt.tag.ListTag;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.world.Location;
-import org.lunaris.world.Position;
+import org.lunaris.world.World;
 
-import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by RINES on 13.09.17.
@@ -63,7 +61,8 @@ public class PlayerProvider {
             another.disconnect("You logged in from another location");
             return;
         }
-        setupPlayer(player);
+        Location loc = this.server.getWorldProvider().getWorld(0).getSpawnLocation();
+        player.setLocation(loc);
         PlayerLoginEvent event = new PlayerLoginEvent(player);
         this.server.getEventManager().call(event);
         if(event.isCancelled()) {
@@ -73,8 +72,6 @@ public class PlayerProvider {
         player.setIngameState(Player.IngameState.ONLINE);
         this.playersByNames.put(player.getName(), player);
         this.playersByUUIDs.put(player.getClientUUID(), player);
-        this.server.getWorldProvider().getWorld(0).loadChunk(0, 0);
-        Location loc = player.getLocation();
         Packet0BStartGame startGame = new Packet0BStartGame();
         startGame.entityUniqueId = startGame.entityRuntimeId = player.getEntityID();
         startGame.gamemode = startGame.playerGamemode = this.server.getServerSettings().getDefaultGamemode().ordinal();
@@ -99,48 +96,76 @@ public class PlayerProvider {
         startGame.levelId = "";
         startGame.worldName = this.server.getServerSettings().getServerName();
         startGame.generator = 1; //0 old 1 infinity 2 flat
+        player.sendPacket(new Packet28SetEntityMotion(-1, 0F, 0F, 0F));
+        player.setDataFlag(false, EntityDataFlag.CAN_SHOW_NAMETAG, true, false);
+        player.setDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG, true, false);
+        player.setDataFlag(false, EntityDataFlag.CAN_CLIMB, true, false);
+        player.setDataFlag(false, EntityDataFlag.BREATHING, true, false);
+        player.setDataFlag(false, EntityDataFlag.GRAVITY, true, false);
+        player.sendPacket(new Packet27SetEntityData(-1, player.getDataProperties()));
+        player.sendPacket(new Packet1EUpdateAttributes(
+                -1,
+                player.getAttribute(Attribute.MAX_HEALTH),
+                player.getAttribute(Attribute.MAX_HUNGER),
+                player.getAttribute(Attribute.MOVEMENT_SPEED),
+                player.getAttribute(Attribute.EXPERIENCE_LEVEL),
+                player.getAttribute(Attribute.EXPERIENCE)
+        ));
         player.sendPacket(startGame);
+//        player.sendPacket(new Packet2BSetSpawnPosition(Packet2BSetSpawnPosition.SpawnType.WORLD_SPAWN, startGame.spawnX, startGame.spawnY, startGame.spawnZ, false));
+//        player.sendPacket(new Packet13MovePlayer(player));
         player.sendPacket(new Packet0ASetTime(loc.getWorld().getTime()));
+        sendAdventureSettings(player);
         player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
+//        player.sendPacket(new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
+//        player.sendPacket(new Packet28SetEntityMotion(-1, 0F, 0F, 0F));
+//        player.sendPacket(new Packet1EUpdateAttributes(
+//                player.getEntityID(),
+//                player.getAttribute(Attribute.MAX_HEALTH),
+//                player.getAttribute(Attribute.MAX_HUNGER),
+//                player.getAttribute(Attribute.MOVEMENT_SPEED),
+//                player.getAttribute(Attribute.EXPERIENCE_LEVEL),
+//                player.getAttribute(Attribute.EXPERIENCE)
+//        ));
+        player.sendPacket(new Packet0ASetTime(player.getWorld().getTime()));
+        player.sendPacket(new Packet3BSetCommandsEnabled(true));
+        player.sendPacket(new Packet3FPlayerList(Packet3FPlayerList.Type.ADD, this.server.getOnlinePlayers().stream().map(Packet3FPlayerList.Entry::new).toArray(Packet3FPlayerList.Entry[]::new)));
+
+
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.PLAYER_RESPAWN));
         player.getWorld().addPlayerToWorld(player);
+        player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
+        player.sendPacket(new Packet13MovePlayer(player));
         PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
         this.server.getEventManager().call(joinEvent);
+        player.sendPacket(new Packet27SetEntityData(-1, player.getDataProperties()));
+        player.sendPacket(new Packet1EUpdateAttributes(
+                -1,
+                player.getAttribute(Attribute.MAX_HEALTH),
+                player.getAttribute(Attribute.MAX_HUNGER),
+                player.getAttribute(Attribute.MOVEMENT_SPEED),
+                player.getAttribute(Attribute.EXPERIENCE_LEVEL),
+                player.getAttribute(Attribute.EXPERIENCE)
+        ));
+        player.sendPacket(new Packet0ASetTime(loc.getWorld().getTime()));
+        this.server.getScheduler().schedule(() -> {
+        }, 10, TimeUnit.SECONDS);
     }
 
-    private void setupPlayer(Player player) {
-        Location spawn = this.server.getWorldProvider().getWorld(0).getSpawnLocation();
-        System.out.println((spawn == null) + " " + (this.server.getWorldProvider().getWorld(0) == null));
-        CompoundTag nbt = new CompoundTag()
-                .putLong("firstPlayed", System.currentTimeMillis() / 1000)
-                .putLong("lastPlayed", System.currentTimeMillis() / 1000)
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("0", spawn.x))
-                        .add(new DoubleTag("1", spawn.y))
-                        .add(new DoubleTag("2", spawn.z)))
-                .putString("Level", this.server.getWorldProvider().getWorld(0).getName())
-                .putList(new ListTag<>("Inventory"))
-                .putCompound("Achievements", new CompoundTag())
-                .putInt("playerGameType", this.server.getServerSettings().getDefaultGamemode().ordinal())
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("0", 0))
-                        .add(new DoubleTag("1", 0))
-                        .add(new DoubleTag("2", 0)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("0", 0))
-                        .add(new FloatTag("1", 0)))
-                .putFloat("FallDistance", 0)
-                .putShort("Fire", 0)
-                .putShort("Air", 300)
-                .putBoolean("OnGround", true)
-                .putBoolean("Invulnerable", false)
-                .putString("NameTag", player.getName());
-        if(!nbt.contains("foodLevel"))
-            nbt.putInt("foodLevel", 20);
-        if(!nbt.contains("FoodSaturationLevel"))
-            nbt.putFloat("FoodSaturationLevel", 20);
-        player.setNbt(nbt);
-        player.setLocation(spawn);
+    private void sendAdventureSettings(Player player) {
+        Packet37AdventureSettings packet = new Packet37AdventureSettings();
+        packet.flags = this.server.getServerSettings().getAdventureSettingsFlag();
+        packet.worldImmutable = false;
+        packet.autoJump = false;
+        packet.allowFlight = false;
+        packet.noClip = false;
+        packet.isFlying = false;
+        packet.noPvp = false;
+        packet.noPvm = false;
+        packet.noMvp = false;
+        packet.muted = false;
+        packet.userPermission = Packet37AdventureSettings.PERMISSION_LEVEL_MEMBER;
+        player.sendPacket(packet);
     }
 
     public Player getPlayer(String name) {

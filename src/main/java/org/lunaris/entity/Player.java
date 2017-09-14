@@ -1,21 +1,27 @@
 package org.lunaris.entity;
 
 import org.lunaris.Lunaris;
+import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.Gamemode;
 import org.lunaris.entity.data.Skin;
 import org.lunaris.event.player.PlayerKickEvent;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet01Login;
 import org.lunaris.network.protocol.packet.Packet05Disconnect;
+import org.lunaris.network.protocol.packet.Packet1EUpdateAttributes;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
+import org.lunaris.world.util.LongHash;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
 
 /**
  * Created by RINES on 13.09.17.
  */
-public class Player extends Entity {
+public class Player extends LivingEntity {
 
     private final String ip;
     private final RakNetClientSession session;
@@ -32,6 +38,16 @@ public class Player extends Entity {
 
     private String disconnectingReason = "Just disconnected";
 
+    private Gamemode gamemode = Lunaris.getInstance().getServerSettings().getDefaultGamemode();
+    private int foodLevel = 20;
+    private float foodSaturationLevel = 20F;
+    private boolean onGround = true;
+    private boolean invulnerable = false;
+
+    private int chunksView = Lunaris.getInstance().getServerSettings().getChunksView();
+
+    private final Set<Long> chunksSent = new HashSet<>();
+
     public Player(int entityID, RakNetClientSession session, Packet01Login packetLogin) {
         super(entityID);
         this.session = session;
@@ -45,44 +61,18 @@ public class Player extends Entity {
         this.skinGeometry = packetLogin.getSkinGeometry();
     }
 
-    public long getFirstPlayed() {
-        return getNbt().getLong("firstPlayed") * 1000L;
+    /**
+     * Установить скорость.
+     * @param speed: 1.0 - обычная скорость.
+     */
+    public void setSpeed(float speed) {
+        setAttribute(Attribute.MOVEMENT_SPEED, speed / 10F);
     }
 
-    public long getlastPlayed() {
-        return getNbt().getLong("lastPlayed") * 1000L;
-    }
-
-    public Gamemode getGamemode() {
-        return Gamemode.values()[getNbt().getInt("playerGameType")];
-    }
-
-    public float getFallDistance() {
-        return getNbt().getFloat("FallDistance");
-    }
-
-    public int getFireTicks() {
-        return getNbt().getShort("Fire");
-    }
-
-    public int getAirLeft() {
-        return getNbt().getShort("Air");
-    }
-
-    public boolean isOnGround() {
-        return getNbt().getBoolean("OnGround");
-    }
-
-    public boolean isInvulnerable() {
-        return getNbt().getBoolean("Invulnerable");
-    }
-
-    public int getFoodLevel() {
-        return getNbt().getInt("foodLevel");
-    }
-
-    public float getFoodSaturationLevel() {
-        return getNbt().getFloat("FoodSaturationLevel");
+    @Override
+    public void setAttribute(int id, float value) {
+        super.setAttribute(id, value);
+        sendPacket(new Packet1EUpdateAttributes(getEntityID(), getAttribute(id)));
     }
 
     public boolean isOnline() {
@@ -179,8 +169,33 @@ public class Player extends Entity {
         disconnect(reason);
     }
 
+    public boolean hasChunkSent(int x, int z) {
+        return this.chunksSent.contains(LongHash.toLong(x, z));
+    }
+
+    public void addChunkSent(int x, int z) {
+        this.chunksSent.add(LongHash.toLong(x, z));
+    }
+
+    public void tick() {
+        for(Iterator<Long> iterator = this.chunksSent.iterator(); iterator.hasNext();) {
+            long chunk = iterator.next();
+            int x = LongHash.msw(chunk), z = LongHash.lsw(chunk);
+            if(!getWorld().isInRangeOfView(this, x << 4, z << 4))
+                iterator.remove();
+        }
+    }
+
     public RakNetClientSession getSession() {
         return session;
+    }
+
+    public int getChunksView() {
+        return chunksView;
+    }
+
+    public void setChunksView(int chunksView) {
+        this.chunksView = chunksView;
     }
 
     public enum IngameState {

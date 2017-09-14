@@ -8,6 +8,10 @@ import org.lunaris.network.NetworkManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.resourcepacks.ResourcePack;
+import org.lunaris.world.Location;
+
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * Created by RINES on 13.09.17.
@@ -15,6 +19,11 @@ import org.lunaris.resourcepacks.ResourcePack;
 public class MinePacketHandler {
 
     private final Lunaris server = Lunaris.getInstance();
+    private final NetworkManager networkManager;
+
+    public MinePacketHandler(NetworkManager manager) {
+        this.networkManager = manager;
+    }
 
     public void handle(Packet01Login packet) {
         Player player = packet.getPlayer();
@@ -68,27 +77,11 @@ public class MinePacketHandler {
         });
     }
 
-    public void handle(Packet02PlayStatus packet) {
-
-    }
-
-    public void handle(Packet03ServerToClientHandshake packet) {
-
-    }
-
     public void handle(Packet04ClientToServerHandshake packet) {
 
     }
 
     public void handle(Packet05Disconnect packet) {
-
-    }
-
-    public void handle(Packet06ResourcePacksInfo packet) {
-
-    }
-
-    public void handle(Packet07ResourcePackStack packet) {
 
     }
 
@@ -128,8 +121,43 @@ public class MinePacketHandler {
         }
     }
 
-    public void handle(Packet52ResourcePackDataInfo packet) {}
+    public void handle(Packet13MovePlayer packet) {
+        Player player = packet.getPlayer();
+        Location loc = player.getLocation();
+        loc.setYaw(packet.getYaw());
+        loc.setPitch(packet.getPitch());
+        loc.setComponents(packet.getX(), packet.getY(), packet.getZ());
+        //set on ground
+        this.server.getScheduler().addSyncTask(() -> {
+            Collection<Player> players = loc.getWorld().getApplicablePlayers(loc);
+            players.remove(player);
+            this.networkManager.sendPacket(players, packet);
+        });
+    }
 
-    public void handle(PacketFFBatch packet) {}
+    public void handle(Packet24PlayerAction packet) {
+        Player p = packet.getPlayer();
+        this.server.getLogger().info("Got action %s", packet.getAction().name());
+        switch(packet.getAction()) {
+            case RESPAWN: {
+                if(!p.isOnline())
+                    break;
+                //respawn event
+                Location spawn = p.getWorld().getSpawnLocation();
+                p.sendPacket(new Packet2DRespawn((float) spawn.getX(), (float) spawn.getY(), (float) spawn.getZ()));
+
+                break;
+            }case DIMENSION_CHANGE: {
+//                this.server.getPlayerProvider().setupPlayer(p);
+                break;
+            }
+        }
+    }
+
+    public void handle(Packet45RequestChunkRadius packet) {
+        int value = Math.min(packet.getRadius(), this.server.getServerSettings().getChunksView());
+        packet.getPlayer().sendPacket(new Packet46ChunkRadiusUpdate(value));
+        packet.getPlayer().setChunksView(value);
+    }
 
 }

@@ -37,4 +37,12 @@ public class Packet3AFullChunkData extends MinePacket {
         buffer.writeBytes(this.data);
     }
 
+    public int getX() {
+        return this.x;
+    }
+
+    public int getZ() {
+        return this.z;
+    }
+
 }

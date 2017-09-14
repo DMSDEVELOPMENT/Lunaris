@@ -46,7 +46,7 @@ public abstract class Chunk {
     protected abstract boolean load();
 
     protected void generate() {
-        if(Math.abs(this.x) < 4 && Math.abs(this.z) < 4)
+        if(Math.abs(this.x) < 2 && Math.abs(this.z) < 12)
             for(int x = 0; x < 16; ++x)
                 for(int z = 0; z < 16; ++z)
                     setBlock(x, 32, z, Material.GRASS, 0);
@@ -57,6 +57,7 @@ public abstract class Chunk {
     }
 
     public void sendTo(Player player) {
+        player.addChunkSent(this.x, this.z);
         player.sendPacket(new Packet3AFullChunkData(this.x, this.z, compile()));
     }
 
@@ -79,7 +80,7 @@ public abstract class Chunk {
         }
         for(int height : this.heightmap)
             buffer.writeByte((byte) height);
-        buffer.writeBytes(new byte[256]);
+        buffer.writeBytes(ETERNAL8);
         buffer.writeBytes(getBiomeIdArray());
         buffer.writeByte((byte) 0);
         if(false) { //if has extra data

@@ -3,6 +3,7 @@ package org.lunaris.network.protocol;
 import org.lunaris.entity.Player;
 import org.lunaris.event.EventManager;
 import org.lunaris.event.network.PacketReceivedAsyncEvent;
+import org.lunaris.network.NetworkManager;
 import org.lunaris.server.IServer;
 
 import java.lang.invoke.LambdaMetafactory;
@@ -25,8 +26,8 @@ public class MinePacketProvider {
     private final Map<Byte, PacketLookup> lookups = new HashMap<>();
     private final EventManager eventManager;
 
-    public MinePacketProvider(IServer server) {
-        this.handler = new MinePacketHandler();
+    public MinePacketProvider(IServer server, NetworkManager networkManager) {
+        this.handler = new MinePacketHandler(networkManager);
         this.eventManager = server.getEventManager();
         generateLookups();
     }

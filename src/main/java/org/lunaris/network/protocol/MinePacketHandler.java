@@ -3,6 +3,7 @@ package org.lunaris.network.protocol;
 import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.event.player.PlayerKickEvent;
+import org.lunaris.event.player.PlayerMoveEvent;
 import org.lunaris.event.player.PlayerPreLoginEvent;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
@@ -129,6 +130,10 @@ public class MinePacketHandler {
         loc.setComponents(packet.getX(), packet.getY(), packet.getZ());
         //set on ground
         this.server.getScheduler().addSyncTask(() -> {
+            PlayerMoveEvent event = new PlayerMoveEvent(player, packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch());
+            this.server.getEventManager().call(event);
+            if(event.isCancelled())
+                return;
             Collection<Player> players = loc.getWorld().getApplicablePlayers(loc);
             players.remove(player);
             this.networkManager.sendPacket(players, packet);

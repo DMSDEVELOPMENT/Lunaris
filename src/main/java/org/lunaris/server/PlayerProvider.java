@@ -46,7 +46,7 @@ public class PlayerProvider {
             return;
         }
         if(checker.isAddressBanned(player.getAddress())) {
-            player.disconnect("Your IP address have been banned");
+            player.disconnect("Your IP address has been banned");
             return;
         }
         Player another = getPlayer(player.getName());

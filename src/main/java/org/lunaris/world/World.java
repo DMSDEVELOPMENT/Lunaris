@@ -1,7 +1,12 @@
 package org.lunaris.world;
 
+import co.aikar.timings.Timings;
 import org.lunaris.block.Block;
+import org.lunaris.block.Material;
 import org.lunaris.entity.Player;
+import org.lunaris.event.chunk.ChunkLoadedEvent;
+import org.lunaris.event.chunk.ChunkPreLoadEvent;
+import org.lunaris.event.chunk.ChunkUnloadedEvent;
 import org.lunaris.server.IServer;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
@@ -54,8 +59,11 @@ public class World {
         int cx = loc.getBlockX() >> 4, cz = loc.getBlockZ() >> 4;
         int r = player.getChunksView();
         for(int x = cx - r; x <= cx + r; ++x)
-            for(int z = cz - r; z <= cz + r; ++z)
-                loadChunk(x, z).sendTo(player);
+            for(int z = cz - r; z <= cz + r; ++z) {
+                Chunk chunk = loadChunk(x, z);
+                if(chunk != null)
+                    chunk.sendTo(player);
+            }
     }
 
     public void removePlayerFromWorld(Player player) {
@@ -71,7 +79,10 @@ public class World {
     }
 
     public Block getBlockAt(int x, int y, int z) {
-        return loadChunk(x >> 4, z >> 4).getBlock(x, y, z);
+        Chunk chunk = loadChunk(x >> 4, z >> 4);
+        if(chunk == null)
+            return new Block(new Location(this, x, y, z), Material.AIR, 0);
+        return chunk.getBlock(x, y, z);
     }
 
     public synchronized Chunk getChunkAt(int x, int z) {
@@ -82,14 +93,22 @@ public class World {
         Chunk chunk = getChunkAt(x, z);
         if(chunk != null)
             return chunk;
+        ChunkPreLoadEvent preloadEvent = new ChunkPreLoadEvent(x, z);
+        this.server.getEventManager().call(preloadEvent);
+        if(preloadEvent.isCancelled())
+            return null;
         chunk = new TestChunk(this, x, z);
         this.chunks.put(hash(x, z), chunk); //NPE
+        ChunkLoadedEvent loadedEvent = new ChunkLoadedEvent(chunk);
+        this.server.getEventManager().call(loadedEvent);
         return chunk;
     }
 
     public synchronized  void unloadChunk(Chunk chunk) {
         if(chunk == null)
             return;
+        ChunkUnloadedEvent unloadedEvent = new ChunkUnloadedEvent(chunk);
+        this.server.getEventManager().call(unloadedEvent);
         this.chunks.remove(hash(chunk.getX(), chunk.getZ()));
     }
 
@@ -100,11 +119,15 @@ public class World {
     public void tick() {
         if(++this.time >= 24000)
             this.time = 0;
+        Timings.chunksTickTimer.startTiming();
         this.chunks.values().forEach(Chunk::tick);
+        Timings.chunksTickTimer.stopTiming();
         if(this.killerTask != null)
             this.killerTask.tick();
         this.followerTask.tick();
+        Timings.playersTickTimer.startTiming();
         this.players.forEach(Player::tick);
+        Timings.playersTickTimer.stopTiming();
     }
 
     public int getTime() {

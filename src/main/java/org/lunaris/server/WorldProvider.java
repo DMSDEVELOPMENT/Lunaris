@@ -1,5 +1,6 @@
 package org.lunaris.server;
 
+import co.aikar.timings.Timings;
 import org.lunaris.world.Difficulty;
 import org.lunaris.world.Dimension;
 import org.lunaris.world.World;
@@ -33,7 +34,9 @@ public class WorldProvider {
     }
 
     private void tick() {
+        Timings.worldsTickTimer.startTiming();
         this.worlds.forEach(World::tick);
+        Timings.worldsTickTimer.stopTiming();
     }
 
 }

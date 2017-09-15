@@ -1,5 +1,6 @@
 package org.lunaris.event;
 
+import co.aikar.timings.Timings;
 import org.lunaris.server.IServer;
 import org.lunaris.util.exception.EventExecutionException;
 
@@ -32,6 +33,7 @@ public class EventManager {
         Set<Handler> handlers = HANDLERS.get(event.getClass());
         if(handlers == null)
             return;
+        Timings.eventTimer.startTiming();
         Cancellable cancellable = event instanceof Cancellable ? (Cancellable) event : null;
         try {
             for(Handler handler : handlers)
@@ -40,11 +42,7 @@ public class EventManager {
         }catch(Exception ex) {
             new EventExecutionException(ex).printStackTrace();
         }
-    }
-
-    @Deprecated
-    public void callSynchronously(Event event) {
-        this.server.getScheduler().addSyncTask(() -> call(event));
+        Timings.eventTimer.stopTiming();
     }
 
     public void register(Listener listener) {

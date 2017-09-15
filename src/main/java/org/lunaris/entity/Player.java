@@ -1,8 +1,10 @@
 package org.lunaris.entity;
 
 import org.lunaris.Lunaris;
+import org.lunaris.command.CommandSender;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.Gamemode;
+import org.lunaris.entity.data.LPermission;
 import org.lunaris.entity.data.Skin;
 import org.lunaris.event.player.PlayerKickEvent;
 import org.lunaris.network.protocol.MinePacket;
@@ -21,7 +23,7 @@ import java.util.UUID;
 /**
  * Created by RINES on 13.09.17.
  */
-public class Player extends LivingEntity {
+public class Player extends LivingEntity implements CommandSender {
 
     private final String ip;
     private final RakNetClientSession session;
@@ -43,6 +45,8 @@ public class Player extends LivingEntity {
     private float foodSaturationLevel = 20F;
     private boolean onGround = true;
     private boolean invulnerable = false;
+
+    private LPermission permission = LPermission.USER;
 
     private int chunksView = Lunaris.getInstance().getServerSettings().getChunksView();
 
@@ -97,6 +101,21 @@ public class Player extends LivingEntity {
 
     public String getName() {
         return getUsername();
+    }
+
+    @Override
+    public void sendMessage(String message) {
+
+    }
+
+    @Override
+    public void sendMessage(String message, Object... args) {
+
+    }
+
+    @Override
+    public boolean hasPermission(LPermission permission) {
+        return this.permission.ordinal() >= permission.ordinal();
     }
 
     public String getUsername() {
@@ -196,6 +215,14 @@ public class Player extends LivingEntity {
 
     public void setChunksView(int chunksView) {
         this.chunksView = chunksView;
+    }
+
+    public LPermission getPermission() {
+        return permission;
+    }
+
+    public void setPermission(LPermission permission) {
+        this.permission = permission;
     }
 
     public enum IngameState {

@@ -1,5 +1,6 @@
 package org.lunaris.network;
 
+import co.aikar.timings.Timings;
 import io.netty.buffer.Unpooled;
 import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
@@ -82,6 +83,7 @@ public class RakNetProvider {
             @Override
             public void handleMessage(RakNetClientSession session, RakNetPacket packet, int channel) {
                 try {
+                    Timings.packetsReceptionTimer.startTiming();
                     PacketDataInput input = packet.getDataInput();
                     byte[] bytes = new byte[input.remaining()];
                     input.readFully(bytes);
@@ -106,6 +108,7 @@ public class RakNetProvider {
                         manager.mineProvider.handle(packetID, buf, server.getPlayerProvider().getPlayer(session));
                     }finally {
                         buf.release();
+                        Timings.packetsReceptionTimer.stopTiming();
                     }
                 }catch(Exception ex) {
                     new Exception("Can not handle packet input data", ex).printStackTrace();
@@ -121,6 +124,7 @@ public class RakNetProvider {
 
     public void sendPacket(Collection<RakNetClientSession> sessions, MinePacket packet) {
         try {
+            Timings.packetsSendingTimer.startTiming();
             MineBuffer packetBuffer = new MineBuffer(1 << 4);
             packet.write(packetBuffer);
             byte[] bytes = packetBuffer.readBytes(packetBuffer.readableBytes());
@@ -137,6 +141,7 @@ public class RakNetProvider {
             result[0] = this.prefixedId;
             System.arraycopy(bytes, 0, result, 1, bytes.length);
             sessions.forEach(s -> s.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(result))); //check whether rak net packet can be only 1
+            Timings.packetsSendingTimer.stopTiming();
         }catch(Exception ex) {
             new Exception("Can not send packet", ex).printStackTrace();
         }
@@ -144,6 +149,7 @@ public class RakNetProvider {
 
     public void sendPacket(RakNetClientSession session, MinePacket packet) {
         try {
+            Timings.packetsSendingTimer.startTiming();
             MineBuffer packetBuffer = new MineBuffer(1 << 4);
             packet.write(packetBuffer);
             byte[] bytes = packetBuffer.readBytes(packetBuffer.readableBytes());
@@ -160,6 +166,7 @@ public class RakNetProvider {
             result[0] = this.prefixedId;
             System.arraycopy(bytes, 0, result, 1, bytes.length);
             session.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(result));
+            Timings.packetsSendingTimer.stopTiming();
         }catch(Exception ex) {
             new Exception("Can not send packet", ex).printStackTrace();
         }

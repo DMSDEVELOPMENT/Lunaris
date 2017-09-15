@@ -7,7 +7,6 @@ import org.lunaris.network.protocol.MinePacket;
 /**
  * Created by RINES on 14.09.17.
  */
-//SOMETHING IS REALLY WRONG
 public class Packet1DUpdateAttributes extends MinePacket {
 
     private Attribute[] attributes;

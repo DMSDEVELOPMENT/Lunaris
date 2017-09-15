@@ -32,6 +32,14 @@ public class ServerSettings {
 
     private final int adventureSettingsFlag;
 
+    private final boolean timingsEnabledByDefault;
+
+    private final boolean timingsVerbose;
+
+    private final int timingsHistoryInterval;
+
+    private final int timingsHistoryLength;
+
     public ServerSettings(IServer server, FileConfiguration config) {
         try {
             String host = config.getOrSetString("bind-address", "0.0.0.0:19132");
@@ -62,6 +70,10 @@ public class ServerSettings {
             if(config.getOrSetBoolean("player-access.default-level-perms", true))
                 adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_DEFAULT_LEVEL_PERMISSIONS;
             this.adventureSettingsFlag = adventureFlag;
+            this.timingsEnabledByDefault = config.getOrSetBoolean("timings.enabled-by-default", false);
+            this.timingsVerbose = config.getOrSetBoolean("timings.verbose", false);
+            this.timingsHistoryInterval = config.getOrSetInt("timings.history-interval", 6000);
+            this.timingsHistoryLength = config.getOrSetInt("timings.history-length", 72000);
             server.getConfigurationManager().saveConfig();
         }catch(Exception ex) {
             throw new IllegalArgumentException("Server Settings file can not be loaded", ex);
@@ -114,5 +126,21 @@ public class ServerSettings {
 
     public int getAdventureSettingsFlag() {
         return adventureSettingsFlag;
+    }
+
+    public boolean isTimingsEnabledByDefault() {
+        return timingsEnabledByDefault;
+    }
+
+    public boolean isTimingsVerbose() {
+        return timingsVerbose;
+    }
+
+    public int getTimingsHistoryInterval() {
+        return timingsHistoryInterval;
+    }
+
+    public int getTimingsHistoryLength() {
+        return timingsHistoryLength;
     }
 }

@@ -1,6 +1,8 @@
 package org.lunaris;
 
+import co.aikar.timings.Timings;
 import jline.console.ConsoleReader;
+import org.lunaris.command.CommandManager;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.LongEntityData;
 import org.lunaris.event.EventHandler;
@@ -50,6 +52,8 @@ public class Lunaris implements IServer {
 
     private BanChecker banChecker;
 
+    private CommandManager commandManager;
+
     private static boolean shuttingDown;
 
     Lunaris(FormatLogger logger, ConsoleReader consoleReader) {
@@ -65,6 +69,7 @@ public class Lunaris implements IServer {
 
     public void disable() {
         logger.info("Disabling Lunaris version %s..", getServerVersion());
+        Timings.stopServer();
         this.networkManager.disable();
 
         try {
@@ -127,6 +132,8 @@ public class Lunaris implements IServer {
         this.networkManager = new NetworkManager(this);
         this.resourcePackManager = new ResourcePackManager();
         this.banChecker = new BanChecker(this);
+        this.commandManager = new CommandManager();
+        this.commandManager.registerDefaults();
 
 //        this.scheduler.schedule(() -> {
 //            if(getOnlinePlayers().isEmpty())
@@ -166,15 +173,8 @@ public class Lunaris implements IServer {
             while (!shuttingDown) {
                 try {
                     String line = consoleReader.readLine("> ");
-                    if (line != null) {
-                        if(line.equals("stop"))
-                            this.scheduler.addSyncTask(this::disable);
-                        String[] spl = line.split(" ");
-                        String[] args1 = new String[spl.length - 1];
-                        for (int i = 1; i < spl.length; ++i)
-                            args1[i - 1] = spl[i];
-//                        ProxyCommandLoader.handle(spl[0].toLowerCase(), args1);
-                    }
+                    if (line != null)
+                        this.scheduler.addSyncTask(() -> this.commandManager.handle('/' + line, null));
                 } catch (Exception ex) {
                     logger.error(ex, "Can not handle command from server console. Is everything ok?");
                 }
@@ -205,6 +205,11 @@ public class Lunaris implements IServer {
     @Override
     public BanChecker getBanChecker() {
         return this.banChecker;
+    }
+
+    @Override
+    public CommandManager getCommandManager() {
+        return this.commandManager;
     }
 
     @Override

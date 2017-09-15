@@ -119,7 +119,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
         return (int) getOrSet(key, def);
     }
 
-    public byte getOrSetByte(String key, byte def) {
+    public byte getOrSetByte(String key, int def) {
         return (byte) (int) getOrSet(key, def);
     }
 

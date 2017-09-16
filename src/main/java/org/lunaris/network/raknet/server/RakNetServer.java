@@ -45,6 +45,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import org.lunaris.Lunaris;
 import org.lunaris.network.raknet.NoListenerException;
 import org.lunaris.network.raknet.Packet;
 import org.lunaris.network.raknet.RakNet;
@@ -149,7 +150,7 @@ public class RakNetServer implements GeminusRakNetPeer, RakNetServerListener {
 	 *            the maximum transfer unit.
 	 */
 	public RakNetServer(String address, int port, int maxConnections, int maximumTransferUnit) {
-		this(address, port, maxConnections, maximumTransferUnit, null);
+		this(address, port, maxConnections, maximumTransferUnit * 2 / 3, null);
 	}
 
 	/**

@@ -29,11 +29,15 @@ public class PlayerChatAsyncEvent extends Event implements Cancellable {
     }
 
     public Player getPlayer() {
-        return player;
+        return this.player;
     }
 
     public String getMessage() {
-        return message;
+        return this.message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
 }

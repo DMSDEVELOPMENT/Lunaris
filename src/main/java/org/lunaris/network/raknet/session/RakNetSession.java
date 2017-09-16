@@ -657,10 +657,10 @@ public abstract class RakNetSession implements UnumRakNetPeer, GeminusRakNetPeer
 	 *            the <code>EncapsualtedPacket</code> to handle.
 	 */
 	private final void handleEncapsulated(EncapsulatedPacket encapsulated) {
-		Reliability reliability = encapsulated.reliability;
+        Reliability reliability = encapsulated.reliability;
 
 		// Put together split packet
-		if (encapsulated.split == true) {
+		if (encapsulated.split) {
 			if (!splitQueue.containsKey(encapsulated.splitId)) {
 				// Prevent queue from overflowing
 				if (splitQueue.size() + 1 > RakNet.MAX_SPLITS_PER_QUEUE) {
@@ -756,7 +756,7 @@ public abstract class RakNetSession implements UnumRakNetPeer, GeminusRakNetPeer
 			ConnectedPong pong = new ConnectedPong(packet);
 			pong.decode();
 
-			if (latencyEnabled == true) {
+			if (latencyEnabled) {
 				if (latencyIdentifier - pong.identifier == 1) {
 					long latencyRaw = (this.lastPacketReceiveTime - this.lastPingSendTime);
 

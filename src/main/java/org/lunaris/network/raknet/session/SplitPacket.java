@@ -74,6 +74,10 @@ public class SplitPacket {
 		}
 	}
 
+	public int getPayloadsSize() {
+		return this.payloads.size();
+	}
+
 	/**
 	 * @return the split ID of the split packet.
 	 */
@@ -111,6 +115,11 @@ public class SplitPacket {
 			throw new IllegalArgumentException("This split packet does not belong to this one");
 		}
 		payloads.put(encapsulated.splitIndex, encapsulated.payload);
+
+//        long size = 0L;
+//        for(Packet packet : payloads.values())
+//            size += packet.size();
+//        Lunaris.getInstance().getLogger().info("Summary size: %d bytes (current one is %d bytes)", size, encapsulated.payload.size());
 
 		// If the map is large enough then put the packet together and return it
 		if (payloads.size() >= this.splitCount) {

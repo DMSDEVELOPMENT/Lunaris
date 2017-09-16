@@ -42,7 +42,7 @@ public class RakNetProvider {
         this.rakNet = new RakNetServer(
                 settings.getHost(),
                 settings.getPort(),
-                10,
+                200,
                 new MCPEIdentifier(
                         settings.getServerName(),
                         settings.getSupportedClientProtocol(),

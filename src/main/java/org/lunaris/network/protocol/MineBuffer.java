@@ -96,15 +96,17 @@ public class MineBuffer {
     }
 
     public int readUnsignedVarInt() {
-        int i = 0;
-        int j = 0;
-        while(true) {
-            byte b0 = this.readByte();
-            i |= (b0 & 127) << j++ * 7;
-            if((b0 & 128) != 128)
-                break;
+        long value = 0;
+        int size = 0;
+        int b;
+        while (((b = readByte()) & 0x80) == 0x80) {
+            value |= (long) (b & 0x7F) << (size++ * 7);
+            if (size >= 5) {
+                throw new IllegalArgumentException("VarInt too big");
+            }
         }
-        return i;
+
+        return (int) (value | ((long) (b & 0x7F) << (size * 7)));
     }
 
     public void writeUnsignedVarLong(long value) {
@@ -254,9 +256,7 @@ public class MineBuffer {
     }
 
     public String readString() {
-        int i = this.readUnsignedVarInt();
-        Preconditions.checkArgument(i >= 0, "The received encoded string buffer length is less than zero! What a weird string!");
-        String s = new String(this.readBytes(i), Charsets.UTF_8);
+        String s = new String(this.readBytes(readUnsignedVarInt()), Charsets.UTF_8);
         return s;
     }
 
@@ -298,7 +298,7 @@ public class MineBuffer {
     }
 
     public BlockVector readBlockVector() {
-        return new BlockVector(readVarInt(), readUnsignedInt(), readVarInt());
+        return new BlockVector(readVarInt(), readUnsignedVarInt(), readVarInt());
     }
 
     public void writeMetadata(EntityMetadata metadata) {

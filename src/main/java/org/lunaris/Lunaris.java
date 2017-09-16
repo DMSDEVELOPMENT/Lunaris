@@ -238,6 +238,7 @@ public class Lunaris implements IServer {
     @Override
     public void broadcastMessage(String message) {
         this.networkManager.sendPacket(getOnlinePlayers(), new Packet09Text(Packet09Text.MessageType.RAW, "", message, false));
+        this.logger.info(message);
     }
 
     public PlayerProvider getPlayerProvider() {

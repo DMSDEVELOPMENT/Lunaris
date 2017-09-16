@@ -6,6 +6,7 @@ import org.lunaris.command.CommandSender;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.LPermission;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
@@ -19,8 +20,10 @@ public class List extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        sender.sendMessage("Players online: %d", Lunaris.getInstance().getOnlinePlayers().size());
-        sender.sendMessage(Lunaris.getInstance().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.joining(", ")));
+        Collection<Player> players = Lunaris.getInstance().getOnlinePlayers();
+        sender.sendMessage("Players online: %d", players.size());
+        if(!players.isEmpty())
+            sender.sendMessage(players.stream().map(Player::getName).collect(Collectors.joining(", ")));
     }
 
 }

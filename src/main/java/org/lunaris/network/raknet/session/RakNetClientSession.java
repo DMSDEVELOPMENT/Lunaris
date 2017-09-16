@@ -123,7 +123,7 @@ public class RakNetClientSession extends org.lunaris.network.raknet.session.RakN
 			ConnectionRequest request = new ConnectionRequest(packet);
 			request.decode();
 
-			if (request.clientGuid == this.getGloballyUniqueId() && request.useSecurity != true) {
+			if (request.clientGuid == this.getGloballyUniqueId() && !request.useSecurity) {
 				ConnectionRequestAccepted requestAccepted = new ConnectionRequestAccepted();
 				requestAccepted.clientAddress = this.getAddress();
 				requestAccepted.clientTimestamp = request.timestamp;

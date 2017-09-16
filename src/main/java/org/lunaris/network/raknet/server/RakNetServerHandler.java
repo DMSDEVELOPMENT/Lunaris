@@ -64,7 +64,7 @@ public class RakNetServerHandler extends ChannelInboundHandlerAdapter {
 	public RakNetServerHandler(org.lunaris.network.raknet.server.RakNetServer server) {
 		this.loggerName = "server handler #" + server.getGloballyUniqueId();
 		this.server = server;
-		this.blocked = new HashMap<InetAddress, org.lunaris.network.raknet.server.BlockedAddress>();
+		this.blocked = new HashMap<>();
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class RakNetServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		if (msg instanceof DatagramPacket) {
+        if (msg instanceof DatagramPacket) {
 			// Get packet and sender data
 			DatagramPacket datagram = (DatagramPacket) msg;
 			InetSocketAddress sender = datagram.sender();

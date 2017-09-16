@@ -18,6 +18,7 @@ public class CommandManager {
         new Stop();
         new Version();
         new List();
+        new Say();
     }
 
     public boolean isCommand(String line) {

@@ -122,11 +122,17 @@ public class MinePacketHandler {
 
     public void handle(Packet09Text packet) {
         if(packet.getType() == Packet09Text.MessageType.CHAT) {
-            PlayerChatAsyncEvent event = new PlayerChatAsyncEvent(packet.getPlayer(), packet.getMessage());
-            this.server.getEventManager().call(event);
-            if(event.isCancelled())
-                return;
-            this.server.broadcastMessage("<" + packet.getPlayer().getName() + "> " + event.getMessage());
+            this.server.getLogger().info("Message: %s", packet.getMessage());
+            this.server.getLogger().info("Source: %s", packet.getSource());
+            for(String message : packet.getMessage().split("\n")) {
+                if(message.trim().isEmpty() || message.length() > 250)
+                    continue;
+                PlayerChatAsyncEvent event = new PlayerChatAsyncEvent(packet.getPlayer(), message);
+                this.server.getEventManager().call(event);
+                if(event.isCancelled())
+                    continue;
+                this.server.broadcastMessage("<" + packet.getPlayer().getName() + "> " + event.getMessage());
+            }
         }else
             this.server.getLogger().info("Unknown type from client with chat packet: %s", packet.getType().name());
     }

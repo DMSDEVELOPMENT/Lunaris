@@ -24,9 +24,9 @@ public class Packet08ResourcePackResponse extends MinePacket {
     @Override
     public void read(MineBuffer buffer) {
         this.responseStatus = buffer.readByte();
-        this.packIds = new String[buffer.readLShort()];
+        this.packIds = new String[buffer.readUnsignedShort()];
         for(int i = 0; i < this.packIds.length; ++i)
-            this.packIds[i] = buffer.readStringUnlimited();
+            this.packIds[i] = buffer.readString();
     }
 
     @Override

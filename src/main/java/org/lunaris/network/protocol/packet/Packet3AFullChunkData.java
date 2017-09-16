@@ -31,10 +31,9 @@ public class Packet3AFullChunkData extends MinePacket {
 
     @Override
     public void write(MineBuffer buffer) {
-        buffer.putVarInt(this.x);
-        buffer.putVarInt(this.z);
-        buffer.writeVarInt(this.data.length);
-        buffer.writeBytes(this.data);
+        buffer.writeVarInt(this.x);
+        buffer.writeVarInt(this.z);
+        buffer.writeByteArray(this.data);
     }
 
     public int getX() {

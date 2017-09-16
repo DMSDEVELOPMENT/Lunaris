@@ -35,17 +35,16 @@ public class Packet3FPlayerList extends MinePacket {
     @Override
     public void write(MineBuffer buffer) {
         buffer.writeByte((byte) this.type.ordinal());
-        buffer.writeVarIntLonger(this.entries.length);
+        buffer.writeUnsignedVarInt(this.entries.length);
         for(Entry e : this.entries) {
             if(this.type == Type.ADD) {
-                buffer.putUUID(e.uuid);
-                buffer.putVarLong(e.entityId);
-                buffer.writeStringUnlimited(e.name);
-                buffer.writeStringUnlimited(e.skin.getModel());
-                buffer.writeVarIntLonger(e.skin.getData().length);
-                buffer.writeBytes(e.skin.getData());
+                buffer.writeUUID(e.uuid);
+                buffer.writeVarLong(e.entityId);
+                buffer.writeString(e.name);
+                buffer.writeString(e.skin.getModel());
+                buffer.writeByteArray(e.skin.getData());
             }else {
-                buffer.putUUID(e.uuid);
+                buffer.writeUUID(e.uuid);
             }
         }
     }

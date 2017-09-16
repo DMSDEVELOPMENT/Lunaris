@@ -17,7 +17,7 @@ public class Packet45RequestChunkRadius extends MinePacket {
 
     @Override
     public void read(MineBuffer buffer) {
-        this.radius = buffer.getVarInt();
+        this.radius = buffer.readVarInt();
     }
 
     @Override

@@ -57,43 +57,44 @@ public class Packet0BStartGame extends MinePacket {
 
     @Override
     public void write(MineBuffer buffer) {
-        buffer.putVarLong(this.entityUniqueId);
-        buffer.putVarLong(this.entityRuntimeId);
-        buffer.putVarInt(this.playerGamemode);
+        buffer.writeVarLong(this.entityUniqueId);
+        buffer.writeEntityRuntimeId(this.entityRuntimeId);
+        buffer.writeVarInt(this.playerGamemode);
         buffer.writeVector3f(this.x, this.y, this.z);
-        buffer.writeLFloat(this.yaw);
-        buffer.writeLFloat(this.pitch);
-        buffer.putVarInt(this.seed);
-        buffer.putVarInt(this.dimension);
-        buffer.putVarInt(this.generator);
-        buffer.putVarInt(this.gamemode);
-        buffer.putVarInt(this.difficulty);
+        buffer.writeVector2f(this.yaw, this.pitch);
+        //level settings begin
+        buffer.writeVarInt(this.seed);
+        buffer.writeVarInt(this.dimension);
+        buffer.writeVarInt(this.generator);
+        buffer.writeVarInt(this.gamemode);
+        buffer.writeVarInt(this.difficulty);
         buffer.writeBlockVector(this.spawnX, this.spawnY, this.spawnZ);
         buffer.writeBoolean(this.hasAchievementsDisabled);
-        buffer.putVarInt(this.dayCycleStopTime);
+        buffer.writeVarInt(this.dayCycleStopTime);
         buffer.writeBoolean(this.eduMode);
-        buffer.writeLFloat(this.rainLevel);
-        buffer.writeLFloat(this.lightningLevel);
+        buffer.writeFloat(this.rainLevel);
+        buffer.writeFloat(this.lightningLevel);
         buffer.writeBoolean(this.multiplayerGame);
         buffer.writeBoolean(this.broadcastToLAN);
         buffer.writeBoolean(this.broadcastToXboxLive);
         buffer.writeBoolean(this.commandsEnabled);
         buffer.writeBoolean(this.isTexturePacksRequired);
-        buffer.writeVarIntLonger(this.ruleDatas.length);
+        buffer.writeUnsignedVarInt(this.ruleDatas.length);
         for(RuleData rule : this.ruleDatas) {
-            buffer.writeStringUnlimited(rule.name);
+            buffer.writeString(rule.name);
             buffer.writeBoolean(rule.unknown1);
             buffer.writeBoolean(rule.unknown2);
         }
         buffer.writeBoolean(this.bonusChest);
         buffer.writeBoolean(this.trustPlayers);
-        buffer.putVarInt(this.permissionLevel);
-        buffer.putVarInt(this.gamePublish);
-        buffer.writeStringUnlimited(this.levelId);
-        buffer.writeStringUnlimited(this.worldName);
-        buffer.writeStringUnlimited(this.premiumWorldTemplateId);
+        buffer.writeVarInt(this.permissionLevel);
+        buffer.writeVarInt(this.gamePublish);
+        //level settings end
+        buffer.writeString(this.levelId);
+        buffer.writeString(this.worldName);
+        buffer.writeString(this.premiumWorldTemplateId);
         buffer.writeBoolean(this.unknown);
-        buffer.writeLLong(this.currentTick);
+        buffer.writeUnsignedLong(this.currentTick);
     }
 
     public class RuleData {

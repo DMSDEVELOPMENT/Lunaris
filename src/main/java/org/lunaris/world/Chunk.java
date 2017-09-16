@@ -87,7 +87,7 @@ public abstract class Chunk {
             //отправить дополнительный мегабайт
         }else {
             //оставить пакет весом 15кб
-            buffer.putVarInt(0);
+            buffer.writeVarInt(0);
         }
         buffer.writeBytes(new byte[0]); //block (tile) entities
         try {

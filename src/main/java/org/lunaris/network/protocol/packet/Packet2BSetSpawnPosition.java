@@ -34,7 +34,7 @@ public class Packet2BSetSpawnPosition extends MinePacket {
 
     @Override
     public void write(MineBuffer buffer) {
-        buffer.putVarInt(this.spawnType.ordinal());
+        buffer.writeVarInt(this.spawnType.ordinal());
         buffer.writeBlockVector(this.x, this.y, this.z);
         buffer.writeBoolean(this.spawnForced);
     }

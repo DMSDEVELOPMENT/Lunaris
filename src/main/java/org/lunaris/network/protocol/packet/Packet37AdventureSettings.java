@@ -82,9 +82,9 @@ public class Packet37AdventureSettings extends MinePacket {
         buffer.writeVarLong(this.actionPermissions);
         buffer.writeVarLong(this.permissionLevel);
         if ((this.userId & 0x01) != 0) {
-            buffer.writeLLong(-1 * ((this.userId + 1) >> 1));
+            buffer.writeUnsignedLong(-1 * ((this.userId + 1) >> 1));
         } else {
-            buffer.writeLLong(this.userId >> 1);
+            buffer.writeUnsignedLong(this.userId >> 1);
         }
     }
 }

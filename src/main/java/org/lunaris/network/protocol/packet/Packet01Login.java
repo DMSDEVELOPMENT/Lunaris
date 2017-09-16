@@ -42,7 +42,7 @@ public class Packet01Login extends MinePacket {
 
     private void decode(MineBuffer buffer) {
         try {
-            Map<String, List<String>> map = new Gson().fromJson(new String(buffer.readBytes(buffer.readLInt()), StandardCharsets.UTF_8),
+            Map<String, List<String>> map = new Gson().fromJson(new String(buffer.readBytes(buffer.readUnsignedInt()), StandardCharsets.UTF_8),
                     new TypeToken<Map<String, List<String>>>() {
                     }.getType());
             if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
@@ -62,7 +62,7 @@ public class Packet01Login extends MinePacket {
     }
 
     private void decodeSkinData(MineBuffer buffer) {
-        JsonObject skinToken = decodeToken(new String(buffer.readBytes(buffer.readLInt())));
+        JsonObject skinToken = decodeToken(new String(buffer.readBytes(buffer.readUnsignedInt())));
         String skinId = null;
         if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
         if (skinToken.has("SkinId")) skinId = skinToken.get("SkinId").getAsString();

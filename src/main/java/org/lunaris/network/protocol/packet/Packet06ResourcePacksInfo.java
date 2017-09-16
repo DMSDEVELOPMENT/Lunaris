@@ -26,18 +26,18 @@ public class Packet06ResourcePacksInfo extends MinePacket {
     @Override
     public void write(MineBuffer buffer) {
         buffer.writeBoolean(this.forced);
-        buffer.writeLShort(this.behaviourPackEntries.length);
+        buffer.writeUnsignedShort((short) this.behaviourPackEntries.length);
         for(ResourcePack pack : this.behaviourPackEntries) {
             buffer.writeString(pack.getPackId());
             buffer.writeString(pack.getPackVersion());
-            buffer.writeLLong(pack.getPackSize());
+            buffer.writeUnsignedLong(pack.getPackSize());
             buffer.writeString(""); //unknown
         }
-        buffer.writeLShort(this.resourcePackEntries.length);
+        buffer.writeUnsignedShort((short) this.resourcePackEntries.length);
         for(ResourcePack pack : this.resourcePackEntries) {
             buffer.writeString(pack.getPackId());
             buffer.writeString(pack.getPackVersion());
-            buffer.writeLLong(pack.getPackSize());
+            buffer.writeUnsignedLong(pack.getPackSize());
             buffer.writeString(""); //unknown
         }
     }

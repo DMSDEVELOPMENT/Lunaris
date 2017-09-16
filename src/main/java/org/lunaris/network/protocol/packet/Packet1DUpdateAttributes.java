@@ -31,17 +31,17 @@ public class Packet1DUpdateAttributes extends MinePacket {
 
     @Override
     public void write(MineBuffer buffer) {
-        buffer.putVarLong(this.entityId);
+        buffer.writeVarLong(this.entityId);
         if(this.attributes == null)
-            buffer.writeVarInt(0);
+            buffer.writeUnsignedVarInt(0);
         else {
-            buffer.writeVarInt(this.attributes.length);
+            buffer.writeUnsignedVarInt(this.attributes.length);
             for(Attribute a : this.attributes) {
-                buffer.writeLFloat(a.getMinValue());
-                buffer.writeLFloat(a.getMaxValue());
-                buffer.writeLFloat(a.getValue());
-                buffer.writeLFloat(a.getDefaultValue());
-                buffer.writeStringUnlimited(a.getName());
+                buffer.writeFloat(a.getMinValue());
+                buffer.writeFloat(a.getMaxValue());
+                buffer.writeFloat(a.getValue());
+                buffer.writeFloat(a.getDefaultValue());
+                buffer.writeString(a.getName());
             }
         }
     }

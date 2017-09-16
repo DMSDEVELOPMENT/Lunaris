@@ -37,10 +37,9 @@ public class Packet52ResourcePackDataInfo extends MinePacket {
     @Override
     public void write(MineBuffer buffer) {
         buffer.writeString(this.packID);
-        buffer.writeLInt(this.maxChunkSize);
-        buffer.writeLInt(this.chunksAmount);
-        buffer.writeLLong(this.compressedChunkSize);
-        buffer.writeVarInt(this.sha256.length);
-        buffer.writeBytes(this.sha256);
+        buffer.writeUnsignedInt(this.maxChunkSize);
+        buffer.writeUnsignedInt(this.chunksAmount);
+        buffer.writeUnsignedLong(this.compressedChunkSize);
+        buffer.writeByteArray(this.sha256);
     }
 }

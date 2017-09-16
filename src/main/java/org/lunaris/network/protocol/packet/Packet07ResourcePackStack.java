@@ -33,12 +33,12 @@ public class Packet07ResourcePackStack extends MinePacket {
     @Override
     public void write(MineBuffer buffer) {
         buffer.writeBoolean(this.forced);
-        buffer.writeLShort(this.behaviourPackStack.length);
+        buffer.writeUnsignedShort((short) this.behaviourPackStack.length);
         for(ResourcePack pack : this.behaviourPackStack) {
             buffer.writeString(pack.getPackId());
             buffer.writeString(pack.getPackVersion());
         }
-        buffer.writeLShort(this.resourcePackStack.length);
+        buffer.writeUnsignedShort((short) this.resourcePackStack.length);
         for(ResourcePack pack : this.resourcePackStack) {
             buffer.writeString(pack.getPackId());
             buffer.writeString(pack.getPackVersion());

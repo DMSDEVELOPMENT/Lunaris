@@ -44,36 +44,36 @@ public class Packet13MovePlayer extends MinePacket {
 
     @Override
     public void read(MineBuffer buffer) {
-        this.entityId = buffer.getVarLong();
-        Vector3f position = buffer.getVector3f();
+        this.entityId = buffer.readVarLong();
+        Vector3f position = buffer.readVector3f();
         this.x = position.x;
         this.y = position.y;
         this.z = position.z;
-        this.yaw = buffer.getLFloat();
-        this.headYaw = buffer.getLFloat();
-        this.pitch = buffer.getLFloat();
+        this.yaw = buffer.readFloat();
+        this.headYaw = buffer.readFloat();
+        this.pitch = buffer.readFloat();
         this.mode = buffer.readByte();
         this.onGround = buffer.readBoolean();
-        this.ridingEntityId = buffer.getVarLong();
+        this.ridingEntityId = buffer.readVarLong();
         if(this.mode == MODE_TELEPORT) {
-            this.unknown1 = buffer.readLInt();
-            this.unknown2 = buffer.readLInt();
+            this.unknown1 = buffer.readUnsignedInt();
+            this.unknown2 = buffer.readUnsignedInt();
         }
     }
 
     @Override
     public void write(MineBuffer buffer) {
-        buffer.putVarLong(this.entityId);
+        buffer.writeVarLong(this.entityId);
         buffer.writeVector3f(this.x, this.y, this.z);
-        buffer.writeLFloat(this.yaw);
-        buffer.writeLFloat(this.headYaw);
-        buffer.writeLFloat(this.pitch);
+        buffer.writeFloat(this.yaw);
+        buffer.writeFloat(this.headYaw);
+        buffer.writeFloat(this.pitch);
         buffer.writeByte((byte) this.mode);
         buffer.writeBoolean(this.onGround);
-        buffer.putVarLong(this.ridingEntityId);
+        buffer.writeVarLong(this.ridingEntityId);
         if(this.mode == MODE_TELEPORT) {
-            buffer.writeLInt(this.unknown1);
-            buffer.writeLInt(this.unknown2);
+            buffer.writeUnsignedInt(this.unknown1);
+            buffer.writeUnsignedInt(this.unknown2);
         }
     }
 

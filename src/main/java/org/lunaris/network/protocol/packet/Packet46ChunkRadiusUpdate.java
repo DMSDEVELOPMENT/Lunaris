@@ -28,7 +28,7 @@ public class Packet46ChunkRadiusUpdate extends MinePacket {
 
     @Override
     public void write(MineBuffer buffer) {
-        buffer.putVarInt(this.radius);
+        buffer.writeVarInt(this.radius);
     }
 
 }

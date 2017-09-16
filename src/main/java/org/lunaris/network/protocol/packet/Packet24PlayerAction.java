@@ -19,12 +19,12 @@ public class Packet24PlayerAction extends MinePacket {
 
     @Override
     public void read(MineBuffer buffer) {
-        this.entityId = buffer.getVarLong();
-        this.action = Action.values()[buffer.getVarInt()];
-        this.x = buffer.getVarInt();
-        this.y = buffer.readVarInt();
-        this.z = buffer.getVarInt();
-        this.face = buffer.getVarInt();
+        this.entityId = buffer.readEntityRuntimeId();
+        this.action = Action.values()[buffer.readVarInt()];
+        this.x = buffer.readVarInt();
+        this.y = buffer.readUnsignedVarInt();
+        this.z = buffer.readVarInt();
+        this.face = buffer.readVarInt();
     }
 
     @Override
@@ -68,8 +68,8 @@ public class Packet24PlayerAction extends MinePacket {
         JUMP,
         START_SPRINT,
         STOP_SPRINT,
-        STOP_SNEAK,
         START_SNEAK,
+        STOP_SNEAK,
         DIMENSION_CHANGE_ACK,
         START_GLIDE,
         STOP_GLIDE,

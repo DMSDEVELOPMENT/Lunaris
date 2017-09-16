@@ -34,7 +34,7 @@ public class Packet28SetEntityMotion extends MinePacket {
 
     @Override
     public void write(MineBuffer buffer) {
-        buffer.putVarLong(this.entityId);
+        buffer.writeVarLong(this.entityId);
         buffer.writeVector3f(this.motionX, this.motionY, this.motionZ);
     }
 

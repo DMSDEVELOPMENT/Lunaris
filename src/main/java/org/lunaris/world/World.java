@@ -10,6 +10,7 @@ import org.lunaris.event.chunk.ChunkPreLoadEvent;
 import org.lunaris.event.chunk.ChunkUnloadedEvent;
 import org.lunaris.network.protocol.packet.Packet0CAddPlayer;
 import org.lunaris.network.protocol.packet.Packet0ERemoveEntity;
+import org.lunaris.network.protocol.packet.Packet27SetEntityData;
 import org.lunaris.server.IServer;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
@@ -70,6 +71,7 @@ public class World {
         Collection<Player> without = getPlayersWithout(player);
         this.server.getNetworkManager().sendPacket(without, new Packet0CAddPlayer(player));
         without.stream().map(Packet0CAddPlayer::new).forEach(player::sendPacket);
+        this.server.getNetworkManager().sendPacket(without, new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
     }
 
     public void removePlayerFromWorld(Player player) {

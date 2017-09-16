@@ -45,4 +45,6 @@ public interface IServer {
 
     Player getPlayer(UUID uuid);
 
+    void broadcastMessage(String message);
+
 }

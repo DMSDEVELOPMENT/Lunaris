@@ -11,6 +11,7 @@ import org.lunaris.event.Listener;
 import org.lunaris.event.network.PacketReceivedAsyncEvent;
 import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.network.NetworkManager;
+import org.lunaris.network.protocol.packet.Packet09Text;
 import org.lunaris.network.protocol.packet.Packet27SetEntityData;
 import org.lunaris.network.protocol.packet.Packet3AFullChunkData;
 import org.lunaris.resourcepacks.ResourcePackManager;
@@ -232,6 +233,11 @@ public class Lunaris implements IServer {
     @Override
     public Player getPlayer(UUID uuid) {
         return this.playerProvider.getPlayer(uuid);
+    }
+
+    @Override
+    public void broadcastMessage(String message) {
+        this.networkManager.sendPacket(getOnlinePlayers(), new Packet09Text(Packet09Text.MessageType.RAW, "", message, false));
     }
 
     public PlayerProvider getPlayerProvider() {

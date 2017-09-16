@@ -9,10 +9,7 @@ import org.lunaris.entity.data.Skin;
 import org.lunaris.event.player.PlayerKickEvent;
 import org.lunaris.inventory.PlayerInventory;
 import org.lunaris.network.protocol.MinePacket;
-import org.lunaris.network.protocol.packet.Packet01Login;
-import org.lunaris.network.protocol.packet.Packet05Disconnect;
-import org.lunaris.network.protocol.packet.Packet1DUpdateAttributes;
-import org.lunaris.network.protocol.packet.Packet24PlayerAction;
+import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.world.util.LongHash;
@@ -111,12 +108,28 @@ public class Player extends LivingEntity implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-
+        sendPacket(new Packet09Text(Packet09Text.MessageType.RAW, "", message, false));
     }
 
     @Override
     public void sendMessage(String message, Object... args) {
+        sendMessage(String.format(message, args));
+    }
 
+    public void sendTip(String message) {
+        sendPacket(new Packet09Text(Packet09Text.MessageType.TIP, "", message, false));
+    }
+
+    public void sendTip(String message, Object... args) {
+        sendTip(String.format(message, args));
+    }
+
+    public void sendPopup(String message) {
+        sendPopup(message, "");
+    }
+
+    public void sendPopup(String message, String subtitle) {
+        sendPacket(new Packet09Text(Packet09Text.MessageType.POPUP, message, subtitle, false));
     }
 
     @Override

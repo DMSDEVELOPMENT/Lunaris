@@ -120,6 +120,17 @@ public class MinePacketHandler {
         }
     }
 
+    public void handle(Packet09Text packet) {
+        if(packet.getType() == Packet09Text.MessageType.CHAT) {
+            PlayerChatAsyncEvent event = new PlayerChatAsyncEvent(packet.getPlayer(), packet.getMessage());
+            this.server.getEventManager().call(event);
+            if(event.isCancelled())
+                return;
+            this.server.broadcastMessage("<" + packet.getPlayer().getName() + "> " + event.getMessage());
+        }else
+            this.server.getLogger().info("Unknown type from client with chat packet: %s", packet.getType().name());
+    }
+
     public void handle(Packet13MovePlayer packet) {
         Player player = packet.getPlayer();
         Location loc = player.getLocation();

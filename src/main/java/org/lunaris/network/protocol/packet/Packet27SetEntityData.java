@@ -35,48 +35,7 @@ public class Packet27SetEntityData extends MinePacket {
     @Override
     public void write(MineBuffer buffer) {
         buffer.writeVarLong(this.entityId);
-        Map<Integer, EntityData> map = this.metadata.getMap();
-        buffer.writeUnsignedVarInt(map.size());
-        map.forEach((id, data) -> {
-            buffer.writeUnsignedVarInt(id);
-            buffer.writeUnsignedVarInt(data.getTypeId());
-            switch(data.getType()) {
-                case BYTE:
-                    buffer.writeByte(((ByteEntityData) data).getData().byteValue());
-                    break;
-                case SHORT:
-                    buffer.writeUnsignedShort((short) (int) ((ShortEntityData) data).getData());
-                    break;
-                case INT:
-                    buffer.writeVarInt(((IntEntityData) data).getData());
-                    break;
-                case FLOAT:
-                    buffer.writeFloat(((FloatEntityData) data).getData());
-                    break;
-                case STRING:
-                    buffer.writeString(((StringEntityData) data).getData());
-                    break;
-                case SLOT:
-                    SlotEntityData slot = (SlotEntityData) data;
-                    buffer.writeUnsignedShort((short) slot.blockId);
-                    buffer.writeByte((byte) slot.meta);
-                    buffer.writeUnsignedShort((short) slot.count);
-                    break;
-                case POS:
-                    IntPositionEntityData pos = (IntPositionEntityData) data;
-                    buffer.writeVarInt(pos.x);
-                    buffer.writeByte((byte) pos.y);
-                    buffer.writeVarInt(pos.z);
-                    break;
-                case LONG:
-                    buffer.writeVarLong(((LongEntityData) data).getData());
-                    break;
-                case VECTOR3F:
-                    Vector3f vector = ((Vector3fEntityData) data).getData();
-                    buffer.writeVector3f(vector.x, vector.y, vector.z);
-                    break;
-            }
-        });
+        buffer.writeMetadata(this.metadata);
     }
 
     public EntityMetadata getMetadata() {

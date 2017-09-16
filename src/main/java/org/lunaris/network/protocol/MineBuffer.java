@@ -4,11 +4,15 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.lunaris.block.Material;
+import org.lunaris.entity.data.*;
+import org.lunaris.item.ItemStack;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.util.math.Vector3f;
 import org.lunaris.world.BlockVector;
 
 import java.nio.ByteBuffer;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -292,6 +296,67 @@ public class MineBuffer {
 
     public BlockVector readBlockVector() {
         return new BlockVector(readVarInt(), readUnsignedInt(), readVarInt());
+    }
+
+    public void writeMetadata(EntityMetadata metadata) {
+        Map<Integer, EntityData> map = metadata.getMap();
+        writeUnsignedVarInt(map.size());
+        map.forEach((id, data) -> {
+            writeUnsignedVarInt(id);
+            writeUnsignedVarInt(data.getTypeId());
+            switch(data.getType()) {
+                case BYTE:
+                    writeByte(((ByteEntityData) data).getData().byteValue());
+                    break;
+                case SHORT:
+                    writeUnsignedShort((short) (int) ((ShortEntityData) data).getData());
+                    break;
+                case INT:
+                    writeVarInt(((IntEntityData) data).getData());
+                    break;
+                case FLOAT:
+                    writeFloat(((FloatEntityData) data).getData());
+                    break;
+                case STRING:
+                    writeString(((StringEntityData) data).getData());
+                    break;
+                case SLOT:
+                    SlotEntityData slot = (SlotEntityData) data;
+                    writeUnsignedShort((short) slot.blockId);
+                    writeByte((byte) slot.meta);
+                    writeUnsignedShort((short) slot.count);
+                    break;
+                case POS:
+                    IntPositionEntityData pos = (IntPositionEntityData) data;
+                    writeVarInt(pos.x);
+                    writeByte((byte) pos.y);
+                    writeVarInt(pos.z);
+                    break;
+                case LONG:
+                    writeVarLong(((LongEntityData) data).getData());
+                    break;
+                case VECTOR3F:
+                    Vector3f vector = ((Vector3fEntityData) data).getData();
+                    writeVector3f(vector.x, vector.y, vector.z);
+                    break;
+            }
+        });
+    }
+
+    public void writeItem(ItemStack item) {
+        if (item == null || item.getMaterial() == Material.AIR) {
+            writeVarInt(0);
+            return;
+        }
+        writeVarInt(item.getMaterial().getId());
+        int auxValue = (((item.getMaterial().hasMeta() ? item.getData() : -1) & 0x7fff) << 8) | item.getAmount();
+        writeVarInt(auxValue);
+//        byte[] nbt = item.getCompoundTag();
+//        this.putLShort(nbt.length);
+//        this.put(nbt);
+        writeUnsignedShort((short) 0);
+        writeVarInt(0); //can place on entry amount
+        writeVarInt(0); //can destroy entry amount
     }
 
     public void writeUUID(UUID uuid) {

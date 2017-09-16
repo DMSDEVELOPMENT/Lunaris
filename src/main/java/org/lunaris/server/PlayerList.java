@@ -5,9 +5,7 @@ import org.lunaris.entity.Player;
 import org.lunaris.network.protocol.packet.Packet3FPlayerList;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Created by RINES on 16.09.17.
@@ -22,7 +20,8 @@ public class PlayerList {
 
     public void addPlayer(Player player) {
         Packet3FPlayerList packet = new Packet3FPlayerList(Packet3FPlayerList.Type.ADD, new Packet3FPlayerList.Entry(player));
-        this.server.getNetworkManager().sendPacket(getPlayersWithout(player), packet);
+        Collection<Player> players = getPlayersWithout(player);
+        this.server.getNetworkManager().sendPacket(players, packet);
         createFor(player);
     }
 
@@ -41,10 +40,7 @@ public class PlayerList {
     }
 
     private Collection<Player> getPlayersWithout(Player p) {
-        Set<Player> set = new HashSet<>();
-        set.addAll(this.server.getOnlinePlayers());
-        set.remove(p);
-        return set;
+        return this.server.getPlayerProvider().getOnlinePlayersWithout(p);
     }
 
 }

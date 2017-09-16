@@ -7,6 +7,7 @@ import org.lunaris.entity.data.Gamemode;
 import org.lunaris.entity.data.LPermission;
 import org.lunaris.entity.data.Skin;
 import org.lunaris.event.player.PlayerKickEvent;
+import org.lunaris.inventory.PlayerInventory;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet01Login;
 import org.lunaris.network.protocol.packet.Packet05Disconnect;
@@ -42,6 +43,8 @@ public class Player extends LivingEntity implements CommandSender {
     private String disconnectingReason = "Just disconnected";
 
     private Gamemode gamemode = Lunaris.getInstance().getServerSettings().getDefaultGamemode();
+    private final PlayerInventory inventory = new PlayerInventory();
+
     private int foodLevel = 20;
     private float foodSaturationLevel = 20F;
     private boolean onGround = true;
@@ -254,6 +257,10 @@ public class Player extends LivingEntity implements CommandSender {
             default:
                 break;
         }
+    }
+
+    public PlayerInventory getInventory() {
+        return inventory;
     }
 
     public enum IngameState {

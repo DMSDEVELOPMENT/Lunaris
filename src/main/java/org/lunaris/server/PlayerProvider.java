@@ -124,6 +124,7 @@ public class PlayerProvider {
         player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
         player.sendPacket(new Packet13MovePlayer(player));
         sendAdventureSettings(player);
+        this.server.getNetworkManager().sendPacket(getOnlinePlayersWithout(player), new Packet0CAddPlayer(player));
     }
 
     private void sendAdventureSettings(Player player) {
@@ -176,6 +177,14 @@ public class PlayerProvider {
 
     public Collection<Player> getOnlinePlayers() {
         return this.playersByUUIDs.values();
+    }
+
+    public Collection<Player> getOnlinePlayersWithout(Player... without) {
+        Set<Player> players = new HashSet<>();
+        players.addAll(getOnlinePlayers());
+        for(Player player : without)
+            players.remove(player);
+        return players;
     }
 
 }

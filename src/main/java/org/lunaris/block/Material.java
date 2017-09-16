@@ -23,13 +23,23 @@ public enum Material {
     }
 
     private final int id;
+    private final boolean hasMeta;
 
     Material(int id) {
+        this(id, false);
+    }
+
+    Material(int id, boolean hasMeta) {
         this.id = id;
+        this.hasMeta = hasMeta;
     }
 
     public int getId() {
         return this.id;
+    }
+
+    public boolean hasMeta() {
+        return this.hasMeta;
     }
 
 }

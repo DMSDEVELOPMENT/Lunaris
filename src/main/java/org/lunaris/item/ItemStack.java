@@ -29,6 +29,10 @@ public class ItemStack {
         return material;
     }
 
+    public Material getType() {
+        return getMaterial();
+    }
+
     public int getData() {
         return data;
     }

@@ -54,6 +54,8 @@ public class Lunaris implements IServer {
 
     private CommandManager commandManager;
 
+    private PlayerList playerList;
+
     private static boolean shuttingDown;
 
     Lunaris(FormatLogger logger, ConsoleReader consoleReader) {
@@ -134,6 +136,7 @@ public class Lunaris implements IServer {
         this.banChecker = new BanChecker(this);
         this.commandManager = new CommandManager();
         this.commandManager.registerDefaults();
+        this.playerList = new PlayerList(this);
 
 //        this.scheduler.schedule(() -> {
 //            if(getOnlinePlayers().isEmpty())
@@ -215,6 +218,10 @@ public class Lunaris implements IServer {
     @Override
     public Collection<Player> getOnlinePlayers() {
         return this.playerProvider.getOnlinePlayers();
+    }
+
+    public PlayerList getPlayerList() {
+        return this.playerList;
     }
 
     @Override

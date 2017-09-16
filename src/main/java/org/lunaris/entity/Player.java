@@ -11,6 +11,7 @@ import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet01Login;
 import org.lunaris.network.protocol.packet.Packet05Disconnect;
 import org.lunaris.network.protocol.packet.Packet1DUpdateAttributes;
+import org.lunaris.network.protocol.packet.Packet24PlayerAction;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.world.util.LongHash;
@@ -45,6 +46,8 @@ public class Player extends LivingEntity implements CommandSender {
     private float foodSaturationLevel = 20F;
     private boolean onGround = true;
     private boolean invulnerable = false;
+    private boolean sprinting;
+    private boolean sneaking;
 
     private LPermission permission = LPermission.USER;
 
@@ -223,6 +226,34 @@ public class Player extends LivingEntity implements CommandSender {
 
     public void setPermission(LPermission permission) {
         this.permission = permission;
+    }
+
+    public boolean isSprinting() {
+        return sprinting;
+    }
+
+    public boolean isSneaking() {
+        return sneaking;
+    }
+
+    public void setState(Packet24PlayerAction packet) {
+        Packet24PlayerAction.Action action = packet.getAction();
+        switch(action) {
+            case START_SPRINT:
+                this.sprinting = true;
+                break;
+            case STOP_SPRINT:
+                this.sprinting = false;
+                break;
+            case START_SNEAK:
+                this.sneaking = true;
+                break;
+            case STOP_SNEAK:
+                this.sneaking = false;
+                break;
+            default:
+                break;
+        }
     }
 
     public enum IngameState {

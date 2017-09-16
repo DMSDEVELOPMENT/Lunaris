@@ -1,5 +1,6 @@
 package org.lunaris.server;
 
+import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.EntityDataFlag;
@@ -21,11 +22,11 @@ public class PlayerProvider {
     private final Map<String, Player> playersByNames = new HashMap<>();
     private final Map<UUID, Player> playersByUUIDs = new HashMap<>();
     private final Map<String, Player> byHostAddress = new ConcurrentHashMap<>();
-    private final IServer server;
+    private final Lunaris server;
     private final EntityProvider entityProvider;
     private final Scheduler scheduler;
 
-    public PlayerProvider(IServer server) {
+    public PlayerProvider(Lunaris server) {
         this.server = server;
         this.entityProvider = server.getEntityProvider();
         this.scheduler = server.getScheduler();
@@ -106,7 +107,7 @@ public class PlayerProvider {
         player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
         player.sendPacket(new Packet0ASetTime(player.getWorld().getTime()));
         player.sendPacket(new Packet3BSetCommandsEnabled(true));
-        player.sendPacket(new Packet3FPlayerList(Packet3FPlayerList.Type.ADD, this.server.getOnlinePlayers().stream().map(Packet3FPlayerList.Entry::new).toArray(Packet3FPlayerList.Entry[]::new)));
+        this.server.getPlayerList().addPlayer(player);
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.PLAYER_RESPAWN));
         player.getWorld().addPlayerToWorld(player);
         PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
@@ -162,6 +163,7 @@ public class PlayerProvider {
         this.scheduler.addSyncTask(() -> {
             PlayerDisconnectEvent event = new PlayerDisconnectEvent(player);
             this.server.getEventManager().call(event);
+            this.server.getPlayerList().removePlayer(player);
             this.playersByNames.remove(player.getName());
             this.playersByUUIDs.remove(player.getClientUUID());
             if(wasOnline) {

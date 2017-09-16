@@ -2,9 +2,7 @@ package org.lunaris.network.protocol;
 
 import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
-import org.lunaris.event.player.PlayerKickEvent;
-import org.lunaris.event.player.PlayerMoveEvent;
-import org.lunaris.event.player.PlayerPreLoginEvent;
+import org.lunaris.event.player.*;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.network.protocol.packet.*;
@@ -156,6 +154,46 @@ public class MinePacketHandler {
 
 //                this.server.getPlayerProvider().setupPlayer(p);
                 break;
+            }case START_SNEAK: {
+                sync(() -> {
+                    p.setState(packet);
+                    this.networkManager.sendPacket(getApplicablePlayersWithout(p), packet);
+                    PlayerSneakEvent event = new PlayerSneakEvent(p, PlayerSneakEvent.State.START_SNEAKING);
+                    this.server.getEventManager().call(event);
+                });
+                break;
+            }case STOP_SNEAK: {
+                sync(() -> {
+                    p.setState(packet);
+                    this.networkManager.sendPacket(getApplicablePlayersWithout(p), packet);
+                    PlayerSneakEvent event = new PlayerSneakEvent(p, PlayerSneakEvent.State.STOP_SNEAKING);
+                    this.server.getEventManager().call(event);
+                });
+                break;
+            }case START_SPRINT: {
+                sync(() -> {
+                    p.setState(packet);
+                    this.networkManager.sendPacket(getApplicablePlayersWithout(p), packet);
+                    PlayerSprintEvent event = new PlayerSprintEvent(p, PlayerSprintEvent.State.START_SPRINTING);
+                    this.server.getEventManager().call(event);
+                });
+                break;
+            }case STOP_SPRINT: {
+                sync(() -> {
+                    p.setState(packet);
+                    this.networkManager.sendPacket(getApplicablePlayersWithout(p), packet);
+                    PlayerSprintEvent event = new PlayerSprintEvent(p, PlayerSprintEvent.State.STOP_SPRINTING);
+                    this.server.getEventManager().call(event);
+                });
+                break;
+            }
+            case JUMP: {
+                sync(() -> {
+                    this.networkManager.sendPacket(getApplicablePlayersWithout(p), packet);
+                    PlayerJumpEvent event = new PlayerJumpEvent(p);
+                    this.server.getEventManager().call(event);
+                });
+                break;
             }
         }
     }
@@ -164,6 +202,16 @@ public class MinePacketHandler {
         int value = Math.min(packet.getRadius(), this.server.getServerSettings().getChunksView());
         packet.getPlayer().sendPacket(new Packet46ChunkRadiusUpdate(value));
         packet.getPlayer().setChunksView(value);
+    }
+
+    private Collection<Player> getApplicablePlayersWithout(Player p) {
+        Collection<Player> players = p.getWorld().getApplicablePlayers(p.getLocation());
+        players.remove(p);
+        return players;
+    }
+
+    private void sync(Runnable run) {
+        this.server.getScheduler().addSyncTask(run);
     }
 
 }

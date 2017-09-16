@@ -17,7 +17,7 @@ public class Packet3FPlayerList extends MinePacket {
 
     public Packet3FPlayerList() {}
 
-    public Packet3FPlayerList(Type type, Entry[] entries) {
+    public Packet3FPlayerList(Type type, Entry... entries) {
         this.type = type;
         this.entries = entries;
     }

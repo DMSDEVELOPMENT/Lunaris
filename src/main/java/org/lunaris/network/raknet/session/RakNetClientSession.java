@@ -177,4 +177,19 @@ public class RakNetClientSession extends org.lunaris.network.raknet.session.RakN
 		}
 	}
 
+	@Override
+    public int hashCode() {
+        return super.getAddress().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o)
+            return true;
+        if(!(o instanceof RakNetClientSession))
+            return false;
+        RakNetClientSession sess = (RakNetClientSession) o;
+        return super.getAddress().equals(sess.getAddress()) && this.timeCreated == sess.timeCreated;
+    }
+
 }

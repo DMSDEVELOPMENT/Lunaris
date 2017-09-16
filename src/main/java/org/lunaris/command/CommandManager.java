@@ -17,6 +17,7 @@ public class CommandManager {
     public void registerDefaults() {
         new Stop();
         new Version();
+        new List();
     }
 
     public boolean isCommand(String line) {

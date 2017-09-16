@@ -54,6 +54,7 @@ public class Packet0CAddPlayer extends MinePacket {
         buffer.writeUUID(this.uuid);
         buffer.writeString(this.name);
         buffer.writeEntityRuntimeId(this.entityId);
+        buffer.writeEntityRuntimeId(this.entityId);
         buffer.writeVector3f(this.x, this.y, this.z);
         buffer.writeVector3f(this.speedX, this.speedY, this.speedZ);
         buffer.writeFloat(this.pitch);

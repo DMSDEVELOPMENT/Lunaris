@@ -21,7 +21,7 @@ public class PlayerProvider {
 
     private final Map<String, Player> playersByNames = new HashMap<>();
     private final Map<UUID, Player> playersByUUIDs = new HashMap<>();
-    private final Map<String, Player> byHostAddress = new ConcurrentHashMap<>();
+    private final Map<RakNetClientSession, Player> playersBySessions = new ConcurrentHashMap<>();
     private final Lunaris server;
     private final EntityProvider entityProvider;
     private final Scheduler scheduler;
@@ -34,7 +34,7 @@ public class PlayerProvider {
 
     public Player createPlayer(Packet01Login packet, RakNetClientSession session) {
         Player player = new Player(this.entityProvider.getNextEntityID(), session, packet);
-        this.byHostAddress.put(session.getAddress().getAddress().getHostAddress(), player);
+        this.playersBySessions.put(session, player);
         this.server.getLogger().info("%s (%s) is logging in..", player.getName(), player.getAddress());
         return player;
     }
@@ -124,7 +124,6 @@ public class PlayerProvider {
         player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
         player.sendPacket(new Packet13MovePlayer(player));
         sendAdventureSettings(player);
-        this.server.getNetworkManager().sendPacket(getOnlinePlayersWithout(player), new Packet0CAddPlayer(player));
     }
 
     private void sendAdventureSettings(Player player) {
@@ -152,11 +151,11 @@ public class PlayerProvider {
     }
 
     public Player getPlayer(RakNetClientSession session) {
-        return this.byHostAddress.get(session.getAddress().getAddress().getHostAddress());
+        return this.playersBySessions.get(session);
     }
 
     public Player removePlayer(RakNetClientSession session) {
-        Player player = this.byHostAddress.remove(session.getAddress().getAddress().getHostAddress());
+        Player player = this.playersBySessions.remove(session);
         if(player == null)
             return null;
         boolean wasOnline = player.isOnline();

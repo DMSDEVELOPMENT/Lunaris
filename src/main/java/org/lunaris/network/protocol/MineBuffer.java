@@ -79,6 +79,9 @@ public class MineBuffer {
     }
 
     public byte[] readBytes(int length) {
+        length = Math.min(length, remaining());
+        if(length <= 0)
+            return new byte[0];
         byte[] bytes = new byte[length];
         this.buffer.readBytes(bytes);
         return bytes;

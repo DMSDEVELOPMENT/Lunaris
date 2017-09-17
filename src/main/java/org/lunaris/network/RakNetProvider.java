@@ -90,7 +90,7 @@ public class RakNetProvider {
                     buf.readVarInt(); //payload length in bytes
                     byte packetID = buf.readByte();
                     buf.skipBytes(2);
-//                    if(packetID != 0x01) {
+//                    if(packetID == 0x09) {
 //                        List<Byte> list = new ArrayList<>();
 //                        for(byte b : bytes)
 //                            list.add(b);

@@ -71,7 +71,7 @@ public class World {
         Collection<Player> without = getPlayersWithout(player);
         this.server.getNetworkManager().sendPacket(without, new Packet0CAddPlayer(player));
         without.stream().map(Packet0CAddPlayer::new).forEach(player::sendPacket);
-        this.server.getNetworkManager().sendPacket(without, new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
+//        this.server.getNetworkManager().sendPacket(without, new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
     }
 
     public void removePlayerFromWorld(Player player) {

@@ -1,5 +1,6 @@
 package org.lunaris.block;
 
+import org.lunaris.world.Chunk;
 import org.lunaris.world.Location;
 import org.lunaris.world.World;
 
@@ -19,8 +20,39 @@ public class Block {
         this.data = data;
     }
 
+    public void setMaterial(Material type) {
+        this.material = type;
+        this.data = 0;
+        getWorld().updateBlock(this);
+    }
+
+    public void setMaterial(int id) {
+        setMaterial(Material.getById(id));
+    }
+
+    public void setType(Material type) {
+        setMaterial(type);
+    }
+
+    public void setType(int id) {
+        setMaterial(id);
+    }
+
+    public void setData(int data) {
+        this.data = 0;
+        getWorld().updateBlock(this);
+    }
+
     public Material getMaterial() {
         return this.material;
+    }
+
+    public Material getType() {
+        return this.material;
+    }
+
+    public SpecifiedMaterial getSpecifiedMaterial() {
+        return SpecifiedMaterial.getByMaterial(this.material);
     }
 
     public int getId() {
@@ -49,6 +81,18 @@ public class Block {
 
     public int getZ() {
         return this.location.getBlockZ();
+    }
+
+    public Chunk getChunk() {
+        return getWorld().getChunkAt(getX() >> 4, getZ() >> 4);
+    }
+
+    public Block getSide(BlockFace face) {
+        return this.getSide(face, 1);
+    }
+
+    public Block getSide(BlockFace face, int step) {
+        return getWorld().getBlockAt(this.location.getSide(face.getIndex(), step));
     }
 
 }

@@ -94,6 +94,14 @@ public class World {
         return chunk.getBlock(x, y, z);
     }
 
+    public void updateBlock(Block block) {
+        int x = block.getX(), y = block.getY(), z = block.getZ();
+        Chunk chunk = loadChunk(x >> 4, z >> 4);
+        if(chunk == null)
+            return;
+        chunk.setBlock(x, y, z, block.getMaterial(), block.getData());
+    }
+
     public synchronized Chunk getChunkAt(int x, int z) {
         return this.chunks.get(hash(x, z));
     }

@@ -191,13 +191,15 @@ public class MinePacketHandler {
                     this.server.getEventManager().call(event);
                 });
                 break;
-            }
-            case JUMP: {
+            }case JUMP: {
                 sync(() -> {
                     this.networkManager.sendPacket(getApplicablePlayersWithout(p), packet);
                     PlayerJumpEvent event = new PlayerJumpEvent(p);
                     this.server.getEventManager().call(event);
                 });
+                break;
+            }case START_BREAK: {
+                sync(() -> this.server.getWorldProvider().getBlockMaster().onBlockStartBreak(packet));
                 break;
             }default: {
                 this.server.getLogger().info("Got action %s", packet.getAction().name());

@@ -37,6 +37,10 @@ public class KillerTask {
     public void tick() {
         if(++this.ticks == LAUNCH_DELAY) {
             this.ticks = 0;
+            synchronized(this.toBeUnloaded) {
+                this.toBeUnloaded.forEach(this.world::unloadChunk);
+                this.toBeUnloaded.clear();
+            }
             Set<Chunk> chunks = new HashSet<>();
             chunks.addAll(this.chunks.values());
             Set<Location> players = this.world.getPlayers().stream().map(Player::getLocation).collect(Collectors.toSet());
@@ -54,11 +58,6 @@ public class KillerTask {
                     this.toBeUnloaded.addAll(chunks);
                 }
             });
-            synchronized(this.toBeUnloaded) {
-                for(Chunk chunk : this.toBeUnloaded)
-                    this.world.unloadChunk(chunk);
-                this.toBeUnloaded.clear();
-            }
         }
     }
 

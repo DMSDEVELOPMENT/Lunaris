@@ -12,10 +12,10 @@ import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
+import org.lunaris.world.World;
 import org.lunaris.world.util.LongHash;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
@@ -216,12 +216,8 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     public void tick() {
-        for(Iterator<Long> iterator = this.chunksSent.iterator(); iterator.hasNext();) {
-            long chunk = iterator.next();
-            int x = LongHash.msw(chunk), z = LongHash.lsw(chunk);
-            if(!getWorld().isInRangeOfView(this, x << 4, z << 4))
-                iterator.remove();
-        }
+        World world = getWorld();
+        this.chunksSent.removeIf(chunk -> !world.isInRangeOfView(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
     }
 
     public RakNetClientSession getSession() {

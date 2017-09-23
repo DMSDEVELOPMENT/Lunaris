@@ -131,7 +131,7 @@ public class Lunaris implements IServer {
         this.eventManager = new EventManager(this);
         this.entityProvider = new EntityProvider();
         this.playerProvider = new PlayerProvider(this);
-        this.worldProvider = new WorldProvider(this);
+        this.worldProvider = new WorldProvider(this); //this one starts global server tick
         this.networkManager = new NetworkManager(this);
         this.resourcePackManager = new ResourcePackManager();
         this.banChecker = new BanChecker(this);

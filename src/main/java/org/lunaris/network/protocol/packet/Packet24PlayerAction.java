@@ -79,8 +79,8 @@ public class Packet24PlayerAction extends MinePacket {
         START_GLIDE,
         STOP_GLIDE,
         WORLD_IMMUTABLE,
-        CONTINUE_BREAK, //Что-то с ломанием блоков
-        CHANGE_SKIN
+        UNKNOWN2,
+        BREAK //+
     }
 
 }

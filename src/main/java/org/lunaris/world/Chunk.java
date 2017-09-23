@@ -136,6 +136,7 @@ public abstract class Chunk {
 
     public void setBlock(int x, int y, int z, int id, int data) {
         getSection(y).set(x, y, z, (short) id, (byte) data);
+        //send update block packet
     }
 
     private void broadcastUpdate() {
@@ -169,6 +170,10 @@ public abstract class Chunk {
                 return y;
             }
         return 0;
+    }
+
+    public Collection<Player> getApplicablePlayers() {
+        return this.world.getApplicablePlayers(this);
     }
 
     protected ChunkSection getSection(double y) {

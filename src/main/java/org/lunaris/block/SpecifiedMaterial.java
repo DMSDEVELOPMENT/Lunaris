@@ -2,18 +2,34 @@ package org.lunaris.block;
 
 import org.lunaris.entity.Player;
 import org.lunaris.item.ItemStack;
+import org.lunaris.item.ItemTier;
+import org.lunaris.item.ItemToolType;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Created by RINES on 13.09.17.
  */
-public abstract class BlockMaterial {
+public abstract class SpecifiedMaterial {
+
+    private final static Map<Material, SpecifiedMaterial> BLOCK_MATERIALS = new EnumMap<>(Material.class);
+
+    static {
+        //preload block materials
+    }
+
+    public static SpecifiedMaterial getByMaterial(Material material) {
+        return BLOCK_MATERIALS.get(material);
+    }
 
     private final Material material;
     private final String name;
 
-    protected BlockMaterial(Material material, String name) {
+    protected SpecifiedMaterial(Material material, String name) {
         this.material = material;
         this.name = name;
+        BLOCK_MATERIALS.put(material, this);
     }
 
     public Material getMaterial() {
@@ -26,6 +42,10 @@ public abstract class BlockMaterial {
 
     public String getName() {
         return this.name;
+    }
+
+    public boolean isBlock() {
+        return getId() < 256;
     }
 
     //http://minecraft.gamepedia.com/Breaking
@@ -74,9 +94,16 @@ public abstract class BlockMaterial {
         return 0;
     }
 
-    public int getToolType() {
-//        return ItemTool.TYPE_NONE;
-        return 0;
+    public ItemToolType getRequiredToolType() {
+        return isBlock() ? ItemToolType.NONE : null;
+    }
+
+    public ItemToolType getToolType() {
+        return ItemToolType.NONE;
+    }
+
+    public ItemTier getTier() {
+        return ItemTier.NONE;
     }
 
     public double getFrictionFactor() {

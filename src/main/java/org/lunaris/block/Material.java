@@ -9,7 +9,10 @@ import java.util.Map;
 public enum Material {
     AIR(0),
     STONE(1),
-    GRASS(2);
+    GRASS(2),
+    FIRE(-1),
+    WOOL(35),
+    COBWEB(-1);
 
     private final static Map<Integer, Material> BY_ID = new HashMap<>();
 

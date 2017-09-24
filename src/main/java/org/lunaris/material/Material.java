@@ -2,6 +2,7 @@ package org.lunaris.material;
 
 import org.lunaris.material.block.*;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +44,10 @@ public enum Material {
         this.id = id;
         this.hasMeta = hasMeta;
         try {
-            this.specifiedMaterial = specifiedMaterialClass.newInstance();
+            Constructor<? extends SpecifiedMaterial> constructor = specifiedMaterialClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            this.specifiedMaterial = constructor.newInstance();
+            constructor.setAccessible(false);
         }catch(Exception ex) {
             throw new IllegalStateException(ex);
         }

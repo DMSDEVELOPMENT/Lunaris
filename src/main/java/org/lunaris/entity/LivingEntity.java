@@ -5,6 +5,8 @@ import org.lunaris.entity.data.Attribute;
 import org.lunaris.event.EventManager;
 import org.lunaris.event.entity.EntityDamageByEntityEvent;
 import org.lunaris.event.entity.EntityDamageEvent;
+import org.lunaris.event.entity.EntityDeathEvent;
+import org.lunaris.event.player.PlayerDeathEvent;
 
 /**
  * Created by RINES on 14.09.17.
@@ -59,14 +61,28 @@ public class LivingEntity extends Entity {
     }
 
     void damage0(double damage) {
-        setHealth((float) (getHealth() - damage));
+        setHealth(Math.min(getMaxHealth(), Math.max(0F, (float) (getHealth() - damage))));
     }
 
     @Override
     public void tick() {
         super.tick();
-        if(!(this instanceof Player) && getHealth() < .5D)
-            remove();
+        if(getHealth() < 1F) {
+            if(this instanceof Player) {
+                Player p = (Player) this;
+                PlayerDeathEvent event = new PlayerDeathEvent(p);
+                Lunaris.getInstance().getEventManager().call(event);
+                if(event.isCancelled()) {
+                    setHealth(1F);
+                    return;
+                }
+                //send some packets
+            }else {
+                EntityDeathEvent event = new EntityDeathEvent(this);
+                Lunaris.getInstance().getEventManager().call(event);
+                remove();
+            }
+        }
     }
 
 }

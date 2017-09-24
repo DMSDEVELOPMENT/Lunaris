@@ -1,6 +1,7 @@
 package org.lunaris.inventory;
 
 import org.lunaris.item.ItemStack;
+import org.lunaris.material.Material;
 
 /**
  * Created by RINES on 16.09.17.
@@ -8,7 +9,7 @@ import org.lunaris.item.ItemStack;
 public class PlayerInventory {
 
     public ItemStack getItemInHand() {
-        return null;
+        return new ItemStack(Material.AIR, 1);
     }
 
 }

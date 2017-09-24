@@ -116,7 +116,7 @@ public class Lunaris implements IServer {
 
     @Override
     public String getSupportedClientVersion() {
-        return "1.2.0.31";
+        return "1.2.0";
     }
 
     private void loadConfigurations() {

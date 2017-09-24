@@ -11,8 +11,8 @@ import org.lunaris.material.Material;
  */
 public class BlockStone extends BlockSolid {
 
-    protected BlockStone(Material material, String name) {
-        super(material, name);
+    protected BlockStone() {
+        super(Material.STONE, "The Stone");
     }
 
     @Override

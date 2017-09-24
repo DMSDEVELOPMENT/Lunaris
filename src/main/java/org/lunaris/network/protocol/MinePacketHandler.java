@@ -199,7 +199,8 @@ public class MinePacketHandler {
                     this.server.getEventManager().call(event);
                 });
                 break;
-            }case START_BREAK: {
+            }case BREAK:
+            case START_BREAK: {
                 sync(() -> this.server.getWorldProvider().getBlockMaster().onBlockStartBreak(packet));
                 break;
             }default: {

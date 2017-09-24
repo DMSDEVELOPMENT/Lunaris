@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  */
 public class NetworkManager {
 
-    public final static int SUPPORTED_CLIENT_PROTOCOL_VERSION = 136;
+    public final static int SUPPORTED_CLIENT_PROTOCOL_VERSION = 137;
 
     private final IServer server;
 

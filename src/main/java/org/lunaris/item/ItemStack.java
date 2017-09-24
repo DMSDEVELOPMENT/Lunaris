@@ -64,15 +64,21 @@ public class ItemStack {
     }
 
     public boolean useOn(Block block, Entity user) {
-        return getSpecifiedMaterial().useOn(block, user);
+        SpecifiedMaterial material = getSpecifiedMaterial();
+        if(material.isBlock())
+            return false;
+        return ((ItemMaterial) material).useOn(block, user);
     }
 
     public boolean useOn(Entity entity, Entity user) {
-        return getSpecifiedMaterial().useOn(entity, user);
+        SpecifiedMaterial material = getSpecifiedMaterial();
+        if(material.isBlock())
+            return false;
+        return ((ItemMaterial) material).useOn(entity, user);
     }
 
-    private ItemMaterial getSpecifiedMaterial() {
-        return (ItemMaterial) this.material.getSpecifiedMaterial();
+    private SpecifiedMaterial getSpecifiedMaterial() {
+        return this.material.getSpecifiedMaterial();
     }
 
 }

@@ -1,7 +1,10 @@
 package org.lunaris.item;
 
-import org.lunaris.block.SpecifiedMaterial;
-import org.lunaris.block.Material;
+import org.lunaris.block.Block;
+import org.lunaris.entity.Entity;
+import org.lunaris.material.ItemMaterial;
+import org.lunaris.material.SpecifiedMaterial;
+import org.lunaris.material.Material;
 
 /**
  * Created by RINES on 13.09.17.
@@ -60,8 +63,16 @@ public class ItemStack {
         return getTier().compareTo(tier) >= 0;
     }
 
-    private SpecifiedMaterial getSpecifiedMaterial() {
-        return SpecifiedMaterial.getByMaterial(this.material);
+    public boolean useOn(Block block, Entity user) {
+        return getSpecifiedMaterial().useOn(block, user);
+    }
+
+    public boolean useOn(Entity entity, Entity user) {
+        return getSpecifiedMaterial().useOn(entity, user);
+    }
+
+    private ItemMaterial getSpecifiedMaterial() {
+        return (ItemMaterial) this.material.getSpecifiedMaterial();
     }
 
 }

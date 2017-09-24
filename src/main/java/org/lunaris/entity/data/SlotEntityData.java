@@ -1,6 +1,6 @@
 package org.lunaris.entity.data;
 
-import org.lunaris.block.Material;
+import org.lunaris.material.Material;
 import org.lunaris.item.ItemStack;
 
 /**

@@ -144,6 +144,7 @@ public class MinePacketHandler {
         loc.setYaw(packet.getYaw());
         loc.setPitch(packet.getPitch());
         loc.setComponents(packet.getX(), packet.getY(), packet.getZ());
+        player.recalculateCollisions();
         //set on ground
         this.server.getScheduler().addSyncTask(() -> {
             PlayerMoveEvent event = new PlayerMoveEvent(player, packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch());

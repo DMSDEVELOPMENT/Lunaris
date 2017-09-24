@@ -9,5 +9,6 @@ public enum ItemToolType {
     SHOVEL,
     PICKAXE,
     AXE,
-    SHEARS
+    SHEARS,
+    HOE //doesn't exist in protocol
 }

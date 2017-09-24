@@ -1,7 +1,7 @@
 package org.lunaris.world;
 
 import org.lunaris.block.Block;
-import org.lunaris.block.Material;
+import org.lunaris.material.Material;
 import org.lunaris.entity.Player;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.packet.Packet3AFullChunkData;

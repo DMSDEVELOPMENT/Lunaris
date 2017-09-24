@@ -1,16 +1,18 @@
 package org.lunaris.entity;
 
 import org.lunaris.Lunaris;
+import org.lunaris.block.Block;
 import org.lunaris.entity.data.*;
+import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.packet.Packet27SetEntityData;
+import org.lunaris.util.math.AxisAlignedBB;
+import org.lunaris.util.math.LMath;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.Location;
 import org.lunaris.world.World;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by RINES on 13.09.17.
@@ -29,6 +31,12 @@ public class Entity {
             .putString(EntityDataOption.NAMETAG, "")
             .putLong(EntityDataOption.LEAD_HOLDER_ENTITY_ID, -1)
             .putFloat(EntityDataOption.SCALE, 1f);
+
+    private int fireTicks;
+
+    private AxisAlignedBB boundingBox;
+    private Set<Block> blocksAround;
+    private Set<Block> collisionBlocks;
 
     protected Entity(long entityID) {
         this.entityID = entityID;
@@ -86,6 +94,18 @@ public class Entity {
         return this.location;
     }
 
+    public double getX() {
+        return this.location.getX();
+    }
+
+    public double getY() {
+        return this.location.getY();
+    }
+
+    public double getZ() {
+        return this.location.getZ();
+    }
+
     public World getWorld() {
         return this.location.getWorld();
     }
@@ -140,6 +160,69 @@ public class Entity {
 
     public Vector3d getDataPropertyPos(EntityDataOption option) {
         return this.getDataProperties().getPosition(option);
+    }
+
+    public final void remove() {
+        getWorld().removeEntityFromWorld(this);
+    }
+
+    public void tick() {
+        for(Block block : getCollisionBlocks()) {
+            block.getSpecifiedMaterial().onEntityCollide(block, this);
+        }
+        if(this.fireTicks > 0) {
+            //check fire resistance
+            if(this instanceof LivingEntity)
+                ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.FIRE, 1);
+            setDataFlag(false, EntityDataFlag.ON_FIRE, this.fireTicks --> 1, true);
+        }
+        if(getY() <= -16) {
+            if(this instanceof LivingEntity)
+                ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.VOID, 5);
+            else
+                remove();
+        }
+        if(!(this instanceof Player))
+            recalculateCollisions();
+    }
+
+    public void recalculateCollisions() {
+        this.blocksAround = this.collisionBlocks = null;
+    }
+
+    protected Set<Block> getCollisionBlocks() {
+        if(this.collisionBlocks != null)
+            return this.collisionBlocks;
+        this.collisionBlocks = new HashSet<>();
+        for(Block block : getBlocksAround())
+            if(block.collidesWithBB(this.boundingBox, true))
+                this.collisionBlocks.add(block);
+        return this.collisionBlocks;
+    }
+
+    protected Set<Block> getBlocksAround() {
+        if(this.blocksAround != null)
+            return this.blocksAround;
+        int minX = LMath.floorDouble(this.boundingBox.minX);
+        int minY = LMath.floorDouble(this.boundingBox.minY);
+        int minZ = LMath.floorDouble(this.boundingBox.minZ);
+        int maxX = LMath.ceilDouble(this.boundingBox.maxX);
+        int maxY = LMath.ceilDouble(this.boundingBox.maxY);
+        int maxZ = LMath.ceilDouble(this.boundingBox.maxZ);
+        final int X = this.location.getBlockX(), Y = this.location.getBlockY(), Z = this.location.getBlockZ();
+
+        this.blocksAround = new HashSet<>();
+
+        World world = getWorld();
+        for (int z = minZ; z <= maxZ; ++z)
+            for (int x = minX; x <= maxX; ++x)
+                for (int y = minY; y <= maxY; ++y)
+                    this.blocksAround.add(world.getBlockAt(X + x, Y + y, Z + z));
+        return this.blocksAround;
+    }
+
+    public void setOnFire(int ticks) {
+        this.fireTicks = ticks;
     }
 
     @Override

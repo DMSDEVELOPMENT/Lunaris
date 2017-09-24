@@ -6,6 +6,7 @@ import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.Gamemode;
 import org.lunaris.entity.data.LPermission;
 import org.lunaris.entity.data.Skin;
+import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.event.player.PlayerKickEvent;
 import org.lunaris.inventory.PlayerInventory;
 import org.lunaris.network.protocol.MinePacket;
@@ -215,7 +216,9 @@ public class Player extends LivingEntity implements CommandSender {
         this.chunksSent.add(LongHash.toLong(x, z));
     }
 
+    @Override
     public void tick() {
+        super.tick();
         World world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfView(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
     }
@@ -268,8 +271,40 @@ public class Player extends LivingEntity implements CommandSender {
         }
     }
 
+    @Override
+    public void damage(EntityDamageEvent.DamageCause cause, double damage) {
+        if(!isInvulnerable())
+            super.damage(cause, damage);
+    }
+
+    @Override
+    public void damage(Entity damager, double damage) {
+        if(!isInvulnerable())
+            super.damage(damager, damage);
+    }
+
     public PlayerInventory getInventory() {
         return inventory;
+    }
+
+    public Gamemode getGamemode() {
+        return gamemode;
+    }
+
+    public int getFoodLevel() {
+        return foodLevel;
+    }
+
+    public float getFoodSaturationLevel() {
+        return foodSaturationLevel;
+    }
+
+    public boolean isOnGround() {
+        return onGround;
+    }
+
+    public boolean isInvulnerable() {
+        return invulnerable;
     }
 
     public enum IngameState {

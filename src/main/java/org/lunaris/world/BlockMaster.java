@@ -3,8 +3,9 @@ package org.lunaris.world;
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockFace;
-import org.lunaris.block.SpecifiedMaterial;
-import org.lunaris.block.Material;
+import org.lunaris.material.BlockMaterial;
+import org.lunaris.material.SpecifiedMaterial;
+import org.lunaris.material.Material;
 import org.lunaris.entity.Player;
 import org.lunaris.event.player.PlayerHitFireEvent;
 import org.lunaris.event.player.PlayerInteractEvent;
@@ -60,7 +61,7 @@ public class BlockMaster {
     private double getBreakTime(Block block, Player player, ItemStack hand) {
         if(hand == null)
             hand = ItemStack.AIR;
-        SpecifiedMaterial material = block.getSpecifiedMaterial();
+        BlockMaterial material = block.getSpecifiedMaterial();
         double hardness = material.getHardness();
         boolean correctTool = hand.isOfToolType(material.getRequiredToolType());
         boolean canHarvestWithHand = material.canHarvestWithHand();

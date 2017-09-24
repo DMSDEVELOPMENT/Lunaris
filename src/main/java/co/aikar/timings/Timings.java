@@ -26,7 +26,7 @@ public final class Timings {
 
     public static final Timing worldsTickTimer;
     public static final Timing chunksTickTimer;
-    public static final Timing playersTickTimer;
+    public static final Timing entitiesTickTimer;
     public static final Timing packetsReceptionTimer;
     public static final Timing packetsSendingTimer;
     public static final Timing eventTimer;
@@ -52,7 +52,7 @@ public final class Timings {
 
         worldsTickTimer = TimingsManager.getTiming("Direct Tasks Summary");
         chunksTickTimer = TimingsManager.getTiming("Chunks");
-        playersTickTimer = TimingsManager.getTiming("Players");
+        entitiesTickTimer = TimingsManager.getTiming("Entities");
 
         Timing packetsGroup = TimingsManager.getTiming("Packets");
         packetsReceptionTimer = TimingsManager.getTiming(packetsGroup.name, "## Reception", packetsGroup);

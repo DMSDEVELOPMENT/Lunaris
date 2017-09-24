@@ -1,51 +1,26 @@
-package org.lunaris.block;
+package org.lunaris.material;
 
+import org.lunaris.block.Block;
+import org.lunaris.block.BlockColor;
+import org.lunaris.entity.Entity;
 import org.lunaris.entity.Player;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
-
-import java.util.EnumMap;
-import java.util.Map;
+import org.lunaris.util.math.AxisAlignedBB;
 
 /**
- * Created by RINES on 13.09.17.
+ * Created by RINES on 24.09.17.
  */
-public abstract class SpecifiedMaterial {
+public class BlockMaterial extends SpecifiedMaterial {
 
-    private final static Map<Material, SpecifiedMaterial> BLOCK_MATERIALS = new EnumMap<>(Material.class);
-
-    static {
-        //preload block materials
+    protected BlockMaterial(Material material, String name) {
+        super(material, name);
     }
 
-    public static SpecifiedMaterial getByMaterial(Material material) {
-        return BLOCK_MATERIALS.get(material);
-    }
-
-    private final Material material;
-    private final String name;
-
-    protected SpecifiedMaterial(Material material, String name) {
-        this.material = material;
-        this.name = name;
-        BLOCK_MATERIALS.put(material, this);
-    }
-
-    public Material getMaterial() {
-        return this.material;
-    }
-
-    public int getId() {
-        return this.material.getId();
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public boolean isBlock() {
-        return getId() < 256;
+    @Override
+    public final boolean isBlock() {
+        return true;
     }
 
     //http://minecraft.gamepedia.com/Breaking
@@ -70,11 +45,11 @@ public abstract class SpecifiedMaterial {
         return 0;
     }
 
-    public boolean onActivate(ItemStack item) {
-        return this.onActivate(item, null);
+    public boolean onActivate(Block block, ItemStack item) {
+        return this.onActivate(block, item, null);
     }
 
-    public boolean onActivate(ItemStack item, Player player) {
+    public boolean onActivate(Block block, ItemStack item, Player player) {
         return false;
     }
 
@@ -98,11 +73,13 @@ public abstract class SpecifiedMaterial {
         return isBlock() ? ItemToolType.NONE : null;
     }
 
-    public ItemToolType getToolType() {
+    @Override
+    public final ItemToolType getToolType() {
         return ItemToolType.NONE;
     }
 
-    public ItemTier getTier() {
+    @Override
+    public final ItemTier getTier() {
         return ItemTier.NONE;
     }
 
@@ -128,6 +105,33 @@ public abstract class SpecifiedMaterial {
 
     public boolean isSolid() {
         return true;
+    }
+
+    public AxisAlignedBB getBoundingBox(Block block) {
+        if(block.getBoundingBox() == null)
+            block.setBoundingBox(recalculateBoundingBox(block));
+        return block.getBoundingBox();
+    }
+
+    public AxisAlignedBB getCollisionBoundingBox(Block block) {
+        if(block.getCollisionBoundingBox() == null)
+            block.setCollisionBoundingBox(recalculateCollisionBoundingBox(block));
+        return block.getCollisionBoundingBox();
+    }
+
+    protected AxisAlignedBB recalculateBoundingBox(Block block) {
+        return new AxisAlignedBB(
+                block.getX(),
+                block.getY(),
+                block.getZ(),
+                block.getX() + 1,
+                block.getY() + 1,
+                block.getZ() + 1
+        );
+    }
+
+    protected AxisAlignedBB recalculateCollisionBoundingBox(Block block) {
+        return getBoundingBox(block);
     }
 
     public boolean canBeFlowedInto() {
@@ -160,6 +164,18 @@ public abstract class SpecifiedMaterial {
 
     public boolean canBeClimbed() {
         return false;
+    }
+
+    public void onEntityCollide(Block block, Entity entity) {
+
+    }
+
+    public void update(Block block) {
+
+    }
+
+    public ItemStack[] getDrops(Block block, ItemStack hand) {
+        return new ItemStack[0];
     }
 
     public BlockColor getColor() {

@@ -3,15 +3,14 @@ package org.lunaris.world;
 import co.aikar.timings.Timings;
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
-import org.lunaris.block.Material;
+import org.lunaris.entity.Entity;
+import org.lunaris.material.Material;
 import org.lunaris.entity.Player;
 import org.lunaris.event.chunk.ChunkLoadedEvent;
 import org.lunaris.event.chunk.ChunkPreLoadEvent;
 import org.lunaris.event.chunk.ChunkUnloadedEvent;
 import org.lunaris.network.protocol.packet.Packet0CAddPlayer;
 import org.lunaris.network.protocol.packet.Packet0ERemoveEntity;
-import org.lunaris.network.protocol.packet.Packet27SetEntityData;
-import org.lunaris.server.IServer;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
 import org.lunaris.world.util.ChunksFollowerTask;
@@ -42,6 +41,7 @@ public class World {
 
     private final LongObjectHashMap<Chunk> chunks = new LongObjectHashMap<>();
     private final Set<Player> players = new HashSet<>();
+    private final Set<Entity> entities = new HashSet<>();
 
     private final KillerTask killerTask;
     private final ChunksFollowerTask followerTask;
@@ -59,6 +59,7 @@ public class World {
         if(this.players.contains(player))
             return;
         this.players.add(player);
+        this.entities.add(player);
         Location loc = player.getLocation();
         int cx = loc.getBlockX() >> 4, cz = loc.getBlockZ() >> 4;
         int r = player.getChunksView();
@@ -76,7 +77,17 @@ public class World {
 
     public void removePlayerFromWorld(Player player) {
         this.players.remove(player);
-        this.server.getNetworkManager().sendPacket(getPlayers(), new Packet0ERemoveEntity(player.getEntityID()));
+        removeEntityFromWorld(player);
+    }
+
+    public void addEntityToWorld(Entity entity) {
+        this.entities.add(entity);
+        //send add entity packet
+    }
+
+    public void removeEntityFromWorld(Entity entity) {
+        this.entities.remove(entity);
+        this.server.getNetworkManager().sendPacket(getPlayers(), new Packet0ERemoveEntity(entity.getEntityID()));
     }
 
     public synchronized boolean isChunkLoadedAt(int x, int z) {
@@ -142,9 +153,9 @@ public class World {
         if(this.killerTask != null)
             this.killerTask.tick();
         this.followerTask.tick();
-        Timings.playersTickTimer.startTiming();
-        this.players.forEach(Player::tick);
-        Timings.playersTickTimer.stopTiming();
+        Timings.entitiesTickTimer.startTiming();
+        this.entities.forEach(Entity::tick);
+        Timings.entitiesTickTimer.stopTiming();
     }
 
     public int getTime() {

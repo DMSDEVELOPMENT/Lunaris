@@ -4,7 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import org.lunaris.block.Material;
+import org.lunaris.material.Material;
 import org.lunaris.entity.data.*;
 import org.lunaris.item.ItemStack;
 import org.lunaris.util.math.Vector3d;

@@ -769,25 +769,27 @@ public class RakNetServer implements GeminusRakNetPeer, RakNetServerListener {
 
 		// Update system
 		while (this.running) {
-			if (sessions.size() <= 0) {
-				continue; // Do not loop through non-existent sessions
-			}
-			synchronized (sessions) {
-				for (RakNetClientSession session : sessions.values()) {
-					try {
-						// Update session and make sure it isn't DDOSing us
-						session.update();
-						if (session.getPacketsReceivedThisSecond() >= RakNet.getMaxPacketsPerSecond()) {
-							this.blockAddress(session.getInetAddress(), "Too many packets",
-									RakNet.MAX_PACKETS_PER_SECOND_BLOCK);
+			if(!sessions.isEmpty()) {
+				synchronized (sessions) {
+					for (RakNetClientSession session : sessions.values()) {
+						try {
+							// Update session and make sure it isn't DDOSing us
+							session.update();
+							if (session.getPacketsReceivedThisSecond() >= RakNet.getMaxPacketsPerSecond()) {
+								this.blockAddress(session.getInetAddress(), "Too many packets",
+										RakNet.MAX_PACKETS_PER_SECOND_BLOCK);
+							}
+						} catch (Throwable throwable) {
+							// An error related to the session occurred, remove it
+							listener.onSessionException(session, throwable);
+							this.removeSession(session, throwable.getMessage());
 						}
-					} catch (Throwable throwable) {
-						// An error related to the session occurred, remove it
-						listener.onSessionException(session, throwable);
-						this.removeSession(session, throwable.getMessage());
 					}
 				}
 			}
+			try {
+				Thread.sleep(10L);
+			}catch(Exception ex) {}
 		}
 	}
 

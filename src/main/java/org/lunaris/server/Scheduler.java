@@ -57,7 +57,7 @@ public class Scheduler {
             try {
                 task.run();
             }catch(Exception ex) {
-                throw new TaskInvocationException(ex);
+                new TaskInvocationException(ex).printStackTrace();
             }
         }, delay, unit);
     }
@@ -67,7 +67,7 @@ public class Scheduler {
             try {
                 task.run();
             } catch (Exception ex) {
-                throw new TaskInvocationException(ex);
+                new TaskInvocationException(ex).printStackTrace();
             }
         }, delay, repeatDelay, unit);
     }
@@ -77,7 +77,7 @@ public class Scheduler {
             try {
                 task.run();
             }catch(Exception ex) {
-                throw new TaskInvocationException(ex);
+                new TaskInvocationException(ex).printStackTrace();
             }
         });
     }
@@ -87,7 +87,7 @@ public class Scheduler {
             try {
                 task.run();
             }catch(Exception ex) {
-                throw new TaskInvocationException(ex);
+                new TaskInvocationException(ex).printStackTrace();
             }
         });
         t.setDaemon(true);

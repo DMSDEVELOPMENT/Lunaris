@@ -156,7 +156,6 @@ public class MinePacketHandler {
 
     public void handle(Packet24PlayerAction packet) {
         Player p = packet.getPlayer();
-        this.server.getLogger().info("Got action %s", packet.getAction().name());
         switch(packet.getAction()) {
             case START_SNEAK: {
                 sync(() -> {
@@ -211,6 +210,7 @@ public class MinePacketHandler {
                 break;
             }
             default: {
+                this.server.getLogger().info("Got action %s", packet.getAction().name());
                 break;
             }
         }

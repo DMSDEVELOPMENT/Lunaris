@@ -110,10 +110,14 @@ public class RakNetProvider {
                         if(!manager.mineProvider.handle(packetID, buf, server.getPlayerProvider().getPlayer(session)))
                             return;
                         int delta = position - buf.remaining();
-                        if(delta > payloadLength)
+                        if(delta > payloadLength) {
+                            writeDump(bytes);
                             throw new Exception(String.format("Illegal packet data in 0x%02X: took %d bytes whilst expected %d. Critical.", packetID, delta, payloadLength));
-                        if(delta != payloadLength)
+                        }
+                        if(delta != payloadLength) {
+                            writeDump(bytes);
                             new Exception(String.format("Illegal packet data in 0x%02X: took %d bytes whilst expected %d.", packetID, delta, payloadLength)).printStackTrace();
+                        }
                         buf.skipBytes(payloadLength - delta);
                     }
                 }catch(Exception ex) {
@@ -130,6 +134,13 @@ public class RakNetProvider {
 
     public void disable() {
         this.rakNet.shutdown();
+    }
+
+    private void writeDump(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for(byte b : bytes)
+            sb.append(Integer.toHexString(b)).append(" ");
+        this.server.getLogger().info("PACKET DUMP :: " + sb.toString().trim());
     }
 
     public void sendPacket(Collection<RakNetClientSession> sessions, MinePacket packet) {

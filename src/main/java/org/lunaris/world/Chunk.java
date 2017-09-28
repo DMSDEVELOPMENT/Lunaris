@@ -140,6 +140,7 @@ public abstract class Chunk {
     public void setBlock(int x, int y, int z, int id, int data) {
         getSection(y).set(x, y, z, (short) id, (byte) data);
         sendPacket(new Packet15UpdateBlock(x, y, z, id, data));
+        this.dirty = true;
     }
 
     /**

@@ -167,9 +167,9 @@ public class Entity {
     }
 
     public void tick() {
-        for(Block block : getCollisionBlocks()) {
-            block.getSpecifiedMaterial().onEntityCollide(block, this);
-        }
+//        for(Block block : getCollisionBlocks()) {
+//            block.getSpecifiedMaterial().onEntityCollide(block, this);
+//        }
         if(this.fireTicks > 0) {
             //check fire resistance
             if(this instanceof LivingEntity)
@@ -182,8 +182,8 @@ public class Entity {
             else
                 remove();
         }
-        if(!(this instanceof Player))
-            recalculateCollisions();
+//        if(!(this instanceof Player))
+//            recalculateCollisions();
     }
 
     public void recalculateCollisions() {

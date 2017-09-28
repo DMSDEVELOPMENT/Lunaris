@@ -228,6 +228,7 @@ public class Player extends LivingEntity implements CommandSender {
         super.tick();
         World world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfView(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
+        Lunaris.getInstance().getWorldProvider().getBlockMaster().tickPlayersBreak(this);
     }
 
     public RakNetClientSession getSession() {

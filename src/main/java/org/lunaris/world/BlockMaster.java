@@ -3,6 +3,8 @@ package org.lunaris.world;
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockFace;
+import org.lunaris.entity.data.Gamemode;
+import org.lunaris.event.block.BlockBreakEvent;
 import org.lunaris.material.BlockMaterial;
 import org.lunaris.material.Material;
 import org.lunaris.entity.Player;
@@ -11,9 +13,12 @@ import org.lunaris.event.player.PlayerInteractEvent;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
+import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
 import org.lunaris.network.protocol.packet.Packet19LevelEvent;
 import org.lunaris.network.protocol.packet.Packet24PlayerAction;
+import org.lunaris.server.Scheduler;
 import org.lunaris.util.math.Vector3d;
+import org.lunaris.world.particle.DestroyBlockParticle;
 import org.lunaris.world.particle.PunchBlockParticle;
 
 /**
@@ -50,7 +55,7 @@ public class BlockMaster {
         }
         switch(player.getGamemode()) {
             case CREATIVE: {
-                //actually, shouldn't happen
+
                 break;
             }case SURVIVAL: {
                 double breakTime = getBreakTimeInTicks(block, player);
@@ -63,7 +68,7 @@ public class BlockMaster {
                 player.setLastBreak(System.currentTimeMillis());
                 break;
             }default: {
-
+                //shall not happen
                 break;
             }
         }
@@ -96,6 +101,37 @@ public class BlockMaster {
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         BlockFace face = BlockFace.fromIndex(packet.getFace());
         new PunchBlockParticle(player.getWorld().getBlockAt(position), face).sendToNearbyPlayers();
+    }
+
+    public void tickPlayersBreak(Player player) {
+        Block breaking = player.getBreakingBlock();
+        if(breaking == null)
+            return;
+        long breakTime = getBreakTimeInMillis(breaking, player);
+        if(player.getGamemode() == Gamemode.CREATIVE && breakTime > 150L)
+            breakTime = 150L;
+        //check potion effects
+        //check item enchantments
+        long current = System.currentTimeMillis();
+        boolean broken = (player.getGamemode() == Gamemode.CREATIVE || breaking.getSpecifiedMaterial().isBreakable(player.getInventory().getItemInHand()))
+                && player.getLastBreak() + breakTime - Scheduler.ONE_TICK_IN_MILLIS <= current;
+//        System.out.println((player.getLastBreak() + breakTime - current - Scheduler.ONE_TICK_IN_MILLIS) + "ms left (" + breakTime + "ms total)");
+        if(!broken)
+            return;
+        BlockBreakEvent event = new BlockBreakEvent(player, breaking);
+        this.server.getEventManager().call(event);
+        if(event.isCancelled()) {
+            player.sendPacket(new Packet15UpdateBlock(breaking)); //restore block to players
+            return;
+        }
+        player.setLastBreak(current);
+        //drop drops
+        new DestroyBlockParticle(breaking).sendToNearbyPlayers();
+        breaking.setType(Material.AIR);
+    }
+
+    private long getBreakTimeInMillis(Block block, Player player) {
+        return (long) (getBreakTime(block, player, player.getInventory().getItemInHand()) * 1000L);
     }
 
     private double getBreakTimeInTicks(Block block, Player player) {

@@ -228,8 +228,8 @@ public class World {
         this.spawnLocation = spawnLocation;
     }
 
-    public void playSound(Sound sound, Location loc) {
-        this.server.getNetworkManager().sendPacket(getApplicablePlayers(loc), new Packet18LevelSoundEvent(sound, loc, -1, 1, false, false));
+    public void playSound(Sound sound, Location loc, int pitch) {
+        this.server.getNetworkManager().sendPacket(getApplicablePlayers(loc), new Packet18LevelSoundEvent(sound, loc, -1, pitch, false, false));
     }
 
     public void playSound(Sound sound) {

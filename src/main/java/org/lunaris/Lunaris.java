@@ -71,16 +71,16 @@ public class Lunaris implements IServer {
     }
 
     public void disable() {
-        logger.info("Disabling Lunaris version %s..", getServerVersion());
+        this.logger.info("Disabling Lunaris version %s..", getServerVersion());
+        shuttingDown = true;
         Timings.stopServer();
         this.networkManager.disable();
-
         try {
             Thread.sleep(2000L);
         }catch(InterruptedException ex) {
             ex.printStackTrace();
         }
-        logger.info("Good bye!");
+        this.logger.info("Good bye!");
         System.exit(0);
     }
 
@@ -120,13 +120,13 @@ public class Lunaris implements IServer {
     }
 
     private void loadConfigurations() {
-        logger.info("Loading configuration..");
+        this.logger.info("Loading configuration..");
         this.configurationManager = new ConfigurationManager(this);
         this.serverSettings = new ServerSettings(this, this.configurationManager.getConfig());
     }
 
     private void loadDefaults() {
-        logger.info("Loading defaults..");
+        this.logger.info("Loading defaults..");
         this.scheduler = new Scheduler(this);
         this.eventManager = new EventManager(this);
         this.entityProvider = new EntityProvider();
@@ -180,7 +180,7 @@ public class Lunaris implements IServer {
                     if (line != null)
                         this.scheduler.addSyncTask(() -> this.commandManager.handle('/' + line, null));
                 } catch (Exception ex) {
-                    logger.error(ex, "Can not handle command from server console. Is everything ok?");
+                    this.logger.error(ex, "Can not handle command from server console. Is everything ok?");
                 }
             }
         });

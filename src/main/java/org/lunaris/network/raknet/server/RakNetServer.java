@@ -150,7 +150,7 @@ public class RakNetServer implements GeminusRakNetPeer, RakNetServerListener {
 	 *            the maximum transfer unit.
 	 */
 	public RakNetServer(String address, int port, int maxConnections, int maximumTransferUnit) {
-		this(address, port, maxConnections, maximumTransferUnit * 2 / 3, null);
+		this(address, port, maxConnections, (int) (maximumTransferUnit * Lunaris.getInstance().getServerSettings().getMtuScaleFactor()), null);
 	}
 
 	/**
@@ -788,7 +788,7 @@ public class RakNetServer implements GeminusRakNetPeer, RakNetServerListener {
 				}
 			}
 			try {
-				Thread.sleep(10L);
+				Thread.sleep(5L);
 			}catch(Exception ex) {}
 		}
 	}

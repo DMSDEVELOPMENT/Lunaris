@@ -40,6 +40,8 @@ public class ServerSettings {
 
     private final int timingsHistoryLength;
 
+    private final float mtuScaleFactor;
+
     public ServerSettings(IServer server, FileConfiguration config) {
         try {
             String host = config.getOrSetString("bind-address", "0.0.0.0:19132");
@@ -74,6 +76,7 @@ public class ServerSettings {
             this.timingsVerbose = config.getOrSetBoolean("timings.verbose", false);
             this.timingsHistoryInterval = config.getOrSetInt("timings.history-interval", 6000);
             this.timingsHistoryLength = config.getOrSetInt("timings.history-length", 72000);
+            this.mtuScaleFactor = config.getOrSetFloat("mtu-scale-factor", 2F / 3F);
             server.getConfigurationManager().saveConfig();
         }catch(Exception ex) {
             throw new IllegalArgumentException("Server Settings file can not be loaded", ex);
@@ -143,4 +146,9 @@ public class ServerSettings {
     public int getTimingsHistoryLength() {
         return timingsHistoryLength;
     }
+
+    public float getMtuScaleFactor() {
+        return mtuScaleFactor;
+    }
+
 }

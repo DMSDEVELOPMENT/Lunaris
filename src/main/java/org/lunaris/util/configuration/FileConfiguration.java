@@ -126,5 +126,9 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     public boolean getOrSetBoolean(String key, boolean def) {
         return (boolean) getOrSet(key, def);
     }
+
+    public float getOrSetFloat(String key, float def) {
+        return (float) getOrSet(key, def);
+    }
     
 }

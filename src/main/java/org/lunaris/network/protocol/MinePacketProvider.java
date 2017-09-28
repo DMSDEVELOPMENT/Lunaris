@@ -32,12 +32,12 @@ public class MinePacketProvider {
         generateLookups();
     }
 
-    public void handle(byte packetID, MineBuffer buffer, Player sender) {
+    public boolean handle(byte packetID, MineBuffer buffer, Player sender) {
         try {
             PacketLookup lookup = this.lookups.get(packetID);
             if(lookup == null) {
                 System.out.println("Can not handle unknown packet with id " + String.format("0x%02X", packetID));
-                return;
+                return false;
             }
             MinePacket packet = lookup.generator.get();
             packet.setPlayer(sender);
@@ -46,8 +46,9 @@ public class MinePacketProvider {
                 PacketReceivedAsyncEvent event = new PacketReceivedAsyncEvent(packet);
                 this.eventManager.call(event);
                 if(event.isCancelled())
-                    return;
+                    return true;
                 lookup.handler.accept(packet);
+                return true;
             }catch(Exception ex) {
                 throw new Exception("Can not handle packet " + packet.getClass().getSimpleName(), ex);
             }

@@ -31,7 +31,8 @@ public class MineBuffer {
     }
 
     public int remaining() {
-        return this.buffer.readableBytes();
+        int remaining = this.buffer.readableBytes();
+        return remaining >= 0 ? remaining : 0;
     }
 
     public int readableBytes() {

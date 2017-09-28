@@ -83,39 +83,45 @@ public class RakNetProvider {
 
             @Override
             public void handleMessage(RakNetClientSession session, RakNetPacket packet, int channel) {
+                Timings.packetsReceptionTimer.startTiming();
+                MineBuffer buf = null;
                 try {
-                    Timings.packetsReceptionTimer.startTiming();
                     PacketDataInput input = packet.getDataInput();
                     byte[] bytes = new byte[input.remaining()];
                     input.readFully(bytes);
                     bytes = ZLib.inflate(bytes, 1 << 26);
-                    MineBuffer buf = new MineBuffer(Unpooled.copiedBuffer(bytes));
-                    buf.readVarInt(); //payload length in bytes
-                    byte packetID = buf.readByte();
-                    buf.skipBytes(2);
-                    if(packetID == 0x24) {
-                        List<Byte> list = new ArrayList<>();
-                        for(byte b : bytes)
-                            list.add(b);
-                        System.out.println(list.stream().map(b -> String.format("0x%02X", b)).collect(Collectors.joining(" ")));
-                        System.out.println();
-                    }
-                    try {
-//                        if(packetID != 0x13) //whether it's not move packet
-//                            System.out.println("Packet " + String.format("0x%02X", packetID));
+                    buf = new MineBuffer(Unpooled.copiedBuffer(bytes));
+//                    List<Byte> list = new ArrayList<>();
+//                    for(byte b : bytes)
+//                        list.add(b);
+//                    System.out.println(list.stream().map(b -> String.format("0x%02X", b)).collect(Collectors.joining(" ")));
+//                    System.out.println();
+                    int position;
+                    while((position = buf.remaining()) > 0) {
+                        int payloadLength = buf.readUnsignedVarInt() + position - buf.remaining();
+                        byte packetID = buf.readByte();
+                        buf.skipBytes(2);
                         if(packetID == 0x01) {
                             Packet01Login minePacket = (Packet01Login) manager.mineProvider.getPacket(packetID, buf);
                             minePacket.setPlayer(server.getPlayerProvider().createPlayer(minePacket, session));
                             manager.mineProvider.handle(minePacket);
-                            return;
+                            continue;
                         }
-                        manager.mineProvider.handle(packetID, buf, server.getPlayerProvider().getPlayer(session));
-                    }finally {
-                        buf.release();
-                        Timings.packetsReceptionTimer.stopTiming();
+                        if(!manager.mineProvider.handle(packetID, buf, server.getPlayerProvider().getPlayer(session)))
+                            return;
+                        int delta = position - buf.remaining();
+                        if(delta > payloadLength)
+                            throw new Exception(String.format("Illegal packet data in 0x%02X: took %d bytes whilst expected %d. Critical.", packetID, delta, payloadLength));
+                        if(delta != payloadLength)
+                            new Exception(String.format("Illegal packet data in 0x%02X: took %d bytes whilst expected %d.", packetID, delta, payloadLength)).printStackTrace();
+                        buf.readBytes(payloadLength - delta);
                     }
                 }catch(Exception ex) {
                     new Exception("Can not handle packet input data", ex).printStackTrace();
+                }finally {
+                    if(buf != null)
+                        buf.release();
+                    Timings.packetsReceptionTimer.stopTiming();
                 }
             }
         });

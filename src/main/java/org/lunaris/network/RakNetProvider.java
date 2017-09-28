@@ -114,7 +114,7 @@ public class RakNetProvider {
                             throw new Exception(String.format("Illegal packet data in 0x%02X: took %d bytes whilst expected %d. Critical.", packetID, delta, payloadLength));
                         if(delta != payloadLength)
                             new Exception(String.format("Illegal packet data in 0x%02X: took %d bytes whilst expected %d.", packetID, delta, payloadLength)).printStackTrace();
-                        buf.readBytes(payloadLength - delta);
+                        buf.skipBytes(payloadLength - delta);
                     }
                 }catch(Exception ex) {
                     new Exception("Can not handle packet input data", ex).printStackTrace();

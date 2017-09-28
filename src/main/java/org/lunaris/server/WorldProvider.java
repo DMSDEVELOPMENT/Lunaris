@@ -22,7 +22,7 @@ public class WorldProvider {
     public WorldProvider(Lunaris server) {
         this.worlds.add(new World(server, "Test World", Dimension.OVERWORLD, Difficulty.PEACEFUL));
         this.blockMaster = new BlockMaster(server);
-        server.getScheduler().schedule(this::tick, 0L, 50L, TimeUnit.MILLISECONDS);
+        server.getScheduler().schedule(this::tick, 0L, Scheduler.ONE_TICK_IN_MILLIS, TimeUnit.MILLISECONDS);
     }
 
     public List<World> getWorlds() {

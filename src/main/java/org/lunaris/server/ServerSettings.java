@@ -42,6 +42,8 @@ public class ServerSettings {
 
     private final float mtuScaleFactor;
 
+    private final long serverBoostingFactor;
+
     public ServerSettings(IServer server, FileConfiguration config) {
         try {
             String host = config.getOrSetString("bind-address", "0.0.0.0:19132");
@@ -77,6 +79,7 @@ public class ServerSettings {
             this.timingsHistoryInterval = config.getOrSetInt("timings.history-interval", 6000);
             this.timingsHistoryLength = config.getOrSetInt("timings.history-length", 72000);
             this.mtuScaleFactor = (float) config.getOrSetDouble("mtu-scale-factor", 2F / 3F);
+            this.serverBoostingFactor = config.getOrSetInt("server-boosting-factor", 5);
             server.getConfigurationManager().saveConfig();
         }catch(Exception ex) {
             throw new IllegalArgumentException("Server Settings file can not be loaded", ex);
@@ -151,4 +154,7 @@ public class ServerSettings {
         return mtuScaleFactor;
     }
 
+    public long getServerBoostingFactor() {
+        return serverBoostingFactor;
+    }
 }

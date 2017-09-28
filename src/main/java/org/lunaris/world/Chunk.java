@@ -6,6 +6,7 @@ import org.lunaris.material.Material;
 import org.lunaris.entity.Player;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
+import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
 import org.lunaris.network.protocol.packet.Packet3AFullChunkData;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.util.LongHash;
@@ -138,7 +139,7 @@ public abstract class Chunk {
 
     public void setBlock(int x, int y, int z, int id, int data) {
         getSection(y).set(x, y, z, (short) id, (byte) data);
-        //send update block packet
+        sendPacket(new Packet15UpdateBlock(x, y, z, id, data));
     }
 
     /**

@@ -74,12 +74,13 @@ public class BlockMaster {
         Player p = packet.getPlayer();
         p.setBreakingBlock(null);
         p.setLastBreak(Long.MAX_VALUE);
+        onBlockStopBreak(packet);
     }
 
     public void onBlockStopBreak(Packet24PlayerAction packet) {
         Player player = packet.getPlayer();
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
-        player.getWorld().getChunkAt(packet.getX() << 4, packet.getZ() << 4).sendPacket(
+        player.getWorld().getChunkAt(packet.getX() >> 4, packet.getZ() >> 4).sendPacket(
                 new Packet19LevelEvent(
                         Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
                         (float) position.x, (float) position.y, (float) position.z,

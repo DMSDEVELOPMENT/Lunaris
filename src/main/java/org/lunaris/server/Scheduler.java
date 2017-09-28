@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class Scheduler {
 
+    public final static long ONE_TICK_IN_MILLIS = 50L;
+
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     private final Unsafe unsafe = new Unsafe();
@@ -37,7 +39,7 @@ public class Scheduler {
                     new TaskInvocationException(ex).printStackTrace();
                 }
             });
-        }, 0L, 50L, TimeUnit.MILLISECONDS);
+        }, 0L, ONE_TICK_IN_MILLIS / server.getServerSettings().getServerBoostingFactor(), TimeUnit.MILLISECONDS);
     }
 
     public Unsafe getUnsafe() {

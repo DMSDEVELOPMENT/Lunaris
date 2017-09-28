@@ -22,7 +22,13 @@ public class AdventureSettings {
     }
 
     public void update() {
-        this.player.sendPacket(new Packet37AdventureSettings(this.player.getEntityID(), this.flags));
+        Packet37AdventureSettings packet = new Packet37AdventureSettings(this.player.getEntityID(), this.flags);
+        if(this.player.getGamemode() != Gamemode.CREATIVE && this.player.getGamemode() != Gamemode.SURVIVAL)
+            packet
+                .flag(Packet37AdventureSettings.Flag.WORLD_IMMUTABLE, true)
+                .flag(Packet37AdventureSettings.Flag.WORLD_BUILDER, false)
+                .flag(Packet37AdventureSettings.Flag.BUILD_AND_MINE, false);
+        this.player.sendPacket(packet);
     }
 
     public void setFlag(Packet37AdventureSettings.Flag flag, boolean value) {

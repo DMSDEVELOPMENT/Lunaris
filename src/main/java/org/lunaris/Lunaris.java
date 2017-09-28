@@ -162,12 +162,12 @@ public class Lunaris implements IServer {
 //                logger.info("Sent packet %s", e.getPacket().getClass().getSimpleName());
 //            }
 //
-//            @EventHandler
-//            public void onReceiving(PacketReceivedAsyncEvent e) {
-//                if(e.getPacket().getId() == 0x13)
-//                    return;
-//                logger.info("Received packet %s", e.getPacket().getClass().getSimpleName());
-//            }
+////            @EventHandler
+////            public void onReceiving(PacketReceivedAsyncEvent e) {
+////                if(e.getPacket().getId() == 0x13)
+////                    return;
+////                logger.info("Received packet %s", e.getPacket().getClass().getSimpleName());
+////            }
 //
 //        });
     }

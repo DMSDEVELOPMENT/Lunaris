@@ -55,7 +55,7 @@ public class ServerSettings {
             this.maxPlayersOnServer = config.getOrSetInt("max-players", 20);
             this.networkCompressionLevel = config.getOrSetInt("network.compression-level", 7);
             this.networkPacketPrefixedId = config.getOrSetByte("network.packet-prefixed-id", (byte) 0xfe);
-            this.defaultGamemode = Gamemode.values()[config.getOrSetInt("default-gamemode", 2)];
+            this.defaultGamemode = Gamemode.values()[config.getOrSetInt("default-gamemode", 0)];
             this.chunksView = config.getOrSetInt("chunks-view", 6);
             this.unloadChunks = config.getOrSetBoolean("unload-chunks", true);
             this.ingameSettings = new IngameSettings(config);

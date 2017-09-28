@@ -112,11 +112,11 @@ public class RakNetProvider {
                         int delta = position - buf.remaining();
                         if(delta > payloadLength) {
                             writeDump(bytes);
-                            throw new Exception(String.format("Illegal packet data in 0x%02X: took %d bytes whilst expected %d. Critical.", packetID, delta, payloadLength));
+                            throw new IllegalStateException(String.format("Illegal packet data in 0x%02X: took %d bytes whilst expected %d. Critical.", packetID, delta, payloadLength));
                         }
                         if(delta != payloadLength) {
                             writeDump(bytes);
-                            new Exception(String.format("Illegal packet data in 0x%02X: took %d bytes whilst expected %d.", packetID, delta, payloadLength)).printStackTrace();
+                            new IllegalStateException(String.format("Illegal packet data in 0x%02X: took %d bytes whilst expected %d.", packetID, delta, payloadLength)).printStackTrace();
                         }
                         buf.skipBytes(payloadLength - delta);
                     }
@@ -139,7 +139,7 @@ public class RakNetProvider {
     private void writeDump(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for(byte b : bytes)
-            sb.append(Integer.toHexString(b)).append(" ");
+            sb.append("0x").append(Integer.toHexString(b)).append(" ");
         this.server.getLogger().info("PACKET DUMP :: " + sb.toString().trim());
     }
 

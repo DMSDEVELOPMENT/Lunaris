@@ -94,7 +94,7 @@ public class Packet37AdventureSettings extends MinePacket {
         TELEPORT(0x80 | BITFLAG_SECOND_SET, false);
 
         private final int mask;
-        private final boolean defaultValue;
+        private boolean defaultValue;
 
         Flag(int mask, boolean defaultValue) {
             this.mask = mask;
@@ -103,6 +103,10 @@ public class Packet37AdventureSettings extends MinePacket {
 
         public boolean hasDefaultValue() {
             return this.defaultValue;
+        }
+
+        public void setDefaultValue(boolean value) {
+            this.defaultValue = value;
         }
 
     }

@@ -30,8 +30,6 @@ public class ServerSettings {
 
     private final boolean unloadChunks;
 
-    private final int adventureSettingsFlag;
-
     private final boolean timingsEnabledByDefault;
 
     private final boolean timingsVerbose;
@@ -43,6 +41,8 @@ public class ServerSettings {
     private final float mtuScaleFactor;
 
     private final long serverBoostingFactor;
+
+    private final IngameSettings ingameSettings;
 
     public ServerSettings(IServer server, FileConfiguration config) {
         try {
@@ -58,22 +58,22 @@ public class ServerSettings {
             this.defaultGamemode = Gamemode.values()[config.getOrSetInt("default-gamemode", 2)];
             this.chunksView = config.getOrSetInt("chunks-view", 6);
             this.unloadChunks = config.getOrSetBoolean("unload-chunks", true);
-            int adventureFlag = 0;
-//            if(config.getOrSetBoolean("player-access.build-and-mine", true))
-//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_BUILD_AND_MINE;
-//            if(config.getOrSetBoolean("player-access.doors-and-switches", true))
-//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_DOORS_AND_SWITCHES;
-//            if(config.getOrSetBoolean("player-access.open-containers", true))
-//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_OPEN_CONTAINERS;
-//            if(config.getOrSetBoolean("player-access.attack-players", true))
-//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_ATTACK_PLAYERS;
-//            if(config.getOrSetBoolean("player-access.attack-monsters", true))
-//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_ATTACK_MOBS;
-//            if(config.getOrSetBoolean("player-access.teleport", true))
-//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_TELEPORT;
-//            if(config.getOrSetBoolean("player-access.default-level-perms", true))
-//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_DEFAULT_LEVEL_PERMISSIONS;
-            this.adventureSettingsFlag = adventureFlag;
+            this.ingameSettings = new IngameSettings(config);
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.WORLD_IMMUTABLE, "ingame.world-immutable");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.NO_PVP, "ingame.no-pvp");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.AUTO_JUMP, "ingame.auto-jump");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.ALLOW_FLIGHT, "ingame.allow-flight");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.FLYING, "ingame.everybody-flying");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.NO_CLIP, "ingame.no-clip");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.WORLD_BUILDER, "ingame.world-builder");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.MUTED, "ingame.everybody-muted");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.BUILD_AND_MINE, "ingame.access.build-and-mine");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.DOORS_AND_SWITCHES, "ingame.access.use-doors-and-switches");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.OPEN_CONTAINERS, "ingame.access.open-containers");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.ATTACK_PLAYERS, "ingame.access.attack-players");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.ATTACK_MOBS, "ingame.access.attack-mobs");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.TELEPORT, "ingame.access.teleport");
+            this.ingameSettings.load(Packet37AdventureSettings.Flag.OPERATOR, "ingame.everybody-operator");
             this.timingsEnabledByDefault = config.getOrSetBoolean("timings.enabled-by-default", false);
             this.timingsVerbose = config.getOrSetBoolean("timings.verbose", false);
             this.timingsHistoryInterval = config.getOrSetInt("timings.history-interval", 6000);
@@ -87,74 +87,97 @@ public class ServerSettings {
     }
 
     public String getHost() {
-        return host;
+        return this.host;
     }
 
     public int getPort() {
-        return port;
+        return this.port;
     }
 
     public String getServerName() {
-        return serverName;
+        return this.serverName;
     }
 
     public int getSupportedClientProtocol() {
-        return supportedClientProtocol;
+        return this.supportedClientProtocol;
     }
 
     public String getSupportedClientVersion() {
-        return supportedClientVersion;
+        return this.supportedClientVersion;
     }
 
     public int getMaxPlayersOnServer() {
-        return maxPlayersOnServer;
+        return this.maxPlayersOnServer;
     }
 
     public int getNetworkCompressionLevel() {
-        return networkCompressionLevel;
+        return this.networkCompressionLevel;
     }
 
     public byte getNetworkPacketPrefixedId() {
-        return networkPacketPrefixedId;
+        return this.networkPacketPrefixedId;
     }
 
     public Gamemode getDefaultGamemode() {
-        return defaultGamemode;
+        return this.defaultGamemode;
     }
 
     public int getChunksView() {
-        return chunksView;
+        return this.chunksView;
     }
 
     public boolean isUnloadChunks() {
-        return unloadChunks;
-    }
-
-    public int getAdventureSettingsFlag() {
-        return adventureSettingsFlag;
+        return this.unloadChunks;
     }
 
     public boolean isTimingsEnabledByDefault() {
-        return timingsEnabledByDefault;
+        return this.timingsEnabledByDefault;
     }
 
     public boolean isTimingsVerbose() {
-        return timingsVerbose;
+        return this.timingsVerbose;
     }
 
     public int getTimingsHistoryInterval() {
-        return timingsHistoryInterval;
+        return this.timingsHistoryInterval;
     }
 
     public int getTimingsHistoryLength() {
-        return timingsHistoryLength;
+        return this.timingsHistoryLength;
     }
 
     public float getMtuScaleFactor() {
-        return mtuScaleFactor;
+        return this.mtuScaleFactor;
     }
 
     public long getServerBoostingFactor() {
-        return serverBoostingFactor;
+        return this.serverBoostingFactor;
     }
+
+    public IngameSettings getIngameSettings() {
+        return this.ingameSettings;
+    }
+
+    public static class IngameSettings {
+
+        private final FileConfiguration config;
+
+        private IngameSettings(FileConfiguration config) {
+            this.config = config;
+        }
+
+        private void load(Packet37AdventureSettings.Flag flag, String configKey) {
+            setSetting(flag, this.config.getOrSetBoolean(configKey, flag.hasDefaultValue()));
+        }
+
+        public void setSetting(Packet37AdventureSettings.Flag setting, boolean value) {
+            setting.setDefaultValue(value);
+        }
+
+        public boolean getSetting(Packet37AdventureSettings.Flag setting) {
+            return setting.hasDefaultValue();
+        }
+
+    }
+
 }

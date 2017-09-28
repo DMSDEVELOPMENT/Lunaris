@@ -62,25 +62,25 @@ public class Packet24PlayerAction extends MinePacket {
     }
 
     public enum Action {
-        UNKNOWN,
         START_BREAK,
         ABORT_BREAK,
         STOP_BREAK,
         GET_UPDATED_BLOCK,
         DROP_ITEM,
+        START_SLEEPING,
         STOP_SLEEPING,
         RESPAWN,
-        JUMP, //+
-        START_SPRINT, //+
-        STOP_SPRINT, //+
-        START_SNEAK, //+
-        STOP_SNEAK, //+
+        JUMP,
+        START_SPRINT,
+        STOP_SPRINT,
+        START_SNEAK,
+        STOP_SNEAK,
+        DIMENSION_CHANGE_REQUEST,
         DIMENSION_CHANGE_ACK,
         START_GLIDE,
         STOP_GLIDE,
-        WORLD_IMMUTABLE,
-        UNKNOWN2,
-        BREAK //+
+        BUILD_DENIED,
+        CONTINUE_BREAK
     }
 
 }

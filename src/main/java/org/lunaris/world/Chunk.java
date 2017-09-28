@@ -1,9 +1,11 @@
 package org.lunaris.world;
 
+import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.material.Material;
 import org.lunaris.entity.Player;
 import org.lunaris.network.protocol.MineBuffer;
+import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet3AFullChunkData;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.util.LongHash;
@@ -139,8 +141,11 @@ public abstract class Chunk {
         //send update block packet
     }
 
-    private void broadcastUpdate() {
-        Collection<Player> players = this.world.getApplicablePlayers(this);
+    /**
+     * Отсылает пакет всем игрокам, которые видят этот чанк (но могу ти не находиться в нем).
+     */
+    public void sendPacket(MinePacket packet) {
+        Lunaris.getInstance().getNetworkManager().sendPacket(getApplicablePlayers(), packet);
     }
 
     public World getWorld() {
@@ -172,6 +177,9 @@ public abstract class Chunk {
         return 0;
     }
 
+    /**
+     * Возвращает коллекцию игроков, которые видят этот чанк (но могут и не находиться в нем).
+     */
     public Collection<Player> getApplicablePlayers() {
         return this.world.getApplicablePlayers(this);
     }

@@ -47,7 +47,7 @@ public class BlockMaster {
             return;
         }
         double breakTime = getBreakTimeInTicks(block, player);
-        this.server.getNetworkManager().sendPacket(block.getChunk().getApplicablePlayers(), new Packet19LevelEvent(
+        block.getChunk().sendPacket(new Packet19LevelEvent(
                 Packet19LevelEvent.EVENT_BLOCK_START_BREAK,
                 (float) position.x, (float) position.y, (float) position.z,
                 (int) (65535 / breakTime)

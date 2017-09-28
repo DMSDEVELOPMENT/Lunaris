@@ -11,6 +11,7 @@ import org.lunaris.event.chunk.ChunkPreLoadEvent;
 import org.lunaris.event.chunk.ChunkUnloadedEvent;
 import org.lunaris.network.protocol.packet.Packet0CAddPlayer;
 import org.lunaris.network.protocol.packet.Packet0ERemoveEntity;
+import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
 import org.lunaris.world.util.ChunksFollowerTask;
@@ -226,4 +227,13 @@ public class World {
     public void setSpawnLocation(Location spawnLocation) {
         this.spawnLocation = spawnLocation;
     }
+
+    public void playSound(Sound sound, Location loc) {
+        this.server.getNetworkManager().sendPacket(getApplicablePlayers(loc), new Packet18LevelSoundEvent(sound, loc, -1, 1, false, false));
+    }
+
+    public void playSound(Sound sound) {
+        getPlayers().forEach(p -> p.playSound(sound, p.getLocation()));
+    }
+
 }

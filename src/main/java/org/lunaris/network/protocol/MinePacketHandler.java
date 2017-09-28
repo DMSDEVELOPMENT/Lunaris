@@ -55,7 +55,7 @@ public class MinePacketHandler {
             player.disconnect("Your nickname is invalid");
             return;
         }
-        this.server.getScheduler().addSyncTask(() -> {
+        sync(() -> {
             if(this.server.getOnlinePlayers().size() >= this.server.getServerSettings().getMaxPlayersOnServer()) {
                 PlayerKickEvent event = new PlayerKickEvent(player, "The server is full");
                 event.setReasonType(PlayerKickEvent.ReasonType.SERVER_IS_FULL);
@@ -143,13 +143,22 @@ public class MinePacketHandler {
         loc.setComponents(packet.getX(), packet.getY(), packet.getZ());
         player.recalculateCollisions();
         //set on ground
-        this.server.getScheduler().addSyncTask(() -> {
+        sync(() -> {
             PlayerMoveEvent event = new PlayerMoveEvent(player, packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch());
             this.server.getEventManager().call(event);
             if(event.isCancelled())
                 return;
             Collection<Player> players = loc.getWorld().getApplicablePlayers(loc);
             players.remove(player);
+            this.networkManager.sendPacket(players, packet);
+        });
+    }
+
+    public void handle(Packet18LevelSoundEvent packet) {
+        Player p = packet.getPlayer();
+        sync(() -> {
+            Collection<Player> players = p.getWorld().getApplicablePlayers(p.getLocation());
+            players.remove(p);
             this.networkManager.sendPacket(players, packet);
         });
     }
@@ -200,7 +209,7 @@ public class MinePacketHandler {
                 sync(() -> this.server.getWorldProvider().getBlockMaster().onBlockStartBreak(packet));
                 break;
             }case CONTINUE_BREAK: {
-                this.server.getWorldProvider().getBlockMaster().onBlockContinueBreakAsync(packet);
+                sync(() -> this.server.getWorldProvider().getBlockMaster().onBlockContinueBreak(packet));
                 break;
             }case ABORT_BREAK: {
                 sync(() -> this.server.getWorldProvider().getBlockMaster().onBlockAbortBreak(packet));

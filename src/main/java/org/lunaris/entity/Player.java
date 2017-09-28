@@ -11,6 +11,8 @@ import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
+import org.lunaris.world.Location;
+import org.lunaris.world.Sound;
 import org.lunaris.world.World;
 import org.lunaris.world.util.LongHash;
 
@@ -330,6 +332,10 @@ public class Player extends LivingEntity implements CommandSender {
 
     public AdventureSettings getAdventureSettings() {
         return this.adventureSettings;
+    }
+
+    public void playSound(Sound sound, Location loc) {
+        sendPacket(new Packet18LevelSoundEvent(sound, loc, -1, 1, false, false));
     }
 
     public enum IngameState {

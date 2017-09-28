@@ -3,9 +3,7 @@ package org.lunaris.world;
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockFace;
-import org.lunaris.entity.data.Gamemode;
 import org.lunaris.material.BlockMaterial;
-import org.lunaris.material.SpecifiedMaterial;
 import org.lunaris.material.Material;
 import org.lunaris.entity.Player;
 import org.lunaris.event.player.PlayerHitFireEvent;
@@ -16,6 +14,7 @@ import org.lunaris.item.ItemToolType;
 import org.lunaris.network.protocol.packet.Packet19LevelEvent;
 import org.lunaris.network.protocol.packet.Packet24PlayerAction;
 import org.lunaris.util.math.Vector3d;
+import org.lunaris.world.particle.PunchBlockParticle;
 
 /**
  * Created by RINES on 24.09.17.
@@ -90,11 +89,13 @@ public class BlockMaster {
         player.setBreakingBlock(null);
     }
 
-    public void onBlockContinueBreakAsync(Packet24PlayerAction packet) {
+    public void onBlockContinueBreak(Packet24PlayerAction packet) {
         Player player = packet.getPlayer();
         if(player.getBreakingBlock() == null)
             return;
-
+        Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
+        BlockFace face = BlockFace.fromIndex(packet.getFace());
+        new PunchBlockParticle(player.getWorld().getBlockAt(position), face).sendToNearbyPlayers();
     }
 
     private double getBreakTimeInTicks(Block block, Player player) {

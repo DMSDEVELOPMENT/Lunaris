@@ -3,44 +3,25 @@ package org.lunaris.network.protocol.packet;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 
+import java.util.Set;
+
 /**
  * Created by RINES on 14.09.17.
  */
 public class Packet37AdventureSettings extends MinePacket {
 
-    public static final int ACTION_FLAG_PROHIBIT_ALL = 0;
-    public static final int ACTION_FLAG_BUILD_AND_MINE = 1;
-    public static final int ACTION_FLAG_DOORS_AND_SWITCHES = 2;
-    public static final int ACTION_FLAG_OPEN_CONTAINERS = 4;
-    public static final int ACTION_FLAG_ATTACK_PLAYERS = 8;
-    public static final int ACTION_FLAG_ATTACK_MOBS = 16;
-    public static final int ACTION_FLAG_OP = 32;
-    public static final int ACTION_FLAG_TELEPORT = 64;
-    public static final int ACTION_FLAG_DEFAULT_LEVEL_PERMISSIONS = 128;
-    public static final int ACTION_FLAG_ALLOW_ALL = 511;
+    public static final int BITFLAG_SECOND_SET = 1 << 16;
 
-    public static final int PERMISSION_LEVEL_VISITOR = 0;
-    public static final int PERMISSION_LEVEL_MEMBER = 1;
-    public static final int PERMISSION_LEVEL_OPERATOR = 2;
-    public static final int PERMISSION_LEVEL_CUSTOM = 3;
+    public long flags;
+    public CommandPermissionLevel commandPermissions = CommandPermissionLevel.NORMAL;
+    public long flags2;
+    public long playerPermission;
+    public long customFlags;
+    public long entityID;
 
-    public boolean worldImmutable;
-    public boolean noPvp;
-    public boolean noPvm;
-    public boolean noMvp;
-
-    public boolean autoJump;
-    public boolean allowFlight;
-    public boolean noClip;
-    public boolean worldBuilder;
-    public boolean isFlying;
-    public boolean muted;
-
-    public int flags = 0;
-    public int userPermission;
-    public int actionPermissions = ACTION_FLAG_DEFAULT_LEVEL_PERMISSIONS;
-    public int permissionLevel = PERMISSION_LEVEL_MEMBER;
-    public long userId = 0;
+    public Packet37AdventureSettings(Set<Flag> setFlags) {
+        setFlags.forEach(flag -> setFlag(flag, true));
+    }
 
     @Override
     public int getId() {
@@ -49,42 +30,79 @@ public class Packet37AdventureSettings extends MinePacket {
 
     @Override
     public void read(MineBuffer buffer) {
-        this.flags = (int) buffer.readVarLong();
-        this.userPermission = (int) buffer.readVarLong();
-        this.worldImmutable = (this.flags & 1) != 0;
-        this.noPvp = (this.flags & (1 << 1)) != 0;
-        this.noPvm = (this.flags & (1 << 2)) != 0;
-        this.noMvp = (this.flags & (1 << 3)) != 0;
-
-        this.autoJump = (this.flags & (1 << 5)) != 0;
-        this.allowFlight = (this.flags & (1 << 6)) != 0;
-        this.noClip = (this.flags & (1 << 7)) != 0;
-        this.worldBuilder = (this.flags & (1 << 8)) != 0;
-        this.isFlying = (this.flags & (1 << 9)) != 0;
-        this.muted = (this.flags & (1 << 10)) != 0;
+        this.flags = buffer.readUnsignedVarLong();
+        this.commandPermissions = CommandPermissionLevel.values()[(int) buffer.readUnsignedVarLong()];
+        this.flags2 = buffer.readUnsignedVarLong();
+        this.playerPermission = buffer.readUnsignedVarLong();
+        this.customFlags = buffer.readUnsignedVarLong();
     }
 
     @Override
     public void write(MineBuffer buffer) {
-        if (this.worldImmutable) this.flags |= 1;
-        if (this.noPvp) this.flags |= 1 << 1;
-        if (this.noPvm) this.flags |= 1 << 2;
-        if (this.noMvp) this.flags |= 1 << 3;
-
-        if (this.autoJump) this.flags |= 1 << 5;
-        if (this.allowFlight) this.flags |= 1 << 6;
-        if (this.noClip) this.flags |= 1 << 7;
-        if (this.worldBuilder) this.flags |= 1 << 8;
-        if (this.isFlying) this.flags |= 1 << 9;
-        if (this.muted) this.flags |= 1 << 10;
-        buffer.writeVarLong(this.flags);
-        buffer.writeVarLong(this.userPermission);
-        buffer.writeVarLong(this.actionPermissions);
-        buffer.writeVarLong(this.permissionLevel);
-        if ((this.userId & 0x01) != 0) {
-            buffer.writeUnsignedLong(-1 * ((this.userId + 1) >> 1));
-        } else {
-            buffer.writeUnsignedLong(this.userId >> 1);
-        }
+        buffer.writeUnsignedVarLong(this.flags);
+        buffer.writeUnsignedVarLong(this.commandPermissions.ordinal());
+        buffer.writeUnsignedVarLong(this.flags2);
+        buffer.writeUnsignedVarLong(this.playerPermission);
+        buffer.writeUnsignedVarLong(this.customFlags);
+        buffer.writeUnsignedLong(this.entityID);
     }
+
+    public Packet37AdventureSettings flag(Flag flag, boolean setOrUnset) {
+        setFlag(flag, setOrUnset);
+        return this;
+    }
+
+    public void setFlag(Flag theFlag, boolean setOrUnset) {
+        int flag = theFlag.mask;
+        boolean flags = (flag & BITFLAG_SECOND_SET) != 0;
+        if(setOrUnset)
+            if(flags)
+                this.flags2 |= flag;
+            else
+                this.flags |= flag;
+        else if(flags)
+            this.flags2 &= ~flag;
+        else
+            this.flags &= ~flag;
+    }
+
+    public enum CommandPermissionLevel {
+        NORMAL,
+        OPERATOR,
+        HOST,
+        AUTOMATION,
+        ADMIN
+    }
+
+    public enum Flag {
+        WORLD_IMMUTABLE(0x01, false),
+        NO_PVP(0x02, false),
+        AUTO_JUMP(0x20, false),
+        ALLOW_FLIGHT(0x40, false),
+        NO_CLIP(0x80, false),
+        WORLD_BUILDER(0x100, true),
+        FLYING(0x200, false),
+        MUTED(0x400, false),
+        BUILD_AND_MINE(0x01 | BITFLAG_SECOND_SET, true),
+        DOORS_AND_SWITCHES(0x02 | BITFLAG_SECOND_SET, true),
+        OPEN_CONTAINERS(0x04 | BITFLAG_SECOND_SET, true),
+        ATTACK_PLAYERS(0x08 | BITFLAG_SECOND_SET, true),
+        ATTACK_MOBS(0x10 | BITFLAG_SECOND_SET, true),
+        OPERATOR(0x20 | BITFLAG_SECOND_SET, false),
+        TELEPORT(0x80 | BITFLAG_SECOND_SET, false);
+
+        private final int mask;
+        private final boolean defaultValue;
+
+        Flag(int mask, boolean defaultValue) {
+            this.mask = mask;
+            this.defaultValue = defaultValue;
+        }
+
+        public boolean hasDefaultValue() {
+            return this.defaultValue;
+        }
+
+    }
+
 }

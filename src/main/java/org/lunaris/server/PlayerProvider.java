@@ -110,8 +110,6 @@ public class PlayerProvider {
         this.server.getPlayerList().addPlayer(player);
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.PLAYER_RESPAWN));
         player.getWorld().addPlayerToWorld(player);
-        PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
-        this.server.getEventManager().call(joinEvent);
         player.sendPacket(new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
         player.sendPacket(new Packet1DUpdateAttributes(
                 player.getEntityID(),
@@ -123,23 +121,9 @@ public class PlayerProvider {
         ));
         player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
         player.sendPacket(new Packet13MovePlayer(player));
-        sendAdventureSettings(player);
-    }
-
-    private void sendAdventureSettings(Player player) {
-        Packet37AdventureSettings packet = new Packet37AdventureSettings();
-        packet.flags = 0;
-        packet.worldImmutable = false;
-        packet.autoJump = false;
-        packet.allowFlight = false;
-        packet.noClip = false;
-        packet.isFlying = false;
-        packet.noPvp = false;
-        packet.noPvm = false;
-        packet.noMvp = false;
-        packet.muted = false;
-        packet.userPermission = Packet37AdventureSettings.PERMISSION_LEVEL_MEMBER;
-        player.sendPacket(packet);
+        player.getAdventureSettings().update();
+        PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
+        this.server.getEventManager().call(joinEvent);
     }
 
     public Player getPlayer(String name) {

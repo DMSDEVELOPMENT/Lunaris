@@ -3,6 +3,7 @@ package org.lunaris.world;
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockFace;
+import org.lunaris.entity.data.Gamemode;
 import org.lunaris.material.BlockMaterial;
 import org.lunaris.material.SpecifiedMaterial;
 import org.lunaris.material.Material;
@@ -32,6 +33,8 @@ public class BlockMaster {
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         BlockFace face = BlockFace.fromIndex(packet.getFace());
         World world = player.getWorld();
+        if(player.getLastBreak() != Long.MAX_VALUE || player.getLocation().distanceSquared(position) > 100)
+            return;
         Block block = world.getBlockAt(position);
         Block sider = block.getSide(face);
         PlayerInteractEvent interactEvent = new PlayerInteractEvent(player, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, block);
@@ -46,12 +49,51 @@ public class BlockMaster {
             sider.setType(Material.AIR);
             return;
         }
-        double breakTime = getBreakTimeInTicks(block, player);
-        block.getChunk().sendPacket(new Packet19LevelEvent(
-                Packet19LevelEvent.EVENT_BLOCK_START_BREAK,
-                (float) position.x, (float) position.y, (float) position.z,
-                (int) (65535 / breakTime)
-        ));
+        switch(player.getGamemode()) {
+            case CREATIVE: {
+                //actually, shouldn't happen
+                break;
+            }case SURVIVAL: {
+                double breakTime = getBreakTimeInTicks(block, player);
+                block.getChunk().sendPacket(new Packet19LevelEvent(
+                        Packet19LevelEvent.EVENT_BLOCK_START_BREAK,
+                        (float) position.x, (float) position.y, (float) position.z,
+                        (int) (65535 / breakTime)
+                ));
+                player.setBreakingBlock(block);
+                player.setLastBreak(System.currentTimeMillis());
+                break;
+            }default: {
+
+                break;
+            }
+        }
+    }
+
+    public void onBlockAbortBreak(Packet24PlayerAction packet) {
+        Player p = packet.getPlayer();
+        p.setBreakingBlock(null);
+        p.setLastBreak(Long.MAX_VALUE);
+    }
+
+    public void onBlockStopBreak(Packet24PlayerAction packet) {
+        Player player = packet.getPlayer();
+        Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
+        player.getWorld().getChunkAt(packet.getX() << 4, packet.getZ() << 4).sendPacket(
+                new Packet19LevelEvent(
+                        Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
+                        (float) position.x, (float) position.y, (float) position.z,
+                        0
+                )
+        );
+        player.setBreakingBlock(null);
+    }
+
+    public void onBlockContinueBreakAsync(Packet24PlayerAction packet) {
+        Player player = packet.getPlayer();
+        if(player.getBreakingBlock() == null)
+            return;
+
     }
 
     private double getBreakTimeInTicks(Block block, Player player) {

@@ -1,11 +1,9 @@
 package org.lunaris.entity;
 
 import org.lunaris.Lunaris;
+import org.lunaris.block.Block;
 import org.lunaris.command.CommandSender;
-import org.lunaris.entity.data.Attribute;
-import org.lunaris.entity.data.Gamemode;
-import org.lunaris.entity.data.LPermission;
-import org.lunaris.entity.data.Skin;
+import org.lunaris.entity.data.*;
 import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.event.player.PlayerKickEvent;
 import org.lunaris.inventory.PlayerInventory;
@@ -56,6 +54,11 @@ public class Player extends LivingEntity implements CommandSender {
 
     private final Set<Long> chunksSent = new HashSet<>();
 
+    private Block breakingBlock;
+    private long lastBreak = Long.MAX_VALUE;
+
+    private final AdventureSettings adventureSettings;
+
     public Player(int entityID, RakNetClientSession session, Packet01Login packetLogin) {
         super(entityID);
         this.session = session;
@@ -67,6 +70,8 @@ public class Player extends LivingEntity implements CommandSender {
         this.skin = packetLogin.getSkin();
         this.skinGeometryName = packetLogin.getSkinGeometryName();
         this.skinGeometry = packetLogin.getSkinGeometry();
+
+        this.adventureSettings = new AdventureSettings(this);
     }
 
     /**
@@ -284,27 +289,47 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     public PlayerInventory getInventory() {
-        return inventory;
+        return this.inventory;
     }
 
     public Gamemode getGamemode() {
-        return gamemode;
+        return this.gamemode;
     }
 
     public int getFoodLevel() {
-        return foodLevel;
+        return this.foodLevel;
     }
 
     public float getFoodSaturationLevel() {
-        return foodSaturationLevel;
+        return this.foodSaturationLevel;
     }
 
     public boolean isOnGround() {
-        return onGround;
+        return this.onGround;
     }
 
     public boolean isInvulnerable() {
-        return invulnerable;
+        return this.invulnerable;
+    }
+
+    public Block getBreakingBlock() {
+        return this.breakingBlock;
+    }
+
+    public void setBreakingBlock(Block breakingBlock) {
+        this.breakingBlock = breakingBlock;
+    }
+
+    public long getLastBreak() {
+        return this.lastBreak;
+    }
+
+    public void setLastBreak(long lastBreak) {
+        this.lastBreak = lastBreak;
+    }
+
+    public AdventureSettings getAdventureSettings() {
+        return this.adventureSettings;
     }
 
     public enum IngameState {

@@ -57,26 +57,26 @@ public class ServerSettings {
             this.chunksView = config.getOrSetInt("chunks-view", 6);
             this.unloadChunks = config.getOrSetBoolean("unload-chunks", true);
             int adventureFlag = 0;
-            if(config.getOrSetBoolean("player-access.build-and-mine", true))
-                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_BUILD_AND_MINE;
-            if(config.getOrSetBoolean("player-access.doors-and-switches", true))
-                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_DOORS_AND_SWITCHES;
-            if(config.getOrSetBoolean("player-access.open-containers", true))
-                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_OPEN_CONTAINERS;
-            if(config.getOrSetBoolean("player-access.attack-players", true))
-                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_ATTACK_PLAYERS;
-            if(config.getOrSetBoolean("player-access.attack-monsters", true))
-                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_ATTACK_MOBS;
-            if(config.getOrSetBoolean("player-access.teleport", true))
-                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_TELEPORT;
-            if(config.getOrSetBoolean("player-access.default-level-perms", true))
-                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_DEFAULT_LEVEL_PERMISSIONS;
+//            if(config.getOrSetBoolean("player-access.build-and-mine", true))
+//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_BUILD_AND_MINE;
+//            if(config.getOrSetBoolean("player-access.doors-and-switches", true))
+//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_DOORS_AND_SWITCHES;
+//            if(config.getOrSetBoolean("player-access.open-containers", true))
+//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_OPEN_CONTAINERS;
+//            if(config.getOrSetBoolean("player-access.attack-players", true))
+//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_ATTACK_PLAYERS;
+//            if(config.getOrSetBoolean("player-access.attack-monsters", true))
+//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_ATTACK_MOBS;
+//            if(config.getOrSetBoolean("player-access.teleport", true))
+//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_TELEPORT;
+//            if(config.getOrSetBoolean("player-access.default-level-perms", true))
+//                adventureFlag |= Packet37AdventureSettings.ACTION_FLAG_DEFAULT_LEVEL_PERMISSIONS;
             this.adventureSettingsFlag = adventureFlag;
             this.timingsEnabledByDefault = config.getOrSetBoolean("timings.enabled-by-default", false);
             this.timingsVerbose = config.getOrSetBoolean("timings.verbose", false);
             this.timingsHistoryInterval = config.getOrSetInt("timings.history-interval", 6000);
             this.timingsHistoryLength = config.getOrSetInt("timings.history-length", 72000);
-            this.mtuScaleFactor = config.getOrSetFloat("mtu-scale-factor", 2F / 3F);
+            this.mtuScaleFactor = (float) config.getOrSetDouble("mtu-scale-factor", 2F / 3F);
             server.getConfigurationManager().saveConfig();
         }catch(Exception ex) {
             throw new IllegalArgumentException("Server Settings file can not be loaded", ex);

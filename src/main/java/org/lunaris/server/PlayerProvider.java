@@ -95,15 +95,15 @@ public class PlayerProvider {
         startGame.levelId = "";
         startGame.worldName = this.server.getServerSettings().getServerName();
         startGame.generator = 1; //0 old 1 infinity 2 flat
-        player.sendPacket(new Packet28SetEntityMotion(-1, 0F, 0F, 0F));
+//        player.sendPacket(new Packet28SetEntityMotion(-1, 0F, 0F, 0F));
         player.setDataFlag(false, EntityDataFlag.CAN_SHOW_NAMETAG, true, false);
         player.setDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG, true, false);
         player.setDataFlag(false, EntityDataFlag.CAN_CLIMB, true, false);
         player.setDataFlag(false, EntityDataFlag.BREATHING, true, false);
         player.setDataFlag(false, EntityDataFlag.GRAVITY, true, false);
-        player.sendPacket(new Packet27SetEntityData(-1, player.getDataProperties()));
+//        player.sendPacket(new Packet27SetEntityData(-1, player.getDataProperties()));
         player.sendPacket(startGame);
-        player.sendPacket(new Packet0ASetTime(loc.getWorld().getTime()));
+//        player.sendPacket(new Packet0ASetTime(loc.getWorld().getTime()));
         player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
         player.sendPacket(new Packet0ASetTime(player.getWorld().getTime()));
         player.sendPacket(new Packet3BSetCommandsEnabled(true));
@@ -120,7 +120,7 @@ public class PlayerProvider {
                 player.getAttribute(Attribute.EXPERIENCE)
         ));
         player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
-        player.sendPacket(new Packet13MovePlayer(player));
+//        player.sendPacket(new Packet13MovePlayer(player));
         player.getAdventureSettings().update();
         PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
         this.server.getEventManager().call(joinEvent);

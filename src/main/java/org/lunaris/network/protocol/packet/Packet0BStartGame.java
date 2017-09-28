@@ -44,6 +44,7 @@ public class Packet0BStartGame extends MinePacket {
     public String premiumWorldTemplateId = "";
     public boolean unknown = false;
     public long currentTick;
+    public int enchantmentSeed;
 
     @Override
     public int getId() {
@@ -95,6 +96,7 @@ public class Packet0BStartGame extends MinePacket {
         buffer.writeString(this.premiumWorldTemplateId);
         buffer.writeBoolean(this.unknown);
         buffer.writeUnsignedLong(this.currentTick);
+        buffer.writeVarInt(this.enchantmentSeed);
     }
 
     public class RuleData {

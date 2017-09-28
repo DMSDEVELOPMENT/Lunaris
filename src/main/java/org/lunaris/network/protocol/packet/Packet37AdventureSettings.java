@@ -15,12 +15,13 @@ public class Packet37AdventureSettings extends MinePacket {
     public long flags;
     public CommandPermissionLevel commandPermissions = CommandPermissionLevel.NORMAL;
     public long flags2;
-    public long playerPermission;
+    public long playerPermission = 1;
     public long customFlags;
     public long entityID;
 
-    public Packet37AdventureSettings(Set<Flag> setFlags) {
+    public Packet37AdventureSettings(long entityID, Set<Flag> setFlags) {
         setFlags.forEach(flag -> setFlag(flag, true));
+        this.entityID = entityID;
     }
 
     @Override
@@ -35,6 +36,7 @@ public class Packet37AdventureSettings extends MinePacket {
         this.flags2 = buffer.readUnsignedVarLong();
         this.playerPermission = buffer.readUnsignedVarLong();
         this.customFlags = buffer.readUnsignedVarLong();
+        this.entityID = buffer.readUnsignedLong();
     }
 
     @Override

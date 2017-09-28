@@ -22,7 +22,7 @@ public class AdventureSettings {
     }
 
     public void update() {
-        this.player.sendPacket(new Packet37AdventureSettings(this.flags));
+        this.player.sendPacket(new Packet37AdventureSettings(this.player.getEntityID(), this.flags));
     }
 
     public void setFlag(Packet37AdventureSettings.Flag flag, boolean value) {

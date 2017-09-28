@@ -35,6 +35,10 @@ public class Location extends Position {
         this.pitch = pitch;
     }
 
+    public Chunk getChunk() {
+        return getWorld().getChunkAt(getBlockX() >> 4, getBlockZ() >> 4);
+    }
+
     @Override
     public Location add(double x) {
         return this.add(x, 0, 0);

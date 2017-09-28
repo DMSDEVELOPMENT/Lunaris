@@ -19,8 +19,11 @@ import org.lunaris.network.util.ZLib;
 import org.lunaris.server.IServer;
 import org.lunaris.server.ServerSettings;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Created by RINES on 13.09.17.
@@ -90,13 +93,16 @@ public class RakNetProvider {
                     buf.readVarInt(); //payload length in bytes
                     byte packetID = buf.readByte();
                     buf.skipBytes(2);
-//                    if(packetID == 0x09) {
-//                        List<Byte> list = new ArrayList<>();
-//                        for(byte b : bytes)
-//                            list.add(b);
-//                        System.out.println(list.stream().map(b -> String.format("0x%02X", b)).collect(Collectors.joining(" ")));
-//                    }
+                    if(packetID == 0x24) {
+                        List<Byte> list = new ArrayList<>();
+                        for(byte b : bytes)
+                            list.add(b);
+                        System.out.println(list.stream().map(b -> String.format("0x%02X", b)).collect(Collectors.joining(" ")));
+                        System.out.println();
+                    }
                     try {
+//                        if(packetID != 0x13) //whether it's not move packet
+//                            System.out.println("Packet " + String.format("0x%02X", packetID));
                         if(packetID == 0x01) {
                             Packet01Login minePacket = (Packet01Login) manager.mineProvider.getPacket(packetID, buf);
                             minePacket.setPlayer(server.getPlayerProvider().createPlayer(minePacket, session));

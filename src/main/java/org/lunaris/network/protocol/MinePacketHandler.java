@@ -11,7 +11,6 @@ import org.lunaris.resourcepacks.ResourcePack;
 import org.lunaris.world.Location;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Created by RINES on 13.09.17.
@@ -123,8 +122,6 @@ public class MinePacketHandler {
 
     public void handle(Packet09Text packet) {
         if(packet.getType() == Packet09Text.MessageType.CHAT) {
-            this.server.getLogger().info("Message: %s", packet.getMessage());
-            this.server.getLogger().info("Source: %s", packet.getSource());
             for(String message : packet.getMessage().split("\n")) {
                 if(message.trim().isEmpty() || message.length() > 250)
                     continue;
@@ -159,6 +156,7 @@ public class MinePacketHandler {
 
     public void handle(Packet24PlayerAction packet) {
         Player p = packet.getPlayer();
+        this.server.getLogger().info("Got action %s", packet.getAction().name());
         switch(packet.getAction()) {
             case START_SNEAK: {
                 sync(() -> {
@@ -213,10 +211,13 @@ public class MinePacketHandler {
                 break;
             }
             default: {
-                this.server.getLogger().info("Got action %s", packet.getAction().name());
                 break;
             }
         }
+    }
+
+    public void handle(Packet2CAnimate packet) {
+        packet.getPlayer().getLocation().getChunk().sendPacket(packet);
     }
 
     public void handle(Packet45RequestChunkRadius packet) {

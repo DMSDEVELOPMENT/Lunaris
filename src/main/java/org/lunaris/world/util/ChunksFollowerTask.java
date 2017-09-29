@@ -26,17 +26,19 @@ public class ChunksFollowerTask {
     public void tick() {
         if (++this.ticks == LAUNCH_DELAY) {
             this.ticks = 0;
-            for (Player p : this.world.getPlayers()) {
-                int cx = p.getLocation().getBlockX() >> 4, cz = p.getLocation().getBlockZ() >> 4;
-                int r = p.getChunksView();
-                for (int x = -r; x <= r; x++) {
-                    for (int z = -r; z <= r; z++) {
-                        if (x * x + z * z < r * r) { // делаем область кругленькой
-                            Chunk chunk = this.world.loadChunk(x + cx, z + cz);
-                            if (!p.hasChunkSent(chunk.getX(), chunk.getZ()))
-                                chunk.sendTo(p);
-                        }
-                    }
+            this.world.getPlayers().forEach(this::updatePlayer);
+        }
+    }
+    
+    public void updatePlayer(Player player) {
+        int cx = player.getLocation().getBlockX() >> 4, cz = player.getLocation().getBlockZ() >> 4;
+        int r = player.getChunksView();
+        for (int x = -r; x <= r; x++) {
+            for (int z = -r; z <= r; z++) {
+                if (x * x + z * z < r * r) { // делаем область кругленькой
+                    Chunk chunk = this.world.loadChunk(x + cx, z + cz);
+                    if (!player.hasChunkSent(chunk.getX(), chunk.getZ()))
+                        chunk.sendTo(player);
                 }
             }
         }

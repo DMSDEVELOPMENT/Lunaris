@@ -107,7 +107,6 @@ public class PlayerProvider {
         player.sendPacket(new Packet3BSetCommandsEnabled(true));
         this.server.getPlayerList().addPlayer(player);
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.PLAYER_RESPAWN));
-        player.getWorld().addPlayerToWorld(player);
         player.sendPacket(new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
         player.sendPacket(new Packet1DUpdateAttributes(
                 player.getEntityID(),
@@ -119,6 +118,7 @@ public class PlayerProvider {
         ));
         player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
         player.getAdventureSettings().update();
+        player.getWorld().addPlayerToWorld(player);
         PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
         this.server.getEventManager().call(joinEvent);
     }

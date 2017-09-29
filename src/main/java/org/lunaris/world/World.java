@@ -63,15 +63,7 @@ public class World {
             return;
         this.players.add(player);
         this.entities.add(player);
-        Location loc = player.getLocation();
-        int cx = loc.getBlockX() >> 4, cz = loc.getBlockZ() >> 4;
-        int r = player.getChunksView();
-        for (int x = cx - r; x <= cx + r; ++x)
-            for (int z = cz - r; z <= cz + r; ++z) {
-                Chunk chunk = loadChunk(x, z);
-                if (chunk != null)
-                    chunk.sendTo(player);
-            }
+        this.followerTask.updatePlayer(player);
         Collection<Player> without = getPlayersWithout(player);
         this.server.getNetworkManager().sendPacket(without, new Packet0CAddPlayer(player));
         without.stream().map(Packet0CAddPlayer::new).forEach(player::sendPacket);
@@ -129,10 +121,11 @@ public class World {
         if (preloadEvent.isCancelled())
             return null;
         chunk = new TestChunk(this, x, z);
+        server.getScheduler().runAsync(chunk::load);
         this.chunks.put(hash(x, z), chunk); //NPE
         ChunkLoadedEvent loadedEvent = new ChunkLoadedEvent(chunk);
         this.server.getEventManager().call(loadedEvent);
-        System.out.println("Chunk " + chunk.getX() + " " + chunk.getZ() + " loaded");
+        //System.out.println("Chunk " + chunk.getX() + " " + chunk.getZ() + " load initiated");
         return chunk;
     }
 
@@ -142,7 +135,7 @@ public class World {
         ChunkUnloadedEvent unloadedEvent = new ChunkUnloadedEvent(chunk);
         this.server.getEventManager().call(unloadedEvent);
         this.chunks.remove(hash(chunk.getX(), chunk.getZ()));
-        System.out.println("Chunk " + chunk.getX() + " " + chunk.getZ() + " unloaded");
+        //System.out.println("Chunk " + chunk.getX() + " " + chunk.getZ() + " unloaded");
     }
 
     public void unloadChunk(int x, int z) {

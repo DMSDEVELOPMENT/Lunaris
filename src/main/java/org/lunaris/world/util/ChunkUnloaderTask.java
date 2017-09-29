@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class ChunkUnloaderTask {
 
-    private final static int LAUNCH_DELAY = 5;
+    private final static int LAUNCH_DELAY = 20 * 30;
 
     private final IServer server;
 

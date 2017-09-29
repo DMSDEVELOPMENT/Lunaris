@@ -2,8 +2,8 @@ package org.lunaris.world;
 
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
-import org.lunaris.material.Material;
 import org.lunaris.entity.Player;
+import org.lunaris.material.Material;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
@@ -23,7 +23,7 @@ public abstract class Chunk {
 
     private final World world;
 
-    private final int x, z;
+    protected final int x, z;
 
     private final ChunkSection[] sections = new ChunkSection[16];
 
@@ -33,69 +33,77 @@ public abstract class Chunk {
 
     private byte[] data;
     private boolean dirty = true;
+    private boolean loaded = false;
 
     protected Chunk(World world, int x, int z) {
         this.world = world;
         this.x = x;
         this.z = z;
-        for(int i = 0; i < this.sections.length; ++i)
+        for (int i = 0; i < this.sections.length; ++i)
             this.sections[i] = new ChunkSection();
-        if(!load())
-            generate();
     }
 
-    protected abstract void save();
-
-    protected abstract boolean load();
-
-    protected void generate() {
-        if(Math.abs(this.x) < 2 && Math.abs(this.z) < 12)
-            for(int x = 0; x < 16; ++x)
-                for(int z = 0; z < 16; ++z)
-                    setBlock(x, 32, z, x == 7 || x == 8 || z == 7 || z == 8 ? Material.STONE : Material.GRASS, 0);
+    void save() {
+        save0();
     }
+
+    protected abstract void save0();
+
+    void load() {
+        load0();
+        loaded = true;
+        System.out.println("Chunk " + getX() + " " + getZ() + " loaded");
+        Lunaris.getInstance().getScheduler().run(() -> {
+            for (Player player : getApplicablePlayers())
+                sendTo(player);
+        });
+    }
+
+    protected abstract void load0();
 
     void tick() {
 
     }
 
     public void sendTo(Player player) {
+        if (!loaded)
+            return;
         player.addChunkSent(this.x, this.z);
         player.sendPacket(new Packet3AFullChunkData(this.x, this.z, compile()));
     }
 
     public synchronized byte[] compile() {
-        if(!this.dirty)
+        if (!this.dirty)
             return this.data;
         this.dirty = false;
         recalculateHeightmap();
         MineBuffer buffer = new MineBuffer(1 << 6);
         int sectionsHeight = 0;
-        for(int i = this.sections.length - 1; i >= 0; --i)
-            if(!this.sections[i].isEmpty()) {
+        for (int i = this.sections.length - 1; i >= 0; --i)
+            if (!this.sections[i].isEmpty()) {
                 sectionsHeight = i + 1;
                 break;
             }
         buffer.writeByte((byte) sectionsHeight);
-        for(int i = 0; i < sectionsHeight; ++i) {
+        for (int i = 0; i < sectionsHeight; ++i) {
             buffer.writeByte((byte) 0);
             buffer.writeBytes(this.sections[i].getBytes());
         }
-        for(int height : this.heightmap)
+        for (int height : this.heightmap)
             buffer.writeByte((byte) height);
         buffer.writeBytes(ETERNAL8);
         buffer.writeBytes(getBiomeIdArray());
         buffer.writeByte((byte) 0);
-        if(false) { //if has extra data
+        if (false) { //if has extra data
             //отправить дополнительный мегабайт
-        }else {
+        } else {
             //оставить пакет весом 15кб
             buffer.writeVarInt(0);
         }
         buffer.writeBytes(new byte[0]); //block (tile) entities
         try {
             return this.data = buffer.readBytes(buffer.readableBytes());
-        }finally {
+        } finally {
             buffer.release();
         }
     }
@@ -139,7 +147,8 @@ public abstract class Chunk {
 
     public void setBlock(int x, int y, int z, int id, int data) {
         getSection(y).set(x, y, z, (short) id, (byte) data);
-        sendPacket(new Packet15UpdateBlock(x, y, z, id, data));
+        if (loaded)
+            sendPacket(new Packet15UpdateBlock(x, y, z, id, data));
         this.dirty = true;
     }
 
@@ -167,12 +176,13 @@ public abstract class Chunk {
     }
 
     public int getHighestBlockAt(int x, int z, boolean cached) {
-        x &= 15; z &= 15;
-        if(cached)
+        x &= 15;
+        z &= 15;
+        if (cached)
             return this.heightmap[z << 4 | x];
         byte[] column = getColumn(x, z);
-        for(int y = 255; y >= 0; --y)
-            if(column[y << 1] > 0 || column[(y << 1) + 1] > 0) {
+        for (int y = 255; y >= 0; --y)
+            if (column[y << 1] > 0 || column[(y << 1) + 1] > 0) {
                 this.heightmap[z << 4 | x] = y;
                 return y;
             }
@@ -195,14 +205,14 @@ public abstract class Chunk {
     }
 
     private void recalculateHeightmap() {
-        for(int x = 0; x < 16; ++x)
-            for(int z = 0; z < 16; ++z)
+        for (int x = 0; x < 16; ++x)
+            for (int z = 0; z < 16; ++z)
                 this.heightmap[z << 4 | x] = getHighestBlockAt(x, z, false);
     }
 
     private byte[] getColumn(int x, int z) {
         ByteBuffer buffer = ByteBuffer.allocate(1 << 9);
-        for(ChunkSection section : this.sections)
+        for (ChunkSection section : this.sections)
             buffer.put(section.getColumn(x, z));
         return buffer.array();
     }

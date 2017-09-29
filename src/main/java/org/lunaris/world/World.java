@@ -13,6 +13,7 @@ import org.lunaris.material.Material;
 import org.lunaris.network.protocol.packet.Packet0CAddPlayer;
 import org.lunaris.network.protocol.packet.Packet0ERemoveEntity;
 import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
+import org.lunaris.util.math.MathHelper;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
 import org.lunaris.world.util.ChunkUnloaderTask;
@@ -131,7 +132,7 @@ public class World {
         this.chunks.put(hash(x, z), chunk); //NPE
         ChunkLoadedEvent loadedEvent = new ChunkLoadedEvent(chunk);
         this.server.getEventManager().call(loadedEvent);
-        //System.out.println("Chunk " + chunk.getX() + " " + chunk.getZ() + " loaded");
+        System.out.println("Chunk " + chunk.getX() + " " + chunk.getZ() + " loaded");
         return chunk;
     }
 
@@ -141,7 +142,7 @@ public class World {
         ChunkUnloadedEvent unloadedEvent = new ChunkUnloadedEvent(chunk);
         this.server.getEventManager().call(unloadedEvent);
         this.chunks.remove(hash(chunk.getX(), chunk.getZ()));
-        //System.out.println("Chunk " + chunk.getX() + " " + chunk.getZ() + " unloaded");
+        System.out.println("Chunk " + chunk.getX() + " " + chunk.getZ() + " unloaded");
     }
 
     public void unloadChunk(int x, int z) {
@@ -184,18 +185,17 @@ public class World {
     }
 
     public boolean isInRangeOfView(Player player, double x, double z) {
-        double range = (this.server.getServerSettings().getChunksView() + 1) << 4;
-        return Math.abs(player.getLocation().getX() - x) <= range && Math.abs(player.getLocation().getZ() - z) <= range;
+        return Math.hypot(player.getLocation().getX() - x, player.getLocation().getZ() - z) <= player.getChunksView() << 4;
     }
 
     public boolean isInRangeOfView(Player player, Chunk chunk) {
-        return isInRangeOfView(player.getLocation(), chunk);
+        int x = player.getLocation().getBlockX() >> 4, z = player.getLocation().getBlockZ() >> 4;
+        return MathHelper.pow2(x - chunk.getX()) + MathHelper.pow2(z - chunk.getZ()) < MathHelper.pow2(player.getChunksView());
     }
 
     public boolean isInRangeOfView(Vector3d location, Chunk chunk) {
-        double x = location.getX(), z = location.getZ();
-        double range = (this.server.getServerSettings().getChunksView() + 1) << 4;
-        return Math.abs(x - (chunk.getX() << 4)) <= range && Math.abs(z - (chunk.getZ() << 4)) <= range;
+        int x = location.getBlockX() >> 4, z = location.getBlockZ() >> 4;
+        return MathHelper.pow2(x - chunk.getX()) + MathHelper.pow2(z - chunk.getZ()) < MathHelper.pow2(this.server.getServerSettings().getChunksView());
     }
 
     private long hash(int x, int z) {

@@ -40,11 +40,10 @@ public class Packet09Text extends MinePacket {
             case WHISPER:
             case ANNOUNCEMENT: {
                 this.message = buffer.readString();
-                break;
             }case RAW:
             case TIP:
             case SYSTEM: {
-                this.message = buffer.readString();
+                this.source = buffer.readString();
                 break;
             }case TRANSLATION: {
                 this.message = buffer.readString();
@@ -67,7 +66,6 @@ public class Packet09Text extends MinePacket {
             case WHISPER:
             case ANNOUNCEMENT: {
                 buffer.writeString(this.source);
-                break;
             }case RAW:
             case TIP:
             case SYSTEM: {

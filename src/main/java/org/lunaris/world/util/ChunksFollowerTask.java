@@ -35,7 +35,7 @@ public class ChunksFollowerTask {
         int r = player.getChunksView();
         for (int x = -r; x <= r; x++) {
             for (int z = -r; z <= r; z++) {
-                if (x * x + z * z < r * r) { // делаем область кругленькой
+                if (x * x + z * z <= r * r) { // делаем область кругленькой
                     Chunk chunk = this.world.loadChunk(x + cx, z + cz);
                     if (!player.hasChunkSent(chunk.getX(), chunk.getZ()))
                         chunk.sendTo(player);

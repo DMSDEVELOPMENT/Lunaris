@@ -229,5 +229,9 @@ public abstract class Chunk {
     private long hash() {
         return LongHash.toLong(this.x, this.z);
     }
+    
+    public boolean isLoaded() {
+        return loaded;
+    }
 
 }

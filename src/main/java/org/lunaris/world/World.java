@@ -85,7 +85,7 @@ public class World {
         this.server.getNetworkManager().sendPacket(getPlayers(), new Packet0ERemoveEntity(entity.getEntityID()));
     }
 
-    public synchronized boolean isChunkLoadedAt(int x, int z) {
+    public boolean isChunkLoadedAt(int x, int z) {
         return this.chunks.containsKey(hash(x, z));
     }
 
@@ -108,11 +108,11 @@ public class World {
         chunk.setBlock(x, y, z, block.getMaterial(), block.getData());
     }
 
-    public synchronized Chunk getChunkAt(int x, int z) {
+    public Chunk getChunkAt(int x, int z) {
         return this.chunks.get(hash(x, z));
     }
 
-    public synchronized Chunk loadChunk(int x, int z) {
+    public Chunk loadChunk(int x, int z) {
         Chunk chunk = getChunkAt(x, z);
         if (chunk != null)
             return chunk;
@@ -129,7 +129,7 @@ public class World {
         return chunk;
     }
 
-    public synchronized void unloadChunk(Chunk chunk) {
+    public void unloadChunk(Chunk chunk) {
         if (chunk == null)
             return;
         ChunkUnloadedEvent unloadedEvent = new ChunkUnloadedEvent(chunk);
@@ -170,25 +170,33 @@ public class World {
 
     public Collection<Player> getApplicablePlayers(Vector3d location) {
         Set<Player> players = new HashSet<>();
-        double x = location.getX(), z = location.getZ();
+        int x = location.getBlockX(), z = location.getBlockZ();
         for (Player p : this.players)
             if (isInRangeOfView(p, x, z))
                 players.add(p);
         return players;
     }
 
-    public boolean isInRangeOfView(Player player, double x, double z) {
-        return Math.hypot(player.getLocation().getX() - x, player.getLocation().getZ() - z) <= player.getChunksView() << 4;
+    public boolean isInRangeOfView(Player player, int x, int z) {
+        return isInRangeOfView(player.getLocation(), x >> 4, z >> 4, player.getChunksView());
     }
 
     public boolean isInRangeOfView(Player player, Chunk chunk) {
-        int x = player.getLocation().getBlockX() >> 4, z = player.getLocation().getBlockZ() >> 4;
-        return MathHelper.pow2(x - chunk.getX()) + MathHelper.pow2(z - chunk.getZ()) < MathHelper.pow2(player.getChunksView());
+        return isInRangeOfView(player.getLocation(), chunk.getX(), chunk.getZ(), player.getChunksView());
+    }
+
+    public boolean isInRangeOfViewChunk(Player player, int x, int z) {
+        return isInRangeOfView(player.getLocation(), x, z, player.getChunksView());
     }
 
     public boolean isInRangeOfView(Vector3d location, Chunk chunk) {
-        int x = location.getBlockX() >> 4, z = location.getBlockZ() >> 4;
-        return MathHelper.pow2(x - chunk.getX()) + MathHelper.pow2(z - chunk.getZ()) < MathHelper.pow2(this.server.getServerSettings().getChunksView());
+        return isInRangeOfView(location, chunk.getX(), chunk.getZ(), this.server.getServerSettings().getChunksView());
+    }
+
+    public boolean isInRangeOfView(Vector3d location, int x, int z, int range) {
+        return MathHelper.pow2((location.getBlockX() >> 4) - x)
+            + MathHelper.pow2((location.getBlockZ() >> 4) - z)
+            <= MathHelper.pow2(range);
     }
 
     private long hash(int x, int z) {

@@ -229,7 +229,7 @@ public class Player extends LivingEntity implements CommandSender {
     public void tick() {
         super.tick();
         World world = getWorld();
-        this.chunksSent.removeIf(chunk -> !world.isInRangeOfView(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
+        this.chunksSent.removeIf(chunk -> !world.isInRangeOfViewChunk(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
     }
 
     public RakNetClientSession getSession() {

@@ -6,8 +6,10 @@ import jline.console.ConsoleReader;
 import org.lunaris.command.CommandManager;
 import org.lunaris.entity.Player;
 import org.lunaris.event.EventManager;
+import org.lunaris.event.Listener;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.network.protocol.packet.Packet09Text;
+import org.lunaris.plugin.PluginManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.server.BanChecker;
 import org.lunaris.server.EntityProvider;
@@ -57,6 +59,8 @@ public class Lunaris implements IServer {
 
     private PlayerList playerList;
 
+    private PluginManager pluginManager;
+
     private static boolean shuttingDown;
 
     Lunaris(FormatLogger logger, ConsoleReader consoleReader) {
@@ -72,6 +76,7 @@ public class Lunaris implements IServer {
     public void disable() {
         this.logger.info("Disabling Lunaris version %s..", getServerVersion());
         shuttingDown = true;
+        this.pluginManager.disablePlugins();
         Timings.stopServer();
         this.networkManager.disable();
         try {
@@ -118,7 +123,7 @@ public class Lunaris implements IServer {
 
     @Override
     public String getSupportedClientVersion() {
-        return "1.2.0";
+        return "1.2.1";
     }
 
     private void loadConfigurations() {
@@ -140,38 +145,19 @@ public class Lunaris implements IServer {
         this.commandManager = new CommandManager();
         this.commandManager.registerDefaults();
         this.playerList = new PlayerList(this);
+        this.pluginManager = new PluginManager(this);
+        this.pluginManager.loadPlugins();
 
-//        this.scheduler.schedule(() -> {
-//            if(getOnlinePlayers().isEmpty())
-//                return;
-//            Location loc = getOnlinePlayers().iterator().next().getLocation();
-//            int cx = loc.getBlockX() >> 4, cz = loc.getBlockZ() >> 4;
-//            this.logger.info("Chunk {%d;%d}: %s", cx, cz, loc.getWorld().isChunkLoadedAt(cx, cz) ? "loaded" : "not loaded");
-//        }, 1, 1, TimeUnit.SECONDS);
+        this.eventManager.register(new Listener() {
 
-//        this.eventManager.register(new Listener() {
-//
-//            @EventHandler
-//            public void onSending(PacketSendingAsyncEvent e) {
-////                if(e.getPacket().getId() == 0x27) {
-////                    Packet27SetEntityData packet = (Packet27SetEntityData) e.getPacket();
-////                    LongEntityData led = (LongEntityData) packet.getMetadata().getMap().get(0);
-////                    long value = led.data;
-////                    logger.info("Sent %d %s", value, Long.toHexString(value));
-////                }
-//                if(e.getPacket().getId() == 0x13)
-//                    return;
-//                logger.info("Sent packet %s", e.getPacket().getClass().getSimpleName());
-//            }
-//
-////            @EventHandler
-////            public void onReceiving(PacketReceivedAsyncEvent e) {
-////                if(e.getPacket().getId() == 0x13)
-////                    return;
-////                logger.info("Received packet %s", e.getPacket().getClass().getSimpleName());
-////            }
-//
-//        });
+            /*@EventHandler
+            public void onSending(PacketSendingAsyncEvent e) {
+                if(e.getPacket().getId() == 0x13)
+                    return;
+                logger.info("Sent packet %s to %s", e.getPacket().getClass().getSimpleName(), e.getPlayer().getName());
+            }*/
+
+        });
     }
 
     private void runConsole(ConsoleReader consoleReader) {

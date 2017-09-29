@@ -26,19 +26,19 @@ public class Scheduler {
 
     public Task run(Runnable runnable) {
         Task task = new Task(runnable);
-        this.serverThread.submit(task::run);
+        task.future = this.serverThread.submit(task::run);
         return task;
     }
 
     public Task schedule(Runnable runnable, long delay, TimeUnit unit) {
         Task task = new Task(runnable);
-        this.serverThread.schedule(task::run, delay, unit);
+        task.future = this.serverThread.schedule(task::run, delay, unit);
         return task;
     }
 
     public Task scheduleRepeatable(Runnable runnable, long delay, long repeatDelay, TimeUnit unit) {
         Task task = new Task(runnable);
-        this.serverThread.scheduleAtFixedRate(task::run, delay, repeatDelay, unit);
+        task.future = this.serverThread.scheduleAtFixedRate(task::run, delay, repeatDelay, unit);
         return task;
     }
 

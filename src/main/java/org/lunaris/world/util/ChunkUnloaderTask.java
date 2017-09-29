@@ -37,6 +37,7 @@ public class ChunkUnloaderTask {
             this.ticks = 0;
             Set<Chunk> chunks = new HashSet<>();
             chunks.addAll(this.chunks.values());
+            chunks.removeIf(c -> !c.isLoaded());
             Set<Location> players = this.world.getPlayers().stream().map(Player::getLocation).collect(Collectors.toSet());
             this.server.getScheduler().runAsync(() -> {
                 for (Iterator<Chunk> iterator = chunks.iterator(); iterator.hasNext(); ) {

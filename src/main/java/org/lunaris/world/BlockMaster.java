@@ -3,16 +3,16 @@ package org.lunaris.world;
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockFace;
+import org.lunaris.entity.Player;
 import org.lunaris.entity.data.Gamemode;
 import org.lunaris.event.block.BlockBreakEvent;
-import org.lunaris.material.BlockMaterial;
-import org.lunaris.material.Material;
-import org.lunaris.entity.Player;
 import org.lunaris.event.player.PlayerHitFireEvent;
 import org.lunaris.event.player.PlayerInteractEvent;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
+import org.lunaris.material.BlockMaterial;
+import org.lunaris.material.Material;
 import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
 import org.lunaris.network.protocol.packet.Packet19LevelEvent;
 import org.lunaris.network.protocol.packet.Packet24PlayerAction;
@@ -80,16 +80,17 @@ public class BlockMaster {
 
     public void onBlockStopBreak(Packet24PlayerAction packet) {
         Player player = packet.getPlayer();
-        Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
-        player.getWorld().getChunkAt(packet.getX() >> 4, packet.getZ() >> 4).sendPacket(
+        if (packet.getZ() != 0 || packet.getY() != 0 || packet.getZ() != 0) {
+            player.getLocation().getChunk().sendPacket(
                 new Packet19LevelEvent(
-                        Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
-                        (float) position.x, (float) position.y, (float) position.z,
-                        0
+                    Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
+                    packet.getX(), packet.getY(), packet.getZ(),
+                    0
                 )
-        );
+            );
+        }
         Scheduler.Task task = player.getBreakingBlockTask();
-        if(task != null) {
+        if (task != null) {
             task.cancel();
             player.setBreakingBlockTask(null);
         }

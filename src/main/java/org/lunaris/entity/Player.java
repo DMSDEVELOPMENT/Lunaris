@@ -10,6 +10,7 @@ import org.lunaris.inventory.PlayerInventory;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
+import org.lunaris.server.Scheduler;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.world.Location;
 import org.lunaris.world.Sound;
@@ -56,8 +57,7 @@ public class Player extends LivingEntity implements CommandSender {
 
     private final Set<Long> chunksSent = new HashSet<>();
 
-    private Block breakingBlock;
-    private long lastBreak = Long.MAX_VALUE;
+    private Scheduler.Task breakingBlockTask;
 
     private final AdventureSettings adventureSettings;
 
@@ -228,7 +228,7 @@ public class Player extends LivingEntity implements CommandSender {
         super.tick();
         World world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfView(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
-        Lunaris.getInstance().getWorldProvider().getBlockMaster().tickPlayersBreak(this);
+//        Lunaris.getInstance().getWorldProvider().getBlockMaster().tickPlayersBreak(this);
     }
 
     public RakNetClientSession getSession() {
@@ -315,20 +315,12 @@ public class Player extends LivingEntity implements CommandSender {
         return this.invulnerable;
     }
 
-    public Block getBreakingBlock() {
-        return this.breakingBlock;
+    public Scheduler.Task getBreakingBlockTask() {
+        return breakingBlockTask;
     }
 
-    public void setBreakingBlock(Block breakingBlock) {
-        this.breakingBlock = breakingBlock;
-    }
-
-    public long getLastBreak() {
-        return this.lastBreak;
-    }
-
-    public void setLastBreak(long lastBreak) {
-        this.lastBreak = lastBreak;
+    public void setBreakingBlockTask(Scheduler.Task breakingBlockTask) {
+        this.breakingBlockTask = breakingBlockTask;
     }
 
     public AdventureSettings getAdventureSettings() {

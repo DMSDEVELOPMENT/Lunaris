@@ -21,6 +21,8 @@ import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.particle.DestroyBlockParticle;
 import org.lunaris.world.particle.PunchBlockParticle;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by RINES on 24.09.17.
  */
@@ -37,7 +39,7 @@ public class BlockMaster {
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         BlockFace face = BlockFace.fromIndex(packet.getFace());
         World world = player.getWorld();
-        if(player.getLastBreak() != Long.MAX_VALUE || player.getLocation().distanceSquared(position) > 100)
+        if(player.getBreakingBlockTask() != null || player.getLocation().distanceSquared(position) > 100)
             return;
         Block block = world.getBlockAt(position);
         Block sider = block.getSide(face);
@@ -54,20 +56,18 @@ public class BlockMaster {
             return;
         }
         switch(player.getGamemode()) {
-            case CREATIVE: {
-
-                break;
-            }case SURVIVAL: {
+            case SURVIVAL: {
                 double breakTime = getBreakTimeInTicks(block, player);
                 block.getChunk().sendPacket(new Packet19LevelEvent(
                         Packet19LevelEvent.EVENT_BLOCK_START_BREAK,
                         (float) position.x, (float) position.y, (float) position.z,
                         (int) (65535 / breakTime)
                 ));
-                player.setBreakingBlock(block);
-                player.setLastBreak(System.currentTimeMillis());
+            }case CREATIVE: {
+                player.setBreakingBlockTask(this.server.getScheduler().schedule(() -> processBlockBreak(player, block), getExactBreakTimeInMillis(block, player) - Scheduler.ONE_TICK_IN_MILLIS, TimeUnit.MILLISECONDS));
                 break;
-            }default: {
+            }
+            default: {
                 //shall not happen
                 break;
             }
@@ -75,9 +75,6 @@ public class BlockMaster {
     }
 
     public void onBlockAbortBreak(Packet24PlayerAction packet) {
-        Player p = packet.getPlayer();
-        p.setBreakingBlock(null);
-        p.setLastBreak(Long.MAX_VALUE);
         onBlockStopBreak(packet);
     }
 
@@ -91,12 +88,16 @@ public class BlockMaster {
                         0
                 )
         );
-        player.setBreakingBlock(null);
+        Scheduler.Task task = player.getBreakingBlockTask();
+        if(task != null) {
+            task.cancel();
+            player.setBreakingBlockTask(null);
+        }
     }
 
     public void onBlockContinueBreak(Packet24PlayerAction packet) {
         Player player = packet.getPlayer();
-        if(player.getBreakingBlock() == null)
+        if(player.getBreakingBlockTask() == null)
             return;
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         BlockFace face = BlockFace.fromIndex(packet.getFace());
@@ -104,30 +105,48 @@ public class BlockMaster {
     }
 
     public void tickPlayersBreak(Player player) {
-        Block breaking = player.getBreakingBlock();
-        if(breaking == null)
-            return;
-        long breakTime = getBreakTimeInMillis(breaking, player);
-        if(player.getGamemode() == Gamemode.CREATIVE && breakTime > 150L)
-            breakTime = 150L;
-        //check potion effects
-        //check item enchantments
-        long current = System.currentTimeMillis();
-        boolean broken = (player.getGamemode() == Gamemode.CREATIVE || breaking.getSpecifiedMaterial().isBreakable(player.getInventory().getItemInHand()))
-                && player.getLastBreak() + breakTime - Scheduler.ONE_TICK_IN_MILLIS <= current;
-//        System.out.println((player.getLastBreak() + breakTime - current - Scheduler.ONE_TICK_IN_MILLIS) + "ms left (" + breakTime + "ms total)");
-        if(!broken)
-            return;
-        BlockBreakEvent event = new BlockBreakEvent(player, breaking);
+//        Block breaking = player.getBreakingBlock();
+//        if(breaking == null)
+//            return;
+//        long breakTime = getBreakTimeInMillis(breaking, player);
+//        if(player.getGamemode() == Gamemode.CREATIVE && breakTime > 150L)
+//            breakTime = 150L;
+//        //check potion effects
+//        //check item enchantments
+//        long current = System.currentTimeMillis();
+//        boolean broken = (player.getGamemode() == Gamemode.CREATIVE || breaking.getSpecifiedMaterial().isBreakable(player.getInventory().getItemInHand()))
+//                && player.getLastBreak() + breakTime - Scheduler.ONE_TICK_IN_MILLIS <= current;
+////        System.out.println((player.getLastBreak() + breakTime - current - Scheduler.ONE_TICK_IN_MILLIS) + "ms left (" + breakTime + "ms total)");
+//        if(!broken)
+//            return;
+//        BlockBreakEvent event = new BlockBreakEvent(player, breaking);
+//        this.server.getEventManager().call(event);
+//        if(event.isCancelled()) {
+//            player.sendPacket(new Packet15UpdateBlock(breaking)); //restore block to players
+//            return;
+//        }
+//        player.setLastBreak(current);
+//        //drop drops
+//        new DestroyBlockParticle(breaking).sendToNearbyPlayers();
+//        breaking.setType(Material.AIR);
+    }
+
+    private void processBlockBreak(Player player, Block block) {
+        BlockBreakEvent event = new BlockBreakEvent(player, block);
         this.server.getEventManager().call(event);
         if(event.isCancelled()) {
-            player.sendPacket(new Packet15UpdateBlock(breaking)); //restore block to players
+            player.sendPacket(new Packet15UpdateBlock(block)); //restore block to players
             return;
         }
-        player.setLastBreak(current);
         //drop drops
-        new DestroyBlockParticle(breaking).sendToNearbyPlayers();
-        breaking.setType(Material.AIR);
+        new DestroyBlockParticle(block).sendToNearbyPlayers();
+        block.setType(Material.AIR);
+    }
+
+    private long getExactBreakTimeInMillis(Block block, Player player) {
+        if(player.getGamemode() == Gamemode.CREATIVE)
+            return 150L;
+        return getBreakTimeInMillis(block, player);
     }
 
     private long getBreakTimeInMillis(Block block, Player player) {
@@ -135,7 +154,7 @@ public class BlockMaster {
     }
 
     private double getBreakTimeInTicks(Block block, Player player) {
-        return Math.ceil(getBreakTime(block, player, player.getInventory().getItemInHand())) * 20D;
+        return getBreakTime(block, player, player.getInventory().getItemInHand()) * 20D;
     }
 
     private double getBreakTime(Block block, Player player, ItemStack hand) {

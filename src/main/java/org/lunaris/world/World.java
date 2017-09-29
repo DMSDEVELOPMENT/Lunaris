@@ -1,21 +1,22 @@
 package org.lunaris.world;
 
 import co.aikar.timings.Timings;
+
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.entity.Entity;
-import org.lunaris.material.Material;
 import org.lunaris.entity.Player;
 import org.lunaris.event.chunk.ChunkLoadedEvent;
 import org.lunaris.event.chunk.ChunkPreLoadEvent;
 import org.lunaris.event.chunk.ChunkUnloadedEvent;
+import org.lunaris.material.Material;
 import org.lunaris.network.protocol.packet.Packet0CAddPlayer;
 import org.lunaris.network.protocol.packet.Packet0ERemoveEntity;
 import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
+import org.lunaris.world.util.ChunkUnloaderTask;
 import org.lunaris.world.util.ChunksFollowerTask;
-import org.lunaris.world.util.KillerTask;
 import org.lunaris.world.util.LongHash;
 import org.lunaris.world.util.LongObjectHashMap;
 
@@ -44,7 +45,7 @@ public class World {
     private final Set<Player> players = new HashSet<>();
     private final Set<Entity> entities = new HashSet<>();
 
-    private final KillerTask killerTask;
+    private final ChunkUnloaderTask chunkUnloader;
     private final ChunksFollowerTask followerTask;
 
     public World(Lunaris server, String name, Dimension dimension, Difficulty difficulty) {
@@ -52,28 +53,28 @@ public class World {
         this.name = name;
         this.dimension = dimension;
         this.difficulty = difficulty;
-        this.killerTask = server.getServerSettings().isUnloadChunks() ? new KillerTask(server, this, this.chunks) : null;
+        this.chunkUnloader = server.getServerSettings().isUnloadChunks() ? new ChunkUnloaderTask(server, this, this.chunks) : null;
         this.followerTask = new ChunksFollowerTask(server, this);
     }
 
     public void addPlayerToWorld(Player player) {
-        if(this.players.contains(player))
+        if (this.players.contains(player))
             return;
         this.players.add(player);
         this.entities.add(player);
         Location loc = player.getLocation();
         int cx = loc.getBlockX() >> 4, cz = loc.getBlockZ() >> 4;
         int r = player.getChunksView();
-        for(int x = cx - r; x <= cx + r; ++x)
-            for(int z = cz - r; z <= cz + r; ++z) {
+        for (int x = cx - r; x <= cx + r; ++x)
+            for (int z = cz - r; z <= cz + r; ++z) {
                 Chunk chunk = loadChunk(x, z);
-                if(chunk != null)
+                if (chunk != null)
                     chunk.sendTo(player);
             }
         Collection<Player> without = getPlayersWithout(player);
         this.server.getNetworkManager().sendPacket(without, new Packet0CAddPlayer(player));
         without.stream().map(Packet0CAddPlayer::new).forEach(player::sendPacket);
-//        this.server.getNetworkManager().sendPacket(without, new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
+        //        this.server.getNetworkManager().sendPacket(without, new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
     }
 
     public void removePlayerFromWorld(Player player) {
@@ -101,7 +102,7 @@ public class World {
 
     public Block getBlockAt(int x, int y, int z) {
         Chunk chunk = loadChunk(x >> 4, z >> 4);
-        if(chunk == null)
+        if (chunk == null)
             return new Block(new Location(this, x, y, z), Material.AIR, 0);
         return chunk.getBlock(x, y, z);
     }
@@ -109,7 +110,7 @@ public class World {
     public void updateBlock(Block block) {
         int x = block.getX(), y = block.getY(), z = block.getZ();
         Chunk chunk = loadChunk(x >> 4, z >> 4);
-        if(chunk == null)
+        if (chunk == null)
             return;
         chunk.setBlock(x, y, z, block.getMaterial(), block.getData());
     }
@@ -120,25 +121,27 @@ public class World {
 
     public synchronized Chunk loadChunk(int x, int z) {
         Chunk chunk = getChunkAt(x, z);
-        if(chunk != null)
+        if (chunk != null)
             return chunk;
         ChunkPreLoadEvent preloadEvent = new ChunkPreLoadEvent(x, z);
         this.server.getEventManager().call(preloadEvent);
-        if(preloadEvent.isCancelled())
+        if (preloadEvent.isCancelled())
             return null;
         chunk = new TestChunk(this, x, z);
         this.chunks.put(hash(x, z), chunk); //NPE
         ChunkLoadedEvent loadedEvent = new ChunkLoadedEvent(chunk);
         this.server.getEventManager().call(loadedEvent);
+        //System.out.println("Chunk " + chunk.getX() + " " + chunk.getZ() + " loaded");
         return chunk;
     }
 
-    public synchronized  void unloadChunk(Chunk chunk) {
-        if(chunk == null)
+    public synchronized void unloadChunk(Chunk chunk) {
+        if (chunk == null)
             return;
         ChunkUnloadedEvent unloadedEvent = new ChunkUnloadedEvent(chunk);
         this.server.getEventManager().call(unloadedEvent);
         this.chunks.remove(hash(chunk.getX(), chunk.getZ()));
+        //System.out.println("Chunk " + chunk.getX() + " " + chunk.getZ() + " unloaded");
     }
 
     public void unloadChunk(int x, int z) {
@@ -146,13 +149,13 @@ public class World {
     }
 
     public void tick() {
-        if(++this.time >= 24000)
+        if (++this.time >= 24000)
             this.time = 0;
         Timings.chunksTickTimer.startTiming();
         this.chunks.values().forEach(Chunk::tick);
         Timings.chunksTickTimer.stopTiming();
-        if(this.killerTask != null)
-            this.killerTask.tick();
+        if (this.chunkUnloader != null)
+            this.chunkUnloader.tick();
         this.followerTask.tick();
         Timings.entitiesTickTimer.startTiming();
         this.entities.forEach(Entity::tick);
@@ -165,8 +168,8 @@ public class World {
 
     Collection<Player> getApplicablePlayers(Chunk chunk) {
         Set<Player> players = new HashSet<>();
-        for(Player p : this.players)
-            if(isInRangeOfView(p, chunk))
+        for (Player p : this.players)
+            if (isInRangeOfView(p, chunk))
                 players.add(p);
         return players;
     }
@@ -174,14 +177,15 @@ public class World {
     public Collection<Player> getApplicablePlayers(Vector3d location) {
         Set<Player> players = new HashSet<>();
         double x = location.getX(), z = location.getZ();
-        for(Player p : this.players)
-            if(isInRangeOfView(p, x, z))
+        for (Player p : this.players)
+            if (isInRangeOfView(p, x, z))
                 players.add(p);
         return players;
     }
 
     public boolean isInRangeOfView(Player player, double x, double z) {
-        return Math.hypot(player.getLocation().getX() - x, player.getLocation().getZ() - z) <= player.getChunksView() << 4;
+        double range = (this.server.getServerSettings().getChunksView() + 1) << 4;
+        return Math.abs(player.getLocation().getX() - x) <= range && Math.abs(player.getLocation().getZ() - z) <= range;
     }
 
     public boolean isInRangeOfView(Player player, Chunk chunk) {
@@ -190,7 +194,8 @@ public class World {
 
     public boolean isInRangeOfView(Vector3d location, Chunk chunk) {
         double x = location.getX(), z = location.getZ();
-        return Math.hypot(x - (chunk.getX() << 4), z - (chunk.getZ() << 4)) <= (this.server.getServerSettings().getChunksView() + 1) << 4;
+        double range = (this.server.getServerSettings().getChunksView() + 1) << 4;
+        return Math.abs(x - (chunk.getX() << 4)) <= range && Math.abs(z - (chunk.getZ() << 4)) <= range;
     }
 
     private long hash(int x, int z) {
@@ -236,4 +241,8 @@ public class World {
         getPlayers().forEach(p -> p.playSound(sound, p.getLocation()));
     }
 
+    @Override
+    public String toString() {
+        return "World(name=" + name + ")";
+    }
 }

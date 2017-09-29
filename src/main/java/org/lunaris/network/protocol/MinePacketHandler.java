@@ -111,7 +111,7 @@ public class MinePacketHandler {
                 player.sendPacket(new Packet07ResourcePackStack(manager.isResourcePackForced(), manager.getResourceStack()));
                 break;
             }case Packet08ResourcePackResponse.STATUS_COMPLETED: {
-                this.server.getPlayerProvider().addPlayerToGame(player);
+                sync(() -> this.server.getPlayerProvider().addPlayerToGame(player));
                 break;
             }default: {
                 player.disconnect("Unknown resources response result");
@@ -242,7 +242,7 @@ public class MinePacketHandler {
     }
 
     private void sync(Runnable run) {
-        this.server.getScheduler().addSyncTask(run);
+        this.server.getScheduler().run(run);
     }
 
 }

@@ -196,7 +196,7 @@ public class Player extends LivingEntity implements CommandSender {
         if(this.ingameState == IngameState.DISCONNECTING)
             throw new IllegalStateException("Disconnected player can't be disconnected");
         sendPacket(new Packet05Disconnect(reason));
-        Lunaris.getInstance().getScheduler().addSyncTask(() -> this.session.getServer().removeSession(this.session));
+        Lunaris.getInstance().getScheduler().run(() -> this.session.getServer().removeSession(this.session));
         if(reason == null)
             reason = "Unknown reason";
         this.disconnectingReason = reason.replace("\n", "\\n");

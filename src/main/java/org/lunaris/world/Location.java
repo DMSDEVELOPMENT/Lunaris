@@ -128,4 +128,8 @@ public class Location extends Position {
         return (Location) super.clone();
     }
 
+    @Override
+    public String toString() {
+        return "Location(world=" + getWorld() + ", x=" + x + ", y=" + y + ", z=" + z + ", yaw=" + yaw + ", pitch=" + pitch + ")";
+    }
 }

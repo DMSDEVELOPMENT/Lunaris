@@ -2,27 +2,27 @@ package org.lunaris;
 
 import co.aikar.timings.Timings;
 import jline.console.ConsoleReader;
+
 import org.lunaris.command.CommandManager;
 import org.lunaris.entity.Player;
-import org.lunaris.entity.data.LongEntityData;
-import org.lunaris.event.EventHandler;
 import org.lunaris.event.EventManager;
-import org.lunaris.event.Listener;
-import org.lunaris.event.network.PacketReceivedAsyncEvent;
-import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.network.protocol.packet.Packet09Text;
-import org.lunaris.network.protocol.packet.Packet27SetEntityData;
-import org.lunaris.network.protocol.packet.Packet3AFullChunkData;
 import org.lunaris.resourcepacks.ResourcePackManager;
-import org.lunaris.server.*;
+import org.lunaris.server.BanChecker;
+import org.lunaris.server.EntityProvider;
+import org.lunaris.server.IServer;
+import org.lunaris.server.PlayerList;
+import org.lunaris.server.PlayerProvider;
+import org.lunaris.server.Scheduler;
+import org.lunaris.server.ServerSettings;
+import org.lunaris.server.WorldProvider;
 import org.lunaris.util.configuration.ConfigurationManager;
 import org.lunaris.util.logger.FormatLogger;
-import org.lunaris.world.Location;
 
+import java.lang.management.ManagementFactory;
 import java.util.Collection;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by RINES on 12.09.17.
@@ -63,10 +63,9 @@ public class Lunaris implements IServer {
         logger.info("Starting Lunaris version %s for %s clients..", getServerVersion(), getSupportedClientVersion());
         instance = this;
         this.logger = logger;
-        long activationTime = System.currentTimeMillis();
         loadConfigurations();
         loadDefaults();
-        logger.info("Done (%.3f seconds)! For list of commands type \"help\".", (System.currentTimeMillis() - activationTime) / 1000F);
+        this.logger.info("Done (%.3f seconds)! For list of commands type \"help\".", ManagementFactory.getRuntimeMXBean().getUptime() / 1000F);
         runConsole(consoleReader);
     }
 
@@ -77,7 +76,7 @@ public class Lunaris implements IServer {
         this.networkManager.disable();
         try {
             Thread.sleep(2000L);
-        }catch(InterruptedException ex) {
+        } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
         this.logger.info("Good bye!");
@@ -88,14 +87,17 @@ public class Lunaris implements IServer {
         return instance;
     }
 
+    @Override
     public FormatLogger getLogger() {
         return this.logger;
     }
 
+    @Override
     public Scheduler getScheduler() {
         return this.scheduler;
     }
 
+    @Override
     public EventManager getEventManager() {
         return this.eventManager;
     }
@@ -127,7 +129,7 @@ public class Lunaris implements IServer {
 
     private void loadDefaults() {
         this.logger.info("Loading defaults..");
-        this.scheduler = new Scheduler(this);
+        this.scheduler = new Scheduler();
         this.eventManager = new EventManager(this);
         this.entityProvider = new EntityProvider();
         this.playerProvider = new PlayerProvider(this);
@@ -173,17 +175,15 @@ public class Lunaris implements IServer {
     }
 
     private void runConsole(ConsoleReader consoleReader) {
-        this.scheduler.runAsync(() -> {
-            while (!shuttingDown) {
-                try {
-                    String line = consoleReader.readLine("> ");
-                    if (line != null)
-                        this.scheduler.addSyncTask(() -> this.commandManager.handle('/' + line, null));
-                } catch (Exception ex) {
-                    this.logger.error(ex, "Can not handle command from server console. Is everything ok?");
-                }
+        while (!shuttingDown) {
+            try {
+                String line = consoleReader.readLine("> ");
+                if (line != null)
+                    this.scheduler.run(() -> this.commandManager.handle('/' + line, null));
+            } catch (Exception ex) {
+                this.logger.error(ex, "Can not handle command from server console. Is everything ok?");
             }
-        });
+        }
     }
 
     @Override

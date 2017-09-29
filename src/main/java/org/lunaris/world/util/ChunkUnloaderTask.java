@@ -42,8 +42,10 @@ public class ChunkUnloaderTask {
                 for (Iterator<Chunk> iterator = chunks.iterator(); iterator.hasNext(); ) {
                     Chunk chunk = iterator.next();
                     for (Location location : players)
-                        if (this.world.isInRangeOfView(location, chunk))
+                        if (this.world.isInRangeOfView(location, chunk)) {
                             iterator.remove();
+                            break;
+                        }
                 }
                 this.server.getScheduler().run(() ->
                     chunks.forEach(this.world::unloadChunk)

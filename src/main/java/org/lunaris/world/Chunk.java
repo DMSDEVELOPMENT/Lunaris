@@ -52,7 +52,7 @@ public abstract class Chunk {
     void load() {
         load0();
         loaded = true;
-        System.out.println("Chunk " + getX() + " " + getZ() + " loaded");
+        //System.out.println("Chunk " + getX() + " " + getZ() + " loaded");
         Lunaris.getInstance().getScheduler().run(() -> {
             for (Player player : getApplicablePlayers())
                 sendTo(player);

@@ -1,7 +1,6 @@
 package org.lunaris.entity;
 
 import org.lunaris.Lunaris;
-import org.lunaris.block.Block;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.data.*;
 import org.lunaris.event.entity.EntityDamageEvent;
@@ -10,6 +9,7 @@ import org.lunaris.inventory.PlayerInventory;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
+import org.lunaris.network.util.PacketsBush;
 import org.lunaris.server.Scheduler;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.world.Location;
@@ -60,6 +60,8 @@ public class Player extends LivingEntity implements CommandSender {
     private Scheduler.Task breakingBlockTask;
 
     private final AdventureSettings adventureSettings;
+
+    private final PacketsBush packetsBush = new PacketsBush();
 
     public Player(int entityID, RakNetClientSession session, Packet01Login packetLogin) {
         super(entityID);
@@ -228,7 +230,6 @@ public class Player extends LivingEntity implements CommandSender {
         super.tick();
         World world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfView(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
-//        Lunaris.getInstance().getWorldProvider().getBlockMaster().tickPlayersBreak(this);
     }
 
     public RakNetClientSession getSession() {
@@ -316,11 +317,15 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     public Scheduler.Task getBreakingBlockTask() {
-        return breakingBlockTask;
+        return this.breakingBlockTask;
     }
 
     public void setBreakingBlockTask(Scheduler.Task breakingBlockTask) {
         this.breakingBlockTask = breakingBlockTask;
+    }
+
+    public PacketsBush getPacketsBush() {
+        return this.packetsBush;
     }
 
     public AdventureSettings getAdventureSettings() {

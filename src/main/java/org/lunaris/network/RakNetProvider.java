@@ -15,6 +15,7 @@ import org.lunaris.network.raknet.server.RakNetServer;
 import org.lunaris.network.raknet.server.RakNetServerListener;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.network.raknet.stream.PacketDataInput;
+import org.lunaris.network.util.PacketsBush;
 import org.lunaris.network.util.ZLib;
 import org.lunaris.server.IServer;
 import org.lunaris.server.ServerSettings;
@@ -34,13 +35,8 @@ public class RakNetProvider {
     private final IServer server;
     private final long guid = new Random().nextLong();
 
-    private final int compressionLevel;
-    private final byte prefixedId;
-
     public RakNetProvider(NetworkManager manager, Lunaris server) {
         this.server = server;
-        this.compressionLevel = server.getServerSettings().getNetworkCompressionLevel();
-        this.prefixedId = server.getServerSettings().getNetworkPacketPrefixedId();
         ServerSettings settings = server.getServerSettings();
         this.rakNet = new RakNetServer(
                 settings.getHost(),
@@ -143,53 +139,39 @@ public class RakNetProvider {
         this.server.getLogger().info("PACKET DUMP :: " + sb.toString().trim());
     }
 
-    public void sendPacket(Collection<RakNetClientSession> sessions, MinePacket packet) {
-        try {
-            Timings.packetsSendingTimer.startTiming();
-            MineBuffer packetBuffer = new MineBuffer(1 << 4);
-            packet.write(packetBuffer);
-            byte[] bytes = packetBuffer.readBytes(packetBuffer.readableBytes());
-            packetBuffer.release();
-            MineBuffer buffer = new MineBuffer(1 << 5);
-            buffer.writeUnsignedVarInt(bytes.length + 3); //byte id + short (2 bytes)
-            buffer.writeByte(packet.getByteId());
-            buffer.writeUnsignedShort((short) 0);
-            buffer.writeBytes(bytes);
-            bytes = buffer.readBytes(buffer.remaining());
-            buffer.release();
-            bytes = ZLib.deflate(bytes, this.compressionLevel);
-            byte[] result = new byte[bytes.length + 1];
-            result[0] = this.prefixedId;
-            System.arraycopy(bytes, 0, result, 1, bytes.length);
-            sessions.forEach(s -> s.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(result))); //check whether rak net packet can be only 1
-            Timings.packetsSendingTimer.stopTiming();
-        }catch(Exception ex) {
-            new Exception("Can not send packet", ex).printStackTrace();
-        }
+    public void sendPacket(Collection<PacketsBush> bushes, MinePacket packet) {
+        byte[] serialized = serialize(packet);
+        bushes.forEach(bush -> bush.collect(serialized));
     }
 
-    public void sendPacket(RakNetClientSession session, MinePacket packet) {
+    public void sendPacket(PacketsBush bush, MinePacket packet) {
+        bush.collect(serialize(packet));
+    }
+
+    public void tickBush(RakNetClientSession session, PacketsBush bush) {
+        byte[] collected = bush.blossom();
+        if(collected.length == 0)
+            return;
+        session.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(collected));
+    }
+
+    private byte[] serialize(MinePacket packet) {
         try {
-            Timings.packetsSendingTimer.startTiming();
-            MineBuffer packetBuffer = new MineBuffer(1 << 4);
-            packet.write(packetBuffer);
-            byte[] bytes = packetBuffer.readBytes(packetBuffer.readableBytes());
-            packetBuffer.release();
-            MineBuffer buffer = new MineBuffer(1 << 5);
+            MineBuffer buffer = new MineBuffer(1 << 4);
+            packet.write(buffer);
+            byte[] bytes = buffer.readBytes(buffer.readableBytes());
+            buffer.release();
+            buffer = new MineBuffer(1 << 5);
             buffer.writeUnsignedVarInt(bytes.length + 3); //byte id + short (2 bytes)
             buffer.writeByte(packet.getByteId());
             buffer.writeUnsignedShort((short) 0);
             buffer.writeBytes(bytes);
             bytes = buffer.readBytes(buffer.remaining());
             buffer.release();
-            bytes = ZLib.deflate(bytes, this.compressionLevel);
-            byte[] result = new byte[bytes.length + 1];
-            result[0] = this.prefixedId;
-            System.arraycopy(bytes, 0, result, 1, bytes.length);
-            session.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(result));
-            Timings.packetsSendingTimer.stopTiming();
+            return bytes;
         }catch(Exception ex) {
-            new Exception("Can not send packet", ex).printStackTrace();
+            new Exception("Can not serialize packet", ex).printStackTrace();
+            return null;
         }
     }
 

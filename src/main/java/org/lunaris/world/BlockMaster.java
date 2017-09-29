@@ -104,34 +104,8 @@ public class BlockMaster {
         new PunchBlockParticle(player.getWorld().getBlockAt(position), face).sendToNearbyPlayers();
     }
 
-    public void tickPlayersBreak(Player player) {
-//        Block breaking = player.getBreakingBlock();
-//        if(breaking == null)
-//            return;
-//        long breakTime = getBreakTimeInMillis(breaking, player);
-//        if(player.getGamemode() == Gamemode.CREATIVE && breakTime > 150L)
-//            breakTime = 150L;
-//        //check potion effects
-//        //check item enchantments
-//        long current = System.currentTimeMillis();
-//        boolean broken = (player.getGamemode() == Gamemode.CREATIVE || breaking.getSpecifiedMaterial().isBreakable(player.getInventory().getItemInHand()))
-//                && player.getLastBreak() + breakTime - Scheduler.ONE_TICK_IN_MILLIS <= current;
-////        System.out.println((player.getLastBreak() + breakTime - current - Scheduler.ONE_TICK_IN_MILLIS) + "ms left (" + breakTime + "ms total)");
-//        if(!broken)
-//            return;
-//        BlockBreakEvent event = new BlockBreakEvent(player, breaking);
-//        this.server.getEventManager().call(event);
-//        if(event.isCancelled()) {
-//            player.sendPacket(new Packet15UpdateBlock(breaking)); //restore block to players
-//            return;
-//        }
-//        player.setLastBreak(current);
-//        //drop drops
-//        new DestroyBlockParticle(breaking).sendToNearbyPlayers();
-//        breaking.setType(Material.AIR);
-    }
-
     private void processBlockBreak(Player player, Block block) {
+        //check somewhere whether this block can be broken by players tool
         BlockBreakEvent event = new BlockBreakEvent(player, block);
         this.server.getEventManager().call(event);
         if(event.isCancelled()) {

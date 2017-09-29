@@ -167,4 +167,8 @@ public class PlayerProvider {
         return players;
     }
 
+    public Collection<Player> getAllPlayers() {
+        return this.playersBySessions.values();
+    }
+
 }

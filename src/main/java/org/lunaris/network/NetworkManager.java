@@ -6,8 +6,10 @@ import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.MinePacketProvider;
 import org.lunaris.server.IServer;
+import org.lunaris.server.Scheduler;
 
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -27,6 +29,7 @@ public class NetworkManager {
         this.server = server;
         this.rakNet = new RakNetProvider(this, (Lunaris) server);
         this.mineProvider = new MinePacketProvider(server, this);
+        this.server.getScheduler().scheduleRepeatableAsync(this::tick, 0L, Scheduler.ONE_TICK_IN_MILLIS, TimeUnit.MILLISECONDS);
     }
 
     public void disable() {
@@ -38,7 +41,7 @@ public class NetworkManager {
         this.server.getEventManager().call(event);
         if(event.isCancelled())
             return;
-        this.rakNet.sendPacket(player.getSession(), packet);
+        this.rakNet.sendPacket(player.getPacketsBush(), packet);
     }
 
     public void sendPacket(Collection<Player> players, MinePacket packet) {
@@ -47,7 +50,11 @@ public class NetworkManager {
             this.server.getEventManager().call(event);
             return event.isCancelled();
         });
-        this.rakNet.sendPacket(players.stream().map(Player::getSession).collect(Collectors.toSet()), packet);
+        this.rakNet.sendPacket(players.stream().map(Player::getPacketsBush).collect(Collectors.toSet()), packet);
+    }
+
+    public void tick() {
+        Lunaris.getInstance().getPlayerProvider().getAllPlayers().forEach(p -> this.rakNet.tickBush(p.getSession(), p.getPacketsBush()));
     }
 
 }

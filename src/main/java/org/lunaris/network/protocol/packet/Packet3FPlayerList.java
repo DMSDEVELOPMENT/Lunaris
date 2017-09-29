@@ -43,6 +43,10 @@ public class Packet3FPlayerList extends MinePacket {
                 buffer.writeString(e.name);
                 buffer.writeString(e.skin.getModel());
                 buffer.writeByteArray(e.skin.getData());
+                buffer.writeByteArray(e.skin.getCape().getData());
+                buffer.writeString(e.geometryModel);
+                buffer.writeByteArray(e.geometryData);
+                buffer.writeString(e.xboxUserId);
             }else {
                 buffer.writeUUID(e.uuid);
             }
@@ -59,6 +63,9 @@ public class Packet3FPlayerList extends MinePacket {
         public long entityId = 0;
         public String name = "";
         public Skin skin;
+        public String geometryModel = "";
+        public byte[] geometryData = new byte[0];
+        public String xboxUserId = "";
 
         public Entry(UUID uuid) {
             this.uuid = uuid;

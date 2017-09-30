@@ -4,7 +4,6 @@ import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.EntityDataFlag;
-import org.lunaris.entity.data.EntityDataOption;
 import org.lunaris.event.player.PlayerDisconnectEvent;
 import org.lunaris.event.player.PlayerJoinEvent;
 import org.lunaris.event.player.PlayerLoginEvent;
@@ -86,13 +85,12 @@ public class PlayerProvider {
         startGame.levelId = "";
         startGame.worldName = this.server.getServerSettings().getServerName();
         startGame.generator = 1; //0 old 1 infinity 2 flat
-        player.setDataFlag(false, EntityDataFlag.CAN_SHOW_NAMETAG, true, false);
-        player.setDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG, true, false);
+        player.setDisplayNameVisible(true, true);
+        player.setDisplayName(player.getName());
         player.setDataFlag(false, EntityDataFlag.CAN_CLIMB, true, false);
         player.setDataFlag(false, EntityDataFlag.BREATHING, true, false);
         player.setDataFlag(false, EntityDataFlag.GRAVITY, true, false);
-        player.getDataProperties().putString(EntityDataOption.NAMETAG, player.getName());
-//        player.sendPacket(new Packet27SetEntityData(-1, player.getDataProperties()));
+        player.setDirtyMetadata(false);
         player.sendPacket(startGame);
         player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
         player.sendPacket(new Packet0ASetTime(player.getWorld().getTime()));

@@ -253,11 +253,11 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     public boolean isSprinting() {
-        return sprinting;
+        return this.sprinting;
     }
 
     public boolean isSneaking() {
-        return sneaking;
+        return this.sneaking;
     }
 
     public void setState(Packet24PlayerAction packet) {
@@ -290,6 +290,39 @@ public class Player extends LivingEntity implements CommandSender {
     public void damage(Entity damager, double damage) {
         if(!isInvulnerable())
             super.damage(damager, damage);
+    }
+
+    public void teleport(Location location) {
+        Location old = getLocation();
+        setLocation(location);
+        MinePacket packet = new Packet13MovePlayer(this);
+        old.getChunk().sendPacket(packet);
+        location.getChunk().sendPacket(packet);
+    }
+
+    public void respawn(Location location) {
+        this.sprinting = false;
+        this.sneaking = false;
+        setDataFlag(false, EntityDataFlag.SPRINTING, false, false);
+        setDataFlag(false, EntityDataFlag.SNEAKING, false, false);
+        Attribute health = getAttribute(Attribute.MAX_HEALTH);
+        health.setMaxValue(health.getDefaultValue());
+        health.setValue(health.getMaxValue());
+        setDirtyMetadata(false);
+        sendPacket(new Packet2DRespawn((float) location.getX(), (float) location.getY(), (float) location.getZ()));
+        sendPacket(new Packet1DUpdateAttributes(
+                getEntityID(),
+                getAttribute(Attribute.MAX_HEALTH),
+                getAttribute(Attribute.MAX_HUNGER),
+                getAttribute(Attribute.MOVEMENT_SPEED),
+                getAttribute(Attribute.EXPERIENCE_LEVEL),
+                getAttribute(Attribute.EXPERIENCE)
+        ));
+        teleport(location);
+        sendPacket(new Packet28SetEntityMotion(getEntityID(), 0F, 0F, 0F));
+
+        //remove all effects
+        this.adventureSettings.update();
     }
 
     public PlayerInventory getInventory() {

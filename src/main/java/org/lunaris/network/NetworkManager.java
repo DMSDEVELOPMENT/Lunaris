@@ -56,6 +56,10 @@ public class NetworkManager {
         this.rakNet.sendPacket(players.stream().map(Player::getPacketsBush).collect(Collectors.toSet()), packet);
     }
 
+    public void broadcastPacket(MinePacket packet) {
+        sendPacket(this.server.getOnlinePlayers(), packet);
+    }
+
     public void tick() {
         this.server.getPlayerProvider().getAllPlayers().forEach(p -> this.rakNet.tickBush(p.getSession(), p.getPacketsBush()));
     }

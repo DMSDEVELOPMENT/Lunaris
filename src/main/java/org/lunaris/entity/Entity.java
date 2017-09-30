@@ -32,6 +32,8 @@ public class Entity {
             .putLong(EntityDataOption.LEAD_HOLDER_ENTITY_ID, -1)
             .putFloat(EntityDataOption.SCALE, 1f);
 
+    private boolean dirtyMetadata = true;
+
     private int fireTicks;
 
     private AxisAlignedBB boundingBox;
@@ -69,8 +71,9 @@ public class Entity {
             this.getDataProperties().put(data);
             if(send) {
                 EntityMetadata metadata = new EntityMetadata().put(this.dataProperties.get(data.getId()));
-                Lunaris.getInstance().getNetworkManager().sendPacket(getWorld().getApplicablePlayers(this.location), new Packet27SetEntityData(this.entityID, metadata));
-            }
+                Lunaris.getInstance().getNetworkManager().broadcastPacket(new Packet27SetEntityData(this.entityID, metadata));
+            }else
+                this.dirtyMetadata = true;
             return true;
         }
         return false;
@@ -114,52 +117,105 @@ public class Entity {
         this.location = location;
     }
 
+    public void setDisplayName(String name) {
+        setDataProperty(EntityDataOption.NAMETAG, name);
+    }
+
+    public String getDisplayName() {
+        return getDataPropertyString(EntityDataOption.NAMETAG);
+    }
+
+    public void setDisplayNameVisible(boolean visible, boolean always) {
+        setDataFlag(false, EntityDataFlag.CAN_SHOW_NAMETAG, visible, false);
+        setDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG, always, true);
+    }
+
     public EntityMetadata getDataProperties() {
         return this.dataProperties;
     }
 
-    public EntityData getDataProperty(EntityDataOption option) {
+    protected EntityData getDataProperty(EntityDataOption option) {
         return this.getDataProperties().get(option.ordinal());
     }
 
-    public int getDataPropertyInt(EntityDataOption option) {
+    protected int getDataPropertyInt(EntityDataOption option) {
         return this.getDataProperties().getInt(option.ordinal());
     }
 
-    public int getDataPropertyShort(EntityDataOption option) {
+    protected int getDataPropertyShort(EntityDataOption option) {
         return this.getDataProperties().getShort(option.ordinal());
     }
 
-    public int getDataPropertyByte(EntityDataOption option) {
+    protected int getDataPropertyByte(EntityDataOption option) {
         return this.getDataProperties().getByte(option.ordinal());
     }
 
-    public int getDataPropertyByte(int ordinal) {
+    protected int getDataPropertyByte(int ordinal) {
         return this.getDataProperties().getByte(ordinal);
     }
 
-    public boolean getDataPropertyBoolean(EntityDataOption option) {
+    protected boolean getDataPropertyBoolean(EntityDataOption option) {
         return this.getDataProperties().getBoolean(option);
     }
 
-    public long getDataPropertyLong(EntityDataOption option) {
+    protected long getDataPropertyLong(EntityDataOption option) {
         return this.getDataProperties().getLong(option.ordinal());
     }
 
-    public String getDataPropertyString(EntityDataOption option) {
+    protected String getDataPropertyString(EntityDataOption option) {
         return this.getDataProperties().getString(option);
     }
 
-    public float getDataPropertyFloat(EntityDataOption option) {
+    protected float getDataPropertyFloat(EntityDataOption option) {
         return this.getDataProperties().getFloat(option);
     }
 
-    public ItemStack getDataPropertySlot(EntityDataOption option) {
+    protected ItemStack getDataPropertySlot(EntityDataOption option) {
         return this.getDataProperties().getSlot(option);
     }
 
-    public Vector3d getDataPropertyPos(EntityDataOption option) {
+    protected Vector3d getDataPropertyPos(EntityDataOption option) {
         return this.getDataProperties().getPosition(option);
+    }
+
+    protected void setDataProperty(EntityData data) {
+        this.getDataProperties().put(data);
+        this.dirtyMetadata = true;
+    }
+
+    protected void setDataProperty(EntityDataOption option, int value) {
+        this.getDataProperties().putInt(option, value);
+        this.dirtyMetadata = true;
+    }
+
+    protected void setDataProperty(EntityDataOption option, short value) {
+        this.getDataProperties().putShort(option, value);
+        this.dirtyMetadata = true;
+    }
+
+    protected void setDataProperty(EntityDataOption option, byte value) {
+        this.getDataProperties().putByte(option, value);
+        this.dirtyMetadata = true;
+    }
+
+    protected void setDataProperty(EntityDataOption option, boolean value) {
+        this.getDataProperties().putBoolean(option, value);
+        this.dirtyMetadata = true;
+    }
+
+    protected void setDataProperty(EntityDataOption option, long value) {
+        this.getDataProperties().putLong(option, value);
+        this.dirtyMetadata = true;
+    }
+
+    protected void setDataProperty(EntityDataOption option, String value) {
+        this.getDataProperties().putString(option, value);
+        this.dirtyMetadata = true;
+    }
+
+    protected void setDataProperty(EntityDataOption option, float value) {
+        this.getDataProperties().putFloat(option, value);
+        this.dirtyMetadata = true;
     }
 
     public final void remove() {
@@ -176,9 +232,13 @@ public class Entity {
                 ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.FIRE, 1);
             setDataFlag(false, EntityDataFlag.ON_FIRE, this.fireTicks --> 1, true);
         }
+        if(this.dirtyMetadata) {
+            this.dirtyMetadata = false;
+            Lunaris.getInstance().getNetworkManager().broadcastPacket(new Packet27SetEntityData(this.entityID, getDataProperties()));
+        }
         if(getY() <= -16) {
             if(this instanceof LivingEntity)
-                ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.VOID, 5);
+                ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.VOID, 1);
             else
                 remove();
         }
@@ -223,6 +283,14 @@ public class Entity {
 
     public void setOnFire(int ticks) {
         this.fireTicks = ticks;
+    }
+
+    public boolean isDirtyMetadata() {
+        return this.dirtyMetadata;
+    }
+
+    public void setDirtyMetadata(boolean dirtyMetadata) {
+        this.dirtyMetadata = dirtyMetadata;
     }
 
     @Override

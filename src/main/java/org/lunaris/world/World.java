@@ -121,7 +121,7 @@ public class World {
         if (preloadEvent.isCancelled())
             return null;
         chunk = new TestChunk(this, x, z);
-        server.getScheduler().runAsync(chunk::load);
+        this.server.getScheduler().runAsync(chunk::load);
         this.chunks.put(hash(x, z), chunk); //NPE
         ChunkLoadedEvent loadedEvent = new ChunkLoadedEvent(chunk);
         this.server.getEventManager().call(loadedEvent);
@@ -244,6 +244,6 @@ public class World {
 
     @Override
     public String toString() {
-        return "World(name=" + name + ")";
+        return "World(name=" + this.name + ")";
     }
 }

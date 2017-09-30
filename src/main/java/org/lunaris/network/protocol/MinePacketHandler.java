@@ -217,6 +217,14 @@ public class MinePacketHandler {
             }case STOP_BREAK: {
                 sync(() -> this.server.getWorldProvider().getBlockMaster().onBlockStopBreak(packet));
                 break;
+            }case RESPAWN: {
+                //somewhy never happens
+                sync(() -> {
+                    PlayerRespawnEvent respawn = new PlayerRespawnEvent(p, p.getWorld().getSpawnLocation());
+                    Lunaris.getInstance().getEventManager().call(respawn);
+                    p.respawn(respawn.getLocation());
+                });
+                break;
             }
             default: {
                 this.server.getLogger().info("Got action %s", packet.getAction().name());

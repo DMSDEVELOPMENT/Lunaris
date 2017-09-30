@@ -2,11 +2,13 @@ package org.lunaris.entity;
 
 import org.lunaris.Lunaris;
 import org.lunaris.entity.data.Attribute;
+import org.lunaris.entity.data.EntityDataOption;
 import org.lunaris.event.EventManager;
 import org.lunaris.event.entity.EntityDamageByEntityEvent;
 import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.event.entity.EntityDeathEvent;
 import org.lunaris.event.player.PlayerDeathEvent;
+import org.lunaris.event.player.PlayerRespawnEvent;
 
 /**
  * Created by RINES on 14.09.17.
@@ -76,7 +78,10 @@ public class LivingEntity extends Entity {
                     setHealth(1F);
                     return;
                 }
-                //send some packets
+                //экстра-костыль
+                PlayerRespawnEvent respawn = new PlayerRespawnEvent(p, p.getWorld().getSpawnLocation());
+                Lunaris.getInstance().getEventManager().call(respawn);
+                p.respawn(respawn.getLocation());
             }else {
                 EntityDeathEvent event = new EntityDeathEvent(this);
                 Lunaris.getInstance().getEventManager().call(event);

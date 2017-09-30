@@ -20,11 +20,8 @@ import org.lunaris.network.util.ZLib;
 import org.lunaris.server.IServer;
 import org.lunaris.server.ServerSettings;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * Created by RINES on 13.09.17.
@@ -92,11 +89,6 @@ public class RakNetProvider {
                     input.readFully(bytes);
                     bytes = ZLib.inflate(bytes, 1 << 26);
                     buf = new MineBuffer(Unpooled.copiedBuffer(bytes));
-//                    List<Byte> list = new ArrayList<>();
-//                    for(byte b : bytes)
-//                        list.add(b);
-//                    System.out.println(list.stream().map(b -> String.format("0x%02X", b)).collect(Collectors.joining(" ")));
-//                    System.out.println();
                     int position;
                     while((position = buf.remaining()) > 0) {
                         int payloadLength = buf.readUnsignedVarInt() + position - buf.remaining();
@@ -108,6 +100,7 @@ public class RakNetProvider {
                             manager.mineProvider.handle(minePacket);
                             continue;
                         }
+//                        System.out.println("Received " + String.format("0x%02X", packetID));
                         if(!manager.mineProvider.handle(packetID, buf, server.getPlayerProvider().getPlayer(session)))
                             return;
                         int delta = position - buf.remaining();

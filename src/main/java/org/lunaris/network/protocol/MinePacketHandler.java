@@ -137,20 +137,10 @@ public class MinePacketHandler {
 
     public void handle(Packet13MovePlayer packet) {
         Player player = packet.getPlayer();
-        Location loc = player.getLocation();
-        loc.setYaw(packet.getYaw());
-        loc.setPitch(packet.getPitch());
-        loc.setComponents(packet.getX(), packet.getY(), packet.getZ());
-        player.recalculateCollisions();
-        //set on ground
         sync(() -> {
-            PlayerMoveEvent event = new PlayerMoveEvent(player, packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch());
-            this.server.getEventManager().call(event);
-            if(event.isCancelled())
-                return;
-            Collection<Player> players = loc.getWorld().getApplicablePlayers(loc);
-            players.remove(player);
-            this.networkManager.sendPacket(players, packet);
+            player.moveTo(packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch());
+            player.recalculateCollisions();
+            //set on ground
         });
     }
 

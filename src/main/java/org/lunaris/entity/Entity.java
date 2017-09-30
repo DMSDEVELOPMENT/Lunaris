@@ -4,11 +4,9 @@ import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.entity.data.*;
 import org.lunaris.event.entity.EntityDamageEvent;
-import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.packet.Packet27SetEntityData;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.util.math.LMath;
-import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.Location;
 import org.lunaris.world.World;
 
@@ -17,22 +15,13 @@ import java.util.*;
 /**
  * Created by RINES on 13.09.17.
  */
-public class Entity {
+public class Entity extends Metadatable {
 
     private final long entityID;
+    private final EntityMovement movement;
     private Location location;
 
     private final Map<Integer, Attribute> attributes = new HashMap<>();
-
-    private final EntityMetadata dataProperties = new EntityMetadata()
-            .putLong(EntityDataOption.FLAGS, 0)
-            .putShort(EntityDataOption.AIR, 400)
-            .putShort(EntityDataOption.MAX_AIR, 400)
-            .putString(EntityDataOption.NAMETAG, "")
-            .putLong(EntityDataOption.LEAD_HOLDER_ENTITY_ID, -1)
-            .putFloat(EntityDataOption.SCALE, 1f);
-
-    private boolean dirtyMetadata = true;
 
     private int fireTicks;
 
@@ -42,41 +31,12 @@ public class Entity {
 
     protected Entity(long entityID) {
         this.entityID = entityID;
+        this.movement = generateEntityMovement();
     }
 
+    @Override
     public long getEntityID() {
-        return entityID;
-    }
-
-    public boolean getDataFlag(boolean playerFlags, EntityDataFlag flag) {
-        return ((playerFlags ? getDataPropertyByte(27) & 0xff : getDataPropertyLong(EntityDataOption.FLAGS)) & (1L << flag.ordinal())) > 0;
-    }
-
-    public void setDataFlag(boolean playerFlags, EntityDataFlag flag, boolean value, boolean send) {
-        if(getDataFlag(playerFlags, flag) != value) {
-            if(playerFlags) {
-                byte flags = (byte) getDataPropertyByte(27);
-                flags ^= 1 << flag.ordinal();
-                setDataProperty(new ByteEntityData(27, flags), send);
-            }else {
-                long flags = getDataPropertyLong(EntityDataOption.FLAGS);
-                flags ^= 1L << flag.ordinal();
-                setDataProperty(new LongEntityData(0, flags), send);
-            }
-        }
-    }
-
-    public boolean setDataProperty(EntityData data, boolean send) {
-        if(!Objects.equals(data, this.getDataProperties().get(data.getId()))) {
-            this.getDataProperties().put(data);
-            if(send) {
-                EntityMetadata metadata = new EntityMetadata().put(this.dataProperties.get(data.getId()));
-                Lunaris.getInstance().getNetworkManager().broadcastPacket(new Packet27SetEntityData(this.entityID, metadata));
-            }else
-                this.dirtyMetadata = true;
-            return true;
-        }
-        return false;
+        return this.entityID;
     }
 
     public Attribute getAttribute(int id) {
@@ -113,8 +73,20 @@ public class Entity {
         return this.location.getWorld();
     }
 
-    public void setLocation(Location location) {
+    public void initializeLocation(Location location) {
         this.location = location;
+    }
+
+    public void teleport(Location location) {
+        this.movement.teleport(location);
+        this.movement.update(); //notify players around old chunk
+        this.location = location;
+        this.movement.update(); //notify players around new chunk
+    }
+
+    public void moveTo(double x, double y, double z, double yaw, double pitch) {
+        this.movement.setPositionAndRotation(x, y, z, yaw, pitch);
+        this.movement.refill(this.location);
     }
 
     public void setDisplayName(String name) {
@@ -127,95 +99,15 @@ public class Entity {
 
     public void setDisplayNameVisible(boolean visible, boolean always) {
         setDataFlag(false, EntityDataFlag.CAN_SHOW_NAMETAG, visible, false);
-        setDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG, always, true);
+        setDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG, always, false);
     }
 
-    public EntityMetadata getDataProperties() {
-        return this.dataProperties;
+    public boolean isDisplayNameVisible() {
+        return getDataFlag(false, EntityDataFlag.CAN_SHOW_NAMETAG);
     }
 
-    protected EntityData getDataProperty(EntityDataOption option) {
-        return this.getDataProperties().get(option.ordinal());
-    }
-
-    protected int getDataPropertyInt(EntityDataOption option) {
-        return this.getDataProperties().getInt(option.ordinal());
-    }
-
-    protected int getDataPropertyShort(EntityDataOption option) {
-        return this.getDataProperties().getShort(option.ordinal());
-    }
-
-    protected int getDataPropertyByte(EntityDataOption option) {
-        return this.getDataProperties().getByte(option.ordinal());
-    }
-
-    protected int getDataPropertyByte(int ordinal) {
-        return this.getDataProperties().getByte(ordinal);
-    }
-
-    protected boolean getDataPropertyBoolean(EntityDataOption option) {
-        return this.getDataProperties().getBoolean(option);
-    }
-
-    protected long getDataPropertyLong(EntityDataOption option) {
-        return this.getDataProperties().getLong(option.ordinal());
-    }
-
-    protected String getDataPropertyString(EntityDataOption option) {
-        return this.getDataProperties().getString(option);
-    }
-
-    protected float getDataPropertyFloat(EntityDataOption option) {
-        return this.getDataProperties().getFloat(option);
-    }
-
-    protected ItemStack getDataPropertySlot(EntityDataOption option) {
-        return this.getDataProperties().getSlot(option);
-    }
-
-    protected Vector3d getDataPropertyPos(EntityDataOption option) {
-        return this.getDataProperties().getPosition(option);
-    }
-
-    protected void setDataProperty(EntityData data) {
-        this.getDataProperties().put(data);
-        this.dirtyMetadata = true;
-    }
-
-    protected void setDataProperty(EntityDataOption option, int value) {
-        this.getDataProperties().putInt(option, value);
-        this.dirtyMetadata = true;
-    }
-
-    protected void setDataProperty(EntityDataOption option, short value) {
-        this.getDataProperties().putShort(option, value);
-        this.dirtyMetadata = true;
-    }
-
-    protected void setDataProperty(EntityDataOption option, byte value) {
-        this.getDataProperties().putByte(option, value);
-        this.dirtyMetadata = true;
-    }
-
-    protected void setDataProperty(EntityDataOption option, boolean value) {
-        this.getDataProperties().putBoolean(option, value);
-        this.dirtyMetadata = true;
-    }
-
-    protected void setDataProperty(EntityDataOption option, long value) {
-        this.getDataProperties().putLong(option, value);
-        this.dirtyMetadata = true;
-    }
-
-    protected void setDataProperty(EntityDataOption option, String value) {
-        this.getDataProperties().putString(option, value);
-        this.dirtyMetadata = true;
-    }
-
-    protected void setDataProperty(EntityDataOption option, float value) {
-        this.getDataProperties().putFloat(option, value);
-        this.dirtyMetadata = true;
+    public boolean isDisplayNameAlwaysVisible() {
+        return isDisplayNameVisible() && getDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG);
     }
 
     public final void remove() {
@@ -232,10 +124,11 @@ public class Entity {
                 ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.FIRE, 1);
             setDataFlag(false, EntityDataFlag.ON_FIRE, this.fireTicks --> 1, true);
         }
-        if(this.dirtyMetadata) {
-            this.dirtyMetadata = false;
+        if(isDirtyMetadata()) {
+            setDirtyMetadata(false);
             Lunaris.getInstance().getNetworkManager().broadcastPacket(new Packet27SetEntityData(this.entityID, getDataProperties()));
         }
+        this.movement.update();
         if(getY() <= -16) {
             if(this instanceof LivingEntity)
                 ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.VOID, 1);
@@ -285,12 +178,28 @@ public class Entity {
         this.fireTicks = ticks;
     }
 
-    public boolean isDirtyMetadata() {
-        return this.dirtyMetadata;
+    public float getEyeHeight() {
+        return this.getHeight() / 2 + 0.1f;
     }
 
-    public void setDirtyMetadata(boolean dirtyMetadata) {
-        this.dirtyMetadata = dirtyMetadata;
+    public float getHeight() {
+        return 0F;
+    }
+
+    public float getWidth() {
+        return 0F;
+    }
+
+    public float getLength() {
+        return 0F;
+    }
+
+    public float getBaseOffset() {
+        return 0F;
+    }
+
+    protected EntityMovement generateEntityMovement() {
+        return new EntityMovement(this);
     }
 
     @Override

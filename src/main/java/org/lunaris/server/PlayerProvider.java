@@ -51,7 +51,7 @@ public class PlayerProvider {
             return;
         }
         Location loc = this.server.getWorldProvider().getWorld(0).getSpawnLocation();
-        player.setLocation(loc);
+        player.initializeLocation(loc);
         PlayerLoginEvent event = new PlayerLoginEvent(player);
         this.server.getEventManager().call(event);
         if(event.isCancelled()) {

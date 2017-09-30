@@ -78,6 +78,11 @@ public class Player extends LivingEntity implements CommandSender {
         this.adventureSettings = new AdventureSettings(this);
     }
 
+    @Override
+    protected EntityMovement generateEntityMovement() {
+        return new PlayerMovement(this);
+    }
+
     /**
      * Установить скорость.
      * @param speed: 1.0 - обычная скорость.
@@ -292,14 +297,6 @@ public class Player extends LivingEntity implements CommandSender {
             super.damage(damager, damage);
     }
 
-    public void teleport(Location location) {
-        Location old = getLocation();
-        setLocation(location);
-        MinePacket packet = new Packet13MovePlayer(this);
-        old.getChunk().sendPacket(packet);
-        location.getChunk().sendPacket(packet);
-    }
-
     public void respawn(Location location) {
         this.sprinting = false;
         this.sneaking = false;
@@ -367,6 +364,31 @@ public class Player extends LivingEntity implements CommandSender {
 
     public void playSound(Sound sound, Location loc) {
         sendPacket(new Packet18LevelSoundEvent(sound, loc, -1, 1, false, false));
+    }
+
+    @Override
+    public float getWidth() {
+        return 0.6f;
+    }
+
+    @Override
+    public float getLength() {
+        return 0.6f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 1.8f;
+    }
+
+    @Override
+    public float getEyeHeight() {
+        return 1.62f;
+    }
+
+    @Override
+    public float getBaseOffset() {
+        return this.getEyeHeight();
     }
 
     public enum IngameState {

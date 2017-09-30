@@ -1,5 +1,6 @@
 package org.lunaris.network.protocol.packet;
 
+import org.lunaris.entity.Entity;
 import org.lunaris.entity.Player;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
@@ -7,28 +8,20 @@ import org.lunaris.util.math.Vector3f;
 import org.lunaris.world.Location;
 
 /**
- * Created by RINES on 14.09.17.
+ * Created by RINES on 30.09.17.
  */
-public class Packet13MovePlayer extends MinePacket {
-
-    public static final int MODE_NORMAL = 0;
-    public static final int MODE_RESET = 1;
-    public static final int MODE_TELEPORT = 2;
-    public static final int MODE_PITCH = 3; //facepalm Mojang
+public class Packet12MoveEntity extends MinePacket {
 
     private long entityId;
     private float x, y, z;
     private float yaw, headYaw, pitch;
-    private int mode = MODE_NORMAL;
-    private boolean onGround;
-    private long ridingEntityId;
-    private int unknown1, unknown2;
+    private boolean onGround, teleport;
 
-    public Packet13MovePlayer() {}
+    public Packet12MoveEntity() {}
 
-    public Packet13MovePlayer(Player player) {
-        this.entityId = player.getEntityID();
-        Location loc = player.getLocation();
+    public Packet12MoveEntity(Entity entity) {
+        this.entityId = entity.getEntityID();
+        Location loc = entity.getLocation();
         this.x = (float) loc.getX();
         this.y = (float) loc.getY();
         this.z = (float) loc.getZ();
@@ -37,7 +30,7 @@ public class Packet13MovePlayer extends MinePacket {
         this.onGround = true;
     }
 
-    public Packet13MovePlayer(long entityId, float x, float y, float z, float yaw, float pitch) {
+    public Packet12MoveEntity(long entityId, float x, float y, float z, float yaw, float pitch) {
         this.entityId = entityId;
         this.x = x;
         this.y = y;
@@ -48,7 +41,7 @@ public class Packet13MovePlayer extends MinePacket {
 
     @Override
     public int getId() {
-        return 0x13;
+        return 0x12;
     }
 
     @Override
@@ -58,32 +51,22 @@ public class Packet13MovePlayer extends MinePacket {
         this.x = position.x;
         this.y = position.y;
         this.z = position.z;
-        this.yaw = buffer.readFloat();
-        this.headYaw = buffer.readFloat();
-        this.pitch = buffer.readFloat();
-        this.mode = buffer.readByte();
+        this.pitch = (float) (buffer.readByte() * (360d / 256d));
+        this.headYaw = (float) (buffer.readByte() * (360d / 256d));
+        this.yaw = (float) (buffer.readByte() * (360d / 256d));
         this.onGround = buffer.readBoolean();
-        this.ridingEntityId = buffer.readVarLong();
-        if(this.mode == MODE_TELEPORT) {
-            this.unknown1 = buffer.readUnsignedInt();
-            this.unknown2 = buffer.readUnsignedInt();
-        }
+        this.teleport = buffer.readBoolean();
     }
 
     @Override
     public void write(MineBuffer buffer) {
         buffer.writeEntityRuntimeId(this.entityId);
         buffer.writeVector3f(this.x, this.y, this.z);
-        buffer.writeFloat(this.yaw);
-        buffer.writeFloat(this.headYaw);
-        buffer.writeFloat(this.pitch);
-        buffer.writeByte((byte) this.mode);
+        buffer.writeByte((byte) (this.pitch / (360d / 256d)));
+        buffer.writeByte((byte) (this.headYaw / (360d / 256d)));
+        buffer.writeByte((byte) (this.yaw / (360d / 256d)));
         buffer.writeBoolean(this.onGround);
-        buffer.writeVarLong(this.ridingEntityId);
-        if(this.mode == MODE_TELEPORT) {
-            buffer.writeUnsignedInt(this.unknown1);
-            buffer.writeUnsignedInt(this.unknown2);
-        }
+        buffer.writeBoolean(this.teleport);
     }
 
     public long getEntityId() {
@@ -114,24 +97,12 @@ public class Packet13MovePlayer extends MinePacket {
         return pitch;
     }
 
-    public int getMode() {
-        return mode;
-    }
-
     public boolean isOnGround() {
         return onGround;
     }
 
-    public long getRidingEntityId() {
-        return ridingEntityId;
-    }
-
-    public int getUnknown1() {
-        return unknown1;
-    }
-
-    public int getUnknown2() {
-        return unknown2;
+    public boolean isTeleport() {
+        return teleport;
     }
 
 }

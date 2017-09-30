@@ -139,16 +139,16 @@ public class RakNetProvider {
         this.server.getLogger().info("PACKET DUMP :: " + sb.toString().trim());
     }
 
-    public void sendPacket(Collection<PacketsBush> bushes, MinePacket packet) {
+    public synchronized void sendPacket(Collection<PacketsBush> bushes, MinePacket packet) {
         byte[] serialized = serialize(packet);
         bushes.forEach(bush -> bush.collect(serialized));
     }
 
-    public void sendPacket(PacketsBush bush, MinePacket packet) {
+    public synchronized void sendPacket(PacketsBush bush, MinePacket packet) {
         bush.collect(serialize(packet));
     }
 
-    public void tickBush(RakNetClientSession session, PacketsBush bush) {
+    public synchronized void tickBush(RakNetClientSession session, PacketsBush bush) {
         byte[] collected = bush.blossom();
         if(collected.length == 0)
             return;

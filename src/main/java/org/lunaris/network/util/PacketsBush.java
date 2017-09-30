@@ -12,14 +12,14 @@ public class PacketsBush {
 
     private byte[] data = new byte[0];
 
-    public synchronized void collect(byte[] data) {
+    public void collect(byte[] data) {
         byte[] temporary = this.data;
         this.data = new byte[temporary.length + data.length];
         System.arraycopy(temporary, 0, this.data, 0, temporary.length);
         System.arraycopy(data, 0, this.data, temporary.length, data.length);
     }
 
-    public synchronized byte[] blossom() {
+    public byte[] blossom() {
         try {
             if(this.data.length > 0) {
                 this.data = ZLib.deflate(this.data, compressionLevel);

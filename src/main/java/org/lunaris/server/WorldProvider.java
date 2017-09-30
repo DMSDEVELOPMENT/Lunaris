@@ -43,10 +43,7 @@ public class WorldProvider {
     }
 
     private void tick() {
-//        System.out.println("TICK");
-        Timings.worldsTickTimer.startTiming();
         this.worlds.forEach(World::tick);
-        Timings.worldsTickTimer.stopTiming();
     }
     
 }

@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -90,6 +91,10 @@ public class PluginManager {
                 server.getLogger().warn(ex, "Exception whilst disabling plugin %s", plugin.getFullName());
             }
         }
+    }
+
+    public Collection<Plugin> getPlugins() {
+        return this.plugins.values();
     }
 
     Class<?> findClassInPlugins(String name) {

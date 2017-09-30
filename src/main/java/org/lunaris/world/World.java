@@ -143,17 +143,19 @@ public class World {
     }
 
     public void tick() {
+        Timings.getWorldTickTimer(this).startTiming();
         if (++this.time >= 24000)
             this.time = 0;
-        Timings.chunksTickTimer.startTiming();
+        Timings.getChunksTickTimer().startTiming();
         this.chunks.values().forEach(Chunk::tick);
-        Timings.chunksTickTimer.stopTiming();
+        Timings.getChunksTickTimer().stopTiming();
         if (this.chunkUnloader != null)
             this.chunkUnloader.tick();
         this.followerTask.tick();
-        Timings.entitiesTickTimer.startTiming();
+        Timings.getEntitiesTickTimer().startTiming();
         this.entities.forEach(Entity::tick);
-        Timings.entitiesTickTimer.stopTiming();
+        Timings.getEntitiesTickTimer().stopTiming();
+        Timings.getWorldTickTimer(this).stopTiming();
     }
 
     public int getTime() {
@@ -228,6 +230,10 @@ public class World {
         players.addAll(this.players);
         players.remove(p);
         return players;
+    }
+
+    public Collection<Chunk> getLoadedChunks() {
+        return this.chunks.values();
     }
 
     public void setSpawnLocation(Location spawnLocation) {

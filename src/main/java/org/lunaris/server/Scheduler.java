@@ -1,5 +1,6 @@
 package org.lunaris.server;
 
+import co.aikar.timings.Timings;
 import org.lunaris.Lunaris;
 
 import java.util.concurrent.Executors;
@@ -21,7 +22,10 @@ public class Scheduler {
     private final ScheduledExecutorService asyncExecutor = Executors.newScheduledThreadPool(5);
 
     public Scheduler() {
-
+        scheduleRepeatable(() -> {
+            Timings.fullServerTickTimer.stopTiming();
+            Timings.fullServerTickTimer.startTiming();
+        }, 0L, 40L, TimeUnit.MILLISECONDS);
     }
 
     public Task run(Runnable runnable) {

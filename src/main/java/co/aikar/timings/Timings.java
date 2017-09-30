@@ -3,7 +3,9 @@ package co.aikar.timings;
 import org.lunaris.Lunaris;
 import org.lunaris.event.Event;
 import org.lunaris.event.Listener;
+import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.server.ServerSettings;
+import org.lunaris.world.World;
 
 import java.util.Queue;
 
@@ -24,12 +26,13 @@ public final class Timings {
     public static final FullServerTickTiming fullServerTickTimer;
     public static final Timing timingsTickTimer;
 
-    public static final Timing worldsTickTimer;
-    public static final Timing chunksTickTimer;
-    public static final Timing entitiesTickTimer;
-    public static final Timing packetsReceptionTimer;
-    public static final Timing packetsSendingTimer;
-    public static final Timing eventTimer;
+    private static final Timing worldsTickTimer;
+    private static final Timing chunksTickTimer;
+    private static final Timing entitiesTickTimer;
+    private static final Timing packetsReceptionTimer;
+    private static final Timing packetsSerializationTimer;
+    private static final Timing packetsSendingTimer;
+    private static final Timing eventTimer;
 
 
     static {
@@ -39,7 +42,7 @@ public final class Timings {
         setHistoryInterval(config.getTimingsHistoryInterval());
         setHistoryLength(config.getTimingsHistoryLength());
 
-        privacy = false;
+        privacy = true;
 
 //        Lunaris.getInstance().getLogger().info("Timings: \n" +
 //                "Enabled - " + isTimingsEnabled() + "\n" +
@@ -56,9 +59,42 @@ public final class Timings {
 
         Timing packetsGroup = TimingsManager.getTiming("Packets");
         packetsReceptionTimer = TimingsManager.getTiming(packetsGroup.name, "## Reception", packetsGroup);
+        packetsSerializationTimer = TimingsManager.getTiming(packetsGroup.name, "## Serialization", packetsGroup);
         packetsSendingTimer = TimingsManager.getTiming(packetsGroup.name, "## Sending", packetsGroup);
 
         eventTimer = TimingsManager.getTiming("Events");
+    }
+
+    public static Timing getWorldTickTimer(World world) {
+        return getTiming(worldsTickTimer, world.getName());
+    }
+
+    public static Timing getChunksTickTimer() {
+        return chunksTickTimer;
+    }
+
+    public static Timing getEntitiesTickTimer() {
+        return entitiesTickTimer;
+    }
+
+    public static Timing getPacketsReceptionTimer() {
+        return packetsReceptionTimer;
+    }
+
+    public static Timing getPacketsSerializationTimer(MinePacket packet) {
+        return getTiming(packetsSerializationTimer, packet.getClass().getSimpleName());
+    }
+
+    public static Timing getPacketsSendingTimer() {
+        return packetsSendingTimer;
+    }
+
+    public static Timing getEventTimer(Event event) {
+        return getTiming(eventTimer, event.getClass().getSimpleName());
+    }
+
+    private static Timing getTiming(Timing timing, String subvalue) {
+        return TimingsManager.getTiming(DEFAULT_GROUP.name, timing.name + ": " + subvalue, timing);
     }
 
     public static boolean isTimingsEnabled() {

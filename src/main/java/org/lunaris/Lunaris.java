@@ -185,6 +185,11 @@ public class Lunaris implements IServer {
     }
 
     @Override
+    public PluginManager getPluginManager() {
+        return this.pluginManager;
+    }
+
+    @Override
     public Collection<Player> getOnlinePlayers() {
         return this.playerProvider.getOnlinePlayers();
     }

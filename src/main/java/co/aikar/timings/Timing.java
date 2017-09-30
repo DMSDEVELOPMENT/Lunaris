@@ -65,8 +65,8 @@ public class Timing implements AutoCloseable {
 
         if (++this.timingDepth == 1) {
             this.start = System.nanoTime();
-            this.parent = TimingsManager.CURRENT;
-            TimingsManager.CURRENT = this;
+//            this.parent = TimingsManager.CURRENT;
+//            TimingsManager.CURRENT = this;
         }
 
         return this;
@@ -90,14 +90,14 @@ public class Timing implements AutoCloseable {
     }
 
     void addDiff(long diff) {
-        if (TimingsManager.CURRENT == this) {
-            TimingsManager.CURRENT = this.parent;
-            if (this.parent != null) {
-                if (!this.parent.children.containsKey(this.id))
-                    this.parent.children.put(this.id, new TimingData(this.id));
-                this.parent.children.get(this.id).add(diff);
-            }
-        }
+//        if (TimingsManager.CURRENT == this) {
+//            TimingsManager.CURRENT = this.parent;
+//            if (this.parent != null) {
+//                if (!this.parent.children.containsKey(this.id))
+//                    this.parent.children.put(this.id, new TimingData(this.id));
+//                this.parent.children.get(this.id).add(diff);
+//            }
+//        }
 
         this.record.add(diff);
         if (!this.added) {

@@ -1,6 +1,8 @@
 package org.lunaris.entity.data;
 
+import org.lunaris.Lunaris;
 import org.lunaris.entity.Entity;
+import org.lunaris.event.entity.EntityMoveEvent;
 import org.lunaris.network.protocol.packet.Packet12MoveEntity;
 import org.lunaris.network.protocol.packet.Packet28SetEntityMotion;
 import org.lunaris.util.math.Vector3d;
@@ -88,6 +90,10 @@ public class EntityMovement {
     }
 
     protected boolean addMovement(float x, float y, float z, float yaw, float pitch) {
+        EntityMoveEvent event = new EntityMoveEvent(this.entity, x, y, z, yaw, pitch);
+        Lunaris.getInstance().getEventManager().call(event);
+        if(event.isCancelled())
+            return false;
         this.entity.getLocation().getChunk().sendPacket(new Packet12MoveEntity(this.entity.getEntityID(), x, y, z, yaw, pitch));
         return true;
     }

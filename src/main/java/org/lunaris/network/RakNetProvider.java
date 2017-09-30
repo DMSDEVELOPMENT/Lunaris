@@ -81,7 +81,7 @@ public class RakNetProvider {
 
             @Override
             public void handleMessage(RakNetClientSession session, RakNetPacket packet, int channel) {
-                Timings.packetsReceptionTimer.startTiming();
+                Timings.getPacketsReceptionTimer().startTiming();
                 MineBuffer buf = null;
                 try {
                     PacketDataInput input = packet.getDataInput();
@@ -119,7 +119,7 @@ public class RakNetProvider {
                 }finally {
                     if(buf != null)
                         buf.release();
-                    Timings.packetsReceptionTimer.stopTiming();
+                    Timings.getPacketsReceptionTimer().stopTiming();
                 }
             }
         });
@@ -147,13 +147,18 @@ public class RakNetProvider {
     }
 
     public synchronized void tickBush(RakNetClientSession session, PacketsBush bush) {
+        Timings.getPacketsSendingTimer().startTiming();
         byte[] collected = bush.blossom();
-        if(collected.length == 0)
+        if(collected.length == 0) {
+            Timings.getPacketsSendingTimer().stopTiming();
             return;
+        }
         session.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(collected));
+        Timings.getPacketsSendingTimer().stopTiming();
     }
 
     private byte[] serialize(MinePacket packet) {
+        Timings.getPacketsSerializationTimer(packet).startTiming();
         try {
             MineBuffer buffer = new MineBuffer(1 << 4);
             packet.write(buffer);
@@ -170,6 +175,8 @@ public class RakNetProvider {
         }catch(Exception ex) {
             new Exception("Can not serialize packet", ex).printStackTrace();
             return null;
+        }finally {
+            Timings.getPacketsSerializationTimer(packet).stopTiming();
         }
     }
 

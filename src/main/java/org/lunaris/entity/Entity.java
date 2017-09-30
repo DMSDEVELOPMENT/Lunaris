@@ -74,6 +74,8 @@ public class Entity extends Metadatable {
     }
 
     public void initializeLocation(Location location) {
+        if(this.location != null)
+            throw new IllegalStateException("You can not use this method after entity's location has already been initialized.");
         this.location = location;
     }
 

@@ -33,7 +33,7 @@ public class EventManager {
         Set<Handler> handlers = HANDLERS.get(event.getClass());
         if(handlers == null)
             return;
-        Timings.eventTimer.startTiming();
+        Timings.getEventTimer(event).startTiming();
         Cancellable cancellable = event instanceof Cancellable ? (Cancellable) event : null;
         try {
             for(Handler handler : handlers)
@@ -42,7 +42,7 @@ public class EventManager {
         }catch(Exception ex) {
             new EventExecutionException(ex).printStackTrace();
         }
-        Timings.eventTimer.stopTiming();
+        Timings.getEventTimer(event).stopTiming();
     }
 
     public void register(Listener listener) {

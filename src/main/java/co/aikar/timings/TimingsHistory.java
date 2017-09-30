@@ -47,11 +47,6 @@ public class TimingsHistory {
     public static long tileEntityTicks;
     public static long activatedEntityTicks;
 
-    private static int levelIdPool = 1;
-    static Map<String, Integer> levelMap = new HashMap<>();
-    static Map<Integer, String> entityMap = new HashMap<>();
-    static Map<Integer, String> blockEntityMap = new HashMap<>();
-
     private final long endTime;
     private final long startTime;
     private final long totalTicks;
@@ -60,7 +55,6 @@ public class TimingsHistory {
     private final MinuteReport[] minuteReports;
 
     private final TimingsHistoryEntry[] entries;
-    private final JsonObject levels = new JsonObject();
 
     TimingsHistory() {
         this.endTime = System.currentTimeMillis() / 1000;
@@ -90,6 +84,17 @@ public class TimingsHistory {
         final Map<Integer, AtomicInteger> entityCounts = new HashMap<>();
         final Map<Integer, AtomicInteger> blockEntityCounts = new HashMap<>();
         final Gson GSON = new Gson();
+        Lunaris.getInstance().getWorldProvider().getWorlds().forEach(world -> {
+            JsonArray jsonWorld = new JsonArray();
+            world.getLoadedChunks().forEach(chunk -> {
+                JsonArray jsonChunk = new JsonArray();
+                jsonChunk.add(chunk.getX());
+                jsonChunk.add(chunk.getZ());
+
+                jsonWorld.add(jsonChunk);
+            });
+        });
+
         // Information about all loaded entities/block entities
 //        for (Level level : Server.getInstance().getLevels().values()) {
 //            JsonArray jsonLevel = new JsonArray();

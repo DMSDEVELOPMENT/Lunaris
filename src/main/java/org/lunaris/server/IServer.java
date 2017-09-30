@@ -3,6 +3,7 @@ package org.lunaris.server;
 import org.lunaris.command.CommandManager;
 import org.lunaris.entity.Player;
 import org.lunaris.event.EventManager;
+import org.lunaris.plugin.PluginManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.util.configuration.ConfigurationManager;
 import org.lunaris.util.logger.FormatLogger;
@@ -34,6 +35,8 @@ public interface IServer {
     WorldProvider getWorldProvider();
 
     CommandManager getCommandManager();
+
+    PluginManager getPluginManager();
 
     Collection<Player> getOnlinePlayers();
 

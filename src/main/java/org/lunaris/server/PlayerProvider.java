@@ -4,6 +4,7 @@ import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.EntityDataFlag;
+import org.lunaris.entity.data.EntityDataOption;
 import org.lunaris.event.player.PlayerDisconnectEvent;
 import org.lunaris.event.player.PlayerJoinEvent;
 import org.lunaris.event.player.PlayerLoginEvent;
@@ -100,6 +101,7 @@ public class PlayerProvider {
         player.setDataFlag(false, EntityDataFlag.CAN_CLIMB, true, false);
         player.setDataFlag(false, EntityDataFlag.BREATHING, true, false);
         player.setDataFlag(false, EntityDataFlag.GRAVITY, true, false);
+        player.getDataProperties().putString(EntityDataOption.NAMETAG, player.getName());
 //        player.sendPacket(new Packet27SetEntityData(-1, player.getDataProperties()));
         player.sendPacket(startGame);
         player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));

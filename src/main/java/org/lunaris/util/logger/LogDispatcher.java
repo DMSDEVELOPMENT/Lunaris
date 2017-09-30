@@ -14,6 +14,7 @@ public class LogDispatcher extends Thread {
 
     public LogDispatcher(OwnLogger logger) {
         super("Lunaris Logger Thread");
+        this.setDaemon(true);
         this.logger = logger;
     }
 

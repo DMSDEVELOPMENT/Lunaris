@@ -2,14 +2,17 @@ package org.lunaris.plugin;
 
 import org.lunaris.server.IServer;
 import org.lunaris.util.configuration.yaml.YamlConfiguration;
+import org.lunaris.util.logger.OwnLogger;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -73,6 +76,7 @@ public class PluginManager {
         Plugin plugin = pluginClass.asSubclass(Plugin.class).newInstance();
         plugin.name = description.getString("name");
         plugin.version = description.getString("version", "0");
+        plugin.logger = OwnLogger.getLogger(plugin.name);
         plugin.server = server;
         this.plugins.put(plugin.getName(), plugin);
     }

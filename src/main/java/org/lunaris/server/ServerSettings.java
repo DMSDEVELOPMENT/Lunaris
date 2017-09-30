@@ -3,6 +3,9 @@ package org.lunaris.server;
 import org.lunaris.entity.data.Gamemode;
 import org.lunaris.network.protocol.packet.Packet37AdventureSettings;
 import org.lunaris.util.configuration.FileConfiguration;
+import org.lunaris.util.configuration.yaml.YamlConfiguration;
+
+import java.io.File;
 
 /**
  * Created by RINES on 12.09.17.
@@ -14,15 +17,13 @@ public class ServerSettings {
 
     private final String serverName;
 
-    private final int supportedClientProtocol = 136;
+    private final int supportedClientProtocol = 137;
 
     private final String supportedClientVersion;
 
     private final int maxPlayersOnServer;
 
     private final int networkCompressionLevel;
-
-    private final byte networkPacketPrefixedId;
 
     private final Gamemode defaultGamemode;
 
@@ -40,11 +41,11 @@ public class ServerSettings {
 
     private final float mtuScaleFactor;
 
-    private final long serverBoostingFactor;
-
     private final IngameSettings ingameSettings;
 
-    public ServerSettings(IServer server, FileConfiguration config) {
+    public ServerSettings(IServer server) {
+        File configFile = new File("lunaris.yml");
+        FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
         try {
             String host = config.getOrSetString("bind-address", "0.0.0.0:19132");
             String[] split = host.split(":");
@@ -53,8 +54,7 @@ public class ServerSettings {
             this.serverName = config.getOrSetString("server-name", "Lunaris Test Server");
             this.supportedClientVersion = server.getSupportedClientVersion();
             this.maxPlayersOnServer = config.getOrSetInt("max-players", 20);
-            this.networkCompressionLevel = config.getOrSetInt("network.compression-level", 7);
-            this.networkPacketPrefixedId = config.getOrSetByte("network.packet-prefixed-id", (byte) 0xfe);
+            this.networkCompressionLevel = config.getOrSetInt("network.compression-level", 1);
             this.defaultGamemode = Gamemode.values()[config.getOrSetInt("default-gamemode", 0)];
             this.chunksView = config.getOrSetInt("chunks-view", 6);
             this.unloadChunks = config.getOrSetBoolean("unload-chunks", true);
@@ -79,8 +79,7 @@ public class ServerSettings {
             this.timingsHistoryInterval = config.getOrSetInt("timings.history-interval", 6000);
             this.timingsHistoryLength = config.getOrSetInt("timings.history-length", 72000);
             this.mtuScaleFactor = (float) config.getOrSetDouble("mtu-scale-factor", 2F / 3F);
-            this.serverBoostingFactor = config.getOrSetInt("server-boosting-factor", 5);
-            server.getConfigurationManager().saveConfig();
+            config.save(configFile);
         }catch(Exception ex) {
             throw new IllegalArgumentException("Server Settings file can not be loaded", ex);
         }
@@ -114,10 +113,6 @@ public class ServerSettings {
         return this.networkCompressionLevel;
     }
 
-    public byte getNetworkPacketPrefixedId() {
-        return this.networkPacketPrefixedId;
-    }
-
     public Gamemode getDefaultGamemode() {
         return this.defaultGamemode;
     }
@@ -148,10 +143,6 @@ public class ServerSettings {
 
     public float getMtuScaleFactor() {
         return this.mtuScaleFactor;
-    }
-
-    public long getServerBoostingFactor() {
-        return this.serverBoostingFactor;
     }
 
     public IngameSettings getIngameSettings() {

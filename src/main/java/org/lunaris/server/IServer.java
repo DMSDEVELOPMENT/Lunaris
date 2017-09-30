@@ -27,15 +27,11 @@ public interface IServer {
 
     EntityProvider getEntityProvider();
 
-    ConfigurationManager getConfigurationManager();
-
     ServerSettings getServerSettings();
 
     ResourcePackManager getResourcePackManager();
 
     WorldProvider getWorldProvider();
-
-    BanChecker getBanChecker();
 
     CommandManager getCommandManager();
 

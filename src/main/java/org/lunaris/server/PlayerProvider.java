@@ -41,16 +41,6 @@ public class PlayerProvider {
     }
 
     public void addPlayerToGame(Player player) {
-        //check whitelist
-        BanChecker checker = this.server.getBanChecker();
-        if(checker.isNameBanned(player.getName()) || checker.isUUIDBanned(player.getClientUUID())) {
-            player.disconnect("You have been banned");
-            return;
-        }
-        if(checker.isAddressBanned(player.getAddress())) {
-            player.disconnect("Your IP address has been banned");
-            return;
-        }
         Player another = getPlayer(player.getName());
         if(another != null) {
             another.disconnect("You logged in from another location");

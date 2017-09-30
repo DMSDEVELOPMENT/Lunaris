@@ -11,7 +11,6 @@ import org.lunaris.network.NetworkManager;
 import org.lunaris.network.protocol.packet.Packet09Text;
 import org.lunaris.plugin.PluginManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
-import org.lunaris.server.BanChecker;
 import org.lunaris.server.EntityProvider;
 import org.lunaris.server.IServer;
 import org.lunaris.server.PlayerList;
@@ -19,7 +18,6 @@ import org.lunaris.server.PlayerProvider;
 import org.lunaris.server.Scheduler;
 import org.lunaris.server.ServerSettings;
 import org.lunaris.server.WorldProvider;
-import org.lunaris.util.configuration.ConfigurationManager;
 import org.lunaris.util.logger.FormatLogger;
 
 import java.lang.management.ManagementFactory;
@@ -39,8 +37,6 @@ public class Lunaris implements IServer {
 
     private EventManager eventManager;
 
-    private ConfigurationManager configurationManager;
-
     private ServerSettings serverSettings;
 
     private NetworkManager networkManager;
@@ -52,8 +48,6 @@ public class Lunaris implements IServer {
     private ResourcePackManager resourcePackManager;
 
     private WorldProvider worldProvider;
-
-    private BanChecker banChecker;
 
     private CommandManager commandManager;
 
@@ -128,8 +122,7 @@ public class Lunaris implements IServer {
 
     private void loadConfigurations() {
         this.logger.info("Loading configuration..");
-        this.configurationManager = new ConfigurationManager(this);
-        this.serverSettings = new ServerSettings(this, this.configurationManager.getConfig());
+        this.serverSettings = new ServerSettings(this);
     }
 
     private void loadDefaults() {
@@ -141,7 +134,6 @@ public class Lunaris implements IServer {
         this.worldProvider = new WorldProvider(this); //this one starts global server tick
         this.networkManager = new NetworkManager(this);
         this.resourcePackManager = new ResourcePackManager();
-        this.banChecker = new BanChecker(this);
         this.commandManager = new CommandManager();
         this.commandManager.registerDefaults();
         this.playerList = new PlayerList(this);
@@ -173,11 +165,6 @@ public class Lunaris implements IServer {
     }
 
     @Override
-    public ConfigurationManager getConfigurationManager() {
-        return this.configurationManager;
-    }
-
-    @Override
     public ServerSettings getServerSettings() {
         return this.serverSettings;
     }
@@ -190,11 +177,6 @@ public class Lunaris implements IServer {
     @Override
     public WorldProvider getWorldProvider() {
         return this.worldProvider;
-    }
-
-    @Override
-    public BanChecker getBanChecker() {
-        return this.banChecker;
     }
 
     @Override

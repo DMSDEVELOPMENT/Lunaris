@@ -2,8 +2,14 @@ package org.lunaris.util.logger;
 
 import jline.console.ConsoleReader;
 
+import org.lunaris.Lunaris;
+
 import java.io.IOException;
-import java.util.logging.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * @author RinesThaix
@@ -15,7 +21,7 @@ public class OwnLogger extends Logger {
 
     @SuppressWarnings({"CallToPrintStackTrace", "CallToThreadStartDuringObjectConstruction"})
     public OwnLogger(ConsoleReader consoleReader) {
-        super("Lunaris", null);
+        super(null, null);
         setLevel(Level.ALL);
         try {
             FileHandler fileHandler = new FileHandler("lunaris.log", 1 << 24, 8, true);
@@ -40,5 +46,18 @@ public class OwnLogger extends Logger {
 
     void doLog(LogRecord record) {
         super.log(record);
+    }
+
+    public static Logger getLogger(String name) {
+        Logger logger = new Logger(name, null) {
+            OwnLogger ownLogger = Lunaris.getInstance().getLogger();
+
+            @Override
+            public void log(LogRecord record) {
+                ownLogger.log(record);
+            }
+        };
+        logger.setUseParentHandlers(false);
+        return logger;
     }
 }

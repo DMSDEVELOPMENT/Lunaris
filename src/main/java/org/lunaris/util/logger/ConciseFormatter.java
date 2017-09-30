@@ -23,6 +23,11 @@ public class ConciseFormatter extends Formatter {
         formatted.append(" [");
         formatted.append(record.getLevel().getLocalizedName());
         formatted.append("] ");
+        if (record.getLoggerName() != null) {
+            formatted.append("[");
+            formatted.append(record.getLoggerName());
+            formatted.append("] ");
+        }
         formatted.append(formatMessage(record));
         formatted.append('\n');
         if (record.getThrown() != null) {

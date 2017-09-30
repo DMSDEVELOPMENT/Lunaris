@@ -7,7 +7,7 @@ import org.lunaris.Lunaris;
  */
 public class PacketsBush {
 
-    private final static byte prefix = Lunaris.getInstance().getServerSettings().getNetworkPacketPrefixedId();
+    private final static byte prefix = (byte) 0xfe;
     private final static int compressionLevel = Lunaris.getInstance().getServerSettings().getNetworkCompressionLevel();
 
     private byte[] data = new byte[0];

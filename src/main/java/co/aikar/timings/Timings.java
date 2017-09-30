@@ -17,7 +17,6 @@ import static co.aikar.timings.TimingIdentifier.DEFAULT_GROUP;
 public final class Timings {
     private static boolean timingsEnabled = false;
     private static boolean verboseEnabled = false;
-    private static boolean privacy = false;
 
     private static final int MAX_HISTORY_FRAMES = 12;
     private static int historyInterval = -1;
@@ -26,7 +25,8 @@ public final class Timings {
     public static final FullServerTickTiming fullServerTickTimer;
     public static final Timing timingsTickTimer;
 
-    private static final Timing worldsTickTimer;
+    private static final Timing directTasks;
+    private static final Timing worldsTimer;
     private static final Timing chunksTickTimer;
     private static final Timing entitiesTickTimer;
     private static final Timing packetsReceptionTimer;
@@ -42,31 +42,24 @@ public final class Timings {
         setHistoryInterval(config.getTimingsHistoryInterval());
         setHistoryLength(config.getTimingsHistoryLength());
 
-        privacy = true;
-
-//        Lunaris.getInstance().getLogger().info("Timings: \n" +
-//                "Enabled - " + isTimingsEnabled() + "\n" +
-//                "Verbose - " + isVerboseEnabled() + "\n" +
-//                "History Interval - " + getHistoryInterval() + "\n" +
-//                "History Length - " + getHistoryLength());
-
         fullServerTickTimer = new FullServerTickTiming();
         timingsTickTimer = TimingsManager.getTiming(DEFAULT_GROUP.name, "Timings Tick", fullServerTickTimer);
 
-        worldsTickTimer = TimingsManager.getTiming("Direct Tasks Summary");
-        chunksTickTimer = TimingsManager.getTiming("Chunks");
-        entitiesTickTimer = TimingsManager.getTiming("Entities");
+        directTasks = TimingsManager.getTiming("Direct Tasks Summary");
+        worldsTimer = TimingsManager.getTiming(directTasks.name, "Worlds", directTasks);
+        chunksTickTimer = TimingsManager.getTiming(directTasks.name, "Chunks", directTasks);
+        entitiesTickTimer = TimingsManager.getTiming(directTasks.name, "Entities", directTasks);
 
         Timing packetsGroup = TimingsManager.getTiming("Packets");
-        packetsReceptionTimer = TimingsManager.getTiming(packetsGroup.name, "## Reception", packetsGroup);
-        packetsSerializationTimer = TimingsManager.getTiming(packetsGroup.name, "## Serialization", packetsGroup);
-        packetsSendingTimer = TimingsManager.getTiming(packetsGroup.name, "## Sending", packetsGroup);
+        packetsReceptionTimer = TimingsManager.getTiming(packetsGroup.name, "Reception", packetsGroup);
+        packetsSerializationTimer = TimingsManager.getTiming(packetsGroup.name, "Serialization", packetsGroup);
+        packetsSendingTimer = TimingsManager.getTiming(packetsGroup.name, "Sending", packetsGroup);
 
-        eventTimer = TimingsManager.getTiming("Events");
+        eventTimer = TimingsManager.getTiming("Event Executions");
     }
 
     public static Timing getWorldTickTimer(World world) {
-        return getTiming(worldsTickTimer, world.getName());
+        return TimingsManager.getTiming(worldsTimer.name, world.getName(), worldsTimer);
     }
 
     public static Timing getChunksTickTimer() {
@@ -82,7 +75,7 @@ public final class Timings {
     }
 
     public static Timing getPacketsSerializationTimer(MinePacket packet) {
-        return getTiming(packetsSerializationTimer, packet.getClass().getSimpleName());
+        return TimingsManager.getTiming(packetsSerializationTimer.name, packet.getClass().getSimpleName(), packetsSerializationTimer);
     }
 
     public static Timing getPacketsSendingTimer() {
@@ -90,11 +83,7 @@ public final class Timings {
     }
 
     public static Timing getEventTimer(Event event) {
-        return getTiming(eventTimer, event.getClass().getSimpleName());
-    }
-
-    private static Timing getTiming(Timing timing, String subvalue) {
-        return TimingsManager.getTiming(DEFAULT_GROUP.name, timing.name + ": " + subvalue, timing);
+        return TimingsManager.getTiming(eventTimer.name, event.getClass().getSimpleName(), eventTimer);
     }
 
     public static boolean isTimingsEnabled() {
@@ -113,10 +102,6 @@ public final class Timings {
     public static void setVerboseEnabled(boolean enabled) {
         verboseEnabled = enabled;
         TimingsManager.needsRecheckEnabled = true;
-    }
-
-    public static boolean isPrivacy() {
-        return privacy;
     }
 
     public static int getHistoryInterval() {

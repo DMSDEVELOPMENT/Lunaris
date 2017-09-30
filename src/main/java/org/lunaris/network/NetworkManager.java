@@ -5,10 +5,11 @@ import org.lunaris.entity.Player;
 import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.MinePacketProvider;
-import org.lunaris.server.IServer;
 import org.lunaris.server.Scheduler;
 
 import java.util.Collection;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -19,17 +20,19 @@ public class NetworkManager {
 
     public final static int SUPPORTED_CLIENT_PROTOCOL_VERSION = 137;
 
-    private final IServer server;
+    private final Lunaris server;
 
     private final RakNetProvider rakNet;
 
     final MinePacketProvider mineProvider;
 
-    public NetworkManager(IServer server) {
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+    public NetworkManager(Lunaris server) {
         this.server = server;
-        this.rakNet = new RakNetProvider(this, (Lunaris) server);
+        this.rakNet = new RakNetProvider(this, server);
         this.mineProvider = new MinePacketProvider(server, this);
-        this.server.getScheduler().scheduleRepeatableAsync(this::tick, 0L, Scheduler.ONE_TICK_IN_MILLIS, TimeUnit.MILLISECONDS);
+        this.executor.scheduleAtFixedRate(this::tick, 0L, Scheduler.ONE_TICK_IN_MILLIS >> 1, TimeUnit.MILLISECONDS);
     }
 
     public void disable() {
@@ -54,7 +57,7 @@ public class NetworkManager {
     }
 
     public void tick() {
-        Lunaris.getInstance().getPlayerProvider().getAllPlayers().forEach(p -> this.rakNet.tickBush(p.getSession(), p.getPacketsBush()));
+        this.server.getPlayerProvider().getAllPlayers().forEach(p -> this.rakNet.tickBush(p.getSession(), p.getPacketsBush()));
     }
 
 }

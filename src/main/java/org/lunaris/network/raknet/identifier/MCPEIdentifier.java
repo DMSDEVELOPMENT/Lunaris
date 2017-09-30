@@ -343,12 +343,12 @@ public class MCPEIdentifier extends org.lunaris.network.raknet.identifier.Identi
 
 	@Override
 	public String build() {
-		if (this.legacy == true) {
+		if (this.legacy) {
 			return (HEADER + SEPERATOR + serverName + SEPERATOR + serverProtocol + SEPERATOR + versionTag + SEPERATOR
-					+ onlinePlayerCount + SEPERATOR + maxPlayerCount);
+					+ getOnlinePlayerCount() + SEPERATOR + maxPlayerCount);
 		} else {
 			return (HEADER + SEPERATOR + serverName + SEPERATOR + serverProtocol + SEPERATOR + versionTag + SEPERATOR
-					+ onlinePlayerCount + SEPERATOR + maxPlayerCount + SEPERATOR + guid + SEPERATOR + worldName
+					+ getOnlinePlayerCount() + SEPERATOR + maxPlayerCount + SEPERATOR + guid + SEPERATOR + worldName
 					+ SEPERATOR + gamemode);
 		}
 	}

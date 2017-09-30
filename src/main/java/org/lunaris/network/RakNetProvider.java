@@ -51,7 +51,12 @@ public class RakNetProvider {
                         this.guid,
                         server.getWorldProvider().getWorld(0).getName(),
                         "Survival"
-                )
+                ) {
+                    @Override
+                    public int getOnlinePlayerCount() {
+                        return server.getOnlinePlayers().size();
+                    }
+                }
         );
         this.rakNet.setListener(new RakNetServerListener() {
             @Override

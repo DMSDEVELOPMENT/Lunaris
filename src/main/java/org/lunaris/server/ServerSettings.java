@@ -55,6 +55,7 @@ public class ServerSettings {
             this.supportedClientVersion = server.getSupportedClientVersion();
             this.maxPlayersOnServer = config.getOrSetInt("max-players", 20);
             this.networkCompressionLevel = config.getOrSetInt("network.compression-level", 1);
+            this.mtuScaleFactor = (float) config.getOrSetDouble("network.mtu-scale-factor", 2F / 3F);
             this.defaultGamemode = Gamemode.values()[config.getOrSetInt("default-gamemode", 0)];
             this.chunksView = config.getOrSetInt("chunks-view", 6);
             this.unloadChunks = config.getOrSetBoolean("unload-chunks", true);
@@ -78,7 +79,6 @@ public class ServerSettings {
             this.timingsVerbose = config.getOrSetBoolean("timings.verbose", false);
             this.timingsHistoryInterval = config.getOrSetInt("timings.history-interval", 6000);
             this.timingsHistoryLength = config.getOrSetInt("timings.history-length", 72000);
-            this.mtuScaleFactor = (float) config.getOrSetDouble("mtu-scale-factor", 2F / 3F);
             config.save(configFile);
         }catch(Exception ex) {
             throw new IllegalArgumentException("Server Settings file can not be loaded", ex);

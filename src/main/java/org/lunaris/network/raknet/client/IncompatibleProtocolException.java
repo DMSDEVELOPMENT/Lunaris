@@ -38,41 +38,38 @@ package org.lunaris.network.raknet.client;
  */
 public class IncompatibleProtocolException extends org.lunaris.network.raknet.client.RakNetClientException {
 
-	private static final long serialVersionUID = -3390229698349252537L;
+    private static final long serialVersionUID = -3390229698349252537L;
 
-	private final int clientProtocol;
-	private final int serverProtocol;
+    private final int clientProtocol;
+    private final int serverProtocol;
 
-	/**
-	 * Constructs an <code>IncompatibleProtocolException</code> with the
-	 * specified <code>RakNetClient</code>, client protocol, and server
-	 * protocol.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code> that threw the exception.
-	 * @param clientProtocol
-	 *            the client's protocol
-	 * @param serverProtocol
-	 *            the server's protocol
-	 */
-	public IncompatibleProtocolException(RakNetClient client, int clientProtocol, int serverProtocol) {
-		super(client, (clientProtocol < serverProtocol ? "Outdated client" : "Outdated server"));
-		this.clientProtocol = clientProtocol;
-		this.serverProtocol = serverProtocol;
-	}
+    /**
+     * Constructs an <code>IncompatibleProtocolException</code> with the
+     * specified <code>RakNetClient</code>, client protocol, and server
+     * protocol.
+     *
+     * @param client         the <code>RakNetClient</code> that threw the exception.
+     * @param clientProtocol the client's protocol
+     * @param serverProtocol the server's protocol
+     */
+    public IncompatibleProtocolException(RakNetClient client, int clientProtocol, int serverProtocol) {
+        super(client, (clientProtocol < serverProtocol ? "Outdated client" : "Outdated server"));
+        this.clientProtocol = clientProtocol;
+        this.serverProtocol = serverProtocol;
+    }
 
-	/**
-	 * @return the protocol the client is on.
-	 */
-	public int getClientProtocol() {
-		return this.clientProtocol;
-	}
+    /**
+     * @return the protocol the client is on.
+     */
+    public int getClientProtocol() {
+        return this.clientProtocol;
+    }
 
-	/**
-	 * @return the protocol the server is on.
-	 */
-	public int getServerProtocol() {
-		return this.serverProtocol;
-	}
+    /**
+     * @return the protocol the server is on.
+     */
+    public int getServerProtocol() {
+        return this.serverProtocol;
+    }
 
 }

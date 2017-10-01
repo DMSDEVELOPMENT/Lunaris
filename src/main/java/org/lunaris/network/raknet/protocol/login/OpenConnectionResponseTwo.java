@@ -30,78 +30,78 @@
  */
 package org.lunaris.network.raknet.protocol.login;
 
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-
 import org.lunaris.network.raknet.Packet;
 import org.lunaris.network.raknet.RakNetPacket;
 import org.lunaris.network.raknet.protocol.ConnectionType;
 import org.lunaris.network.raknet.protocol.Failable;
 import org.lunaris.network.raknet.protocol.MessageIdentifier;
 
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+
 public class OpenConnectionResponseTwo extends RakNetPacket implements Failable {
 
-	public boolean magic;
-	public long serverGuid;
-	public InetSocketAddress clientAddress;
-	public int maximumTransferUnit;
-	public boolean encryptionEnabled;
-	public ConnectionType connectionType;
-	private boolean failed;
+    public boolean magic;
+    public long serverGuid;
+    public InetSocketAddress clientAddress;
+    public int maximumTransferUnit;
+    public boolean encryptionEnabled;
+    public ConnectionType connectionType;
+    private boolean failed;
 
-	public OpenConnectionResponseTwo(Packet packet) {
-		super(packet);
-	}
+    public OpenConnectionResponseTwo(Packet packet) {
+        super(packet);
+    }
 
-	public OpenConnectionResponseTwo() {
-		super(MessageIdentifier.ID_OPEN_CONNECTION_REPLY_2);
-	}
+    public OpenConnectionResponseTwo() {
+        super(MessageIdentifier.ID_OPEN_CONNECTION_REPLY_2);
+    }
 
-	@Override
-	public void encode() {
-		try {
-			this.writeMagic();
-			this.writeLong(serverGuid);
-			this.writeAddress(clientAddress);
-			this.writeUnsignedShort(maximumTransferUnit);
-			this.writeBoolean(encryptionEnabled);
-			this.connectionType = this.writeConnectionType();
-		} catch (UnknownHostException e) {
-			this.failed = true;
-			this.magic = false;
-			this.serverGuid = 0;
-			this.clientAddress = null;
-			this.maximumTransferUnit = 0;
-			this.encryptionEnabled = false;
-			this.connectionType = null;
-			this.clear();
-		}
-	}
+    @Override
+    public void encode() {
+        try {
+            this.writeMagic();
+            this.writeLong(serverGuid);
+            this.writeAddress(clientAddress);
+            this.writeUnsignedShort(maximumTransferUnit);
+            this.writeBoolean(encryptionEnabled);
+            this.connectionType = this.writeConnectionType();
+        } catch (UnknownHostException e) {
+            this.failed = true;
+            this.magic = false;
+            this.serverGuid = 0;
+            this.clientAddress = null;
+            this.maximumTransferUnit = 0;
+            this.encryptionEnabled = false;
+            this.connectionType = null;
+            this.clear();
+        }
+    }
 
-	@Override
-	public void decode() {
-		try {
-			this.magic = this.checkMagic();
-			this.serverGuid = this.readLong();
-			this.clientAddress = this.readAddress();
-			this.maximumTransferUnit = this.readUnsignedShort();
-			this.encryptionEnabled = this.readBoolean();
-			this.connectionType = this.readConnectionType();
-		} catch (UnknownHostException e) {
-			this.failed = true;
-			this.magic = false;
-			this.serverGuid = 0;
-			this.clientAddress = null;
-			this.maximumTransferUnit = 0;
-			this.encryptionEnabled = false;
-			this.connectionType = null;
-			this.clear();
-		}
-	}
+    @Override
+    public void decode() {
+        try {
+            this.magic = this.checkMagic();
+            this.serverGuid = this.readLong();
+            this.clientAddress = this.readAddress();
+            this.maximumTransferUnit = this.readUnsignedShort();
+            this.encryptionEnabled = this.readBoolean();
+            this.connectionType = this.readConnectionType();
+        } catch (UnknownHostException e) {
+            this.failed = true;
+            this.magic = false;
+            this.serverGuid = 0;
+            this.clientAddress = null;
+            this.maximumTransferUnit = 0;
+            this.encryptionEnabled = false;
+            this.connectionType = null;
+            this.clear();
+        }
+    }
 
-	@Override
-	public boolean failed() {
-		return this.failed;
-	}
+    @Override
+    public boolean failed() {
+        return this.failed;
+    }
 
 }

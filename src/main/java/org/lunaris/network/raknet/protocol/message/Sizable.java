@@ -33,14 +33,14 @@ package org.lunaris.network.raknet.protocol.message;
 /**
  * Represents a packet class whose size in bytes can be calculated before being
  * encoded.
- * 
+ *
  * @author Trent "MarfGamer" Summerlin
  */
 public interface Sizable {
 
-	/**
-	 * @return the size of the packet would be if it had been encoded.
-	 */
-	public int calculateSize();
+    /**
+     * @return the size of the packet would be if it had been encoded.
+     */
+    public int calculateSize();
 
 }

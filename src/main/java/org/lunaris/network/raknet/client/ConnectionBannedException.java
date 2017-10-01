@@ -38,17 +38,16 @@ package org.lunaris.network.raknet.client;
  */
 public class ConnectionBannedException extends org.lunaris.network.raknet.client.RakNetClientException {
 
-	private static final long serialVersionUID = 8440218445920818619L;
+    private static final long serialVersionUID = 8440218445920818619L;
 
-	/**
-	 * Constructs a <code>ConnectedionBannedException</code> with the specified
-	 * <code>RakNetClient</code>.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code> that threw the exception.
-	 */
-	public ConnectionBannedException(RakNetClient client) {
-		super(client, "Banned from server");
-	}
+    /**
+     * Constructs a <code>ConnectedionBannedException</code> with the specified
+     * <code>RakNetClient</code>.
+     *
+     * @param client the <code>RakNetClient</code> that threw the exception.
+     */
+    public ConnectionBannedException(RakNetClient client) {
+        super(client, "Banned from server");
+    }
 
 }

@@ -30,11 +30,8 @@
  */
 package org.lunaris.network.raknet.session;
 
-import static org.lunaris.network.raknet.protocol.MessageIdentifier.*;
-
-import java.net.InetSocketAddress;
-
 import io.netty.channel.Channel;
+
 import org.lunaris.network.raknet.RakNetPacket;
 import org.lunaris.network.raknet.client.RakNetClient;
 import org.lunaris.network.raknet.protocol.ConnectionType;
@@ -44,6 +41,10 @@ import org.lunaris.network.raknet.protocol.login.NewIncomingConnection;
 import org.lunaris.network.raknet.protocol.message.EncapsulatedPacket;
 import org.lunaris.network.raknet.protocol.message.acknowledge.Record;
 
+import java.net.InetSocketAddress;
+
+import static org.lunaris.network.raknet.protocol.MessageIdentifier.*;
+
 /**
  * This class represents a server connection and handles the login sequence
  * packets.
@@ -52,100 +53,94 @@ import org.lunaris.network.raknet.protocol.message.acknowledge.Record;
  */
 public class RakNetServerSession extends org.lunaris.network.raknet.session.RakNetSession {
 
-	private final RakNetClient client;
-	private EncapsulatedPacket incomingConnectionPacket;
+    private final RakNetClient client;
+    private EncapsulatedPacket incomingConnectionPacket;
 
-	/**
-	 * Called by the client when the connection is closed.
-	 */
-	public void closeConnection() {
-		sendQueue.clear(); // Make sure disconnect packet is first in-line
-		this.sendMessage(Reliability.UNRELIABLE, ID_DISCONNECTION_NOTIFICATION);
-		this.update(); // Make sure the packet is sent out
-	}
+    /**
+     * Called by the client when the connection is closed.
+     */
+    public void closeConnection() {
+        sendQueue.clear(); // Make sure disconnect packet is first in-line
+        this.sendMessage(Reliability.UNRELIABLE, ID_DISCONNECTION_NOTIFICATION);
+        this.update(); // Make sure the packet is sent out
+    }
 
-	/**
-	 * Constructs a <code>RakNetClientSession</code> with the specified
-	 * <code>RakNetClient</code>, globally unique ID, maximum transfer unit,
-	 * <code>Channel</code>, and address.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code>.
-	 * @param connectionType
-	 *            the connection type of the session.
-	 * @param guid
-	 *            the globally unique ID.
-	 * @param maximumTransferUnit
-	 *            the maximum transfer unit
-	 * @param channel
-	 *            the <code>Channel</code>.
-	 * @param address
-	 *            the address.
-	 */
-	public RakNetServerSession(RakNetClient client, ConnectionType connectionType, long guid, int maximumTransferUnit,
-			Channel channel, InetSocketAddress address) {
-		super(connectionType, guid, maximumTransferUnit, channel, address);
-		this.client = client;
-		this.setState(org.lunaris.network.raknet.session.RakNetState.HANDSHAKING); // We start at the handshake
-	}
+    /**
+     * Constructs a <code>RakNetClientSession</code> with the specified
+     * <code>RakNetClient</code>, globally unique ID, maximum transfer unit,
+     * <code>Channel</code>, and address.
+     *
+     * @param client              the <code>RakNetClient</code>.
+     * @param connectionType      the connection type of the session.
+     * @param guid                the globally unique ID.
+     * @param maximumTransferUnit the maximum transfer unit
+     * @param channel             the <code>Channel</code>.
+     * @param address             the address.
+     */
+    public RakNetServerSession(RakNetClient client, ConnectionType connectionType, long guid, int maximumTransferUnit,
+                               Channel channel, InetSocketAddress address) {
+        super(connectionType, guid, maximumTransferUnit, channel, address);
+        this.client = client;
+        this.setState(org.lunaris.network.raknet.session.RakNetState.HANDSHAKING); // We start at the handshake
+    }
 
-	@Override
-	public void onAcknowledge(Record record, EncapsulatedPacket packet) {
-		client.getListener().onAcknowledge(this, record, packet);
+    @Override
+    public void onAcknowledge(Record record, EncapsulatedPacket packet) {
+        client.getListener().onAcknowledge(this, record, packet);
 
-		// If the server received our IncomingConnectionPacket we are connected
-		if (!this.getState().equals(org.lunaris.network.raknet.session.RakNetState.CONNECTED) && incomingConnectionPacket != null) {
-			if (record.equals(incomingConnectionPacket.ackRecord)) {
-				this.setState(org.lunaris.network.raknet.session.RakNetState.CONNECTED);
-				client.getListener().onConnect(this);
-			}
-		}
-	}
+        // If the server received our IncomingConnectionPacket we are connected
+        if (!this.getState().equals(org.lunaris.network.raknet.session.RakNetState.CONNECTED) && incomingConnectionPacket != null) {
+            if (record.equals(incomingConnectionPacket.ackRecord)) {
+                this.setState(org.lunaris.network.raknet.session.RakNetState.CONNECTED);
+                client.getListener().onConnect(this);
+            }
+        }
+    }
 
-	@Override
-	public void onNotAcknowledge(Record record, EncapsulatedPacket packet) {
-		client.getListener().onNotAcknowledge(this, record, packet);
-	}
+    @Override
+    public void onNotAcknowledge(Record record, EncapsulatedPacket packet) {
+        client.getListener().onNotAcknowledge(this, record, packet);
+    }
 
-	@Override
-	public void handleMessage(RakNetPacket packet, int channel) {
-		short packetId = packet.getId();
+    @Override
+    public void handleMessage(RakNetPacket packet, int channel) {
+        short packetId = packet.getId();
 
-		if (packetId == ID_CONNECTION_REQUEST_ACCEPTED && this.getState() == org.lunaris.network.raknet.session.RakNetState.HANDSHAKING) {
-			ConnectionRequestAccepted serverHandshake = new ConnectionRequestAccepted(packet);
-			serverHandshake.decode();
+        if (packetId == ID_CONNECTION_REQUEST_ACCEPTED && this.getState() == org.lunaris.network.raknet.session.RakNetState.HANDSHAKING) {
+            ConnectionRequestAccepted serverHandshake = new ConnectionRequestAccepted(packet);
+            serverHandshake.decode();
 
-			if (!serverHandshake.failed()) {
-				NewIncomingConnection clientHandshake = new NewIncomingConnection();
-				clientHandshake.serverAddress = client.getSession().getAddress();
-				clientHandshake.clientTimestamp = serverHandshake.clientTimestamp;
-				clientHandshake.serverTimestamp = serverHandshake.serverTimestamp;
-				clientHandshake.encode();
+            if (!serverHandshake.failed()) {
+                NewIncomingConnection clientHandshake = new NewIncomingConnection();
+                clientHandshake.serverAddress = client.getSession().getAddress();
+                clientHandshake.clientTimestamp = serverHandshake.clientTimestamp;
+                clientHandshake.serverTimestamp = serverHandshake.serverTimestamp;
+                clientHandshake.encode();
 
-				if (!clientHandshake.failed()) {
-					this.incomingConnectionPacket = this.sendMessage(Reliability.RELIABLE_ORDERED_WITH_ACK_RECEIPT,
-							clientHandshake);
-				} else {
-					client.disconnect("Failed to login");
-				}
-			} else {
-				client.disconnect("Failed to login");
-			}
-		} else if (packetId == ID_DISCONNECTION_NOTIFICATION) {
-			this.setState(RakNetState.DISCONNECTED);
-			client.disconnect("Server disconnected");
-		} else {
-			/*
+                if (!clientHandshake.failed()) {
+                    this.incomingConnectionPacket = this.sendMessage(Reliability.RELIABLE_ORDERED_WITH_ACK_RECEIPT,
+                        clientHandshake);
+                } else {
+                    client.disconnect("Failed to login");
+                }
+            } else {
+                client.disconnect("Failed to login");
+            }
+        } else if (packetId == ID_DISCONNECTION_NOTIFICATION) {
+            this.setState(RakNetState.DISCONNECTED);
+            client.disconnect("Server disconnected");
+        } else {
+            /*
 			 * If the packet is a user packet, we use handleMessage(). If the ID
 			 * is not a user packet but it is unknown to the session, we use
 			 * handleUnknownMessage().
 			 */
-			if (packetId >= ID_USER_PACKET_ENUM) {
-				client.getListener().handleMessage(this, packet, channel);
-			} else {
-				client.getListener().handleUnknownMessage(this, packet, channel);
-			}
-		}
-	}
+            if (packetId >= ID_USER_PACKET_ENUM) {
+                client.getListener().handleMessage(this, packet, channel);
+            } else {
+                client.getListener().handleUnknownMessage(this, packet, channel);
+            }
+        }
+    }
 
 }

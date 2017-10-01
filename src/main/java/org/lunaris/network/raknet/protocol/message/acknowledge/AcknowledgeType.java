@@ -38,33 +38,32 @@ package org.lunaris.network.raknet.protocol.message.acknowledge;
  */
 public enum AcknowledgeType {
 
-	ACKNOWLEDGED(org.lunaris.network.raknet.protocol.message.acknowledge.Acknowledge.ACKNOWLEDGED), NOT_ACKNOWLEDGED(org.lunaris.network.raknet.protocol.message.acknowledge.Acknowledge.NOT_ACKNOWLEDGED);
+    ACKNOWLEDGED(Acknowledge.ACKNOWLEDGED), NOT_ACKNOWLEDGED(Acknowledge.NOT_ACKNOWLEDGED);
 
-	public short id;
+    public short id;
 
-	private AcknowledgeType(short id) {
-		this.id = id;
-	}
+    AcknowledgeType(short id) {
+        this.id = id;
+    }
 
-	/**
-	 * @return the ID of the acknowledge type.
-	 */
-	public short getId() {
-		return this.id;
-	}
+    /**
+     * @return the ID of the acknowledge type.
+     */
+    public short getId() {
+        return this.id;
+    }
 
-	/**
-	 * @param id
-	 *            the ID of the acknowledge receipt type to lookup.
-	 * @return an <code>AcknowledgeType</code> based on the specified ID.
-	 */
-	public static AcknowledgeType lookup(short id) {
-		for (AcknowledgeType type : AcknowledgeType.values()) {
-			if (type.getId() == id) {
-				return type;
-			}
-		}
-		return null;
-	}
+    /**
+     * @param id the ID of the acknowledge receipt type to lookup.
+     * @return an <code>AcknowledgeType</code> based on the specified ID.
+     */
+    public static AcknowledgeType lookup(short id) {
+        for (AcknowledgeType type : AcknowledgeType.values()) {
+            if (type.getId() == id) {
+                return type;
+            }
+        }
+        return null;
+    }
 
 }

@@ -37,92 +37,90 @@ package org.lunaris.network.raknet;
  */
 public class RakNet {
 
-	// Network protocol data
-	public static final int SERVER_NETWORK_PROTOCOL = 8;
-	public static final int CLIENT_NETWORK_PROTOCOL = 8;
-	public static final int MINIMUM_TRANSFER_UNIT = 548;
+    // Network protocol data
+    public static final int SERVER_NETWORK_PROTOCOL = 8;
+    public static final int CLIENT_NETWORK_PROTOCOL = 8;
+    public static final int MINIMUM_TRANSFER_UNIT = 548;
 
-	// Session data
-	public static final int MAX_CHANNELS = 32;
-	public static final byte DEFAULT_CHANNEL = 0;
-	public static final int MAX_SPLIT_COUNT = 128;
-	public static final int MAX_SPLITS_PER_QUEUE = 4;
+    // Session data
+    public static final int MAX_CHANNELS = 32;
+    public static final byte DEFAULT_CHANNEL = 0;
+    public static final int MAX_SPLIT_COUNT = 128;
+    public static final int MAX_SPLITS_PER_QUEUE = 4;
 
-	// Configurable options
-	private static long MAX_PACKETS_PER_SECOND = 500;
-	private static boolean USE_LOGGING = false;
+    // Configurable options
+    private static long MAX_PACKETS_PER_SECOND = 500;
+    private static boolean USE_LOGGING = false;
 
-	/**
-	 * Returns how many packets can be received in the span of a single second
-	 * (1000 milliseconds) before a session is blocked.
-	 * 
-	 * @return how many packets can be received in the span of a single second
-	 *         before a session is blocked.
-	 */
-	public static long getMaxPacketsPerSecond() {
-		return MAX_PACKETS_PER_SECOND;
-	}
+    /**
+     * Returns how many packets can be received in the span of a single second
+     * (1000 milliseconds) before a session is blocked.
+     *
+     * @return how many packets can be received in the span of a single second
+     * before a session is blocked.
+     */
+    public static long getMaxPacketsPerSecond() {
+        return MAX_PACKETS_PER_SECOND;
+    }
 
-	/**
-	 * Sets how many packets can be received in the span of a single second
-	 * (1000 milliseconds) before a session is blocked.
-	 * 
-	 * @param maxPacketsPerSecond
-	 *            how many packets can be received in the span of a single
-	 *            second before a session is blocked.
-	 */
-	public static void setMaxPacketsPerSecond(long maxPacketsPerSecond) {
-		MAX_PACKETS_PER_SECOND = maxPacketsPerSecond;
-	}
+    /**
+     * Sets how many packets can be received in the span of a single second
+     * (1000 milliseconds) before a session is blocked.
+     *
+     * @param maxPacketsPerSecond how many packets can be received in the span of a single
+     *                            second before a session is blocked.
+     */
+    public static void setMaxPacketsPerSecond(long maxPacketsPerSecond) {
+        MAX_PACKETS_PER_SECOND = maxPacketsPerSecond;
+    }
 
-	/**
-	 * Removes the max packets per second limit so that no matter how many
-	 * packets a session sends it will never be blocked. This is unrecommended,
-	 * as it can open your server to DOS/DDOS attacks.
-	 */
-	public static void setMaxPacketsPerSecondUnlimited() {
-		MAX_PACKETS_PER_SECOND = Long.MAX_VALUE;
-	}
+    /**
+     * Removes the max packets per second limit so that no matter how many
+     * packets a session sends it will never be blocked. This is unrecommended,
+     * as it can open your server to DOS/DDOS attacks.
+     */
+    public static void setMaxPacketsPerSecondUnlimited() {
+        MAX_PACKETS_PER_SECOND = Long.MAX_VALUE;
+    }
 
-	/**
-	 * @return whether or not if JRakNet should log to the console.
-	 */
-	public static boolean isLoggingEnabled() {
-		return USE_LOGGING;
-	}
+    /**
+     * @return whether or not if JRakNet should log to the console.
+     */
+    public static boolean isLoggingEnabled() {
+        return USE_LOGGING;
+    }
 
-	/**
-	 * Enables JRakNet logging.
-	 */
-	public static void enableLogging() {
-		RakNetLogger.setLevel(-1);
-		USE_LOGGING = true;
-	}
+    /**
+     * Enables JRakNet logging.
+     */
+    public static void enableLogging() {
+        RakNetLogger.setLevel(-1);
+        USE_LOGGING = true;
+    }
 
-	/**
-	 * Enables JRakNet logging with the specified logger level.
-	 * 
-	 * @param level
-	 *            the logger level to use.
-	 */
-	public static void enableLogging(int level) {
-		RakNetLogger.setLevel(level);
-		USE_LOGGING = true;
-	}
+    /**
+     * Enables JRakNet logging with the specified logger level.
+     *
+     * @param level the logger level to use.
+     */
+    public static void enableLogging(int level) {
+        RakNetLogger.setLevel(level);
+        USE_LOGGING = true;
+    }
 
-	/**
-	 * Disables JRakNet logging.
-	 */
-	public static void disableLogging() {
-		USE_LOGGING = false;
-	}
+    /**
+     * Disables JRakNet logging.
+     */
+    public static void disableLogging() {
+        USE_LOGGING = false;
+    }
 
-	// Session timing
-	public static final long SEND_INTERVAL = 50L;
-	public static final long RECOVERY_SEND_INTERVAL = SEND_INTERVAL;
-	public static final long PING_SEND_INTERVAL = 2500L;
-	public static final long DETECTION_SEND_INTERVAL = PING_SEND_INTERVAL * 2;
-	public static final long SESSION_TIMEOUT = DETECTION_SEND_INTERVAL * 5;
-	public static final long MAX_PACKETS_PER_SECOND_BLOCK = (1000L * 300);
+    // Session timing
+    public static final long SEND_INTERVAL = 50L;
+    public static final long RECOVERY_SEND_INTERVAL = SEND_INTERVAL;
+    public static final long PING_SEND_INTERVAL = 2500L;
+    public static final long DETECTION_SEND_INTERVAL = PING_SEND_INTERVAL * 2;
+    public static final long SESSION_TIMEOUT = DETECTION_SEND_INTERVAL * 5;
+    public static final long MAX_PACKETS_PER_SECOND_BLOCK = (1000L * 300);
 
 }

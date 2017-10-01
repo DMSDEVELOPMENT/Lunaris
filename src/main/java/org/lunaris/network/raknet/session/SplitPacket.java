@@ -46,148 +46,139 @@ import org.lunaris.network.raknet.util.map.IntMap;
  */
 public class SplitPacket {
 
-	private final int splitId;
-	private final int splitCount;
-	private final Reliability reliability;
+    private final int splitId;
+    private final int splitCount;
+    private final Reliability reliability;
 
-	private final IntMap<Packet> payloads;
+    private final IntMap<Packet> payloads;
 
-	/**
-	 * Constructs a <code>SplitPacket</code> with the specified split ID, split
-	 * count, and <code>Reliability</code>.
-	 * 
-	 * @param splitId
-	 *            the split ID.
-	 * @param splitCount
-	 *            the split count.
-	 * @param reliability
-	 *            the <code>Reliability</code>
-	 */
-	public SplitPacket(int splitId, int splitCount, Reliability reliability) {
-		this.splitId = splitId;
-		this.splitCount = splitCount;
-		this.reliability = reliability;
-		this.payloads = new IntMap<Packet>();
+    /**
+     * Constructs a <code>SplitPacket</code> with the specified split ID, split
+     * count, and <code>Reliability</code>.
+     *
+     * @param splitId     the split ID.
+     * @param splitCount  the split count.
+     * @param reliability the <code>Reliability</code>
+     */
+    public SplitPacket(int splitId, int splitCount, Reliability reliability) {
+        this.splitId = splitId;
+        this.splitCount = splitCount;
+        this.reliability = reliability;
+        this.payloads = new IntMap<>();
 
-		if (this.splitCount > RakNet.MAX_SPLIT_COUNT) {
-			throw new IllegalArgumentException("Split count can be no greater than " + RakNet.MAX_SPLIT_COUNT);
-		}
-	}
+        if (this.splitCount > RakNet.MAX_SPLIT_COUNT) {
+            throw new IllegalArgumentException("Split count can be no greater than " + RakNet.MAX_SPLIT_COUNT);
+        }
+    }
 
-	public int getPayloadsSize() {
-		return this.payloads.size();
-	}
+    public int getPayloadsSize() {
+        return this.payloads.size();
+    }
 
-	/**
-	 * @return the split ID of the split packet.
-	 */
-	public int getSplitId() {
-		return this.splitId;
-	}
+    /**
+     * @return the split ID of the split packet.
+     */
+    public int getSplitId() {
+        return this.splitId;
+    }
 
-	/**
-	 * @return the amount of packets needed to complete the split packet.
-	 */
-	public int getSplitCount() {
-		return this.splitCount;
-	}
+    /**
+     * @return the amount of packets needed to complete the split packet.
+     */
+    public int getSplitCount() {
+        return this.splitCount;
+    }
 
-	/**
-	 * @return the reliability of the split packet.
-	 */
-	public Reliability getReliability() {
-		return this.reliability;
-	}
+    /**
+     * @return the reliability of the split packet.
+     */
+    public Reliability getReliability() {
+        return this.reliability;
+    }
 
-	/**
-	 * Updates the data for the split packet while also verifying that the
-	 * specified <code>EncapsulatedPacket</code> belongs to this split packet.
-	 * 
-	 * @param encapsulated
-	 *            the <code>EncapsulatedPacket</code> being used to update the
-	 *            data.
-	 * @return the packet if finished, null if data is still missing.
-	 */
-	public Packet update(EncapsulatedPacket encapsulated) {
-		// Update payload data
-		if (encapsulated.split != true || encapsulated.splitId != this.splitId
-				|| encapsulated.splitCount != this.splitCount || encapsulated.reliability != this.reliability) {
-			throw new IllegalArgumentException("This split packet does not belong to this one");
-		}
-		payloads.put(encapsulated.splitIndex, encapsulated.payload);
+    /**
+     * Updates the data for the split packet while also verifying that the
+     * specified <code>EncapsulatedPacket</code> belongs to this split packet.
+     *
+     * @param encapsulated the <code>EncapsulatedPacket</code> being used to update the
+     *                     data.
+     * @return the packet if finished, null if data is still missing.
+     */
+    public Packet update(EncapsulatedPacket encapsulated) {
+        // Update payload data
+        if (!encapsulated.split || encapsulated.splitId != this.splitId
+            || encapsulated.splitCount != this.splitCount || encapsulated.reliability != this.reliability) {
+            throw new IllegalArgumentException("This split packet does not belong to this one");
+        }
+        payloads.put(encapsulated.splitIndex, encapsulated.payload);
 
-//        long size = 0L;
-//        for(Packet packet : payloads.values())
-//            size += packet.size();
-//        Lunaris.getInstance().getLogger().info("Summary size: %d bytes (current one is %d bytes)", size, encapsulated.payload.size());
+        //        long size = 0L;
+        //        for(Packet packet : payloads.values())
+        //            size += packet.size();
+        //        Lunaris.getInstance().getLogger().info("Summary size: %d bytes (current one is %d bytes)", size, encapsulated.payload.size());
 
-		// If the map is large enough then put the packet together and return it
-		if (payloads.size() >= this.splitCount) {
-			Packet finalPayload = new Packet();
-			for (int i = 0; i < payloads.size(); i++) {
-				finalPayload.write(payloads.get(i).array());
-			}
-			return finalPayload;
-		}
+        // If the map is large enough then put the packet together and return it
+        if (payloads.size() >= this.splitCount) {
+            Packet finalPayload = new Packet();
+            for (int i = 0; i < payloads.size(); i++) {
+                finalPayload.write(payloads.get(i).array());
+            }
+            return finalPayload;
+        }
 
-		// The packet is not yet ready
-		return null;
-	}
+        // The packet is not yet ready
+        return null;
+    }
 
-	/**
-	 * @param reliability
-	 *            the reliability of the packet.
-	 * @param packet
-	 *            the packet.
-	 * @param maximumTransferUnit
-	 *            the maximum transfer unit of the session.
-	 * @return true the packet needs to be split.
-	 */
-	public static boolean needsSplit(Reliability reliability, Packet packet, int maximumTransferUnit) {
-		return (CustomPacket.calculateDummy()
-				+ EncapsulatedPacket.calculateDummy(reliability, false, packet) > maximumTransferUnit);
-	}
+    /**
+     * @param reliability         the reliability of the packet.
+     * @param packet              the packet.
+     * @param maximumTransferUnit the maximum transfer unit of the session.
+     * @return true the packet needs to be split.
+     */
+    public static boolean needsSplit(Reliability reliability, Packet packet, int maximumTransferUnit) {
+        return (CustomPacket.calculateDummy()
+            + EncapsulatedPacket.calculateDummy(reliability, false, packet) > maximumTransferUnit);
+    }
 
-	/**
-	 * Splits the specified <code>EncapsulatedPacket</code> using the specified
-	 * maximumTransferUnit
-	 * 
-	 * @param session
-	 *            the session.
-	 * @param encapsulated
-	 *            the <code>EncapsulatedPacket</code> to split.
-	 * @return the split <code>EncapsulatedPacket</code>s.
-	 */
-	public static final EncapsulatedPacket[] splitPacket(RakNetSession session, EncapsulatedPacket encapsulated) {
-		// Get split packet data
-		byte[][] split = ArrayUtils.splitArray(encapsulated.payload.array(), session.getMaximumTransferUnit()
-				- CustomPacket.calculateDummy() - EncapsulatedPacket.calculateDummy(encapsulated.reliability, true));
-		EncapsulatedPacket[] splitPackets = new EncapsulatedPacket[split.length];
+    /**
+     * Splits the specified <code>EncapsulatedPacket</code> using the specified
+     * maximumTransferUnit
+     *
+     * @param session      the session.
+     * @param encapsulated the <code>EncapsulatedPacket</code> to split.
+     * @return the split <code>EncapsulatedPacket</code>s.
+     */
+    public static EncapsulatedPacket[] splitPacket(RakNetSession session, EncapsulatedPacket encapsulated) {
+        // Get split packet data
+        byte[][] split = ArrayUtils.splitArray(encapsulated.payload.array(), session.getMaximumTransferUnit()
+            - CustomPacket.calculateDummy() - EncapsulatedPacket.calculateDummy(encapsulated.reliability, true));
+        EncapsulatedPacket[] splitPackets = new EncapsulatedPacket[split.length];
 
-		// Encode encapsulated packets
-		for (int i = 0; i < split.length; i++) {
-			// Set the base parameters
-			EncapsulatedPacket encapsulatedSplit = new EncapsulatedPacket();
-			encapsulatedSplit.reliability = encapsulated.reliability;
-			encapsulatedSplit.payload = new Packet(split[i]);
+        // Encode encapsulated packets
+        for (int i = 0; i < split.length; i++) {
+            // Set the base parameters
+            EncapsulatedPacket encapsulatedSplit = new EncapsulatedPacket();
+            encapsulatedSplit.reliability = encapsulated.reliability;
+            encapsulatedSplit.payload = new Packet(split[i]);
 
-			// Set reliability specific parameters
-			encapsulatedSplit.messageIndex = (encapsulated.reliability.isReliable() ? session.bumpMessageIndex()
-					: encapsulated.messageIndex);
-			if (encapsulated.reliability.isOrdered() || encapsulated.reliability.isSequenced()) {
-				encapsulatedSplit.orderChannel = encapsulated.orderChannel;
-				encapsulatedSplit.orderIndex = encapsulated.orderIndex;
-			}
+            // Set reliability specific parameters
+            encapsulatedSplit.messageIndex = (encapsulated.reliability.isReliable() ? session.bumpMessageIndex()
+                : encapsulated.messageIndex);
+            if (encapsulated.reliability.isOrdered() || encapsulated.reliability.isSequenced()) {
+                encapsulatedSplit.orderChannel = encapsulated.orderChannel;
+                encapsulatedSplit.orderIndex = encapsulated.orderIndex;
+            }
 
-			// Set the split related parameters
-			encapsulatedSplit.split = true;
-			encapsulatedSplit.splitCount = split.length;
-			encapsulatedSplit.splitId = encapsulated.splitId;
-			encapsulatedSplit.splitIndex = i;
-			splitPackets[i] = encapsulatedSplit;
-		}
+            // Set the split related parameters
+            encapsulatedSplit.split = true;
+            encapsulatedSplit.splitCount = split.length;
+            encapsulatedSplit.splitId = encapsulated.splitId;
+            encapsulatedSplit.splitIndex = i;
+            splitPackets[i] = encapsulatedSplit;
+        }
 
-		return splitPackets;
-	}
+        return splitPackets;
+    }
 
 }

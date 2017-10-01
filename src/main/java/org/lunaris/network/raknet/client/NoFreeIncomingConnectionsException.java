@@ -38,17 +38,16 @@ package org.lunaris.network.raknet.client;
  */
 public class NoFreeIncomingConnectionsException extends org.lunaris.network.raknet.client.RakNetClientException {
 
-	private static final long serialVersionUID = 5863972657532782029L;
+    private static final long serialVersionUID = 5863972657532782029L;
 
-	/**
-	 * Constructs a <code>NoFreeIncomingConnectionsException</code> with the
-	 * specified <code>RakNetClient</code>.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code> that threw the exception.
-	 */
-	public NoFreeIncomingConnectionsException(RakNetClient client) {
-		super(client, "Server has no free incoming connections");
-	}
+    /**
+     * Constructs a <code>NoFreeIncomingConnectionsException</code> with the
+     * specified <code>RakNetClient</code>.
+     *
+     * @param client the <code>RakNetClient</code> that threw the exception.
+     */
+    public NoFreeIncomingConnectionsException(RakNetClient client) {
+        super(client, "Server has no free incoming connections");
+    }
 
 }

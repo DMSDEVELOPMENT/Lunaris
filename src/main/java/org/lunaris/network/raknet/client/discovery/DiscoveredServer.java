@@ -30,10 +30,10 @@
  */
 package org.lunaris.network.raknet.client.discovery;
 
-import java.net.InetSocketAddress;
-
 import org.lunaris.network.raknet.identifier.Identifier;
 import org.lunaris.network.raknet.util.ArrayUtils;
+
+import java.net.InetSocketAddress;
 
 /**
  * This class represents a server that has been discovered by the
@@ -44,86 +44,81 @@ import org.lunaris.network.raknet.util.ArrayUtils;
  */
 public class DiscoveredServer {
 
-	public static final long SERVER_TIMEOUT_MILLI = 5000L;
-	public static final String IS_JRAKNET_FIELD = "isJraknet";
+    public static final long SERVER_TIMEOUT_MILLI = 5000L;
+    public static final String IS_JRAKNET_FIELD = "isJraknet";
 
-	// Server data
-	private final InetSocketAddress address;
-	private long discoveryTimestamp;
-	private Identifier identifier;
+    // Server data
+    private final InetSocketAddress address;
+    private long discoveryTimestamp;
+    private Identifier identifier;
 
-	/**
-	 * Constructs a <code>DiscoveredServer</code> with the specified address,
-	 * discovery timestamp, and identifier.
-	 * 
-	 * @param address
-	 *            the discovered server's address.
-	 * @param discoveryTimestamp
-	 *            the time the server was initially discovered.
-	 * @param identifier
-	 *            the server's identifier.
-	 */
-	public DiscoveredServer(InetSocketAddress address, long discoveryTimestamp, Identifier identifier) {
-		this.address = address;
-		this.discoveryTimestamp = discoveryTimestamp;
-		this.identifier = identifier;
-	}
+    /**
+     * Constructs a <code>DiscoveredServer</code> with the specified address,
+     * discovery timestamp, and identifier.
+     *
+     * @param address            the discovered server's address.
+     * @param discoveryTimestamp the time the server was initially discovered.
+     * @param identifier         the server's identifier.
+     */
+    public DiscoveredServer(InetSocketAddress address, long discoveryTimestamp, Identifier identifier) {
+        this.address = address;
+        this.discoveryTimestamp = discoveryTimestamp;
+        this.identifier = identifier;
+    }
 
-	/**
-	 * @return the address of the discovered server.
-	 */
-	public InetSocketAddress getAddress() {
-		return this.address;
-	}
+    /**
+     * @return the address of the discovered server.
+     */
+    public InetSocketAddress getAddress() {
+        return this.address;
+    }
 
-	/**
-	 * @return the last time the server sent a response back.
-	 */
-	public long getDiscoveryTimestamp() {
-		return this.discoveryTimestamp;
-	}
+    /**
+     * @return the last time the server sent a response back.
+     */
+    public long getDiscoveryTimestamp() {
+        return this.discoveryTimestamp;
+    }
 
-	/**
-	 * Updates the last time the server sent a response back.
-	 * 
-	 * @param discoveryTimestamp
-	 *            the new discovery timestamp.
-	 */
-	public void setDiscoveryTimestamp(long discoveryTimestamp) {
-		this.discoveryTimestamp = discoveryTimestamp;
-	}
+    /**
+     * Updates the last time the server sent a response back.
+     *
+     * @param discoveryTimestamp the new discovery timestamp.
+     */
+    public void setDiscoveryTimestamp(long discoveryTimestamp) {
+        this.discoveryTimestamp = discoveryTimestamp;
+    }
 
-	/**
-	 * @return the last identifier received by the server.
-	 */
-	public Identifier getIdentifier() {
-		return this.identifier;
-	}
+    /**
+     * @return the last identifier received by the server.
+     */
+    public Identifier getIdentifier() {
+        return this.identifier;
+    }
 
-	/**
-	 * Updates the identifier.
-	 * 
-	 * @param identifier
-	 *            the new identifier.
-	 */
-	public void setIdentifier(Identifier identifier) {
-		this.identifier = identifier;
-	}
+    /**
+     * Updates the identifier.
+     *
+     * @param identifier the new identifier.
+     */
+    public void setIdentifier(Identifier identifier) {
+        this.identifier = identifier;
+    }
 
-	@Override
-	public boolean equals(Object object) {
-		if (object instanceof DiscoveredServer) {
-			DiscoveredServer discoveredServer = (DiscoveredServer) object;
-			return (discoveredServer.getAddress().equals(this.getAddress())
-					&& discoveredServer.getDiscoveryTimestamp() == this.getDiscoveryTimestamp()
-					&& discoveredServer.getIdentifier().equals(this.getIdentifier()));
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof DiscoveredServer) {
+            DiscoveredServer discoveredServer = (DiscoveredServer) object;
+            return (discoveredServer.getAddress().equals(this.getAddress())
+                && discoveredServer.getDiscoveryTimestamp() == this.getDiscoveryTimestamp()
+                && discoveredServer.getIdentifier().equals(this.getIdentifier()));
+        }
+        return false;
+    }
 
-	@Override
-	public String toString() {
-		return ArrayUtils.toJRakNetString(this.address, this.discoveryTimestamp, this.identifier);
-	}
+    @Override
+    public String toString() {
+        return ArrayUtils.toJRakNetString(this.address, this.discoveryTimestamp, this.identifier);
+    }
 
 }

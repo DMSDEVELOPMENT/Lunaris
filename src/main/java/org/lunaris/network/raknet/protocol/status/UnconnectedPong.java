@@ -38,35 +38,35 @@ import org.lunaris.network.raknet.protocol.MessageIdentifier;
 
 public class UnconnectedPong extends RakNetPacket {
 
-	public long pingId;
-	public long pongId;
-	public boolean magic;
-	public Identifier identifier;
-	public ConnectionType connectionType;
+    public long pingId;
+    public long pongId;
+    public boolean magic;
+    public Identifier identifier;
+    public ConnectionType connectionType;
 
-	public UnconnectedPong() {
-		super(MessageIdentifier.ID_UNCONNECTED_PONG);
-	}
+    public UnconnectedPong() {
+        super(MessageIdentifier.ID_UNCONNECTED_PONG);
+    }
 
-	public UnconnectedPong(Packet packet) {
-		super(packet);
-	}
+    public UnconnectedPong(Packet packet) {
+        super(packet);
+    }
 
-	@Override
-	public void encode() {
-		this.writeLong(pingId);
-		this.writeLong(pongId);
-		this.writeMagic();
-		this.writeString(identifier.build());
-		this.connectionType = this.writeConnectionType();
-	}
+    @Override
+    public void encode() {
+        this.writeLong(pingId);
+        this.writeLong(pongId);
+        this.writeMagic();
+        this.writeString(identifier.build());
+        this.connectionType = this.writeConnectionType();
+    }
 
-	@Override
-	public void decode() {
-		this.pingId = this.readLong();
-		this.pongId = this.readLong();
-		this.magic = this.checkMagic();
-		this.identifier = new Identifier(this.readString(), this.connectionType = this.readConnectionType());
-	}
+    @Override
+    public void decode() {
+        this.pingId = this.readLong();
+        this.pongId = this.readLong();
+        this.magic = this.checkMagic();
+        this.identifier = new Identifier(this.readString(), this.connectionType = this.readConnectionType());
+    }
 
 }

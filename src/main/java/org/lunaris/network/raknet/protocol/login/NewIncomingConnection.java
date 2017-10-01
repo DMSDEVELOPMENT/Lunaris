@@ -30,68 +30,68 @@
  */
 package org.lunaris.network.raknet.protocol.login;
 
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-
 import org.lunaris.network.raknet.Packet;
 import org.lunaris.network.raknet.RakNetPacket;
 import org.lunaris.network.raknet.protocol.Failable;
 import org.lunaris.network.raknet.protocol.MessageIdentifier;
 
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+
 public class NewIncomingConnection extends RakNetPacket implements Failable {
 
-	public InetSocketAddress serverAddress;
-	public long serverTimestamp;
-	public long clientTimestamp;
-	private boolean failed;
+    public InetSocketAddress serverAddress;
+    public long serverTimestamp;
+    public long clientTimestamp;
+    private boolean failed;
 
-	public NewIncomingConnection(Packet packet) {
-		super(packet);
-	}
+    public NewIncomingConnection(Packet packet) {
+        super(packet);
+    }
 
-	public NewIncomingConnection() {
-		super(MessageIdentifier.ID_NEW_INCOMING_CONNECTION);
-	}
+    public NewIncomingConnection() {
+        super(MessageIdentifier.ID_NEW_INCOMING_CONNECTION);
+    }
 
-	@Override
-	public void encode() {
-		try {
-			this.writeAddress(serverAddress);
-			for (int i = 0; i < 10; i++) {
-				this.writeAddress("0.0.0.0", 0);
-			}
-			this.writeLong(serverTimestamp);
-			this.writeLong(clientTimestamp);
-		} catch (UnknownHostException e) {
-			this.failed = true;
-			this.serverAddress = null;
-			this.serverTimestamp = 0;
-			this.clientTimestamp = 0;
-			this.clear();
-		}
-	}
+    @Override
+    public void encode() {
+        try {
+            this.writeAddress(serverAddress);
+            for (int i = 0; i < 10; i++) {
+                this.writeAddress("0.0.0.0", 0);
+            }
+            this.writeLong(serverTimestamp);
+            this.writeLong(clientTimestamp);
+        } catch (UnknownHostException e) {
+            this.failed = true;
+            this.serverAddress = null;
+            this.serverTimestamp = 0;
+            this.clientTimestamp = 0;
+            this.clear();
+        }
+    }
 
-	@Override
-	public void decode() {
-		try {
-			this.serverAddress = this.readAddress();
-			for (int i = 0; i < 10; i++) {
-				this.readAddress(); // Ignore, unknown use
-			}
-			this.serverTimestamp = this.readLong();
-			this.clientTimestamp = this.readLong();
-		} catch (UnknownHostException e) {
-			this.failed = true;
-			this.serverAddress = null;
-			this.serverTimestamp = 0;
-			this.clientTimestamp = 0;
-			this.clear();
-		}
-	}
+    @Override
+    public void decode() {
+        try {
+            this.serverAddress = this.readAddress();
+            for (int i = 0; i < 10; i++) {
+                this.readAddress(); // Ignore, unknown use
+            }
+            this.serverTimestamp = this.readLong();
+            this.clientTimestamp = this.readLong();
+        } catch (UnknownHostException e) {
+            this.failed = true;
+            this.serverAddress = null;
+            this.serverTimestamp = 0;
+            this.clientTimestamp = 0;
+            this.clear();
+        }
+    }
 
-	@Override
-	public boolean failed() {
-		return this.failed;
-	}
+    @Override
+    public boolean failed() {
+        return this.failed;
+    }
 
 }

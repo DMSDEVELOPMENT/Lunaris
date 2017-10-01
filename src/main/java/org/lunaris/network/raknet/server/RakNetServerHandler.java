@@ -30,15 +30,16 @@
  */
 package org.lunaris.network.raknet.server;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.DatagramPacket;
+
 import org.lunaris.network.raknet.RakNetLogger;
 import org.lunaris.network.raknet.RakNetPacket;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.util.HashMap;
 
 /**
  * Used by the <code>RakNetServer</code> with the sole purpose of sending
@@ -48,103 +49,97 @@ import org.lunaris.network.raknet.RakNetPacket;
  */
 public class RakNetServerHandler extends ChannelInboundHandlerAdapter {
 
-	// Handler data
-	private final String loggerName;
-	private final org.lunaris.network.raknet.server.RakNetServer server;
-	private final HashMap<InetAddress, org.lunaris.network.raknet.server.BlockedAddress> blocked;
-	private InetSocketAddress causeAddress;
+    // Handler data
+    private final String loggerName;
+    private final RakNetServer server;
+    private final HashMap<InetAddress, BlockedAddress> blocked;
+    private InetSocketAddress causeAddress;
 
-	/**
-	 * Constructs a <code>RakNetClientServer</code> with the specified
-	 * <code>RakNetClient</code>.
-	 * 
-	 * @param server
-	 *            the <code>RakNetServer</code> to send received packets to.
-	 */
-	public RakNetServerHandler(org.lunaris.network.raknet.server.RakNetServer server) {
-		this.loggerName = "server handler #" + server.getGloballyUniqueId();
-		this.server = server;
-		this.blocked = new HashMap<>();
-	}
+    /**
+     * Constructs a <code>RakNetClientServer</code> with the specified
+     * <code>RakNetClient</code>.
+     *
+     * @param server the <code>RakNetServer</code> to send received packets to.
+     */
+    public RakNetServerHandler(RakNetServer server) {
+        this.loggerName = "server handler #" + server.getGloballyUniqueId();
+        this.server = server;
+        this.blocked = new HashMap<>();
+    }
 
-	/**
-	 * Blocks the specified address with the specified reason for the specified
-	 * amount time.
-	 * 
-	 * @param address
-	 *            the address to block.
-	 * @param reason
-	 *            the reason the address was blocked.
-	 * @param time
-	 *            how long the address will be blocked in milliseconds.
-	 */
-	public void blockAddress(InetAddress address, String reason, long time) {
-		blocked.put(address, new org.lunaris.network.raknet.server.BlockedAddress(System.currentTimeMillis(), time));
-		server.getListener().onAddressBlocked(address, reason, time);
-		RakNetLogger.info(loggerName,
-				"Blocked address " + address + " due to \"" + reason + "\" for " + time + " milliseconds");
-	}
+    /**
+     * Blocks the specified address with the specified reason for the specified
+     * amount time.
+     *
+     * @param address the address to block.
+     * @param reason  the reason the address was blocked.
+     * @param time    how long the address will be blocked in milliseconds.
+     */
+    public void blockAddress(InetAddress address, String reason, long time) {
+        blocked.put(address, new BlockedAddress(System.currentTimeMillis(), time));
+        server.getListener().onAddressBlocked(address, reason, time);
+        RakNetLogger.info(loggerName,
+            "Blocked address " + address + " due to \"" + reason + "\" for " + time + " milliseconds");
+    }
 
-	/**
-	 * Unblocks the specified address.
-	 * 
-	 * @param address
-	 *            the address to unblock.
-	 */
-	public void unblockAddress(InetAddress address) {
-		blocked.remove(address);
-		server.getListener().onAddressUnblocked(address);
-		RakNetLogger.info(loggerName, "Unblocked address " + address);
-	}
+    /**
+     * Unblocks the specified address.
+     *
+     * @param address the address to unblock.
+     */
+    public void unblockAddress(InetAddress address) {
+        blocked.remove(address);
+        server.getListener().onAddressUnblocked(address);
+        RakNetLogger.info(loggerName, "Unblocked address " + address);
+    }
 
-	/**
-	 * @param address
-	 *            the address to check.
-	 * @return whether or not the specified address is blocked.
-	 */
-	public boolean addressBlocked(InetAddress address) {
-		return blocked.containsKey(address);
-	}
+    /**
+     * @param address the address to check.
+     * @return whether or not the specified address is blocked.
+     */
+    public boolean addressBlocked(InetAddress address) {
+        return blocked.containsKey(address);
+    }
 
-	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof DatagramPacket) {
-			// Get packet and sender data
-			DatagramPacket datagram = (DatagramPacket) msg;
-			InetSocketAddress sender = datagram.sender();
-			RakNetPacket packet = new RakNetPacket(datagram);
+            // Get packet and sender data
+            DatagramPacket datagram = (DatagramPacket) msg;
+            InetSocketAddress sender = datagram.sender();
+            RakNetPacket packet = new RakNetPacket(datagram);
 
-			// If an exception happens it's because of this address
-			this.causeAddress = sender;
+            // If an exception happens it's because of this address
+            this.causeAddress = sender;
 
-			// Is the sender blocked?
-			if (this.addressBlocked(sender.getAddress())) {
-				org.lunaris.network.raknet.server.BlockedAddress status = blocked.get(sender.getAddress());
-				if (status.getTime() <= BlockedAddress.PERMANENT_BLOCK) {
-					return; // Permanently blocked
-				}
-				if (System.currentTimeMillis() - status.getStartTime() < status.getTime()) {
-					return; // Time hasn't expired
-				}
-				this.unblockAddress(sender.getAddress());
-			}
+            // Is the sender blocked?
+            if (this.addressBlocked(sender.getAddress())) {
+                BlockedAddress status = blocked.get(sender.getAddress());
+                if (status.getTime() <= BlockedAddress.PERMANENT_BLOCK) {
+                    return; // Permanently blocked
+                }
+                if (System.currentTimeMillis() - status.getStartTime() < status.getTime()) {
+                    return; // Time hasn't expired
+                }
+                this.unblockAddress(sender.getAddress());
+            }
 
-			// Handle the packet and release the buffer
-			server.handleMessage(packet, sender);
-			datagram.content().readerIndex(0); // Reset position
-			RakNetLogger.debug(loggerName, "Sent packet to server and reset Datagram buffer read position");
-			server.getListener().handleNettyMessage(datagram.content(), sender);
-			datagram.content().release(); // No longer needed
-			RakNetLogger.debug(loggerName, "Sent Datagram buffer to server and released it");
+            // Handle the packet and release the buffer
+            server.handleMessage(packet, sender);
+            datagram.content().readerIndex(0); // Reset position
+            RakNetLogger.debug(loggerName, "Sent packet to server and reset Datagram buffer read position");
+            server.getListener().handleNettyMessage(datagram.content(), sender);
+            datagram.content().release(); // No longer needed
+            RakNetLogger.debug(loggerName, "Sent Datagram buffer to server and released it");
 
-			// No exceptions occurred, release the suspect
-			this.causeAddress = null;
-		}
-	}
+            // No exceptions occurred, release the suspect
+            this.causeAddress = null;
+        }
+    }
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		server.handleHandlerException(this.causeAddress, cause);
-	}
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        server.handleHandlerException(this.causeAddress, cause);
+    }
 
 }

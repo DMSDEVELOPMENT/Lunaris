@@ -38,17 +38,16 @@ package org.lunaris.network.raknet.client;
  */
 public class AlreadyConnectedException extends org.lunaris.network.raknet.client.RakNetClientException {
 
-	private static final long serialVersionUID = -482118372058339060L;
+    private static final long serialVersionUID = -482118372058339060L;
 
-	/**
-	 * Constructs an <code>AlreadyConnectedException</code> with the specified
-	 * <code>RakNetClient</code>.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code> that threw the exception.
-	 */
-	public AlreadyConnectedException(RakNetClient client) {
-		super(client, "Already connected to server");
-	}
+    /**
+     * Constructs an <code>AlreadyConnectedException</code> with the specified
+     * <code>RakNetClient</code>.
+     *
+     * @param client the <code>RakNetClient</code> that threw the exception.
+     */
+    public AlreadyConnectedException(RakNetClient client) {
+        super(client, "Already connected to server");
+    }
 
 }

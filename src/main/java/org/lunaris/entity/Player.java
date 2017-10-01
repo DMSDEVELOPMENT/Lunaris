@@ -61,8 +61,6 @@ public class Player extends LivingEntity implements CommandSender {
 
     private final AdventureSettings adventureSettings;
 
-    private final PacketsBush packetsBush = new PacketsBush();
-
     public Player(int entityID, RakNetClientSession session, Packet01Login packetLogin) {
         super(entityID);
         this.session = session;
@@ -352,10 +350,6 @@ public class Player extends LivingEntity implements CommandSender {
 
     public void setBreakingBlockTask(Scheduler.Task breakingBlockTask) {
         this.breakingBlockTask = breakingBlockTask;
-    }
-
-    public PacketsBush getPacketsBush() {
-        return this.packetsBush;
     }
 
     public AdventureSettings getAdventureSettings() {

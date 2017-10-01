@@ -40,13 +40,13 @@ import org.lunaris.network.raknet.RakNet;
  */
 public class InvalidChannelException extends IllegalArgumentException {
 
-	private static final long serialVersionUID = -8690545139286694469L;
+    private static final long serialVersionUID = -8690545139286694469L;
 
-	/**
-	 * Constructs an <code>InvalidChannelException</code>.
-	 */
-	public InvalidChannelException() {
-		super("Channel must be lower than " + RakNet.MAX_CHANNELS);
-	}
+    /**
+     * Constructs an <code>InvalidChannelException</code>.
+     */
+    public InvalidChannelException() {
+        super("Channel must be lower than " + RakNet.MAX_CHANNELS);
+    }
 
 }

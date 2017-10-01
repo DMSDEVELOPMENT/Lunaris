@@ -30,7 +30,12 @@
  */
 package org.lunaris.network.raknet.stream;
 
+import org.lunaris.network.raknet.Packet;
+
 import java.io.DataOutput;
+import java.io.IOException;
+import java.io.OutputStream;
+
 /*
  *       _   _____            _      _   _          _   
  *      | | |  __ \          | |    | \ | |        | |  
@@ -61,10 +66,6 @@ import java.io.DataOutput;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.  
  */
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.lunaris.network.raknet.Packet;
 
 /**
  * Used to write data to a <code>Packet</code> with ease, to retrieve a
@@ -75,91 +76,90 @@ import org.lunaris.network.raknet.Packet;
  */
 public class PacketDataOutput extends OutputStream implements DataOutput {
 
-	private final Packet packet;
+    private final Packet packet;
 
-	/**
-	 * Constructs a <code>PacketDataOutput</code> with the specified
-	 * <code>Packet</code>.
-	 * 
-	 * @param packet
-	 *            The <code>Packet</code> to write data to.
-	 */
-	public PacketDataOutput(Packet packet) {
-		this.packet = packet;
-	}
+    /**
+     * Constructs a <code>PacketDataOutput</code> with the specified
+     * <code>Packet</code>.
+     *
+     * @param packet The <code>Packet</code> to write data to.
+     */
+    public PacketDataOutput(Packet packet) {
+        this.packet = packet;
+    }
 
-	@Override
-	public void write(int b) throws IOException {
-		packet.writeByte(b);
-	}
+    @Override
+    public void write(int b) throws IOException {
+        packet.writeByte(b);
+    }
 
-	@Override
-	public void write(byte[] b) throws IOException {
-		packet.write(b);
-	}
+    @Override
+    public void write(byte[] b) throws IOException {
+        packet.write(b);
+    }
 
-	@Override
-	public void write(byte[] b, int off, int len) throws IOException {
-		for (int i = off; i < len; i++) {
-			packet.writeByte(b[i]);
-		}
-	}
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        for (int i = off; i < len; i++) {
+            packet.writeByte(b[i]);
+        }
+    }
 
-	@Override
-	public void writeBoolean(boolean v) throws IOException {
-		packet.writeBoolean(v);
-	}
+    @Override
+    public void writeBoolean(boolean v) throws IOException {
+        packet.writeBoolean(v);
+    }
 
-	@Override
-	public void writeByte(int v) throws IOException {
-		packet.writeByte(v);
-	}
+    @Override
+    public void writeByte(int v) throws IOException {
+        packet.writeByte(v);
+    }
 
-	@Override
-	public void writeShort(int v) throws IOException {
-		packet.writeShort(v);
-	}
+    @Override
+    public void writeShort(int v) throws IOException {
+        packet.writeShort(v);
+    }
 
-	@Override
-	public void writeChar(int v) throws IOException {
-		packet.writeUnsignedShort(v);
-	}
+    @Override
+    public void writeChar(int v) throws IOException {
+        packet.writeUnsignedShort(v);
+    }
 
-	@Override
-	public void writeInt(int v) throws IOException {
-		packet.writeInt(v);
-	}
+    @Override
+    public void writeInt(int v) throws IOException {
+        packet.writeInt(v);
+    }
 
-	@Override
-	public void writeLong(long v) throws IOException {
-		packet.writeLong(v);
-	}
+    @Override
+    public void writeLong(long v) throws IOException {
+        packet.writeLong(v);
+    }
 
-	@Override
-	public void writeFloat(float v) throws IOException {
-		packet.writeFloat(v);
-	}
+    @Override
+    public void writeFloat(float v) throws IOException {
+        packet.writeFloat(v);
+    }
 
-	@Override
-	public void writeDouble(double v) throws IOException {
-		packet.writeDouble(v);
-	}
+    @Override
+    public void writeDouble(double v) throws IOException {
+        packet.writeDouble(v);
+    }
 
-	@Override
-	public void writeBytes(String s) throws IOException {
-		packet.write(s.getBytes());
-	}
+    @Override
+    public void writeBytes(String s) throws IOException {
+        packet.write(s.getBytes());
+    }
 
-	@Override
-	public void writeChars(String s) throws IOException {
-		for (char c : s.toCharArray()) {
-			packet.writeUnsignedShort(c);
-		}
-	}
+    @Override
+    public void writeChars(String s) throws IOException {
+        for (char c : s.toCharArray()) {
+            packet.writeUnsignedShort(c);
+        }
+    }
 
-	@Override
-	public void writeUTF(String s) throws IOException {
-		packet.writeString(s);
-	}
+    @Override
+    public void writeUTF(String s) throws IOException {
+        packet.writeString(s);
+    }
 
 }

@@ -30,11 +30,11 @@
  */
 package org.lunaris.network.raknet.stream;
 
+import org.lunaris.network.raknet.Packet;
+
 import java.io.DataInput;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.lunaris.network.raknet.Packet;
 
 /**
  * Used to read data from a <code>Packet</code> with ease, to retrieve a
@@ -45,114 +45,113 @@ import org.lunaris.network.raknet.Packet;
  */
 public class PacketDataInput extends InputStream implements DataInput {
 
-	private final Packet packet;
+    private final Packet packet;
 
-	/**
-	 * Constructs a <code>PacketDataInput</code> with the specified
-	 * <code>Packet</code>.
-	 * 
-	 * @param packet
-	 *            the <code>Packet</code> to read data from.
-	 */
-	public PacketDataInput(Packet packet) {
-		this.packet = packet;
-	}
+    /**
+     * Constructs a <code>PacketDataInput</code> with the specified
+     * <code>Packet</code>.
+     *
+     * @param packet the <code>Packet</code> to read data from.
+     */
+    public PacketDataInput(Packet packet) {
+        this.packet = packet;
+    }
 
-	public int remaining() {
-		return packet.remaining();
-	}
+    public int remaining() {
+        return packet.remaining();
+    }
 
-	@Override
-	public int read() throws IOException {
-		if (packet.remaining() <= 0) {
-			return -1;
-		} else {
-			return packet.readUnsignedByte();
-		}
-	}
+    @Override
+    public int read() throws IOException {
+        if (packet.remaining() <= 0) {
+            return -1;
+        } else {
+            return packet.readUnsignedByte();
+        }
+    }
 
-	@Override
-	public void readFully(byte[] b) throws IOException {
-		for (int i = 0; i < b.length; i++) {
-			b[i] = packet.readByte();
-		}
-	}
+    @Override
+    public void readFully(byte[] b) throws IOException {
+        for (int i = 0; i < b.length; i++) {
+            b[i] = packet.readByte();
+        }
+    }
 
-	@Override
-	public void readFully(byte[] b, int off, int len) throws IOException {
-		for (int i = off; i < len; i++) {
-			b[i] = packet.readByte();
-		}
-	}
+    @Override
+    public void readFully(byte[] b, int off, int len) throws IOException {
+        for (int i = off; i < len; i++) {
+            b[i] = packet.readByte();
+        }
+    }
 
-	@Override
-	public int skipBytes(int n) throws IOException {
-		int skipped = 0;
-		while (skipped < n && packet.remaining() > 0) {
-			packet.readByte();
-			skipped++;
-		}
-		return skipped;
-	}
+    @Override
+    public int skipBytes(int n) throws IOException {
+        int skipped = 0;
+        while (skipped < n && packet.remaining() > 0) {
+            packet.readByte();
+            skipped++;
+        }
+        return skipped;
+    }
 
-	@Override
-	public boolean readBoolean() throws IOException {
-		return packet.readBoolean();
-	}
+    @Override
+    public boolean readBoolean() throws IOException {
+        return packet.readBoolean();
+    }
 
-	@Override
-	public byte readByte() throws IOException {
-		return packet.readByte();
-	}
+    @Override
+    public byte readByte() throws IOException {
+        return packet.readByte();
+    }
 
-	@Override
-	public int readUnsignedByte() throws IOException {
-		return packet.readUnsignedByte();
-	}
+    @Override
+    public int readUnsignedByte() throws IOException {
+        return packet.readUnsignedByte();
+    }
 
-	@Override
-	public short readShort() throws IOException {
-		return packet.readShort();
-	}
+    @Override
+    public short readShort() throws IOException {
+        return packet.readShort();
+    }
 
-	@Override
-	public int readUnsignedShort() throws IOException {
-		return packet.readUnsignedShort();
-	}
+    @Override
+    public int readUnsignedShort() throws IOException {
+        return packet.readUnsignedShort();
+    }
 
-	@Override
-	public char readChar() throws IOException {
-		return (char) packet.readUnsignedShort();
-	}
+    @Override
+    public char readChar() throws IOException {
+        return (char) packet.readUnsignedShort();
+    }
 
-	@Override
-	public int readInt() throws IOException {
-		return packet.readInt();
-	}
+    @Override
+    public int readInt() throws IOException {
+        return packet.readInt();
+    }
 
-	@Override
-	public long readLong() throws IOException {
-		return packet.readLong();
-	}
+    @Override
+    public long readLong() throws IOException {
+        return packet.readLong();
+    }
 
-	@Override
-	public float readFloat() throws IOException {
-		return packet.readFloat();
-	}
+    @Override
+    public float readFloat() throws IOException {
+        return packet.readFloat();
+    }
 
-	@Override
-	public double readDouble() throws IOException {
-		return packet.readDouble();
-	}
+    @Override
+    public double readDouble() throws IOException {
+        return packet.readDouble();
+    }
 
-	@Override
-	public String readLine() throws IOException {
-		throw new RuntimeException("This method is not supported by " + this.getClass().getSimpleName());
-	}
+    @Override
+    public String readLine() throws IOException {
+        throw new RuntimeException("This method is not supported by " + this.getClass().getSimpleName());
+    }
 
-	@Override
-	public String readUTF() throws IOException {
-		return packet.readString();
-	}
+    @Override
+    public String readUTF() throws IOException {
+        return packet.readString();
+    }
 
 }

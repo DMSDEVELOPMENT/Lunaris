@@ -38,20 +38,20 @@ package org.lunaris.network.raknet.client.discovery;
  */
 public enum DiscoveryMode {
 
-	/**
-	 * the client will not attempt to discover servers on the local network.
-	 */
-	NONE,
+    /**
+     * the client will not attempt to discover servers on the local network.
+     */
+    NONE,
 
-	/**
-	 * any servers found on the local network will appear.
-	 */
-	ALL_CONNECTIONS,
+    /**
+     * any servers found on the local network will appear.
+     */
+    ALL_CONNECTIONS,
 
-	/**
-	 * any servers found on the local network will appear as long as they have
-	 * open connections.
-	 */
-	OPEN_CONNECTIONS;
+    /**
+     * any servers found on the local network will appear as long as they have
+     * open connections.
+     */
+    OPEN_CONNECTIONS;
 
 }

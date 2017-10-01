@@ -30,10 +30,10 @@
  */
 package org.lunaris.network.raknet.server;
 
-import java.net.InetSocketAddress;
-
 import org.lunaris.network.raknet.identifier.Identifier;
 import org.lunaris.network.raknet.protocol.ConnectionType;
+
+import java.net.InetSocketAddress;
 
 /**
  * Used primarily to box an identifier sent in the response of a server to a
@@ -43,56 +43,52 @@ import org.lunaris.network.raknet.protocol.ConnectionType;
  */
 public class ServerPing {
 
-	private final InetSocketAddress sender;
-	private Identifier identifier;
-	private final ConnectionType connectionType;
+    private final InetSocketAddress sender;
+    private Identifier identifier;
+    private final ConnectionType connectionType;
 
-	/**
-	 * Constructs a <code>ServerPing</code> with the specified address and
-	 * <code>Identifier</code>.
-	 * 
-	 * @param sender
-	 *            the address of the ping sender.
-	 * @param identifier
-	 *            the <code>Identifier</code> to respond with.
-	 * @param connectionType
-	 *            the connection type of the ping sender.
-	 */
-	public ServerPing(InetSocketAddress sender, Identifier identifier, ConnectionType connectionType) {
-		this.sender = sender;
-		this.identifier = identifier;
-		this.connectionType = connectionType;
-	}
+    /**
+     * Constructs a <code>ServerPing</code> with the specified address and
+     * <code>Identifier</code>.
+     *
+     * @param sender         the address of the ping sender.
+     * @param identifier     the <code>Identifier</code> to respond with.
+     * @param connectionType the connection type of the ping sender.
+     */
+    public ServerPing(InetSocketAddress sender, Identifier identifier, ConnectionType connectionType) {
+        this.sender = sender;
+        this.identifier = identifier;
+        this.connectionType = connectionType;
+    }
 
-	/**
-	 * @return the address of the ping sender.
-	 */
-	public InetSocketAddress getSender() {
-		return this.sender;
-	}
+    /**
+     * @return the address of the ping sender.
+     */
+    public InetSocketAddress getSender() {
+        return this.sender;
+    }
 
-	/**
-	 * @return the <code>Identifier</code> being sent back to the sender.
-	 */
-	public Identifier getIdentifier() {
-		return this.identifier;
-	}
+    /**
+     * @return the <code>Identifier</code> being sent back to the sender.
+     */
+    public Identifier getIdentifier() {
+        return this.identifier;
+    }
 
-	/**
-	 * @return the connection type of the ping sender.
-	 */
-	public final ConnectionType getConnectionType() {
-		return this.connectionType;
-	}
+    /**
+     * @return the connection type of the ping sender.
+     */
+    public final ConnectionType getConnectionType() {
+        return this.connectionType;
+    }
 
-	/**
-	 * Sets the <code>Identifier</code> being sent back to the sender.
-	 * 
-	 * @param identifier
-	 *            the new <code>Identifier</code>.
-	 */
-	public void setIdentifier(Identifier identifier) {
-		this.identifier = identifier;
-	}
+    /**
+     * Sets the <code>Identifier</code> being sent back to the sender.
+     *
+     * @param identifier the new <code>Identifier</code>.
+     */
+    public void setIdentifier(Identifier identifier) {
+        this.identifier = identifier;
+    }
 
 }

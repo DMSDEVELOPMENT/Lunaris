@@ -41,34 +41,32 @@ import org.lunaris.network.raknet.util.RakNetUtils;
  */
 public class PacketBufferException extends RakNetClientException {
 
-	private static final long serialVersionUID = -3730545025991834599L;
+    private static final long serialVersionUID = -3730545025991834599L;
 
-	private final RakNetPacket packet;
+    private final RakNetPacket packet;
 
-	/**
-	 * Constructs a <code>PacketBufferException</code> with the specified
-	 * <code>RakNetClient</code> and <code>RakNetPacket</code>.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code> that threw the exception.
-	 * @param packet
-	 *            the <code>RakNetPacket</code> that failed to encode/decode.
-	 */
-	public PacketBufferException(org.lunaris.network.raknet.client.RakNetClient client, RakNetPacket packet) {
-		super(client, "Packet with ID " + RakNetUtils.toHexStringId(packet) + " failed to encode/decode");
-		this.packet = packet;
-	}
+    /**
+     * Constructs a <code>PacketBufferException</code> with the specified
+     * <code>RakNetClient</code> and <code>RakNetPacket</code>.
+     *
+     * @param client the <code>RakNetClient</code> that threw the exception.
+     * @param packet the <code>RakNetPacket</code> that failed to encode/decode.
+     */
+    public PacketBufferException(org.lunaris.network.raknet.client.RakNetClient client, RakNetPacket packet) {
+        super(client, "Packet with ID " + RakNetUtils.toHexStringId(packet) + " failed to encode/decode");
+        this.packet = packet;
+    }
 
-	/**
-	 * @return the packet that failed to encode/decode.
-	 */
-	public RakNetPacket getPacket() {
-		return this.packet;
-	}
+    /**
+     * @return the packet that failed to encode/decode.
+     */
+    public RakNetPacket getPacket() {
+        return this.packet;
+    }
 
-	@Override
-	public String getLocalizedMessage() {
-		return "Packet failed to encode/decode";
-	}
+    @Override
+    public String getLocalizedMessage() {
+        return "Packet failed to encode/decode";
+    }
 
 }

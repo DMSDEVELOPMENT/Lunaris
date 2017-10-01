@@ -38,37 +38,35 @@ package org.lunaris.network.raknet.server;
  */
 public class BlockedAddress {
 
-	public static final int PERMANENT_BLOCK = -1;
+    public static final int PERMANENT_BLOCK = -1;
 
-	private final long startTime;
-	private final long time;
+    private final long startTime;
+    private final long time;
 
-	/**
-	 * Constructs a <code>BlockedClient</code> with the specified start time and
-	 * the amount of time that the client is blocked.
-	 * 
-	 * @param startTime
-	 *            the time the address was first blocked.
-	 * @param time
-	 *            the amount of time until the client is unblocked.
-	 */
-	public BlockedAddress(long startTime, long time) {
-		this.startTime = startTime;
-		this.time = time;
-	}
+    /**
+     * Constructs a <code>BlockedClient</code> with the specified start time and
+     * the amount of time that the client is blocked.
+     *
+     * @param startTime the time the address was first blocked.
+     * @param time      the amount of time until the client is unblocked.
+     */
+    public BlockedAddress(long startTime, long time) {
+        this.startTime = startTime;
+        this.time = time;
+    }
 
-	/**
-	 * @return the time the address was first blocked.
-	 */
-	public long getStartTime() {
-		return this.startTime;
-	}
+    /**
+     * @return the time the address was first blocked.
+     */
+    public long getStartTime() {
+        return this.startTime;
+    }
 
-	/**
-	 * @return how long until the address is unblocked.
-	 */
-	public long getTime() {
-		return this.time;
-	}
+    /**
+     * @return how long until the address is unblocked.
+     */
+    public long getTime() {
+        return this.time;
+    }
 
 }

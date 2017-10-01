@@ -1,12 +1,14 @@
 package org.lunaris.server;
 
 import co.aikar.timings.Timings;
+
 import org.lunaris.Lunaris;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,8 +20,8 @@ public class Scheduler {
 
     private static AtomicInteger ID_COUNTER = new AtomicInteger(0);
 
-    private final ScheduledExecutorService serverThread = Executors.newSingleThreadScheduledExecutor();
-    private final ScheduledExecutorService asyncExecutor = Executors.newScheduledThreadPool(5);
+    private final ScheduledExecutorService serverThread = createScheduledExecutor("Server Thread", 1);
+    private final ScheduledExecutorService asyncExecutor = createScheduledExecutor("Async Task Pool", 5);
 
     public Scheduler() {
         scheduleRepeatable(() -> {
@@ -62,6 +64,21 @@ public class Scheduler {
         Task task = new Task(runnable);
         task.future = this.asyncExecutor.scheduleAtFixedRate(task::run, delay, repeatDelay, unit);
         return task;
+    }
+
+    public static ScheduledExecutorService createScheduledExecutor(String name, int threads) {
+        if (threads == 1) {
+            return Executors.newScheduledThreadPool(1, r -> new Thread(r, name));
+        } else {
+            return Executors.newScheduledThreadPool(threads, new ThreadFactory() {
+                private final AtomicInteger threadNumber = new AtomicInteger(1);
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, name + " #" + threadNumber.getAndIncrement());
+                }
+            });
+        }
     }
 
     public class Task {

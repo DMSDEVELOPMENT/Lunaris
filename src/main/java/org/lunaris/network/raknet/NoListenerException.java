@@ -37,13 +37,13 @@ package org.lunaris.network.raknet;
  */
 public class NoListenerException extends RuntimeException {
 
-	private static final long serialVersionUID = 1841007286123953067L;
+    private static final long serialVersionUID = 1841007286123953067L;
 
-	/**
-	 * Constructs a <code>NoListenerException</code>.
-	 */
-	public NoListenerException() {
-		super("Listener cannot be null");
-	}
+    /**
+     * Constructs a <code>NoListenerException</code>.
+     */
+    public NoListenerException() {
+        super("Listener cannot be null");
+    }
 
 }

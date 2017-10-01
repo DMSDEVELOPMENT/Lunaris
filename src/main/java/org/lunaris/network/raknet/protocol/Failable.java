@@ -37,9 +37,9 @@ package org.lunaris.network.raknet.protocol;
  */
 public interface Failable {
 
-	/**
-	 * @return <code>true</code> if the packet failed to encode.
-	 */
-	public boolean failed();
+    /**
+     * @return <code>true</code> if the packet failed to encode.
+     */
+    public boolean failed();
 
 }

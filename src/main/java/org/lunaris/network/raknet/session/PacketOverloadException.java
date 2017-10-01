@@ -40,13 +40,13 @@ import org.lunaris.network.raknet.RakNet;
  */
 public class PacketOverloadException extends RuntimeException {
 
-	private static final long serialVersionUID = 8544922469731039197L;
+    private static final long serialVersionUID = 8544922469731039197L;
 
-	/**
-	 * Constructs a <code>PacketOverloadException</code>.
-	 */
-	public PacketOverloadException() {
-		super("Too many packets (More than " + RakNet.getMaxPacketsPerSecond() + ") were sent within a second");
-	}
+    /**
+     * Constructs a <code>PacketOverloadException</code>.
+     */
+    public PacketOverloadException() {
+        super("Too many packets (More than " + RakNet.getMaxPacketsPerSecond() + ") were sent within a second");
+    }
 
 }

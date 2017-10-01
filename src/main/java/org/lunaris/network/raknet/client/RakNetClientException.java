@@ -39,29 +39,27 @@ import org.lunaris.network.raknet.RakNetException;
  */
 public class RakNetClientException extends RakNetException {
 
-	private static final long serialVersionUID = 2441122006497992080L;
+    private static final long serialVersionUID = 2441122006497992080L;
 
-	private final org.lunaris.network.raknet.client.RakNetClient client;
+    private final org.lunaris.network.raknet.client.RakNetClient client;
 
-	/**
-	 * Constructs a <code>RakNetClientException</code> with the specified
-	 * <code>RakNetClient</code> and error.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code> that threw the exception.
-	 * @param error
-	 *            the reason the exception was thrown.
-	 */
-	public RakNetClientException(org.lunaris.network.raknet.client.RakNetClient client, String error) {
-		super(error);
-		this.client = client;
-	}
+    /**
+     * Constructs a <code>RakNetClientException</code> with the specified
+     * <code>RakNetClient</code> and error.
+     *
+     * @param client the <code>RakNetClient</code> that threw the exception.
+     * @param error  the reason the exception was thrown.
+     */
+    public RakNetClientException(org.lunaris.network.raknet.client.RakNetClient client, String error) {
+        super(error);
+        this.client = client;
+    }
 
-	/**
-	 * @return the client that threw the exception.
-	 */
-	public final org.lunaris.network.raknet.client.RakNetClient getClient() {
-		return this.client;
-	}
+    /**
+     * @return the client that threw the exception.
+     */
+    public final org.lunaris.network.raknet.client.RakNetClient getClient() {
+        return this.client;
+    }
 
 }

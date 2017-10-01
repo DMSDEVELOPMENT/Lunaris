@@ -34,12 +34,12 @@ import org.lunaris.network.raknet.Packet;
 
 public class UnconnectedPingOpenConnections extends org.lunaris.network.raknet.protocol.status.UnconnectedPing {
 
-	public UnconnectedPingOpenConnections() {
-		super(true);
-	}
+    public UnconnectedPingOpenConnections() {
+        super(true);
+    }
 
-	public UnconnectedPingOpenConnections(Packet packet) {
-		super(packet);
-	}
+    public UnconnectedPingOpenConnections(Packet packet) {
+        super(packet);
+    }
 
 }

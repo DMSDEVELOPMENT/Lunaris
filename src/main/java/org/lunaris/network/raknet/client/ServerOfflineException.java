@@ -40,29 +40,27 @@ import java.net.InetSocketAddress;
  */
 public class ServerOfflineException extends org.lunaris.network.raknet.client.RakNetClientException {
 
-	private static final long serialVersionUID = -3916155995964791602L;
+    private static final long serialVersionUID = -3916155995964791602L;
 
-	private final InetSocketAddress address;
+    private final InetSocketAddress address;
 
-	/**
-	 * Constructs a <code>ServerOfflineException</code> with the specified
-	 * <code>RakNetClient</code> and address.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code> that threw the exception.
-	 * @param address
-	 *            the address of the offline server.
-	 */
-	public ServerOfflineException(RakNetClient client, InetSocketAddress address) {
-		super(client, "Server at address " + address.toString() + " is offline");
-		this.address = address;
-	}
+    /**
+     * Constructs a <code>ServerOfflineException</code> with the specified
+     * <code>RakNetClient</code> and address.
+     *
+     * @param client  the <code>RakNetClient</code> that threw the exception.
+     * @param address the address of the offline server.
+     */
+    public ServerOfflineException(RakNetClient client, InetSocketAddress address) {
+        super(client, "Server at address " + address.toString() + " is offline");
+        this.address = address;
+    }
 
-	/**
-	 * @return the address of the offline server.
-	 */
-	public InetSocketAddress getAddress() {
-		return this.address;
-	}
+    /**
+     * @return the address of the offline server.
+     */
+    public InetSocketAddress getAddress() {
+        return this.address;
+    }
 
 }

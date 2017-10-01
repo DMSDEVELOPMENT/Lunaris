@@ -37,13 +37,13 @@ package org.lunaris.network.raknet.session;
  */
 public class TimeoutException extends RuntimeException {
 
-	private static final long serialVersionUID = 4216977972114486611L;
+    private static final long serialVersionUID = 4216977972114486611L;
 
-	/**
-	 * Constructs a <code>TimeoutException</code>.
-	 */
-	public TimeoutException() {
-		super("Session timeout");
-	}
+    /**
+     * Constructs a <code>TimeoutException</code>.
+     */
+    public TimeoutException() {
+        super("Session timeout");
+    }
 
 }

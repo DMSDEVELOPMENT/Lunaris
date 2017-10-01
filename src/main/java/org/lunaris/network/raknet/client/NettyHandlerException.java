@@ -38,42 +38,39 @@ package org.lunaris.network.raknet.client;
  */
 public class NettyHandlerException extends RakNetClientException {
 
-	private static final long serialVersionUID = -7405227886962804185L;
+    private static final long serialVersionUID = -7405227886962804185L;
 
-	private final org.lunaris.network.raknet.client.RakNetClientHandler handler;
-	private final Throwable cause;
+    private final org.lunaris.network.raknet.client.RakNetClientHandler handler;
+    private final Throwable cause;
 
-	/**
-	 * Constructs a <code>NettyHandlerException</code> with the specified
-	 * <code>RakNetClient</code>, <code>RakNetClientHandler</code>, and
-	 * <code>Throwable</code> that caused this exception to be thrown.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code> that threw the exception.
-	 * @param handler
-	 *            the <code>RakNetClientHandler</code> that caught the
-	 *            exception.
-	 * @param cause
-	 *            the <code>Throwable</code> that was caught by the handler.
-	 */
-	public NettyHandlerException(org.lunaris.network.raknet.client.RakNetClient client, org.lunaris.network.raknet.client.RakNetClientHandler handler, Throwable cause) {
-		super(client, "Exception in handler \"" + cause.getMessage() + "\"");
-		this.handler = handler;
-		this.cause = cause;
-	}
+    /**
+     * Constructs a <code>NettyHandlerException</code> with the specified
+     * <code>RakNetClient</code>, <code>RakNetClientHandler</code>, and
+     * <code>Throwable</code> that caused this exception to be thrown.
+     *
+     * @param client  the <code>RakNetClient</code> that threw the exception.
+     * @param handler the <code>RakNetClientHandler</code> that caught the
+     *                exception.
+     * @param cause   the <code>Throwable</code> that was caught by the handler.
+     */
+    public NettyHandlerException(org.lunaris.network.raknet.client.RakNetClient client, org.lunaris.network.raknet.client.RakNetClientHandler handler, Throwable cause) {
+        super(client, "Exception in handler \"" + cause.getMessage() + "\"");
+        this.handler = handler;
+        this.cause = cause;
+    }
 
-	/**
-	 * @return the <code>RakNetHandler</code> the client is using.
-	 */
-	public RakNetClientHandler getHandler() {
-		return this.handler;
-	}
+    /**
+     * @return the <code>RakNetHandler</code> the client is using.
+     */
+    public RakNetClientHandler getHandler() {
+        return this.handler;
+    }
 
-	/**
-	 * @return the <code>Throwable</code> that was caught by the handler.
-	 */
-	public Throwable getThrowableCause() {
-		return this.cause;
-	}
+    /**
+     * @return the <code>Throwable</code> that was caught by the handler.
+     */
+    public Throwable getThrowableCause() {
+        return this.cause;
+    }
 
 }

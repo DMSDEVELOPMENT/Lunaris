@@ -37,27 +37,25 @@ package org.lunaris.network.raknet;
  */
 public class RakNetException extends Exception {
 
-	private static final long serialVersionUID = -685945306592443928L;
+    private static final long serialVersionUID = -685945306592443928L;
 
-	/**
-	 * Constructs a <code>RakNetException</code> with the specified error.
-	 * 
-	 * @param error
-	 *            the reason the exception was thrown.
-	 */
-	public RakNetException(String error) {
-		super(error);
-	}
+    /**
+     * Constructs a <code>RakNetException</code> with the specified error.
+     *
+     * @param error the reason the exception was thrown.
+     */
+    public RakNetException(String error) {
+        super(error);
+    }
 
-	/**
-	 * Constructs a <code>RakNetException</code> with the specified
-	 * <code>Throwable</code>.
-	 * 
-	 * @param cause
-	 *            the <code>Throwable</code> that was thrown.
-	 */
-	public RakNetException(Throwable cause) {
-		this(cause.getMessage());
-	}
+    /**
+     * Constructs a <code>RakNetException</code> with the specified
+     * <code>Throwable</code>.
+     *
+     * @param cause the <code>Throwable</code> that was thrown.
+     */
+    public RakNetException(Throwable cause) {
+        this(cause.getMessage());
+    }
 
 }

@@ -30,13 +30,14 @@
  */
 package org.lunaris.network.raknet.client;
 
-import java.net.InetSocketAddress;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.DatagramPacket;
+
 import org.lunaris.network.raknet.RakNetLogger;
 import org.lunaris.network.raknet.RakNetPacket;
+
+import java.net.InetSocketAddress;
 
 /**
  * Used by the <code>RakNetClient</code> with the sole purpose of sending
@@ -46,52 +47,51 @@ import org.lunaris.network.raknet.RakNetPacket;
  */
 public class RakNetClientHandler extends ChannelInboundHandlerAdapter {
 
-	// Logger name
-	private final String loggerName;
+    // Logger name
+    private final String loggerName;
 
-	// Handler data
-	private final org.lunaris.network.raknet.client.RakNetClient client;
-	private InetSocketAddress causeAddress;
+    // Handler data
+    private final org.lunaris.network.raknet.client.RakNetClient client;
+    private InetSocketAddress causeAddress;
 
-	/**
-	 * Constructs a <code>RakNetClientHandler</code> with the specified
-	 * <code>RakNetClient</code>.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code> to send received packets to.
-	 */
-	public RakNetClientHandler(org.lunaris.network.raknet.client.RakNetClient client) {
-		this.loggerName = "client handler #" + client.getGloballyUniqueId();
-		this.client = client;
-	}
+    /**
+     * Constructs a <code>RakNetClientHandler</code> with the specified
+     * <code>RakNetClient</code>.
+     *
+     * @param client the <code>RakNetClient</code> to send received packets to.
+     */
+    public RakNetClientHandler(org.lunaris.network.raknet.client.RakNetClient client) {
+        this.loggerName = "client handler #" + client.getGloballyUniqueId();
+        this.client = client;
+    }
 
-	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		if (msg instanceof DatagramPacket) {
-			// Get packet and sender data
-			DatagramPacket datagram = (DatagramPacket) msg;
-			InetSocketAddress sender = datagram.sender();
-			RakNetPacket packet = new RakNetPacket(datagram);
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        if (msg instanceof DatagramPacket) {
+            // Get packet and sender data
+            DatagramPacket datagram = (DatagramPacket) msg;
+            InetSocketAddress sender = datagram.sender();
+            RakNetPacket packet = new RakNetPacket(datagram);
 
-			// If an exception happens it's because of this address
-			this.causeAddress = sender;
+            // If an exception happens it's because of this address
+            this.causeAddress = sender;
 
-			// Handle the packet and release the buffer
-			client.handleMessage(packet, sender);
-			datagram.content().readerIndex(0); // Reset position
-			RakNetLogger.debug(loggerName, "Sent packet to client and reset Datagram buffer read position");
-			client.getListener().handleNettyMessage(datagram.content(), sender);
-			datagram.content().release(); // No longer needed
-			RakNetLogger.debug(loggerName, "Sent Datagram buffer to client and released it");
+            // Handle the packet and release the buffer
+            client.handleMessage(packet, sender);
+            datagram.content().readerIndex(0); // Reset position
+            RakNetLogger.debug(loggerName, "Sent packet to client and reset Datagram buffer read position");
+            client.getListener().handleNettyMessage(datagram.content(), sender);
+            datagram.content().release(); // No longer needed
+            RakNetLogger.debug(loggerName, "Sent Datagram buffer to client and released it");
 
-			// No exceptions occurred, release the suspect
-			this.causeAddress = null;
-		}
-	}
+            // No exceptions occurred, release the suspect
+            this.causeAddress = null;
+        }
+    }
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		client.handleHandlerException(this.causeAddress, cause);
-	}
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        client.handleHandlerException(this.causeAddress, cause);
+    }
 
 }

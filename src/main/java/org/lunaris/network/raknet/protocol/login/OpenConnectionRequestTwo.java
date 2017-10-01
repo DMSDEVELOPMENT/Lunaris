@@ -30,73 +30,73 @@
  */
 package org.lunaris.network.raknet.protocol.login;
 
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-
 import org.lunaris.network.raknet.Packet;
 import org.lunaris.network.raknet.RakNetPacket;
 import org.lunaris.network.raknet.protocol.ConnectionType;
 import org.lunaris.network.raknet.protocol.Failable;
 import org.lunaris.network.raknet.protocol.MessageIdentifier;
 
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+
 public class OpenConnectionRequestTwo extends RakNetPacket implements Failable {
 
-	public boolean magic;
-	public InetSocketAddress address;
-	public int maximumTransferUnit;
-	public long clientGuid;
-	public ConnectionType connectionType;
-	private boolean failed;
+    public boolean magic;
+    public InetSocketAddress address;
+    public int maximumTransferUnit;
+    public long clientGuid;
+    public ConnectionType connectionType;
+    private boolean failed;
 
-	public OpenConnectionRequestTwo(Packet packet) {
-		super(packet);
-	}
+    public OpenConnectionRequestTwo(Packet packet) {
+        super(packet);
+    }
 
-	public OpenConnectionRequestTwo() {
-		super(MessageIdentifier.ID_OPEN_CONNECTION_REQUEST_2);
-	}
+    public OpenConnectionRequestTwo() {
+        super(MessageIdentifier.ID_OPEN_CONNECTION_REQUEST_2);
+    }
 
-	@Override
-	public void encode() {
-		try {
-			this.writeMagic();
-			this.writeAddress(address);
-			this.writeUnsignedShort(maximumTransferUnit);
-			this.writeLong(clientGuid);
-			this.connectionType = this.writeConnectionType();
-		} catch (UnknownHostException e) {
-			this.failed = true;
-			this.magic = false;
-			this.address = null;
-			this.maximumTransferUnit = 0;
-			this.clientGuid = 0;
-			this.connectionType = null;
-			this.clear();
-		}
-	}
+    @Override
+    public void encode() {
+        try {
+            this.writeMagic();
+            this.writeAddress(address);
+            this.writeUnsignedShort(maximumTransferUnit);
+            this.writeLong(clientGuid);
+            this.connectionType = this.writeConnectionType();
+        } catch (UnknownHostException e) {
+            this.failed = true;
+            this.magic = false;
+            this.address = null;
+            this.maximumTransferUnit = 0;
+            this.clientGuid = 0;
+            this.connectionType = null;
+            this.clear();
+        }
+    }
 
-	@Override
-	public void decode() {
-		try {
-			this.magic = this.checkMagic();
-			this.address = this.readAddress();
-			this.maximumTransferUnit = this.readUnsignedShort();
-			this.clientGuid = this.readLong();
-			this.connectionType = this.readConnectionType();
-		} catch (UnknownHostException e) {
-			this.failed = true;
-			this.magic = false;
-			this.address = null;
-			this.maximumTransferUnit = 0;
-			this.clientGuid = 0;
-			this.connectionType = null;
-			this.clear();
-		}
-	}
+    @Override
+    public void decode() {
+        try {
+            this.magic = this.checkMagic();
+            this.address = this.readAddress();
+            this.maximumTransferUnit = this.readUnsignedShort();
+            this.clientGuid = this.readLong();
+            this.connectionType = this.readConnectionType();
+        } catch (UnknownHostException e) {
+            this.failed = true;
+            this.magic = false;
+            this.address = null;
+            this.maximumTransferUnit = 0;
+            this.clientGuid = 0;
+            this.connectionType = null;
+            this.clear();
+        }
+    }
 
-	@Override
-	public boolean failed() {
-		return this.failed;
-	}
+    @Override
+    public boolean failed() {
+        return this.failed;
+    }
 
 }

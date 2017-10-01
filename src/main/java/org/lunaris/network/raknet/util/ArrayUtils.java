@@ -40,68 +40,63 @@ import java.util.Arrays;
  */
 public abstract class ArrayUtils {
 
-	/**
-	 * Splits an array into more chunks with the specified maximum size for each
-	 * array chunk.
-	 * 
-	 * @param src
-	 *            the original array.
-	 * @param size
-	 *            the max size for each array that has been split.
-	 * @return the split byte array's no bigger than the maximum size.
-	 */
-	public static final byte[][] splitArray(byte[] src, int size) {
-		int index = 0;
-		ArrayList<byte[]> split = new ArrayList<byte[]>();
-		while (index < src.length) {
-			if (index + size <= src.length) {
-				split.add(Arrays.copyOfRange(src, index, index + size));
-				index += size;
-			} else {
-				split.add(Arrays.copyOfRange(src, index, src.length));
-				index = src.length;
-			}
-		}
-		return split.toArray(new byte[split.size()][size]);
-	}
+    /**
+     * Splits an array into more chunks with the specified maximum size for each
+     * array chunk.
+     *
+     * @param src  the original array.
+     * @param size the max size for each array that has been split.
+     * @return the split byte array's no bigger than the maximum size.
+     */
+    public static final byte[][] splitArray(byte[] src, int size) {
+        int index = 0;
+        ArrayList<byte[]> split = new ArrayList<>();
+        while (index < src.length) {
+            if (index + size <= src.length) {
+                split.add(Arrays.copyOfRange(src, index, index + size));
+                index += size;
+            } else {
+                split.add(Arrays.copyOfRange(src, index, src.length));
+                index = src.length;
+            }
+        }
+        return split.toArray(new byte[split.size()][size]);
+    }
 
-	/**
-	 * Returns all the integers in between each other as a normal subtraction.
-	 * 
-	 * @param low
-	 *            the starting point.
-	 * @param high
-	 *            the ending point.
-	 * @return the numbers in between high and low.
-	 */
-	public static final int[] subtractionArray(int low, int high) {
-		if (low > high) {
-			return new int[0];
-		}
+    /**
+     * Returns all the integers in between each other as a normal subtraction.
+     *
+     * @param low  the starting point.
+     * @param high the ending point.
+     * @return the numbers in between high and low.
+     */
+    public static final int[] subtractionArray(int low, int high) {
+        if (low > high) {
+            return new int[0];
+        }
 
-		int[] arr = new int[high - low - 1];
-		for (int i = 0; i < arr.length; i++) {
-			arr[i] = i + low + 1;
-		}
-		return arr;
-	}
+        int[] arr = new int[high - low - 1];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = i + low + 1;
+        }
+        return arr;
+    }
 
-	/**
-	 * Convert the specified list of objects to a String. Used primarily by
-	 * JRakNet objects to easily convert their data to a readable String.
-	 * 
-	 * @param obj
-	 *            the objects to convert.
-	 * @return a converted string.
-	 */
-	public static final String toJRakNetString(Object... obj) {
-		StringBuilder str = new StringBuilder();
-		str.append("[");
-		for (int i = 0; i < obj.length; i++) {
-			str.append((obj[i] instanceof Number ? ((Number) obj[i]).longValue() : obj[i].toString())
-					+ (i + 1 < obj.length ? ", " : "]"));
-		}
-		return str.toString();
-	}
+    /**
+     * Convert the specified list of objects to a String. Used primarily by
+     * JRakNet objects to easily convert their data to a readable String.
+     *
+     * @param obj the objects to convert.
+     * @return a converted string.
+     */
+    public static final String toJRakNetString(Object... obj) {
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        for (int i = 0; i < obj.length; i++) {
+            str.append((obj[i] instanceof Number ? ((Number) obj[i]).longValue() : obj[i].toString())
+                + (i + 1 < obj.length ? ", " : "]"));
+        }
+        return str.toString();
+    }
 
 }

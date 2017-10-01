@@ -8,6 +8,8 @@ import org.lunaris.event.player.PlayerConnectAsyncEvent;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet01Login;
+import org.lunaris.network.raknet.RakNet;
+import org.lunaris.network.raknet.RakNetLogger;
 import org.lunaris.network.raknet.RakNetPacket;
 import org.lunaris.network.raknet.identifier.MCPEIdentifier;
 import org.lunaris.network.raknet.protocol.Reliability;
@@ -55,6 +57,7 @@ public class RakNetProvider {
                     }
                 }
         );
+        RakNet.enableLogging(RakNetLogger.LEVEL_INFO);
         this.rakNet.setListener(new RakNetServerListener() {
             @Override
             public void onServerStart() {
@@ -135,49 +138,6 @@ public class RakNetProvider {
         for(byte b : bytes)
             sb.append("0x").append(Integer.toHexString(b)).append(" ");
         this.server.getLogger().info("PACKET DUMP :: " + sb.toString().trim());
-    }
-
-    public synchronized void sendPacket(Collection<PacketsBush> bushes, MinePacket packet) {
-        byte[] serialized = serialize(packet);
-        bushes.forEach(bush -> bush.collect(serialized));
-    }
-
-    public synchronized void sendPacket(PacketsBush bush, MinePacket packet) {
-        bush.collect(serialize(packet));
-    }
-
-    public synchronized void tickBush(RakNetClientSession session, PacketsBush bush) {
-        Timings.getPacketsSendingTimer().startTiming();
-        byte[] collected = bush.blossom();
-        if(collected.length == 0) {
-            Timings.getPacketsSendingTimer().stopTiming();
-            return;
-        }
-        session.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(collected));
-        Timings.getPacketsSendingTimer().stopTiming();
-    }
-
-    private byte[] serialize(MinePacket packet) {
-        Timings.getPacketsSerializationTimer(packet).startTiming();
-        try {
-            MineBuffer buffer = new MineBuffer(1 << 4);
-            packet.write(buffer);
-            byte[] bytes = buffer.readBytes(buffer.readableBytes());
-            buffer.release();
-            buffer = new MineBuffer(1 << 5);
-            buffer.writeUnsignedVarInt(bytes.length + 3); //byte id + short (2 bytes)
-            buffer.writeByte(packet.getByteId());
-            buffer.writeUnsignedShort((short) 0);
-            buffer.writeBytes(bytes);
-            bytes = buffer.readBytes(buffer.remaining());
-            buffer.release();
-            return bytes;
-        }catch(Exception ex) {
-            new Exception("Can not serialize packet", ex).printStackTrace();
-            return null;
-        }finally {
-            Timings.getPacketsSerializationTimer(packet).stopTiming();
-        }
     }
 
 }

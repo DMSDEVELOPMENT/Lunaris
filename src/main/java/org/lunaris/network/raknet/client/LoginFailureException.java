@@ -38,19 +38,17 @@ package org.lunaris.network.raknet.client;
  */
 public class LoginFailureException extends RakNetClientException {
 
-	private static final long serialVersionUID = -5025319984358819345L;
+    private static final long serialVersionUID = -5025319984358819345L;
 
-	/**
-	 * Constructs a <code>LoginFailureException</code> with the specified
-	 * <code>RakNetClient</code> and reason as to why the login failed.
-	 * 
-	 * @param client
-	 *            the <code>RakNetClient</code> that threw the exception.
-	 * @param error
-	 *            the reason the client failed to login to the server.
-	 */
-	public LoginFailureException(org.lunaris.network.raknet.client.RakNetClient client, String error) {
-		super(client, error);
-	}
+    /**
+     * Constructs a <code>LoginFailureException</code> with the specified
+     * <code>RakNetClient</code> and reason as to why the login failed.
+     *
+     * @param client the <code>RakNetClient</code> that threw the exception.
+     * @param error  the reason the client failed to login to the server.
+     */
+    public LoginFailureException(org.lunaris.network.raknet.client.RakNetClient client, String error) {
+        super(client, error);
+    }
 
 }

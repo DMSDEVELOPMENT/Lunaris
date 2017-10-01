@@ -37,35 +37,35 @@ import org.lunaris.network.raknet.protocol.MessageIdentifier;
 
 public class UnconnectedPing extends RakNetPacket {
 
-	public long timestamp;
-	public boolean magic;
-	public ConnectionType connectionType;
+    public long timestamp;
+    public boolean magic;
+    public ConnectionType connectionType;
 
-	protected UnconnectedPing(boolean requiresOpenConnections) {
-		super((requiresOpenConnections ? MessageIdentifier.ID_UNCONNECTED_PING_OPEN_CONNECTIONS
-				: MessageIdentifier.ID_UNCONNECTED_PING));
-	}
+    protected UnconnectedPing(boolean requiresOpenConnections) {
+        super((requiresOpenConnections ? MessageIdentifier.ID_UNCONNECTED_PING_OPEN_CONNECTIONS
+            : MessageIdentifier.ID_UNCONNECTED_PING));
+    }
 
-	public UnconnectedPing(Packet packet) {
-		super(packet);
-	}
+    public UnconnectedPing(Packet packet) {
+        super(packet);
+    }
 
-	public UnconnectedPing() {
-		this(false);
-	}
+    public UnconnectedPing() {
+        this(false);
+    }
 
-	@Override
-	public void encode() {
-		this.writeLong(timestamp);
-		this.writeMagic();
-		this.connectionType = this.writeConnectionType();
-	}
+    @Override
+    public void encode() {
+        this.writeLong(timestamp);
+        this.writeMagic();
+        this.connectionType = this.writeConnectionType();
+    }
 
-	@Override
-	public void decode() {
-		this.timestamp = this.readLong();
-		this.magic = this.checkMagic();
-		this.connectionType = this.readConnectionType();
-	}
+    @Override
+    public void decode() {
+        this.timestamp = this.readLong();
+        this.magic = this.checkMagic();
+        this.connectionType = this.readConnectionType();
+    }
 
 }

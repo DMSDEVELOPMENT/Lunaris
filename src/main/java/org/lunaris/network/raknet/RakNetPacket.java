@@ -40,125 +40,117 @@ import io.netty.channel.socket.DatagramPacket;
  *
  * @author Trent "MarfGamer" Summerlin
  */
-public class RakNetPacket extends org.lunaris.network.raknet.Packet {
-	
-	// RakNet packet data
-	private short id;
+public class RakNetPacket extends Packet {
 
-	/**
-	 * Constructs a <code>RakNetPacket</code> with the specified ID that will be
-	 * written to it.
-	 * 
-	 * @param id
-	 *            the ID of the <code>RakNetPacket</code>.
-	 */
-	public RakNetPacket(int id) {
-		super();
-		if (id < 0 || id > 255) {
-			throw new IllegalArgumentException("Invalid ID, must be in between 0-255");
-		}
-		this.writeUnsignedByte(this.id = (short) id);
-	}
+    // RakNet packet data
+    private short id;
 
-	/**
-	 * Constructs a <code>RakNetPacket</code> that reads from and writes to the
-	 * specified <code>ByteBuf</code>. On instantiation, the first byte of the
-	 * buffer will be read and set as the ID.
-	 * 
-	 * @param buffer
-	 *            the <code>ByteBuf</code> to read from and write to.
-	 */
-	public RakNetPacket(ByteBuf buffer) {
-		super(buffer);
-		if (this.remaining() < 1) {
-			throw new IllegalArgumentException("The packet contains no data, it has no ID to be read");
-		}
-		this.id = this.readUnsignedByte();
-	}
+    /**
+     * Constructs a <code>RakNetPacket</code> with the specified ID that will be
+     * written to it.
+     *
+     * @param id the ID of the <code>RakNetPacket</code>.
+     */
+    public RakNetPacket(int id) {
+        super();
+        if (id < 0 || id > 255) {
+            throw new IllegalArgumentException("Invalid ID, must be in between 0-255");
+        }
+        this.writeUnsignedByte(this.id = (short) id);
+    }
 
-	/**
-	 * Constructs a <code>RakNetPacket</code> that reads from and writes to the
-	 * specified <code>DatagramPacket</code>. On instantiation, the first byte
-	 * of the datagram will be read and set as the ID.
-	 * 
-	 * @param datagram
-	 *            the <code>DatagramPacket</code> to read from and write to.
-	 */
-	public RakNetPacket(DatagramPacket datagram) {
-		this(datagram.content());
-	}
+    /**
+     * Constructs a <code>RakNetPacket</code> that reads from and writes to the
+     * specified <code>ByteBuf</code>. On instantiation, the first byte of the
+     * buffer will be read and set as the ID.
+     *
+     * @param buffer the <code>ByteBuf</code> to read from and write to.
+     */
+    public RakNetPacket(ByteBuf buffer) {
+        super(buffer);
+        if (this.remaining() < 1) {
+            throw new IllegalArgumentException("The packet contains no data, it has no ID to be read");
+        }
+        this.id = this.readUnsignedByte();
+    }
 
-	/**
-	 * Constructs a <code>RakNetPacket</code> that reads from and writes to the
-	 * specified byte array. On instantiation, the first byte of the byte array
-	 * will be read and set as the ID.
-	 * 
-	 * @param data
-	 *            the byte array to read from and write to.
-	 */
-	public RakNetPacket(byte[] data) {
-		this(Unpooled.copiedBuffer(data));
-	}
+    /**
+     * Constructs a <code>RakNetPacket</code> that reads from and writes to the
+     * specified <code>DatagramPacket</code>. On instantiation, the first byte
+     * of the datagram will be read and set as the ID.
+     *
+     * @param datagram the <code>DatagramPacket</code> to read from and write to.
+     */
+    public RakNetPacket(DatagramPacket datagram) {
+        this(datagram.content());
+    }
 
-	/**
-	 * Constructs a <code>RakNetPacket</code> that reads from and writes to the
-	 * specified <code>Packet</code>. On instantiation, the first byte of the
-	 * buffer will be read and set as the ID unless the specified packet is a
-	 * subclass of <code>RakNetPacket</code>.
-	 * 
-	 * @param packet
-	 *            the <code>Packet</code> to read from and write to.
-	 */
-	public RakNetPacket(org.lunaris.network.raknet.Packet packet) {
-		super(packet);
+    /**
+     * Constructs a <code>RakNetPacket</code> that reads from and writes to the
+     * specified byte array. On instantiation, the first byte of the byte array
+     * will be read and set as the ID.
+     *
+     * @param data the byte array to read from and write to.
+     */
+    public RakNetPacket(byte[] data) {
+        this(Unpooled.copiedBuffer(data));
+    }
 
-		// Make sure this isn't an existing RakNetPacket!
-		if (packet instanceof RakNetPacket) {
-			this.id = ((RakNetPacket) packet).id;
-		} else {
-			this.id = this.readUnsignedByte();
-		}
-	}
+    /**
+     * Constructs a <code>RakNetPacket</code> that reads from and writes to the
+     * specified <code>Packet</code>. On instantiation, the first byte of the
+     * buffer will be read and set as the ID unless the specified packet is a
+     * subclass of <code>RakNetPacket</code>.
+     *
+     * @param packet the <code>Packet</code> to read from and write to.
+     */
+    public RakNetPacket(Packet packet) {
+        super(packet);
 
-	/**
-	 * @return the ID of the packet.
-	 */
-	public final short getId() {
-		return this.id;
-	}
+        // Make sure this isn't an existing RakNetPacket!
+        if (packet instanceof RakNetPacket) {
+            this.id = ((RakNetPacket) packet).id;
+        } else {
+            this.id = this.readUnsignedByte();
+        }
+    }
 
-	/**
-	 * Encodes the packet.
-	 */
-	public void encode() {
-	}
+    /**
+     * @return the ID of the packet.
+     */
+    public final short getId() {
+        return this.id;
+    }
 
-	/**
-	 * Decodes the packet.
-	 */
-	public void decode() {
-	}
+    /**
+     * Encodes the packet.
+     */
+    public void encode() {
+    }
 
-	/**
-	 * Sets the buffer and updates the ID if specified.
-	 * 
-	 * @param buffer
-	 *            the new buffer.
-	 * @param updateId
-	 *            whether or not to update the ID.
-	 */
-	public void setBuffer(byte[] buffer, boolean updateId) {
-		super.setBuffer(buffer);
-		if (updateId == true) {
-			this.id = this.readUnsignedByte();
-		}
-	}
+    /**
+     * Decodes the packet.
+     */
+    public void decode() {
+    }
 
-	@Override
-	public org.lunaris.network.raknet.Packet flip() {
-		super.flip();
-		this.id = this.readUnsignedByte();
-		return this;
-	}
+    /**
+     * Sets the buffer and updates the ID if specified.
+     *
+     * @param buffer   the new buffer.
+     * @param updateId whether or not to update the ID.
+     */
+    public void setBuffer(byte[] buffer, boolean updateId) {
+        super.setBuffer(buffer);
+        if (updateId)
+            this.id = this.readUnsignedByte();
+    }
+
+    @Override
+    public Packet flip() {
+        super.flip();
+        this.id = this.readUnsignedByte();
+        return this;
+    }
 
 }

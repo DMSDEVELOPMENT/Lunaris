@@ -41,55 +41,55 @@ import org.lunaris.network.raknet.protocol.ConnectionType;
  */
 public class Identifier {
 
-	private final String identifier;
-	private final ConnectionType connectionType;
+    private final String identifier;
+    private final ConnectionType connectionType;
 
-	public Identifier(String identifier, ConnectionType connectionType) {
-		this.identifier = identifier;
-		this.connectionType = connectionType;
-	}
+    public Identifier(String identifier, ConnectionType connectionType) {
+        this.identifier = identifier;
+        this.connectionType = connectionType;
+    }
 
-	public Identifier(String identifier) {
-		this.identifier = identifier;
-		this.connectionType = ConnectionType.JRAKNET;
-	}
+    public Identifier(String identifier) {
+        this.identifier = identifier;
+        this.connectionType = ConnectionType.JRAKNET;
+    }
 
-	public Identifier(Identifier identifier) {
-		this.identifier = identifier.identifier;
-		this.connectionType = identifier.connectionType;
-	}
+    public Identifier(Identifier identifier) {
+        this.identifier = identifier.identifier;
+        this.connectionType = identifier.connectionType;
+    }
 
-	public Identifier() {
-		this.identifier = null;
-		this.connectionType = ConnectionType.JRAKNET;
-	}
+    public Identifier() {
+        this.identifier = null;
+        this.connectionType = ConnectionType.JRAKNET;
+    }
 
-	/**
-	 * @return the identifier as a String.
-	 */
-	public String build() {
-		return this.identifier;
-	}
+    /**
+     * @return the identifier as a String.
+     */
+    public String build() {
+        return this.identifier;
+    }
 
-	/**
-	 * @return the connection type of the identifier's sender.
-	 */
-	public final ConnectionType getConnectionType() {
-		return this.connectionType;
-	}
+    /**
+     * @return the connection type of the identifier's sender.
+     */
+    public final ConnectionType getConnectionType() {
+        return this.connectionType;
+    }
 
-	@Override
-	public final String toString() {
-		return this.build();
-	}
+    @Override
+    public final String toString() {
+        return this.build();
+    }
 
-	@Override
-	public boolean equals(Object object) {
-		if (object instanceof Identifier) {
-			Identifier identifier = (Identifier) object;
-			return this.build().equals(identifier.build());
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Identifier) {
+            Identifier identifier = (Identifier) object;
+            return this.build().equals(identifier.build());
+        }
+        return false;
+    }
 
 }

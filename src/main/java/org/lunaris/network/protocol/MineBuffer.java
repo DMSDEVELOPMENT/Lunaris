@@ -367,6 +367,45 @@ public class MineBuffer {
         writeBytes(appendBytes(lfu(uuid.getMostSignificantBits()), lfu(uuid.getLeastSignificantBits())));
     }
 
+    public void writeItemStack(ItemStack is) {
+        if(is == null || is.getType() == Material.AIR) {
+            writeVarInt(0);
+            return;
+        }
+        writeVarInt(is.getType().getId());
+        int auxValue = (((is.getType().hasMeta() ? is.getData() : -1) & 0x7fff) << 8) | is.getAmount();
+        writeVarInt(auxValue);
+        byte[] nbt = is.getNbtData();
+        writeUnsignedShort((short) nbt.length);
+        writeBytes(nbt);
+        writeVarInt(0); //CanPlaceOn entry set length
+        writeVarInt(0); //CanDestroy entry set length
+    }
+
+    public ItemStack readItemStack() {
+        int id = readVarInt();
+        if(id <= 0)
+            return ItemStack.AIR;
+        int auxValue = readVarInt();
+        int data = auxValue >> 8;
+        if(data == Short.MAX_VALUE)
+            data = -1;
+        int amount = auxValue & 0xff;
+        int nbtLength = readUnsignedShort();
+        if(nbtLength < 0)
+            nbtLength = 0;
+        byte[] nbt = readBytes(nbtLength);
+        int canPlaceOnLength = readVarInt();
+        for(int i = 0; i < canPlaceOnLength; ++i)
+            readString();
+        int canDestroyLength = readVarInt();
+        for(int i = 0; i < canDestroyLength; ++i)
+            readString();
+        ItemStack is = new ItemStack(Material.getById(id), amount, data);
+        is.setNbtData(nbt);
+        return is;
+    }
+
     public byte[] appendBytes(byte[] bytes1, byte[]... bytes2) {
         int length = bytes1.length;
         for (byte[] bytes : bytes2) {

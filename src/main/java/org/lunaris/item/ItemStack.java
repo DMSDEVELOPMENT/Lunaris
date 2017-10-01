@@ -3,8 +3,8 @@ package org.lunaris.item;
 import org.lunaris.block.Block;
 import org.lunaris.entity.Entity;
 import org.lunaris.material.ItemMaterial;
-import org.lunaris.material.SpecifiedMaterial;
 import org.lunaris.material.Material;
+import org.lunaris.material.SpecifiedMaterial;
 import org.lunaris.nbt.NBTIO;
 import org.lunaris.nbt.tag.CompoundTag;
 
@@ -19,22 +19,22 @@ public class ItemStack implements Cloneable {
 
     public final static ItemStack AIR = new ItemStack(Material.AIR, 1);
 
-    private final Material material;
+    private final Material type;
     private int data;
     private int amount;
     private byte[] nbtData = new byte[0];
     private CompoundTag compiledNbt;
 
-    public ItemStack(Material material) {
-        this(material, 0, 0);
+    public ItemStack(Material type) {
+        this(type, 0, 0);
     }
 
-    public ItemStack(Material material, int amount) {
-        this(material, amount, 0);
+    public ItemStack(Material type, int amount) {
+        this(type, amount, 0);
     }
 
-    public ItemStack(Material material, int amount, int data) {
-        this.material = material;
+    public ItemStack(Material type, int amount, int data) {
+        this.type = type;
         this.amount = amount;
         this.data = data < 0 ? 0 : data;
     }
@@ -45,25 +45,22 @@ public class ItemStack implements Cloneable {
         int id = 0, data = 0;
 
         Pattern pattern = Pattern.compile("^[1-9]\\d*$");
-        if(pattern.matcher(b[0]).matches())
+        if (pattern.matcher(b[0]).matches())
             id = Integer.parseInt(b[0]);
-        else try {
-            id = ItemList.class.getField(b[0].toUpperCase()).getInt(null);
-        }catch(Exception ignored) {}
+        else
+            try {
+                id = ItemList.class.getField(b[0].toUpperCase()).getInt(null);
+            } catch (Exception ignored) {}
         id &= 0xffff;
-        if(b.length != 1)
+        if (b.length != 1)
             data = Integer.parseInt(b[1]) & 0xffff;
-        this.material = Material.getById(id);
+        this.type = Material.getById(id);
         this.amount = 1;
         this.data = data < 0 ? 0 : data;
     }
 
-    public Material getMaterial() {
-        return this.material;
-    }
-
     public Material getType() {
-        return getMaterial();
+        return type;
     }
 
     public int getData() {
@@ -100,16 +97,16 @@ public class ItemStack implements Cloneable {
 
     public boolean useOn(Block block, Entity user) {
         SpecifiedMaterial material = getSpecifiedMaterial();
-        if(material.isBlock())
+        if (material.isBlock())
             return false;
         return ((ItemMaterial) material).useOn(block, user);
     }
 
     public boolean useOn(Entity entity, Entity user) {
         SpecifiedMaterial material = getSpecifiedMaterial();
-        if(material.isBlock())
-            return false;
-        return ((ItemMaterial) material).useOn(entity, user);
+        if (material instanceof ItemMaterial)
+            return ((ItemMaterial) material).useOn(entity, user);
+        return false;
     }
 
     public boolean hasCompoundTag() {
@@ -126,7 +123,7 @@ public class ItemStack implements Cloneable {
     }
 
     public void setCompoundTag(CompoundTag tag) {
-        if(tag.isEmpty()) {
+        if (tag.isEmpty()) {
             setNbtData(new byte[0]);
             return;
         }
@@ -136,17 +133,17 @@ public class ItemStack implements Cloneable {
     }
 
     public CompoundTag getCompoundTag() {
-        if(!hasCompoundTag())
+        if (!hasCompoundTag())
             return null;
-        if(this.compiledNbt == null)
+        if (this.compiledNbt == null)
             this.compiledNbt = deserializeNbt(this.nbtData);
-        if(this.compiledNbt != null)
+        if (this.compiledNbt != null)
             this.compiledNbt.setName("");
         return this.compiledNbt;
     }
 
-    private SpecifiedMaterial getSpecifiedMaterial() {
-        return this.material.getSpecifiedMaterial();
+    public SpecifiedMaterial getSpecifiedMaterial() {
+        return this.type.getSpecifiedMaterial();
     }
 
     private byte[] serializeNbt(CompoundTag tag) {
@@ -172,27 +169,27 @@ public class ItemStack implements Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        if(o == this || o == null && getType() == Material.AIR)
+        if (o == this || o == null && getType() == Material.AIR)
             return true;
-        if(!(o instanceof ItemStack))
+        if (!(o instanceof ItemStack))
             return false;
         ItemStack item = (ItemStack) o;
-        if(getType() != item.getType() || getData() != item.getData() || getAmount() != item.getAmount()
-                || this.nbtData.length != item.nbtData.length)
+        if (getType() != item.getType() || getData() != item.getData() || getAmount() != item.getAmount()
+            || this.nbtData.length != item.nbtData.length)
             return false;
-        for(int i = 0; i < this.nbtData.length; ++i)
-            if(this.nbtData[i] != item.nbtData[i])
+        for (int i = 0; i < this.nbtData.length; ++i)
+            if (this.nbtData[i] != item.nbtData[i])
                 return false;
         return true;
     }
 
     public boolean isSimilar(ItemStack item) {
-        if(item == null || item == null && getType() == Material.AIR)
+        if (item == null || item == null && getType() == Material.AIR)
             return true;
-        if(getType() != item.getType() || getData() != item.getData() || this.nbtData.length != item.nbtData.length)
+        if (getType() != item.getType() || getData() != item.getData() || this.nbtData.length != item.nbtData.length)
             return false;
-        for(int i = 0; i < this.nbtData.length; ++i)
-            if(this.nbtData[i] != item.nbtData[i])
+        for (int i = 0; i < this.nbtData.length; ++i)
+            if (this.nbtData[i] != item.nbtData[i])
                 return false;
         return true;
     }
@@ -201,13 +198,13 @@ public class ItemStack implements Cloneable {
     public ItemStack clone() {
         try {
             return (ItemStack) super.clone();
-        }catch(Exception ignored) {}
+        } catch (Exception ignored) {}
         return null;
     }
 
     @Override
     public String toString() {
-        return "ItemStack{Material:" + this.material.name() + ", Data:" + this.data + ", Amount:" + this.amount + "}";
+        return "ItemStack{Material:" + this.type.name() + ", Data:" + this.data + ", Amount:" + this.amount + "}";
     }
 
 }

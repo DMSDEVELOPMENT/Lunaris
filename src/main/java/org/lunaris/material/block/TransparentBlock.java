@@ -7,20 +7,20 @@ import org.lunaris.material.Material;
 /**
  * Created by RINES on 24.09.17.
  */
-public abstract class BlockSolid extends BlockMaterial {
+public abstract class TransparentBlock extends BlockMaterial {
 
-    protected BlockSolid(Material material, String name) {
+    protected TransparentBlock(Material material, String name) {
         super(material, name);
     }
 
     @Override
-    public boolean isSolid() {
+    public boolean isTransparent() {
         return true;
     }
 
     @Override
-    public BlockColor getColor() {
-        return BlockColor.STONE_BLOCK_COLOR;
+    public BlockColor getColor(int data) {
+        return BlockColor.TRANSPARENT_BLOCK_COLOR;
     }
 
 }

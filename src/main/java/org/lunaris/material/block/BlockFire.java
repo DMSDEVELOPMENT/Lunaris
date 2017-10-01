@@ -13,7 +13,7 @@ import org.lunaris.material.Material;
 /**
  * Created by RINES on 24.09.17.
  */
-public class BlockFire extends BlockFlowable {
+public class BlockFire extends FlowableBlock {
 
     protected BlockFire() {
         super(Material.FIRE, "Fire");
@@ -40,13 +40,8 @@ public class BlockFire extends BlockFlowable {
     }
 
     @Override
-    public int tickRate() {
+    public int tickRate(Block block) {
         return 30;
-    }
-
-    @Override
-    public void update(Block block) {
-
     }
 
     @Override
@@ -62,7 +57,7 @@ public class BlockFire extends BlockFlowable {
     }
 
     @Override
-    public BlockColor getColor() {
+    public BlockColor getColor(int data) {
         return BlockColor.AIR_BLOCK_COLOR;
     }
 

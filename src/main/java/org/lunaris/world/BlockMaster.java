@@ -47,7 +47,7 @@ public class BlockMaster {
         this.server.getEventManager().call(interactEvent);
         if(interactEvent.isCancelled())
             return;
-        if(sider.getMaterial() == Material.FIRE) {
+        if(sider.getType() == Material.FIRE) {
             PlayerHitFireEvent hitFireEvent = new PlayerHitFireEvent(player, block, sider);
             this.server.getEventManager().call(hitFireEvent);
             if(hitFireEvent.isCancelled())
@@ -148,7 +148,7 @@ public class BlockMaster {
 //        boolean outOfWaterButNotOnGround = !player.isInsideOfWater() && !player.isOnGround();
         boolean insideOfWaterWithoutAquaAffinity = false;
         boolean outOfWaterButNotOnGround = false;
-        return getBreakTime(hardness, correctTool, canHarvestWithHand, material.getMaterial(), toolType, tier, efficiencyLoreLevel, hasteEffectLevel, insideOfWaterWithoutAquaAffinity, outOfWaterButNotOnGround);
+        return getBreakTime(hardness, correctTool, canHarvestWithHand, material.getType(), toolType, tier, efficiencyLoreLevel, hasteEffectLevel, insideOfWaterWithoutAquaAffinity, outOfWaterButNotOnGround);
     }
 
     private double getBreakTime(double hardness, boolean correctTool, boolean canHarvestWithHand, Material blockType,

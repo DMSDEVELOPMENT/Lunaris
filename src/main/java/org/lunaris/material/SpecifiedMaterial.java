@@ -12,15 +12,17 @@ public abstract class SpecifiedMaterial {
     private final String name;
 
     protected SpecifiedMaterial(Material material, String name) {
+        if (material == null)
+            throw new IllegalArgumentException("Pizda");
         this.material = material;
         this.name = name;
     }
 
-    public Material getMaterial() {
+    public Material getType() {
         return this.material;
     }
 
-    public int getId() {
+    public int getTypeId() {
         return this.material.getId();
     }
 

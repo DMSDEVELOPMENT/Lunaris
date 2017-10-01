@@ -8,6 +8,11 @@ import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.util.math.AxisAlignedBB;
+import org.lunaris.util.math.Vector3d;
+import org.lunaris.world.BlockUpdateType;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by RINES on 24.09.17.
@@ -32,17 +37,32 @@ public class BlockMaterial extends SpecifiedMaterial {
         return true;
     }
 
-    public int tickRate() {
+    public int tickRate(Block block) {
         return 10;
     }
 
     public boolean onBreak(ItemStack item, Block block) {
-//        return this.getLevel().setBlock(this, new BlockAir(), true, true);
+        getDrops(block, item);
+        //        return this.getLevel().setBlock(this, new BlockAir(), true, true);
         return true;
     }
 
-    public int onUpdate(int type) {
-        return 0;
+    public void onBlockAdd(Block block) {
+        
+    }
+    
+    public void dropBlockAsItem(Block block) {
+        for (ItemStack drop : getDrops(block, null)) {
+            // drop item in world
+        }
+    }
+
+    public void onNeighborBlockChange(Block block, Block neighborBlock) {
+
+    }
+
+    public void onUpdate(Block block, BlockUpdateType type) {
+        return;
     }
 
     public boolean onActivate(Block block, ItemStack item) {
@@ -108,25 +128,25 @@ public class BlockMaterial extends SpecifiedMaterial {
     }
 
     public AxisAlignedBB getBoundingBox(Block block) {
-        if(block.getBoundingBox() == null)
+        if (block.getBoundingBox() == null)
             block.setBoundingBox(recalculateBoundingBox(block));
         return block.getBoundingBox();
     }
 
     public AxisAlignedBB getCollisionBoundingBox(Block block) {
-        if(block.getCollisionBoundingBox() == null)
+        if (block.getCollisionBoundingBox() == null)
             block.setCollisionBoundingBox(recalculateCollisionBoundingBox(block));
         return block.getCollisionBoundingBox();
     }
 
     protected AxisAlignedBB recalculateBoundingBox(Block block) {
         return new AxisAlignedBB(
-                block.getX(),
-                block.getY(),
-                block.getZ(),
-                block.getX() + 1,
-                block.getY() + 1,
-                block.getZ() + 1
+            block.getX(),
+            block.getY(),
+            block.getZ(),
+            block.getX() + 1,
+            block.getY() + 1,
+            block.getZ() + 1
         );
     }
 
@@ -170,15 +190,15 @@ public class BlockMaterial extends SpecifiedMaterial {
 
     }
 
-    public void update(Block block) {
+    public void addVelocityToEntity(Block block, Entity entity, Vector3d vector) {
 
     }
 
-    public ItemStack[] getDrops(Block block, ItemStack hand) {
-        return new ItemStack[0];
+    public List<ItemStack> getDrops(Block block, ItemStack hand) {
+        return Collections.emptyList();
     }
 
-    public BlockColor getColor() {
+    public BlockColor getColor(int data) {
         return BlockColor.VOID_BLOCK_COLOR;
     }
 

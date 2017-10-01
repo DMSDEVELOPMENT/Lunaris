@@ -8,11 +8,11 @@ import org.lunaris.world.Location;
  */
 public class GenericParticle extends Particle {
 
-    GenericParticle(ParticleType type, Location location) {
+    public GenericParticle(ParticleType type, Location location) {
         this(type, location, 0);
     }
 
-    GenericParticle(ParticleType type, Location location, int data) {
+    public GenericParticle(ParticleType type, Location location, int data) {
         super(Packet19LevelEvent.EVENT_ADD_PARTICLE_MASK | type.ordinal(), type, location, data);
     }
 

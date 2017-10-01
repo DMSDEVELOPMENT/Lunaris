@@ -8,7 +8,7 @@ import org.lunaris.util.math.AxisAlignedBB;
 /**
  * Created by RINES on 24.09.17.
  */
-public class BlockAir extends BlockTransparent {
+public class BlockAir extends TransparentBlock {
 
     public BlockAir() {
         super(Material.AIR, "Air");

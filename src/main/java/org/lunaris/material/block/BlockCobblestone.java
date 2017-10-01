@@ -6,10 +6,13 @@ import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.material.Material;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by RINES on 24.09.17.
  */
-public class BlockCobblestone extends BlockSolid {
+public class BlockCobblestone extends SolidBlock {
 
     protected BlockCobblestone() {
         super(Material.COBBLESTONE, "Cobblestone");
@@ -36,10 +39,10 @@ public class BlockCobblestone extends BlockSolid {
     }
 
     @Override
-    public ItemStack[] getDrops(Block block, ItemStack hand) {
-        if(hand.isOfToolType(ItemToolType.PICKAXE) && hand.isOfTier(ItemTier.WOODEN))
-            return new ItemStack[]{new ItemStack(Material.COBBLESTONE, 1)};
-        return new ItemStack[0];
+    public List<ItemStack> getDrops(Block block, ItemStack hand) {
+        if(hand != null && hand.isOfToolType(ItemToolType.PICKAXE) && hand.isOfTier(ItemTier.WOODEN))
+            return Collections.singletonList(new ItemStack(Material.COBBLESTONE, 1));
+        return Collections.emptyList();
     }
 
 }

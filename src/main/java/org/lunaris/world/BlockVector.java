@@ -210,7 +210,7 @@ public class BlockVector implements Cloneable {
 
     @Override
     public String toString() {
-        return "BlockPosition(level=" + ",x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
+        return "BlockPosition(x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
     }
 
     @Override

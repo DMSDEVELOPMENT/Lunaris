@@ -7,10 +7,13 @@ import org.lunaris.item.ItemToolType;
 import org.lunaris.material.Material;
 import org.lunaris.util.math.AxisAlignedBB;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by RINES on 24.09.17.
  */
-public class BlockFarmland extends BlockTransparent {
+public class BlockFarmland extends TransparentBlock {
 
     protected BlockFarmland() {
         super(Material.FARM_LAND, "Farmland");
@@ -34,22 +37,22 @@ public class BlockFarmland extends BlockTransparent {
     @Override
     protected AxisAlignedBB recalculateBoundingBox(Block block) {
         return new AxisAlignedBB(
-                block.getX(),
-                block.getY(),
-                block.getZ(),
-                block.getX() + 1,
-                block.getY() + .9375,
-                block.getZ() + 1
+            block.getX(),
+            block.getY(),
+            block.getZ(),
+            block.getX() + 1,
+            block.getY() + .9375,
+            block.getZ() + 1
         );
     }
 
     @Override
-    public ItemStack[] getDrops(Block block, ItemStack hand) {
-        return new ItemStack[]{new ItemStack(Material.DIRT, 1)};
+    public List<ItemStack> getDrops(Block block, ItemStack hand) {
+        return Collections.singletonList(new ItemStack(Material.DIRT, 1));
     }
 
     @Override
-    public BlockColor getColor() {
+    public BlockColor getColor(int data) {
         return BlockColor.DIRT_BLOCK_COLOR;
     }
 

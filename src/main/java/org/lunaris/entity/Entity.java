@@ -24,6 +24,7 @@ public class Entity extends Metadatable {
     private final Map<Integer, Attribute> attributes = new HashMap<>();
 
     private int fireTicks;
+    private int fallDistance;
 
     private AxisAlignedBB boundingBox;
     private Set<Block> blocksAround;
@@ -178,6 +179,18 @@ public class Entity extends Metadatable {
 
     public void setOnFire(int ticks) {
         this.fireTicks = ticks;
+    }
+
+    public void setFallDistance(int fallDistance) {
+        this.fallDistance = fallDistance;
+    }
+
+    public int getFireTicks() {
+        return this.fireTicks;
+    }
+
+    public int getFallDistance() {
+        return fallDistance;
     }
 
     public float getEyeHeight() {

@@ -20,7 +20,7 @@ public class SlotEntityData extends EntityData<ItemStack> {
     }
 
     public SlotEntityData(int id, ItemStack item) {
-        this(id, item.getMaterial().getId(), (byte) item.getData(), item.getAmount());
+        this(id, item.getType().getId(), (byte) item.getData(), item.getAmount());
     }
 
     @Override
@@ -30,7 +30,7 @@ public class SlotEntityData extends EntityData<ItemStack> {
 
     @Override
     public void setData(ItemStack data) {
-        this.blockId = data.getMaterial().getId();
+        this.blockId = data.getType().getId();
         this.meta = data.getData();
         this.count = data.getAmount();
     }

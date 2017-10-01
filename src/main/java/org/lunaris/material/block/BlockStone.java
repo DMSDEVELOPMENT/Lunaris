@@ -6,10 +6,13 @@ import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.material.Material;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by RINES on 24.09.17.
  */
-public class BlockStone extends BlockSolid {
+public class BlockStone extends SolidBlock {
 
     protected BlockStone() {
         super(Material.STONE, "The Stone");
@@ -36,29 +39,37 @@ public class BlockStone extends BlockSolid {
     }
 
     @Override
-    public ItemStack[] getDrops(Block block, ItemStack hand) {
-        if(hand.isOfToolType(ItemToolType.PICKAXE) && hand.isOfTier(ItemTier.WOODEN)) {
+    public List<ItemStack> getDrops(Block block, ItemStack hand) {
+        if (hand != null && hand.isOfToolType(ItemToolType.PICKAXE) && hand.isOfTier(ItemTier.WOODEN)) {
             ItemStack result;
-            if(block.getData() == 0)
+            if (block.getData() == 0)
                 result = new ItemStack(Material.COBBLESTONE, 1);
             else
                 result = new ItemStack(Material.STONE, 1, block.getData());
-            return new ItemStack[]{result};
+            return Collections.singletonList(result);
         }
-        return new ItemStack[0];
+        return Collections.emptyList();
     }
 
     @Override
     public String getName(int data) {
-        switch(data) {
-            case 0: return "Stone";
-            case 1: return "Granite";
-            case 2: return "Polished Granite";
-            case 3: return "Diorite";
-            case 4: return "Polished Diorite";
-            case 5: return "Andesite";
-            case 6: return "Polished Andesite";
-            default: return "Unknown Stone";
+        switch (data) {
+            case 0:
+                return "Stone";
+            case 1:
+                return "Granite";
+            case 2:
+                return "Polished Granite";
+            case 3:
+                return "Diorite";
+            case 4:
+                return "Polished Diorite";
+            case 5:
+                return "Andesite";
+            case 6:
+                return "Polished Andesite";
+            default:
+                return "Unknown Stone";
         }
     }
 

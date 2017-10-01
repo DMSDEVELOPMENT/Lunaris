@@ -16,7 +16,7 @@ public class Packet15UpdateBlock extends MinePacket {
         this.x = block.getX();
         this.y = block.getY();
         this.z = block.getZ();
-        this.id = block.getId();
+        this.id = block.getTypeId();
         this.data = block.getData();
     }
 

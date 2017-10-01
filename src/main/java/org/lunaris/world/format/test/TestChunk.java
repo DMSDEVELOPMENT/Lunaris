@@ -36,5 +36,15 @@ public class TestChunk extends Chunk {
             setBlock(15, 32, 0, Material.WOOL, 3);
             setBlock(15, 32, 15, Material.WOOL, 4);
         }
+        if (this.x == 1 && this.z == 0) {
+            getBlock(0, 32, 9).setType(Material.WATER_STILL);
+            getBlock(0, 32, 11).setType(Material.WATER_STILL);
+            
+            getBlock(5, 32, 9).setType(Material.WATER);
+            getBlock(5, 32, 11).setType(Material.WATER);
+            
+            getBlock(10, 32, 9).setType(Material.LAVA_STILL);
+            getBlock(10, 32, 11).setType(Material.LAVA_STILL);
+        }
     }
 }

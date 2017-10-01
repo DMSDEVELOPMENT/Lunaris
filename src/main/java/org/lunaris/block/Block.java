@@ -2,7 +2,6 @@ package org.lunaris.block;
 
 import org.lunaris.material.BlockMaterial;
 import org.lunaris.material.Material;
-import org.lunaris.material.SpecifiedMaterial;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.Chunk;
 import org.lunaris.world.Location;
@@ -13,56 +12,65 @@ import org.lunaris.world.World;
  */
 public class Block {
 
-    private Material material;
+    private Material type;
     private int data;
 
     private Location location;
 
     private AxisAlignedBB boundingBox, collisionBoundingBox;
 
-    public Block(Location location, Material material, int data) {
+    public Block(Location location, Material type) {
+        this(location, type, 0);
+    }
+
+    public Block(Location location, Material type, int data) {
         this.location = location;
-        this.material = material;
+        this.type = type;
         this.data = data;
     }
 
-    public void setMaterial(Material type) {
-        this.material = type;
-        this.data = 0;
-        getWorld().updateBlock(this);
-    }
-
-    public void setMaterial(int id) {
-        setMaterial(Material.getById(id));
-    }
-
     public void setType(Material type) {
-        setMaterial(type);
+        setTypeAndData(type, 0);
     }
 
-    public void setType(int id) {
-        setMaterial(id);
+    public void setTypeId(int id) {
+        setTypeAndData(Material.getById(id), 0);
     }
 
     public void setData(int data) {
-        this.data = 0;
+        this.data = data;
         getWorld().updateBlock(this);
     }
 
-    public Material getMaterial() {
-        return this.material;
+    public void setTypeIdAndData(int id, int data) {
+        setTypeAndData(Material.getById(id), data);
+    }
+
+    public void setTypeAndData(Material type, int data) {
+        if (type == this.type && this.data == data)
+            return;
+        boolean typeChanged = false;
+        if (type != this.type) {
+            getSpecifiedMaterial().onBreak(null, this);
+            this.type = type;
+            typeChanged = true;
+        }
+        this.data = data;
+        getWorld().updateBlock(this);
+        if (typeChanged)
+            getSpecifiedMaterial().onBlockAdd(this);
     }
 
     public Material getType() {
-        return this.material;
+        return this.type;
     }
 
     public BlockMaterial getSpecifiedMaterial() {
-        return (BlockMaterial) this.material.getSpecifiedMaterial();
+        return (BlockMaterial) this.type.getSpecifiedMaterial();
     }
 
-    public int getId() {
-        return this.material.getId();
+    public int getTypeId() {
+        return this.type.getId();
     }
 
     public int getData() {
@@ -101,6 +109,10 @@ public class Block {
         return getWorld().getBlockAt(this.location.getSide(face.getIndex(), step));
     }
 
+    public Block getRelative(int x, int y, int z) {
+        return getWorld().getBlockAt(getX() + x, getY() + y, getZ() + z);
+    }
+
     public AxisAlignedBB getBoundingBox() {
         return boundingBox;
     }
@@ -126,4 +138,8 @@ public class Block {
         return bb1 != null && bb.intersectsWith(bb1);
     }
 
+    @Override
+    public String toString() {
+        return "Block(world=" + getWorld() + ", x=" + getX() + ", y=" + getY() + ", z=" + getZ() + ", type=" + type + ":" + data + ")";
+    }
 }

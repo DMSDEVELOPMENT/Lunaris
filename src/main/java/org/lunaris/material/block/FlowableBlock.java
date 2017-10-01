@@ -7,9 +7,9 @@ import org.lunaris.util.math.AxisAlignedBB;
 /**
  * Created by RINES on 24.09.17.
  */
-public abstract class BlockFlowable extends BlockTransparent {
+public abstract class FlowableBlock extends TransparentBlock {
 
-    protected BlockFlowable(Material material, String name) {
+    protected FlowableBlock(Material material, String name) {
         super(material, name);
     }
 

@@ -4,6 +4,7 @@ import co.aikar.timings.Timings;
 
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
+import org.lunaris.block.BlockFace;
 import org.lunaris.entity.Entity;
 import org.lunaris.entity.Player;
 import org.lunaris.event.chunk.ChunkLoadedEvent;
@@ -16,6 +17,7 @@ import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
 import org.lunaris.util.math.MathHelper;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
+import org.lunaris.world.util.BlockUpdateScheduler;
 import org.lunaris.world.util.ChunkUnloaderTask;
 import org.lunaris.world.util.ChunksFollowerTask;
 import org.lunaris.world.util.LongHash;
@@ -24,6 +26,7 @@ import org.lunaris.world.util.LongObjectHashMap;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by RINES on 13.09.17.
@@ -46,15 +49,17 @@ public class World {
     private final Set<Player> players = new HashSet<>();
     private final Set<Entity> entities = new HashSet<>();
 
-    private final ChunkUnloaderTask chunkUnloader;
     private final ChunksFollowerTask followerTask;
+    private final BlockUpdateScheduler blockUpdateScheduler;
 
     public World(Lunaris server, String name, Dimension dimension, Difficulty difficulty) {
         this.server = server;
         this.name = name;
         this.dimension = dimension;
         this.difficulty = difficulty;
-        this.chunkUnloader = server.getServerSettings().isUnloadChunks() ? new ChunkUnloaderTask(server, this, this.chunks) : null;
+        if (server.getServerSettings().isUnloadChunks())
+            server.getScheduler().scheduleRepeatable(new ChunkUnloaderTask(server, this, chunks), 30, 30, TimeUnit.SECONDS);
+        blockUpdateScheduler = new BlockUpdateScheduler(this);
         this.followerTask = new ChunksFollowerTask(server, this);
     }
 
@@ -105,7 +110,15 @@ public class World {
         Chunk chunk = loadChunk(x >> 4, z >> 4);
         if (chunk == null)
             return;
-        chunk.setBlock(x, y, z, block.getMaterial(), block.getData());
+        chunk.setBlock(x, y, z, block.getType(), block.getData());
+        updateNeighbor(block);
+    }
+    
+    public void updateNeighbor(Block block) {
+        for (BlockFace face : BlockFace.values()) {
+            Block side = block.getSide(face);
+            side.getSpecifiedMaterial().onNeighborBlockChange(side, block);
+        }
     }
 
     public Chunk getChunkAt(int x, int z) {
@@ -148,14 +161,17 @@ public class World {
             this.time = 0;
         Timings.getChunksTickTimer().startTiming();
         this.chunks.values().forEach(Chunk::tick);
+        this.blockUpdateScheduler.tick();
         Timings.getChunksTickTimer().stopTiming();
-        if (this.chunkUnloader != null)
-            this.chunkUnloader.tick();
         this.followerTask.tick();
         Timings.getEntitiesTickTimer().startTiming();
         this.entities.forEach(Entity::tick);
         Timings.getEntitiesTickTimer().stopTiming();
         Timings.getWorldTickTimer(this).stopTiming();
+    }
+    
+    public void scheduleUpdate(Block block, int delay) {
+        blockUpdateScheduler.scheduleUpdate(block, delay);
     }
 
     public int getTime() {
@@ -240,8 +256,8 @@ public class World {
         this.spawnLocation = spawnLocation;
     }
 
-    public void playSound(Sound sound, Location loc, int pitch) {
-        this.server.getNetworkManager().sendPacket(getApplicablePlayers(loc), new Packet18LevelSoundEvent(sound, loc, -1, pitch, false, false));
+    public void playSound(Sound sound, Location loc, float pitch) {
+        this.server.getNetworkManager().sendPacket(getApplicablePlayers(loc), new Packet18LevelSoundEvent(sound, loc, -1, (int) (pitch / 1000f), false, false));
     }
 
     public void playSound(Sound sound) {

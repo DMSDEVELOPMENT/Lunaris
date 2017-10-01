@@ -14,9 +14,7 @@ import org.lunaris.network.protocol.packet.*;
 import org.lunaris.resourcepacks.ResourcePack;
 import org.lunaris.world.Location;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by RINES on 13.09.17.
@@ -160,7 +158,11 @@ public class MinePacketHandler {
     }
 
     public void handle(Packet1FMobEquipment packet) {
-        this.networkManager.broadcastPacket(packet);
+        sync(() -> {
+            Set<Player> players = new HashSet<>(Lunaris.getInstance().getOnlinePlayers());
+            players.remove(packet.getPlayer());
+            this.networkManager.sendPacket(players, packet);
+        });
     }
 
     public void handle(Packet24PlayerAction packet) {

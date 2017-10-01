@@ -12,11 +12,11 @@ import java.util.Map;
  */
 public enum Material {
     AIR(BlockAir.class, 0),
-    STONE(BlockStone.class, 1),
+    STONE(BlockStone.class, 1, true),
     GRASS(BlockGrass.class, 2),
     DIRT(BlockDirt.class, 3),
     COBBLESTONE(BlockCobblestone.class, 4),
-    PLANKS(BlockPlanks.class, 5),
+    PLANKS(BlockPlanks.class, 5, true),
     BEDROCK(BlockBedrock.class, 7),
     WATER(BlockWater.class, 8),
     WATER_STILL(BlockWaterStill.class, 9),

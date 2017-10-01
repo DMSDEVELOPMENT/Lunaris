@@ -361,12 +361,15 @@ public class Player extends LivingEntity implements CommandSender {
         PlayerInventory inventory = getInventory();
         inventory.sendContents(this);
         if(gamemode == Gamemode.CREATIVE) {
-//            inventory.sendCreativeContents();
-            inventory.setItem(0, new ItemStack(Material.WOOL, 1, 0));
-            inventory.setItem(1, new ItemStack(Material.WOOL, 2, 1));
-            inventory.setItem(2, new ItemStack(Material.WOOL, 3, 2));
-            inventory.setItem(3, new ItemStack(Material.WOOL, 4, 3));
-            inventory.setItem(4, new ItemStack(Material.STONE, 8, 0));
+            inventory.sendCreativeContents();
+            inventory.addItem(
+                    new ItemStack(Material.WOOL, 1, 0),
+                    new ItemStack(Material.WOOL, 2, 1),
+                    new ItemStack(Material.WOOL, 3, 2),
+                    new ItemStack(Material.WOOL, 4, 3),
+                    new ItemStack(Material.STONE, 8, 0),
+                    new ItemStack(Material.STONE, 8, 1),
+                    new ItemStack(Material.STONE, 8, 2));
         }
     }
 

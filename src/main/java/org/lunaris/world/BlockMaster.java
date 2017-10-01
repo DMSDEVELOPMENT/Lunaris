@@ -63,8 +63,9 @@ public class BlockMaster {
                         (float) position.x, (float) position.y, (float) position.z,
                         (int) (65535 / breakTime)
                 ));
-            }case CREATIVE: {
                 player.setBreakingBlockTask(this.server.getScheduler().schedule(() -> processBlockBreak(player, block), getExactBreakTimeInMillis(block, player) - Scheduler.ONE_TICK_IN_MILLIS, TimeUnit.MILLISECONDS));
+            }case CREATIVE: {
+                //not there
                 break;
             }
             default: {

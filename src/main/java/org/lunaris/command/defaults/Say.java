@@ -18,6 +18,8 @@ public class Say extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if(args.length == 0)
+            return;
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < args.length; ++i)
             sb.append(args[i]).append(" ");

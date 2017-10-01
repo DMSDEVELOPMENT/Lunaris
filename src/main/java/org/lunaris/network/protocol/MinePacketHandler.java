@@ -4,13 +4,19 @@ import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.event.player.*;
+import org.lunaris.inventory.transaction.BasicInventoryTransaction;
+import org.lunaris.inventory.transaction.InventoryAction;
+import org.lunaris.inventory.transaction.InventoryActionData;
+import org.lunaris.inventory.transaction.InventoryTransaction;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.resourcepacks.ResourcePack;
 import org.lunaris.world.Location;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by RINES on 13.09.17.
@@ -153,6 +159,10 @@ public class MinePacketHandler {
         });
     }
 
+    public void handle(Packet1FMobEquipment packet) {
+        this.networkManager.broadcastPacket(packet);
+    }
+
     public void handle(Packet24PlayerAction packet) {
         Player p = packet.getPlayer();
         switch(packet.getAction()) {
@@ -234,7 +244,47 @@ public class MinePacketHandler {
     }
 
     public void handle(Packet1EInventoryTransaction packet) {
+        sync(() -> {
+            Player player = packet.getPlayer();
+            List<InventoryAction> actions = new ArrayList<>();
+            for (InventoryActionData actionData : packet.getActions()) {
+                InventoryAction action = actionData.toInventoryAction(packet.getPlayer());
+                if (action == null)
+                    continue;
+                actions.add(action);
+            }
+            switch (packet.getType()) {
+                case NORMAL: {
+                    InventoryTransaction transaction = new BasicInventoryTransaction(player, actions);
+                    if (!transaction.execute()) {
+                        transaction.getInventories().forEach(inventory -> inventory.sendContents(player));
+                        break;
+                    }
 
+                    break;
+                }
+                case MISMATCH: {
+                    player.getInventoryManager().sendAllInventories();
+                    break;
+                }
+                case USE_ITEM: {
+
+                    break;
+                }
+                case USE_ITEM_ON_ENTITY: {
+
+                    break;
+                }
+                case RELEASE_ITEM: {
+
+                    break;
+                }
+                default: {
+                    player.getInventory().sendContents(player);
+                    break;
+                }
+            }
+        });
     }
 
     public void handle(Packet31InventoryContent packet) {

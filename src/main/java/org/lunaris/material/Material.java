@@ -15,7 +15,7 @@ public enum Material {
     GRASS(BlockGrass.class, 2),
     DIRT(BlockDirt.class, 3),
     COBBLESTONE(BlockCobblestone.class, 4),
-    WOOL(BlockDirt.class, 35), //fix
+    WOOL(BlockDirt.class, 35, true), //fix
     COBWEB(BlockDirt.class, -1), //fix
     FIRE(BlockFire.class, 51),
     FARM_LAND(BlockFarmland.class, 60),

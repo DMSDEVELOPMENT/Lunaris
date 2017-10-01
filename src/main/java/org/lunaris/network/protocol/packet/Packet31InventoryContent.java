@@ -9,13 +9,12 @@ import org.lunaris.network.protocol.MinePacket;
  */
 public class Packet31InventoryContent extends MinePacket {
 
-    private InventoryContentType type;
+    private int inventoryId;
     private ItemStack[] items;
 
     public Packet31InventoryContent() {}
 
-    public Packet31InventoryContent(InventoryContentType type, ItemStack[] items) {
-        this.type = type;
+    public Packet31InventoryContent(int inventoryId, ItemStack[] items) {
         this.items = items;
     }
 
@@ -26,7 +25,7 @@ public class Packet31InventoryContent extends MinePacket {
 
     @Override
     public void read(MineBuffer buffer) {
-        this.type = InventoryContentType.values()[buffer.readUnsignedVarInt()];
+        this.inventoryId = buffer.readUnsignedVarInt();
         this.items = new ItemStack[buffer.readUnsignedVarInt()];
         for(int i = 0; i < this.items.length; ++i)
             this.items[i] = buffer.readItemStack();
@@ -34,7 +33,7 @@ public class Packet31InventoryContent extends MinePacket {
 
     @Override
     public void write(MineBuffer buffer) {
-        buffer.writeUnsignedVarInt(this.type.id);
+        buffer.writeUnsignedVarInt(this.inventoryId);
         buffer.writeUnsignedVarInt(this.items.length);
         for(ItemStack item : this.items)
             buffer.writeItemStack(item);

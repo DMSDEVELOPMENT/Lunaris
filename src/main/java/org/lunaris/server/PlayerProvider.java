@@ -59,7 +59,7 @@ public class PlayerProvider {
             return;
         }
         player.setIngameState(Player.IngameState.ONLINE);
-        this.playersByNames.put(player.getName(), player);
+        this.playersByNames.put(player.getName().toLowerCase(), player);
         this.playersByUUIDs.put(player.getClientUUID(), player);
         Packet0BStartGame startGame = new Packet0BStartGame();
         startGame.entityUniqueId = startGame.entityRuntimeId = player.getEntityID();
@@ -114,7 +114,7 @@ public class PlayerProvider {
     }
 
     public Player getPlayer(String name) {
-        return this.playersByNames.get(name);
+        return this.playersByNames.get(name.toLowerCase());
     }
 
     public Player getPlayer(UUID uuid) {
@@ -135,7 +135,7 @@ public class PlayerProvider {
             PlayerDisconnectEvent event = new PlayerDisconnectEvent(player);
             this.server.getEventManager().call(event);
             this.server.getPlayerList().removePlayer(player);
-            this.playersByNames.remove(player.getName());
+            this.playersByNames.remove(player.getName().toLowerCase());
             this.playersByUUIDs.remove(player.getClientUUID());
             if(wasOnline) {
                 player.getWorld().removePlayerFromWorld(player);

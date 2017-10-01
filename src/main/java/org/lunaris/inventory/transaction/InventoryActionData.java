@@ -1,6 +1,10 @@
 package org.lunaris.inventory.transaction;
 
 import org.lunaris.entity.Player;
+import org.lunaris.inventory.Inventory;
+import org.lunaris.inventory.transaction.action.CreativeInventoryAction;
+import org.lunaris.inventory.transaction.action.DropItemAction;
+import org.lunaris.inventory.transaction.action.SlotChangeAction;
 import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.packet.Packet1EInventoryTransaction;
@@ -70,12 +74,19 @@ public class InventoryActionData {
                     this.inventorySlot += 36;
                     this.windowId = InventorySection.INVENTORY.getId();
                 }
-
-                break;
+                Inventory inventory = player.getInventoryManager().getInventoryById(this.windowId);
+                if(inventory != null)
+                    return new SlotChangeAction(inventory, this.inventorySlot, this.oldItem, this.newItem);
+                throw new RuntimeException("Player " + player.getName() + " has no open container with window ID " + this.windowId);
             }case WORLD: {
                 if(this.inventorySlot != Packet1EInventoryTransaction.MagicActionType.DROP_ITEM.ordinal())
                     break;
-
+                return new DropItemAction(this.oldItem, this.newItem);
+            }case CREATIVE: {
+                Packet1EInventoryTransaction.CreativeMagicActionType type = Packet1EInventoryTransaction.CreativeMagicActionType.values()[this.inventorySlot];
+                return new CreativeInventoryAction(type, this.oldItem, this.newItem);
+            }case TODO: {
+                //Soon
                 break;
             }
         }

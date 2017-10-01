@@ -68,7 +68,7 @@ public class NetworkManager {
     }
 
     public void broadcastPacket(MinePacket packet) {
-        sendPacket(this.server.getOnlinePlayers(), packet);
+        sendPacket(new HashSet<>(this.server.getOnlinePlayers()), packet);
     }
 
     public void tick() {

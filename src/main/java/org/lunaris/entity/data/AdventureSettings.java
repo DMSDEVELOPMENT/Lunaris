@@ -31,6 +31,22 @@ public class AdventureSettings {
         this.player.sendPacket(packet);
     }
 
+    public void update(Gamemode gamemode) {
+        flag(Packet37AdventureSettings.Flag.ALLOW_FLIGHT, gamemode, Gamemode.CREATIVE, Gamemode.SPECTATOR);
+        flag(Packet37AdventureSettings.Flag.NO_CLIP, gamemode, Gamemode.SPECTATOR);
+        flag(Packet37AdventureSettings.Flag.FLYING, gamemode, Gamemode.SPECTATOR);
+        update();
+    }
+
+    private void flag(Packet37AdventureSettings.Flag flag, Gamemode given, Gamemode... allowed) {
+        for(Gamemode gamemode : allowed)
+            if(gamemode == given) {
+                setFlag(flag, true);
+                return;
+            }
+        setFlag(flag, false);
+    }
+
     public void setFlag(Packet37AdventureSettings.Flag flag, boolean value) {
         if(value)
             this.flags.add(flag);

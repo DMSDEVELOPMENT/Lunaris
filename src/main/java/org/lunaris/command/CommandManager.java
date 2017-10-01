@@ -20,6 +20,7 @@ public class CommandManager {
         new List();
         new Say();
         new Timings();
+        new Test();
     }
 
     public boolean isCommand(String line) {

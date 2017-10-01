@@ -6,5 +6,6 @@ package org.lunaris.entity.data;
 public enum Gamemode {
     SURVIVAL,
     CREATIVE,
-    ADVENTURE
+    ADVENTURE,
+    SPECTATOR
 }

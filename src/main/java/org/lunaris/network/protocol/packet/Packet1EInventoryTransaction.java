@@ -105,6 +105,18 @@ public class Packet1EInventoryTransaction extends MinePacket {
         }
     }
 
+    public TransactionType getType() {
+        return this.type;
+    }
+
+    public InventoryActionData[] getActions() {
+        return this.actions;
+    }
+
+    public TransactionData getData() {
+        return this.data;
+    }
+
     public enum TransactionType {
         NORMAL,
         MISMATCH,

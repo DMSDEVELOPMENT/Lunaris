@@ -1,7 +1,54 @@
 package org.lunaris.inventory.transaction;
 
+import org.lunaris.entity.Player;
+import org.lunaris.item.ItemStack;
+
 /**
  * Created by RINES on 01.10.17.
  */
-public class InventoryAction {
+public abstract class InventoryAction {
+
+    private final long creationTime;
+    private ItemStack sourceItem;
+    private ItemStack targetItem;
+
+    protected InventoryAction(ItemStack sourceItem, ItemStack targetItem) {
+        this.sourceItem = sourceItem;
+        this.targetItem = targetItem;
+        this.creationTime = System.currentTimeMillis();
+    }
+
+    public long getCreationTime() {
+        return this.creationTime;
+    }
+
+    public ItemStack getSourceItem() {
+        return this.sourceItem.clone();
+    }
+
+    public ItemStack getTargetItem() {
+        return this.targetItem.clone();
+    }
+
+    /**
+     * Проверка на то, может ли игрок совершить это действие.
+     */
+    abstract public boolean isValid(Player source);
+
+    /**
+     * Вызывается, если транзакция, часть которой является, признана валидной. Выполняет все server-side действия,
+     * реализующие действие. Возвращает true в случае успеха, false в случае отмены плагинами.
+     */
+    abstract public boolean execute(Player source);
+
+    /**
+     * Метод, вызываемый после полного исполнения действия.
+     */
+    abstract public void onExecuteSuccess(Player source);
+
+    /**
+     * Метод, вызываемый в случае, если действие не смогло быть окончено.
+     */
+    abstract public void onExecuteFail(Player source);
+
 }

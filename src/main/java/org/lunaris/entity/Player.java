@@ -5,7 +5,11 @@ import org.lunaris.command.CommandSender;
 import org.lunaris.entity.data.*;
 import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.event.player.PlayerKickEvent;
+import org.lunaris.inventory.Inventory;
+import org.lunaris.inventory.InventoryManager;
 import org.lunaris.inventory.PlayerInventory;
+import org.lunaris.item.ItemStack;
+import org.lunaris.material.Material;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
@@ -42,7 +46,7 @@ public class Player extends LivingEntity implements CommandSender {
     private String disconnectingReason = "Just disconnected";
 
     private Gamemode gamemode = Lunaris.getInstance().getServerSettings().getDefaultGamemode();
-    private final PlayerInventory inventory = new PlayerInventory();
+    private final InventoryManager inventoryManager;
 
     private int foodLevel = 20;
     private float foodSaturationLevel = 20F;
@@ -74,6 +78,7 @@ public class Player extends LivingEntity implements CommandSender {
         this.skinGeometry = packetLogin.getSkinGeometry();
 
         this.adventureSettings = new AdventureSettings(this);
+        this.inventoryManager = new InventoryManager(this);
     }
 
     @Override
@@ -320,12 +325,49 @@ public class Player extends LivingEntity implements CommandSender {
         this.adventureSettings.update();
     }
 
+    public InventoryManager getInventoryManager() {
+        return this.inventoryManager;
+    }
+
+    public void openInventory(Inventory inventory) {
+        this.inventoryManager.addInventory(inventory);
+        this.inventoryManager.sendInventory(inventory);
+    }
+
+    public void closeInventory() {
+        this.inventoryManager.closeAndRemoveLastOpenedInventory();
+    }
+
     public PlayerInventory getInventory() {
-        return this.inventory;
+        return this.inventoryManager.getPlayerInventory();
     }
 
     public Gamemode getGamemode() {
         return this.gamemode;
+    }
+
+    public void setGamemode(Gamemode gamemode) {
+        if(this.gamemode == gamemode)
+            return;
+        this.gamemode = gamemode;
+        sendPacket(new Packet3ESetPlayerGameType(gamemode));
+        this.adventureSettings.update(gamemode);
+        if(gamemode == Gamemode.SPECTATOR) {
+            //...
+        }else {
+
+
+        }
+        PlayerInventory inventory = getInventory();
+        inventory.sendContents(this);
+        if(gamemode == Gamemode.CREATIVE) {
+//            inventory.sendCreativeContents();
+            inventory.setItem(0, new ItemStack(Material.WOOL, 1, 0));
+            inventory.setItem(1, new ItemStack(Material.WOOL, 2, 1));
+            inventory.setItem(2, new ItemStack(Material.WOOL, 3, 2));
+            inventory.setItem(3, new ItemStack(Material.WOOL, 4, 3));
+            inventory.setItem(4, new ItemStack(Material.STONE, 8, 0));
+        }
     }
 
     public int getFoodLevel() {

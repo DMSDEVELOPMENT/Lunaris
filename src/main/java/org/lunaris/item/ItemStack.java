@@ -15,14 +15,14 @@ import java.util.regex.Pattern;
 /**
  * Created by RINES on 13.09.17.
  */
-public class ItemStack {
+public class ItemStack implements Cloneable {
 
     public final static ItemStack AIR = new ItemStack(Material.AIR, 1);
 
     private final Material material;
     private int data;
     private int amount;
-    private byte[] nbtData;
+    private byte[] nbtData = new byte[0];
     private CompoundTag compiledNbt;
 
     public ItemStack(Material material) {
@@ -36,7 +36,7 @@ public class ItemStack {
     public ItemStack(Material material, int amount, int data) {
         this.material = material;
         this.amount = amount;
-        this.data = data;
+        this.data = data < 0 ? 0 : data;
     }
 
     public ItemStack(String stringData) {
@@ -55,7 +55,7 @@ public class ItemStack {
             data = Integer.parseInt(b[1]) & 0xffff;
         this.material = Material.getById(id);
         this.amount = 1;
-        this.data = data;
+        this.data = data < 0 ? 0 : data;
     }
 
     public Material getMaterial() {
@@ -71,7 +71,7 @@ public class ItemStack {
     }
 
     public void setData(int data) {
-        this.data = data;
+        this.data = data < 0 ? 0 : data;
     }
 
     public int getAmount() {
@@ -164,6 +164,50 @@ public class ItemStack {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean canBeFoundInCreative() {
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == this || o == null && getType() == Material.AIR)
+            return true;
+        if(!(o instanceof ItemStack))
+            return false;
+        ItemStack item = (ItemStack) o;
+        if(getType() != item.getType() || getData() != item.getData() || getAmount() != item.getAmount()
+                || this.nbtData.length != item.nbtData.length)
+            return false;
+        for(int i = 0; i < this.nbtData.length; ++i)
+            if(this.nbtData[i] != item.nbtData[i])
+                return false;
+        return true;
+    }
+
+    public boolean isSimilar(ItemStack item) {
+        if(item == null || item == null && getType() == Material.AIR)
+            return true;
+        if(getType() != item.getType() || getData() != item.getData() || this.nbtData.length != item.nbtData.length)
+            return false;
+        for(int i = 0; i < this.nbtData.length; ++i)
+            if(this.nbtData[i] != item.nbtData[i])
+                return false;
+        return true;
+    }
+
+    @Override
+    public ItemStack clone() {
+        try {
+            return (ItemStack) super.clone();
+        }catch(Exception ignored) {}
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemStack{Material:" + this.material.name() + ", Data:" + this.data + ", Amount:" + this.amount + "}";
     }
 
 }

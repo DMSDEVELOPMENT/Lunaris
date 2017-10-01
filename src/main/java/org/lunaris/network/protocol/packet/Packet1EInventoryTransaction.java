@@ -1,10 +1,7 @@
 package org.lunaris.network.protocol.packet;
 
 import org.lunaris.block.BlockFace;
-import org.lunaris.inventory.transaction.ReleaseItemData;
-import org.lunaris.inventory.transaction.TransactionData;
-import org.lunaris.inventory.transaction.UseItemData;
-import org.lunaris.inventory.transaction.UseItemOnEntityData;
+import org.lunaris.inventory.transaction.*;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 
@@ -14,7 +11,7 @@ import org.lunaris.network.protocol.MinePacket;
 public class Packet1EInventoryTransaction extends MinePacket {
 
     private TransactionType type;
-    //actions
+    private InventoryActionData[] actions;
     private TransactionData data;
 
     @Override
@@ -25,7 +22,9 @@ public class Packet1EInventoryTransaction extends MinePacket {
     @Override
     public void read(MineBuffer buffer) {
         this.type = TransactionType.values()[buffer.readUnsignedVarInt()];
-        //actions
+        this.actions = new InventoryActionData[buffer.readUnsignedVarInt()];
+        for(int i = 0; i < this.actions.length; ++i)
+            this.actions[i] = new InventoryActionData(buffer);
         switch(this.type) {
             case NORMAL:
             case MISMATCH:
@@ -69,7 +68,9 @@ public class Packet1EInventoryTransaction extends MinePacket {
     @Override
     public void write(MineBuffer buffer) {
         buffer.writeUnsignedVarInt(this.type.ordinal());
-        //actions
+        buffer.writeUnsignedVarInt(this.actions.length);
+        for(InventoryActionData data : this.actions)
+            data.write(buffer);
         switch(this.type) {
             case NORMAL:
             case MISMATCH:

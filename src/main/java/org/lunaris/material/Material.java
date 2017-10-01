@@ -23,7 +23,7 @@ public enum Material {
     LAVA(BlockLava.class, 10),
     LAVA_STILL(BlockLavaStill.class, 11),
     WOOL(BlockWool.class, 35, true),
-    COBWEB(BlockCobweb.class, 30), //fix
+    COBWEB(BlockCobweb.class, 30),
     OBSIDIAN(BlockObsidian.class, 49),
     FIRE(BlockFire.class, 51),
     FARM_LAND(BlockFarmland.class, 60),

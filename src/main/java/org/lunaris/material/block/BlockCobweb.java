@@ -14,8 +14,8 @@ import java.util.List;
  * @author xtrafrancyz
  */
 public class BlockCobweb extends FlowableBlock {
-    protected BlockCobweb(Material material, String name) {
-        super(material, name);
+    protected BlockCobweb() {
+        super(Material.COBWEB, "Cobweb");
     }
 
     @Override

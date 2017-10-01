@@ -55,7 +55,7 @@ public class NetworkManager {
         this.server.getEventManager().call(event);
         if (event.isCancelled())
             return;
-        sendQueue.add(new QueuedPacket(Collections.singletonList(player.getSession()), packet));
+        sendQueue.add(new QueuedPacket(Collections.singletonList(player.getSession()), serialize(packet)));
     }
 
     public void sendPacket(Collection<Player> players, MinePacket packet) {
@@ -64,7 +64,7 @@ public class NetworkManager {
             this.server.getEventManager().call(event);
             return event.isCancelled();
         });
-        sendQueue.add(new QueuedPacket(players.stream().map(Player::getSession).collect(Collectors.toList()), packet));
+        sendQueue.add(new QueuedPacket(players.stream().map(Player::getSession).collect(Collectors.toList()), serialize(packet)));
     }
 
     public void broadcastPacket(MinePacket packet) {
@@ -75,9 +75,8 @@ public class NetworkManager {
         Timings.getPacketsSendingTimer().startTiming();
         Set<RakNetClientSession> receivers = new HashSet<>();
         for (QueuedPacket packet = sendQueue.poll(); packet != null; packet = sendQueue.poll()) {
-            byte[] serialized = serialize(packet.packet);
             for (RakNetClientSession session : packet.receivers)
-                session.getPacketsBush().collect(serialized);
+                session.getPacketsBush().collect(packet.packet);
             receivers.addAll(packet.receivers);
         }
         receivers.forEach(session ->
@@ -111,9 +110,9 @@ public class NetworkManager {
 
     private static class QueuedPacket {
         public Collection<RakNetClientSession> receivers;
-        public MinePacket packet;
+        public byte[] packet;
 
-        public QueuedPacket(Collection<RakNetClientSession> receivers, MinePacket packet) {
+        public QueuedPacket(Collection<RakNetClientSession> receivers, byte[] packet) {
             this.receivers = receivers;
             this.packet = packet;
         }

@@ -113,6 +113,8 @@ public abstract class Chunk {
     }
 
     public Block getBlock(int x, int y, int z) {
+        if (x >= 3000000 || x < 0 || y < 0 || y > 255 || z >= 3000000 || z < 0)
+            return new Block(new Location(this.world, x, y, z), Material.AIR);
         ChunkSection section = getSection(y);
         return new Block(new Location(this.world, x, y, z), Material.getById(section.getId(x, y, z)), section.getData(x, y, z));
     }
@@ -146,6 +148,8 @@ public abstract class Chunk {
     }
 
     public void setBlock(int x, int y, int z, int id, int data) {
+        if (x >= 3000000 || x < 0 || y < 0 || y > 255 || z >= 3000000 || z < 0)
+            return;
         getSection(y).set(x, y, z, (short) id, (byte) data);
         if (loaded)
             sendPacket(new Packet15UpdateBlock(x, y, z, id, data));
@@ -229,7 +233,7 @@ public abstract class Chunk {
     private long hash() {
         return LongHash.toLong(this.x, this.z);
     }
-    
+
     public boolean isLoaded() {
         return loaded;
     }

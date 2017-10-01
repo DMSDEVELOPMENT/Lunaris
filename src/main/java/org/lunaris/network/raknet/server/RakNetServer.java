@@ -272,7 +272,7 @@ public class RakNetServer implements GeminusRakNetPeer, RakNetServerListener {
             throw new NullPointerException();
         }
         this.listener = listener;
-        RakNetLogger.info(this, "Set listener to " + listener.getClass().getName());
+        RakNetLogger.debug(this, "Set listener to " + listener.getClass().getName());
         return this;
     }
 
@@ -721,7 +721,7 @@ public class RakNetServer implements GeminusRakNetPeer, RakNetServerListener {
         }
 
         // Notify API
-        RakNetLogger.info(this, "Started server");
+        RakNetLogger.debug(this, "Started server");
         listener.onServerStart();
 
         // Update system
@@ -775,7 +775,7 @@ public class RakNetServer implements GeminusRakNetPeer, RakNetServerListener {
         thread.setName("JRAKNET_SERVER_" + server.getGloballyUniqueId());
         thread.start();
         this.serverThread = thread;
-        RakNetLogger.info(this, "Started on thread with name " + thread.getName());
+        RakNetLogger.debug(this, "Started on thread with name " + thread.getName());
 
         // Return the thread so it can be modified
         return thread;

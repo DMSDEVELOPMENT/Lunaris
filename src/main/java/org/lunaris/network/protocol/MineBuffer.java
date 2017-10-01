@@ -347,22 +347,6 @@ public class MineBuffer {
         });
     }
 
-    public void writeItem(ItemStack item) {
-        if (item == null || item.getMaterial() == Material.AIR) {
-            writeVarInt(0);
-            return;
-        }
-        writeVarInt(item.getMaterial().getId());
-        int auxValue = (((item.getMaterial().hasMeta() ? item.getData() : -1) & 0x7fff) << 8) | item.getAmount();
-        writeVarInt(auxValue);
-//        byte[] nbt = item.getCompoundTag();
-//        this.putLShort(nbt.length);
-//        this.put(nbt);
-        writeUnsignedShort((short) 0);
-        writeVarInt(0); //can place on entry amount
-        writeVarInt(0); //can destroy entry amount
-    }
-
     public void writeUUID(UUID uuid) {
         writeBytes(appendBytes(lfu(uuid.getMostSignificantBits()), lfu(uuid.getLeastSignificantBits())));
     }

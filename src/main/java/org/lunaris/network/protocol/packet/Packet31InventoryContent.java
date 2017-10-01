@@ -7,10 +7,17 @@ import org.lunaris.network.protocol.MinePacket;
 /**
  * Created by RINES on 01.10.17.
  */
-public class InventoryContentPacket extends MinePacket {
+public class Packet31InventoryContent extends MinePacket {
 
     private InventoryContentType type;
     private ItemStack[] items;
+
+    public Packet31InventoryContent() {}
+
+    public Packet31InventoryContent(InventoryContentType type, ItemStack[] items) {
+        this.type = type;
+        this.items = items;
+    }
 
     @Override
     public int getId() {
@@ -46,6 +53,11 @@ public class InventoryContentPacket extends MinePacket {
         InventoryContentType(int id) {
             this.id = id;
         }
+
+        public int getId() {
+            return this.id;
+        }
+
     }
 
 }

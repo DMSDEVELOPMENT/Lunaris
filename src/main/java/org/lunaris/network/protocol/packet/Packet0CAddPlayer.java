@@ -60,7 +60,7 @@ public class Packet0CAddPlayer extends MinePacket {
         buffer.writeFloat(this.pitch);
         buffer.writeFloat(this.yaw); //head rotation
         buffer.writeFloat(this.yaw);
-        buffer.writeItem(this.hand);
+        buffer.writeItemStack(this.hand);
         buffer.writeMetadata(this.metadata);
     }
 }

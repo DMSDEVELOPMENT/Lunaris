@@ -233,6 +233,18 @@ public class MinePacketHandler {
         packet.getPlayer().setChunksView(value);
     }
 
+    public void handle(Packet1EInventoryTransaction packet) {
+
+    }
+
+    public void handle(Packet31InventoryContent packet) {
+
+    }
+
+    public void handle(Packet32InventorySlot packet) {
+
+    }
+
     private Collection<Player> getApplicablePlayersWithout(Player p) {
         Collection<Player> players = p.getWorld().getApplicablePlayers(p.getLocation());
         players.remove(p);

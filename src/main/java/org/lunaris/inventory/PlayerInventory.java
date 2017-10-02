@@ -102,7 +102,7 @@ public class PlayerInventory extends Inventory {
     @Override
     public void setItem(int index, ItemStack item) {
         if(index >= getSize()) {
-            setItemWithoutUpdate(index, item);
+            super.setItemWithoutUpdate(index, item);
             sendArmorSlot(index, item);
         }else
             super.setItem(index, item);
@@ -111,7 +111,7 @@ public class PlayerInventory extends Inventory {
     @Override
     public void setItemWithoutUpdate(int index, ItemStack item) {
         if(index >= getSize()) {
-            setItemWithoutUpdate(index, item);
+            super.setItemWithoutUpdate(index, item);
             sendArmorSlot(index, item);
         }else
             super.setItemWithoutUpdate(index, item);
@@ -124,16 +124,12 @@ public class PlayerInventory extends Inventory {
         return armor;
     }
 
-    public void sendCreativeContents() {
-//        Packet31InventoryContent packet = new Packet31InventoryContent(InventorySection.CREATIVE.getId(), new ItemStack[]{
-//                new ItemStack(Material.WOOL, 1, 0),
-//                new ItemStack(Material.WOOL, 1, 1),
-//                new ItemStack(Material.WOOL, 1, 2),
-//                new ItemStack(Material.WOOL, 1, 3),
-//                new ItemStack(Material.WOOL, 1, 4),
-//                new ItemStack(Material.STONE, 1)
-//        });
-//        this.holder.sendPacket(packet);
+    public void equipItem0(int slot) {
+        if(!isHotbarSlot(slot)) {
+            sendContents(this.holder);
+            return;
+        }
+        this.itemInHandIndex = slot;
     }
 
     private void sendArmorSlot(int index, ItemStack item) {

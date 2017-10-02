@@ -6,14 +6,18 @@ import org.lunaris.block.BlockFace;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.Gamemode;
 import org.lunaris.event.block.BlockBreakEvent;
+import org.lunaris.event.block.BlockPlaceEvent;
 import org.lunaris.event.player.PlayerHitFireEvent;
 import org.lunaris.event.player.PlayerInteractEvent;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.material.BlockMaterial;
+import org.lunaris.material.ItemMaterial;
 import org.lunaris.material.Material;
+import org.lunaris.material.SpecifiedMaterial;
 import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
+import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
 import org.lunaris.network.protocol.packet.Packet19LevelEvent;
 import org.lunaris.network.protocol.packet.Packet24PlayerAction;
 import org.lunaris.server.Scheduler;
@@ -35,6 +39,7 @@ public class BlockMaster {
     }
 
     public void onRightClickBlock(Player player, BlockVector blockPosition, BlockFace blockFace, Vector3d clickPosition) {
+        //check whether can interact at this position
         ItemStack hand = player.getInventory().getItemInHand();
         Block target = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
         Block sider = target.getSide(blockFace);
@@ -46,7 +51,36 @@ public class BlockMaster {
             //cancel things
             return;
         }
-
+        BlockMaterial targetMaterial = target.getSpecifiedMaterial();
+        if(!player.isSneaking() && targetMaterial.canBeActivated() && targetMaterial.onActivate(target, hand, player))
+            return;
+        if(hand != null && hand.getType() != Material.AIR) {
+            SpecifiedMaterial handMaterial = hand.getSpecifiedMaterial();
+            if(!handMaterial.isBlock()) {
+                ItemMaterial itemMaterial = (ItemMaterial) handMaterial;
+                if(itemMaterial.canBeUsed() && itemMaterial.useOn(target, hand, player)) {
+                    if(hand.getAmount() <= 0) {
+                        player.getInventory().setItemInHand(hand);
+                        return;
+                    }
+                }
+            }else {
+                BlockMaterial blockMaterial = (BlockMaterial) handMaterial;
+                if(sider.getType() == Material.AIR && blockMaterial.canBePlaced()) {
+                    BlockPlaceEvent placeEvent = new BlockPlaceEvent(player, hand, new BlockVector(sider.getX(), sider.getY(), sider.getZ()));
+                    this.server.getEventManager().call(placeEvent);
+                    if(placeEvent.isCancelled()) {
+                        return;
+                    }
+                    if(blockMaterial.place(hand, sider, target, blockFace, clickPosition.getX(), clickPosition.getY(), clickPosition.getZ(), player)) {
+                        sider.getChunk().sendPacket(new Packet18LevelSoundEvent(Sound.PLACE, sider.getLocation(), hand.getType().getId(), 1, false, false));if(player.getGamemode() != Gamemode.CREATIVE) {
+                            hand.setAmount(hand.getAmount() - 1);
+                            player.getInventory().setItemInHand(hand.getAmount() == 0 ? null : hand);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public void onBlockStartBreak(Packet24PlayerAction packet) {
@@ -114,6 +148,10 @@ public class BlockMaster {
 
     public void onBlockContinueBreak(Packet24PlayerAction packet) {
         Player player = packet.getPlayer();
+        if(player.getGamemode() == Gamemode.CREATIVE) {
+            processBlockBreak(player, player.getWorld().getBlockAt(packet.getX(), packet.getY(), packet.getZ()));
+            return;
+        }
         if(player.getBreakingBlockTask() == null)
             return;
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());

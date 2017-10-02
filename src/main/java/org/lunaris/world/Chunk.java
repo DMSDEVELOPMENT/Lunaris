@@ -113,7 +113,8 @@ public abstract class Chunk {
     }
 
     public Block getBlock(int x, int y, int z) {
-        if (x >= 3000000 || x < 0 || y < 0 || y > 255 || z >= 3000000 || z < 0)
+        final int modulus = 3_000_000;
+        if (x >= modulus || x < -modulus || y < 0 || y > 255 || z >= modulus || z < -modulus)
             return new Block(new Location(this.world, x, y, z), Material.AIR);
         ChunkSection section = getSection(y);
         return new Block(new Location(this.world, x, y, z), Material.getById(section.getId(x, y, z)), section.getData(x, y, z));
@@ -148,7 +149,8 @@ public abstract class Chunk {
     }
 
     public void setBlock(int x, int y, int z, int id, int data) {
-        if (x >= 3000000 || x < 0 || y < 0 || y > 255 || z >= 3000000 || z < 0)
+        final int modulus = 3_000_000;
+        if (x >= modulus || x < -modulus || y < 0 || y > 255 || z >= modulus || z < -modulus)
             return;
         getSection(y).set(x, y, z, (short) id, (byte) data);
         if (loaded)

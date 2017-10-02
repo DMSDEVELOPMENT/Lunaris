@@ -46,4 +46,23 @@ public class Packet1FMobEquipment extends MinePacket {
         buffer.writeByte((byte) this.inventoryId);
     }
 
+    public long getEntityID() {
+        return entityID;
+    }
+
+    public ItemStack getItem() {
+        return this.item;
+    }
+
+    public int getInventorySlot() {
+        return this.inventorySlot;
+    }
+
+    public int getHotbarSlot() {
+        return this.hotbarSlot;
+    }
+
+    public int getInventoryId() {
+        return this.inventoryId;
+    }
 }

@@ -103,13 +103,13 @@ public class ItemStack implements Cloneable {
         SpecifiedMaterial material = getSpecifiedMaterial();
         if (material.isBlock())
             return false;
-        return ((ItemMaterial) material).useOn(block, user);
+        return ((ItemMaterial) material).useOn(block, this, user);
     }
 
     public boolean useOn(Entity entity, Entity user) {
         SpecifiedMaterial material = getSpecifiedMaterial();
         if (material instanceof ItemMaterial)
-            return ((ItemMaterial) material).useOn(entity, user);
+            return ((ItemMaterial) material).useOn(entity, this, user);
         return false;
     }
 

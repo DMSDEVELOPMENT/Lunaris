@@ -2,6 +2,7 @@ package org.lunaris.material;
 
 import org.lunaris.block.Block;
 import org.lunaris.entity.Entity;
+import org.lunaris.item.ItemStack;
 
 /**
  * Created by RINES on 24.09.17.
@@ -33,11 +34,15 @@ public class ItemMaterial extends SpecifiedMaterial {
         return -1;
     }
 
-    public boolean useOn(Block block, Entity user) {
+    public boolean canBeUsed() {
         return false;
     }
 
-    public boolean useOn(Entity entity, Entity user) {
+    public boolean useOn(Block block, ItemStack item, Entity user) {
+        return false;
+    }
+
+    public boolean useOn(Entity entity, ItemStack item, Entity user) {
         return false;
     }
 

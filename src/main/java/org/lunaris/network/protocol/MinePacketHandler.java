@@ -158,6 +158,16 @@ public class MinePacketHandler {
 
     public void handle(Packet1FMobEquipment packet) {
         sync(() -> {
+            Player p = packet.getPlayer();
+            ItemStack given = packet.getItem();
+            ItemStack has = p.getInventory().getItem(packet.getHotbarSlot());
+            if(!has.isSimilar(given)) {
+                this.server.getLogger().warn("%s tried to equip item that is not in slot %d in inventory %d: %s vs %s", p.getName(), packet.getHotbarSlot(), packet.getInventoryId(), given.toString(), has.toString());
+                p.getInventory().sendContents(p);
+                return;
+            }
+            p.setDataFlag(false, EntityDataFlag.ACTION, false, true);
+            p.getInventory().equipItem0(packet.getHotbarSlot());
             Set<Player> players = new HashSet<>(Lunaris.getInstance().getOnlinePlayers());
             players.remove(packet.getPlayer());
             this.networkManager.sendPacket(players, packet);
@@ -238,6 +248,12 @@ public class MinePacketHandler {
         packet.getPlayer().getLocation().getChunk().sendPacket(packet);
     }
 
+    public void handle(Packet30PlayerHotbar packet) {
+        if(packet.getInventoryId() != InventorySection.INVENTORY.getId())
+            return;
+        sync(() -> packet.getPlayer().getInventory().equipItem0(packet.getActiveSlot()));
+    }
+
     public void handle(Packet45RequestChunkRadius packet) {
         int value = Math.min(packet.getRadius(), this.server.getServerSettings().getChunksView());
         packet.getPlayer().sendPacket(new Packet46ChunkRadiusUpdate(value));
@@ -270,18 +286,18 @@ public class MinePacketHandler {
                 }
                 case USE_ITEM: {
                     UseItemData data = (UseItemData) packet.getData();
+                    System.out.println("Active action: " + data.getType());
                     switch(data.getType()) {
                         case CLICK_BLOCK: {
                             player.setDataFlag(false, EntityDataFlag.ACTION, false, true);
-                            if(true /*can interact with this location*/)
-                                this.server.getWorldProvider().getBlockMaster().onRightClickBlock(player, data.getBlockPosition(), data.getBlockFace(), data.getClickPosition());
-                            break;
+                            this.server.getWorldProvider().getBlockMaster().onRightClickBlock(player, data.getBlockPosition(), data.getBlockFace(), data.getClickPosition());
+                            return;
                         }case BREAK_BLOCK: {
 
-                            break;
+                            return;
                         }case CLICK_AIR: {
 
-                            break;
+                            return;
                         }
                     }
                     break;

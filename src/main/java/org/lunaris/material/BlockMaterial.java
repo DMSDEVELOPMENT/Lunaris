@@ -2,6 +2,7 @@ package org.lunaris.material;
 
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockColor;
+import org.lunaris.block.BlockFace;
 import org.lunaris.entity.Entity;
 import org.lunaris.entity.Player;
 import org.lunaris.item.ItemStack;
@@ -112,6 +113,11 @@ public class BlockMaterial extends SpecifiedMaterial {
     }
 
     public boolean canBePlaced() {
+        return true;
+    }
+
+    public boolean place(ItemStack stack, Block block, Block against, BlockFace blockFace, double fx, double fy, double fz, Player player) {
+        block.setTypeAndData(getType(), stack.getData());
         return true;
     }
 

@@ -25,7 +25,7 @@ public class ItemStack implements Cloneable {
     private CompoundTag compiledNbt;
 
     public ItemStack(Material type) {
-        this(type, 0, 0);
+        this(type, 1, 0);
     }
 
     public ItemStack(Material type, int amount) {

@@ -58,7 +58,7 @@ public class ItemBucket extends ItemHandle {
                     block.setType(Material.AIR);
                     if (player.getGamemode() == Gamemode.SURVIVAL) {
                         item.setAmount(item.getAmount() - 1);
-                        if(item.getAmount() == 0)
+                        if (item.getAmount() == 0)
                             player.getInventory().setItemInHand(result);
                         else {
                             player.getInventory().setItemInHand(item);
@@ -78,11 +78,12 @@ public class ItemBucket extends ItemHandle {
                 target.setType(containingType);
                 if (player.getGamemode() == Gamemode.SURVIVAL) {
                     item.setAmount(item.getAmount() - 1);
-                    if (item.getAmount() == 0)
-                        player.getInventory().setItemInHand(null);
-                    else
+                    if (item.getAmount() == 0) {
+                        player.getInventory().setItemInHand(new ItemStack(Material.BUCKET));
+                    } else {
                         player.getInventory().setItemInHand(item);
-                    player.getInventory().addItem(new ItemStack(Material.BUCKET));
+                        player.getInventory().addItem(new ItemStack(Material.BUCKET));
+                    }
                 }
                 return true;
             } else {

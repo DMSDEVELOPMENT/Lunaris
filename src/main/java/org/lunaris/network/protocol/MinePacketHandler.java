@@ -3,7 +3,6 @@ package org.lunaris.network.protocol;
 import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.EntityDataFlag;
-import org.lunaris.entity.data.Gamemode;
 import org.lunaris.event.player.*;
 import org.lunaris.inventory.transaction.*;
 import org.lunaris.item.ItemStack;
@@ -12,7 +11,6 @@ import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.resourcepacks.ResourcePack;
 import org.lunaris.world.BlockVector;
-import org.lunaris.world.Location;
 
 import java.util.*;
 
@@ -150,11 +148,7 @@ public class MinePacketHandler {
 
     public void handle(Packet18LevelSoundEvent packet) {
         Player p = packet.getPlayer();
-        sync(() -> {
-            Collection<Player> players = p.getWorld().getApplicablePlayers(p.getLocation());
-            players.remove(p);
-            this.networkManager.sendPacket(players, packet);
-        });
+        sync(() -> this.networkManager.sendPacket(getApplicablePlayersWithout(p), packet));
     }
 
     public void handle(Packet1FMobEquipment packet) {
@@ -246,11 +240,7 @@ public class MinePacketHandler {
     }
 
     public void handle(Packet2CAnimate packet) {
-        sync(() -> {
-            Collection<Player> players = packet.getPlayer().getLocation().getChunk().getApplicablePlayers();
-            players.remove(packet.getPlayer());
-            this.server.getNetworkManager().sendPacket(players, packet);
-        });
+        sync(() -> this.networkManager.sendPacket(getApplicablePlayersWithout(packet.getPlayer()), packet));
     }
 
     public void handle(Packet30PlayerHotbar packet) {

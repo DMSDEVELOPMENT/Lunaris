@@ -120,40 +120,26 @@ public abstract class Chunk {
         return new Block(new Location(this.world, x, y, z), Material.getById(section.getId(x, y, z)), section.getData(x, y, z));
     }
 
-    public void setBlock(Vector3d position, Material type, int data) {
-        setBlock(position.getBlockX(), position.getBlockY(), position.getBlockZ(), type.getId(), data);
+    protected void setBlock(int x, int y, int z, Material type) {
+        setBlock0(x, y, z, type.getId(), 0);
     }
 
-    public void setBlock(Vector3d position, Material type) {
-        setBlock(position.getBlockX(), position.getBlockY(), position.getBlockZ(), type.getId(), 0);
+    protected void setBlock(int x, int y, int z, Material type, int data) {
+        setBlock0(x, y, z, type.getId(), data);
     }
 
-    public void setBlock(Vector3d position, int id, int data) {
-        setBlock(position.getBlockX(), position.getBlockY(), position.getBlockZ(), id, data);
+    protected void setBlock(int x, int y, int z, int id) {
+        setBlock0(x, y, z, id, 0);
     }
 
-    public void setBlock(Vector3d position, int id) {
-        setBlock(position.getBlockX(), position.getBlockY(), position.getBlockZ(), id, 0);
+    protected void setBlock(int x, int y, int z, int id, int data) {
+        setBlock0(x, y, z, id, data);
     }
 
-    public void setBlock(int x, int y, int z, Material type) {
-        setBlock(x, y, z, type.getId(), 0);
-    }
-
-    public void setBlock(int x, int y, int z, Material type, int data) {
-        setBlock(x, y, z, type.getId(), data);
-    }
-
-    public void setBlock(int x, int y, int z, int id) {
-        setBlock(x, y, z, id, 0);
-    }
-
-    public void setBlock(int x, int y, int z, int id, int data) {
+    void setBlock0(int x, int y, int z, int id, int data) {
         if (x >= WORLD_LIMIT || x < -WORLD_LIMIT || y < 0 || y > 255 || z >= WORLD_LIMIT || z < -WORLD_LIMIT)
             return;
         getSection(y).set(x, y, z, (short) id, (byte) data);
-        if (loaded)
-            sendPacket(new Packet15UpdateBlock(x, y, z, id, data));
         this.dirty = true;
     }
 

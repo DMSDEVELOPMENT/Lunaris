@@ -11,6 +11,7 @@ import org.lunaris.world.World;
  * Created by RINES on 13.09.17.
  */
 public class Block {
+    public static final BUFlag.Set DEFAULT_FLAGS = BUFlag.set(BUFlag.UPDATE_NEIGHBORS, BUFlag.SEND_PACKET);
 
     private Material type;
     private int data;
@@ -38,8 +39,7 @@ public class Block {
     }
 
     public void setData(int data) {
-        this.data = data;
-        getWorld().updateBlock(this);
+        setTypeAndData(type, data);
     }
 
     public void setTypeIdAndData(int id, int data) {
@@ -47,6 +47,14 @@ public class Block {
     }
 
     public void setTypeAndData(Material type, int data) {
+        setTypeAndData(type, data, DEFAULT_FLAGS);
+    }
+
+    public void setTypeAndData(Material type, int data, BUFlag... flags) {
+        setTypeAndData(type, data, BUFlag.set(flags));
+    }
+
+    public void setTypeAndData(Material type, int data, BUFlag.Set flags) {
         if (type == this.type && this.data == data)
             return;
         boolean typeChanged = false;
@@ -56,7 +64,7 @@ public class Block {
             typeChanged = true;
         }
         this.data = data;
-        getWorld().updateBlock(this);
+        getWorld().updateBlock(this, flags);
         if (typeChanged)
             getHandle().onBlockAdd(this);
     }

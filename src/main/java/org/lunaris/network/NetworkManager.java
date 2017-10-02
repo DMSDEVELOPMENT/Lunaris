@@ -75,8 +75,11 @@ public class NetworkManager {
         Timings.getPacketsSendingTimer().startTiming();
         Set<RakNetClientSession> receivers = new HashSet<>();
         for (QueuedPacket packet = sendQueue.poll(); packet != null; packet = sendQueue.poll()) {
-            for (RakNetClientSession session : packet.receivers)
+            for (RakNetClientSession session : packet.receivers) {
                 session.getPacketsBush().collect(packet.packet);
+                if (session.getPacketsBush().isFull())
+                    session.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(session.getPacketsBush().blossom()));
+            }
             receivers.addAll(packet.receivers);
         }
         receivers.forEach(session ->
@@ -86,7 +89,7 @@ public class NetworkManager {
     }
 
     private byte[] serialize(MinePacket packet) {
-        Timings.getPacketsSerializationTimer(packet).startTiming();
+        //Timings.getPacketsSerializationTimer(packet).startTiming();
         try {
             MineBuffer buffer = new MineBuffer(1 << 4);
             packet.write(buffer);
@@ -104,7 +107,7 @@ public class NetworkManager {
             new Exception("Can not serialize packet", ex).printStackTrace();
             return null;
         } finally {
-            Timings.getPacketsSerializationTimer(packet).stopTiming();
+            //Timings.getPacketsSerializationTimer(packet).stopTiming();
         }
     }
 

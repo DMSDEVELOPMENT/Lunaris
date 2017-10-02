@@ -734,6 +734,7 @@ public class RakNetServer implements GeminusRakNetPeer, RakNetServerListener {
                             session.update();
                             if (session.getPacketsReceivedThisSecond() >= RakNet.getMaxPacketsPerSecond()) {
                                 this.blockAddress(session.getInetAddress(), "Too many packets", RakNet.MAX_PACKETS_PER_SECOND_BLOCK);
+                                Lunaris.getInstance().getLogger().info("Session %s blocked for %s", session.getInetAddress(), RakNet.MAX_PACKETS_PER_SECOND_BLOCK);
                             }
                         } catch (Throwable throwable) {
                             // An error related to the session occurred, remove it

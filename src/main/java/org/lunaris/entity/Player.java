@@ -363,18 +363,8 @@ public class Player extends LivingEntity implements CommandSender {
         }
         PlayerInventory inventory = getInventory();
         inventory.sendContents(this);
-        if(gamemode == Gamemode.CREATIVE) {
+        if(gamemode == Gamemode.CREATIVE)
             this.inventoryManager.getCreativeInventory().sendContents(this);
-            inventory.addItem(
-                    new ItemStack(Material.WOOL, 1, 0),
-                    new ItemStack(Material.WOOL, 2, 1),
-                    new ItemStack(Material.WOOL, 3, 2),
-                    new ItemStack(Material.WOOL, 4, 3),
-                    new ItemStack(Material.STONE, 8, 0),
-                    new ItemStack(Material.STONE, 8, 1),
-                    new ItemStack(Material.STONE, 8, 2)
-            );
-        }
     }
 
     public int getFoodLevel() {

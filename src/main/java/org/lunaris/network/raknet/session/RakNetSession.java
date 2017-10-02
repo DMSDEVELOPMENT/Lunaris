@@ -781,7 +781,7 @@ public abstract class RakNetSession implements UnumRakNetPeer, GeminusRakNetPeer
 
         // Send packets in the send queue
         synchronized (sendQueue) {
-            if (!sendQueue.isEmpty() && this.packetsSentThisSecond < RakNet.getMaxPacketsPerSecond()) {
+            while (!sendQueue.isEmpty() && this.packetsSentThisSecond < RakNet.getMaxPacketsPerSecond()) {
                 ArrayList<EncapsulatedPacket> send = new ArrayList<>();
                 int sendLength = CustomPacket.calculateDummy();
 

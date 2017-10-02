@@ -58,7 +58,7 @@ public class RakNetClientSession extends org.lunaris.network.raknet.session.RakN
     private final RakNetServer server;
     private final long timeCreated;
     private long timestamp;
-    private final PacketsBush bush = new PacketsBush();
+    private final PacketsBush bush;
 
     /**
      * Constructs a <code>RakNetClientSession</code> with the specified
@@ -76,6 +76,7 @@ public class RakNetClientSession extends org.lunaris.network.raknet.session.RakN
     public RakNetClientSession(RakNetServer server, long timeCreated, ConnectionType connectionType, long guid,
                                int maximumTransferUnit, Channel channel, InetSocketAddress address) {
         super(connectionType, guid, maximumTransferUnit, channel, address);
+        this.bush = new PacketsBush(this);
         this.server = server;
         this.timeCreated = timeCreated;
     }

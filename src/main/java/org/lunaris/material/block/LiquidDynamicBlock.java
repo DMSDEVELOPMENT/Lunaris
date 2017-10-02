@@ -1,6 +1,7 @@
 package org.lunaris.material.block;
 
 import org.lunaris.Lunaris;
+import org.lunaris.block.BUFlag;
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockFace;
 import org.lunaris.event.block.BlockFromToEvent;
@@ -56,7 +57,7 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
                     }
                 }
 
-                if (adjacentSources[0] >= 2 && block.getType() == Material.WATER) {
+                if (adjacentSources[0] >= 2 && isWater(block.getType())) {
                     Block bottomBlock = block.getSide(BlockFace.DOWN);
                     if (bottomBlock.getHandle().isSolid()) {
                         aaaa = 0;
@@ -65,7 +66,7 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
                     }
                 }
 
-                if (block.getType() == Material.LAVA && decay < 8 && aaaa < 8 && aaaa > decay && ThreadLocalRandom.current().nextInt(4) != 0) {
+                if (isLava(block.getType()) && decay < 8 && aaaa < 8 && aaaa > decay && ThreadLocalRandom.current().nextInt(4) != 0) {
                     tickRate *= 4;
                 }
 
@@ -87,7 +88,7 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
             Block bottomBlock = block.getSide(BlockFace.DOWN);
 
             if (bottomBlock.getHandle().canBeFlowedInto()) {
-                if (block.getType() == Material.LAVA && bottomBlock.getType() == Material.WATER) {
+                if (isLava(block.getType()) && isWater(bottomBlock.getType())) {
                     BlockFromToEvent event = new BlockFromToEvent(bottomBlock, new Block(bottomBlock.getLocation(), Material.STONE));
                     Lunaris.getInstance().getEventManager().call(event);
                     if (!event.isCancelled()) {
@@ -121,13 +122,13 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
     }
 
     private void setStaticBlock(Block block) {
-        block.getChunk().setBlock(block.getLocation(), getStaticType(), block.getData());
+        block.setTypeAndData(getStaticType(), block.getData(), BUFlag.SEND_PACKET);
     }
 
     private void flowIntoBlock(Block block, int newFlowDecay) {
         if (block.getHandle().canBeFlowedInto()) {
-            if (block.getTypeId() > 0) {
-                if (getType() == Material.LAVA) {
+            if (block.getType() != Material.AIR) {
+                if (isLava(getType())) {
                     this.triggerLavaMixEffects(block);
                 } else {
                     this.dropBlockAsItem(block);

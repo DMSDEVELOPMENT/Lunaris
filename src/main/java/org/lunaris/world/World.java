@@ -3,6 +3,7 @@ package org.lunaris.world;
 import co.aikar.timings.Timings;
 
 import org.lunaris.Lunaris;
+import org.lunaris.block.BUFlag;
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockFace;
 import org.lunaris.entity.Entity;
@@ -13,6 +14,7 @@ import org.lunaris.event.chunk.ChunkUnloadedEvent;
 import org.lunaris.material.Material;
 import org.lunaris.network.protocol.packet.Packet0CAddPlayer;
 import org.lunaris.network.protocol.packet.Packet0ERemoveEntity;
+import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
 import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
 import org.lunaris.util.math.MathHelper;
 import org.lunaris.util.math.Vector3d;
@@ -105,16 +107,21 @@ public class World {
         return chunk.getBlock(x, y, z);
     }
 
-    public void updateBlock(Block block) {
+    public void updateBlock(Block block, BUFlag.Set flags) {
         int x = block.getX(), y = block.getY(), z = block.getZ();
         Chunk chunk = loadChunk(x >> 4, z >> 4);
         if (chunk == null)
             return;
-        chunk.setBlock(x, y, z, block.getType(), block.getData());
-        updateNeighbor(block);
+        int id = block.getTypeId();
+        chunk.setBlock0(x, y, z, id, block.getData());
+        if (flags.has(BUFlag.SEND_PACKET))
+            chunk.sendPacket(new Packet15UpdateBlock(x, y, z, id, block.getData()));
+        if (flags.has(BUFlag.UPDATE_NEIGHBORS))
+            updateNeighbor(block);
     }
-    
+
     public void updateNeighbor(Block block) {
+        System.out.println("UPD "+block);
         for (BlockFace face : BlockFace.values()) {
             Block side = block.getSide(face);
             side.getHandle().onNeighborBlockChange(side, block);
@@ -169,7 +176,7 @@ public class World {
         Timings.getEntitiesTickTimer().stopTiming();
         Timings.getWorldTickTimer(this).stopTiming();
     }
-    
+
     public void scheduleUpdate(Block block, int delay) {
         blockUpdateScheduler.scheduleUpdate(block, delay);
     }

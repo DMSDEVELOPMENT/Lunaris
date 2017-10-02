@@ -103,6 +103,14 @@ public abstract class LiquidBlock extends TransparentBlock {
         entity.setFallDistance(0);
     }
 
+    protected boolean isLava(Material type) {
+        return type == Material.LAVA || type == Material.LAVA_STILL;
+    }
+    
+    protected boolean isWater(Material type) {
+        return type == Material.WATER || type == Material.WATER_STILL;
+    }
+    
     public float getFluidHeightPercent(Block block) {
         float d = (float) block.getData();
         if (d >= 8)
@@ -182,10 +190,10 @@ public abstract class LiquidBlock extends TransparentBlock {
     }
 
     protected boolean checkForMixing(Block block) {
-        if (block.getType() == Material.LAVA) {
+        if (isLava(block.getType())) {
             boolean colliding = false;
             for (BlockFace face : BlockFace.values()) {
-                if (colliding = block.getSide(face).getType() == Material.WATER) {
+                if (colliding = isWater(block.getSide(face).getType())) {
                     break;
                 }
             }

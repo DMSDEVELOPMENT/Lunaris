@@ -7,8 +7,8 @@ import org.lunaris.material.Material;
  * @author xtrafrancyz
  */
 public abstract class LiquidStaticBlock extends LiquidBlock {
-    protected LiquidStaticBlock(Material material, String name) {
-        super(material, name);
+    protected LiquidStaticBlock(Material type, String name) {
+        super(type, name);
     }
 
     @Override

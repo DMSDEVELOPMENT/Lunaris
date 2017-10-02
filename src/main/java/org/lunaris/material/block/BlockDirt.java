@@ -2,6 +2,7 @@ package org.lunaris.material.block;
 
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockColor;
+import org.lunaris.block.BlockFace;
 import org.lunaris.entity.Player;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemToolType;
@@ -15,8 +16,8 @@ import java.util.List;
  */
 public class BlockDirt extends SolidBlock {
 
-    protected BlockDirt(Material material, String name) {
-        super(material, name);
+    protected BlockDirt(Material type, String name) {
+        super(type, name);
     }
 
     protected BlockDirt() {
@@ -40,8 +41,8 @@ public class BlockDirt extends SolidBlock {
 
     @Override
     public boolean onActivate(Block block, ItemStack item, Player player) {
-        if (item.isOfToolType(ItemToolType.HOE)) {
-            item.useOn(block, player);
+        if (item != null && item.isItem() && item.isOfToolType(ItemToolType.HOE)) {
+            item.getItemHandle().useOn(item, block, BlockFace.UP, player);
             block.setType(Material.FARM_LAND);
             return true;
         }

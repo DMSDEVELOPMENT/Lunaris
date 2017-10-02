@@ -1,6 +1,6 @@
 package org.lunaris.block;
 
-import org.lunaris.material.BlockMaterial;
+import org.lunaris.material.BlockHandle;
 import org.lunaris.material.Material;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.Chunk;
@@ -51,22 +51,22 @@ public class Block {
             return;
         boolean typeChanged = false;
         if (type != this.type) {
-            getSpecifiedMaterial().onBreak(null, this);
+            getHandle().onBreak(null, this);
             this.type = type;
             typeChanged = true;
         }
         this.data = data;
         getWorld().updateBlock(this);
         if (typeChanged)
-            getSpecifiedMaterial().onBlockAdd(this);
+            getHandle().onBlockAdd(this);
     }
 
     public Material getType() {
         return this.type;
     }
 
-    public BlockMaterial getSpecifiedMaterial() {
-        return (BlockMaterial) this.type.getSpecifiedMaterial();
+    public BlockHandle getHandle() {
+        return (BlockHandle) this.type.getHandle();
     }
 
     public int getTypeId() {

@@ -35,7 +35,7 @@ public class BlockObsidian extends SolidBlock {
 
     @Override
     public List<ItemStack> getDrops(Block block, ItemStack hand) {
-        if (hand != null && hand.isOfToolType(ItemToolType.PICKAXE) && hand.isOfTier(ItemTier.DIAMOND))
+        if (hand != null && hand.isOfToolTier(ItemToolType.PICKAXE, ItemTier.DIAMOND))
             return Collections.singletonList(new ItemStack(getType()));
         return Collections.emptyList();
     }

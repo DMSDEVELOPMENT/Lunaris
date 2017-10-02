@@ -8,8 +8,8 @@ import org.lunaris.material.Material;
  * @author xtrafrancyz
  */
 public abstract class ColoredBlock extends SolidBlock {
-    protected ColoredBlock(Material material, String name) {
-        super(material, name);
+    protected ColoredBlock(Material type, String name) {
+        super(type, name);
     }
 
     @Override

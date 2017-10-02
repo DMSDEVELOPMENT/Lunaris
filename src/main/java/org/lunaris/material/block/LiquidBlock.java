@@ -21,8 +21,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author xtrafrancyz
  */
 public abstract class LiquidBlock extends TransparentBlock {
-    protected LiquidBlock(Material material, String name) {
-        super(material, name);
+    protected LiquidBlock(Material type, String name) {
+        super(type, name);
     }
 
     @Override
@@ -111,7 +111,7 @@ public abstract class LiquidBlock extends TransparentBlock {
     }
 
     protected int getFlowDecay(Block block) {
-        return block.getSpecifiedMaterial() instanceof LiquidBlock ? block.getData() : -1;
+        return block.getHandle() instanceof LiquidBlock ? block.getData() : -1;
     }
 
     protected int getEffectiveFlowDecay(Block block) {
@@ -133,7 +133,7 @@ public abstract class LiquidBlock extends TransparentBlock {
             int blockDecay = this.getEffectiveFlowDecay(sideBlock);
 
             if (blockDecay < 0) {
-                if (!sideBlock.getSpecifiedMaterial().canBeFlowedInto())
+                if (!sideBlock.getHandle().canBeFlowedInto())
                     continue;
 
                 blockDecay = this.getEffectiveFlowDecay(sideBlock.getSide(BlockFace.DOWN));
@@ -155,21 +155,21 @@ public abstract class LiquidBlock extends TransparentBlock {
         if (block.getData() >= 8) {
             boolean falling = false;
 
-            if (!block.getRelative(0, 0, -1).getSpecifiedMaterial().canBeFlowedInto()) {
+            if (!block.getRelative(0, 0, -1).getHandle().canBeFlowedInto()) {
                 falling = true;
-            } else if (!block.getRelative(0, 0, 1).getSpecifiedMaterial().canBeFlowedInto()) {
+            } else if (!block.getRelative(0, 0, 1).getHandle().canBeFlowedInto()) {
                 falling = true;
-            } else if (!block.getRelative(-1, 0, 0).getSpecifiedMaterial().canBeFlowedInto()) {
+            } else if (!block.getRelative(-1, 0, 0).getHandle().canBeFlowedInto()) {
                 falling = true;
-            } else if (block.getRelative(1, 0, 0).getSpecifiedMaterial().canBeFlowedInto()) {
+            } else if (block.getRelative(1, 0, 0).getHandle().canBeFlowedInto()) {
                 falling = true;
-            } else if (!block.getRelative(0, 1, -1).getSpecifiedMaterial().canBeFlowedInto()) {
+            } else if (!block.getRelative(0, 1, -1).getHandle().canBeFlowedInto()) {
                 falling = true;
-            } else if (!block.getRelative(0, 1, 1).getSpecifiedMaterial().canBeFlowedInto()) {
+            } else if (!block.getRelative(0, 1, 1).getHandle().canBeFlowedInto()) {
                 falling = true;
-            } else if (!block.getRelative(-1, 1, 0).getSpecifiedMaterial().canBeFlowedInto()) {
+            } else if (!block.getRelative(-1, 1, 0).getHandle().canBeFlowedInto()) {
                 falling = true;
-            } else if (block.getRelative(1, 1, 0).getSpecifiedMaterial().canBeFlowedInto()) {
+            } else if (block.getRelative(1, 1, 0).getHandle().canBeFlowedInto()) {
                 falling = true;
             }
 

@@ -47,11 +47,11 @@ public class BlockFire extends FlowableBlock {
     @Override
     public void onEntityCollide(Block block, Entity entity) {
         //check fire resistance
-        if(entity instanceof Player && ((Player) entity).getGamemode() == Gamemode.CREATIVE)
+        if (entity instanceof Player && ((Player) entity).getGamemode() == Gamemode.CREATIVE)
             return;
         EntityBurnEvent event = new EntityBurnEvent(entity, 20 << 3);
         Lunaris.getInstance().getEventManager().call(event);
-        if(event.isCancelled())
+        if (event.isCancelled())
             return;
         entity.setOnFire(event.getFireTicks());
     }

@@ -14,7 +14,7 @@ public class BlockPlanks extends SolidBlock {
     public static final int JUNGLE = 3;
     public static final int ACACIA = 4;
     public static final int DARK_OAK = 5;
-    
+
     protected BlockPlanks() {
         super(Material.PLANKS, null);
     }

@@ -1,10 +1,9 @@
 package org.lunaris.item;
 
-import org.lunaris.block.Block;
-import org.lunaris.entity.Entity;
-import org.lunaris.material.ItemMaterial;
+import org.lunaris.material.BlockHandle;
+import org.lunaris.material.ItemHandle;
 import org.lunaris.material.Material;
-import org.lunaris.material.SpecifiedMaterial;
+import org.lunaris.material.MaterialHandle;
 import org.lunaris.nbt.NBTIO;
 import org.lunaris.nbt.tag.CompoundTag;
 
@@ -83,8 +82,12 @@ public class ItemStack implements Cloneable {
         this.amount = amount;
     }
 
+    public int getMaxStackSize() {
+        return getHandle().getMaxStackSize(data);
+    }
+
     public ItemToolType getToolType() {
-        return getSpecifiedMaterial().getToolType();
+        return isBlock() ? ItemToolType.NONE : getItemHandle().getToolType();
     }
 
     public boolean isOfToolType(ItemToolType toolType) {
@@ -92,25 +95,35 @@ public class ItemStack implements Cloneable {
     }
 
     public ItemTier getTier() {
-        return getSpecifiedMaterial().getTier();
+        return isBlock() ? ItemTier.NONE : getItemHandle().getTier();
     }
 
     public boolean isOfTier(ItemTier tier) {
         return getTier().compareTo(tier) >= 0;
     }
 
-    public boolean useOn(Block block, Entity user) {
-        SpecifiedMaterial material = getSpecifiedMaterial();
-        if (material.isBlock())
-            return false;
-        return ((ItemMaterial) material).useOn(block, this, user);
+    public boolean isOfToolTier(ItemToolType toolType, ItemTier tier) {
+        return isOfToolType(toolType) && isOfTier(tier);
     }
 
-    public boolean useOn(Entity entity, Entity user) {
-        SpecifiedMaterial material = getSpecifiedMaterial();
-        if (material instanceof ItemMaterial)
-            return ((ItemMaterial) material).useOn(entity, this, user);
-        return false;
+    public boolean isItem() {
+        return !getHandle().isBlock();
+    }
+
+    public boolean isBlock() {
+        return getHandle().isBlock();
+    }
+
+    public BlockHandle getBlockHandle() {
+        return getHandle().asBlock();
+    }
+
+    public ItemHandle getItemHandle() {
+        return getHandle().asItem();
+    }
+
+    public MaterialHandle getHandle() {
+        return this.type.getHandle();
     }
 
     public boolean hasCompoundTag() {
@@ -144,10 +157,6 @@ public class ItemStack implements Cloneable {
         if (this.compiledNbt != null)
             this.compiledNbt.setName("");
         return this.compiledNbt;
-    }
-
-    public SpecifiedMaterial getSpecifiedMaterial() {
-        return this.type.getSpecifiedMaterial();
     }
 
     private byte[] serializeNbt(CompoundTag tag) {

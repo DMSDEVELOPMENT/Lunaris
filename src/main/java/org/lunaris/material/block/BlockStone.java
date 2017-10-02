@@ -40,7 +40,7 @@ public class BlockStone extends SolidBlock {
 
     @Override
     public List<ItemStack> getDrops(Block block, ItemStack hand) {
-        if (hand != null && hand.isOfToolType(ItemToolType.PICKAXE) && hand.isOfTier(ItemTier.WOODEN)) {
+        if (hand != null && hand.isOfToolTier(ItemToolType.PICKAXE, ItemTier.WOODEN)) {
             ItemStack result;
             if (block.getData() == 0)
                 result = new ItemStack(Material.COBBLESTONE, 1);

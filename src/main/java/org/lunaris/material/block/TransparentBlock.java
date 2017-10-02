@@ -1,16 +1,16 @@
 package org.lunaris.material.block;
 
 import org.lunaris.block.BlockColor;
-import org.lunaris.material.BlockMaterial;
+import org.lunaris.material.BlockHandle;
 import org.lunaris.material.Material;
 
 /**
  * Created by RINES on 24.09.17.
  */
-public abstract class TransparentBlock extends BlockMaterial {
+public abstract class TransparentBlock extends BlockHandle {
 
-    protected TransparentBlock(Material material, String name) {
-        super(material, name);
+    protected TransparentBlock(Material type, String name) {
+        super(type, name);
     }
 
     @Override

@@ -6,7 +6,6 @@ import org.lunaris.block.BlockFace;
 import org.lunaris.entity.Entity;
 import org.lunaris.entity.Player;
 import org.lunaris.item.ItemStack;
-import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.util.math.Vector3d;
@@ -18,10 +17,10 @@ import java.util.List;
 /**
  * Created by RINES on 24.09.17.
  */
-public class BlockMaterial extends SpecifiedMaterial {
+public class BlockHandle extends MaterialHandle {
 
-    protected BlockMaterial(Material material, String name) {
-        super(material, name);
+    protected BlockHandle(Material type, String name) {
+        super(type, name);
     }
 
     @Override
@@ -49,9 +48,9 @@ public class BlockMaterial extends SpecifiedMaterial {
     }
 
     public void onBlockAdd(Block block) {
-        
+
     }
-    
+
     public void dropBlockAsItem(Block block) {
         for (ItemStack drop : getDrops(block, null)) {
             // drop item in world
@@ -63,7 +62,7 @@ public class BlockMaterial extends SpecifiedMaterial {
     }
 
     public void onUpdate(Block block, BlockUpdateType type) {
-        return;
+        
     }
 
     public boolean onActivate(Block block, ItemStack item) {
@@ -91,17 +90,7 @@ public class BlockMaterial extends SpecifiedMaterial {
     }
 
     public ItemToolType getRequiredToolType() {
-        return isBlock() ? ItemToolType.NONE : null;
-    }
-
-    @Override
-    public final ItemToolType getToolType() {
         return ItemToolType.NONE;
-    }
-
-    @Override
-    public final ItemTier getTier() {
-        return ItemTier.NONE;
     }
 
     public double getFrictionFactor() {

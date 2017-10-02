@@ -41,7 +41,7 @@ public class BlockUpdateScheduler {
             Block block = world.getBlockAt(update.pos.x, update.pos.y, update.pos.z);
             if (block.getType() != update.material)
                 continue;
-            block.getSpecifiedMaterial().onUpdate(block, BlockUpdateType.SCHEDULED);
+            block.getHandle().onUpdate(block, BlockUpdateType.SCHEDULED);
         }
         updatesThisTick.clear();
     }

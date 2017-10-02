@@ -40,8 +40,8 @@ public class TestChunk extends Chunk {
             setBlock(0, 32, 9, Material.WATER_STILL);
             setBlock(0, 32, 11, Material.WATER_STILL);
 
-            setBlock(5, 32, 9, Material.WATER);
-            setBlock(5, 32, 11, Material.WATER);
+            setBlock(5, 32, 9, Material.WATER_STILL);
+            setBlock(5, 32, 11, Material.WATER_STILL);
 
             setBlock(10, 32, 9, Material.LAVA_STILL);
             setBlock(10, 32, 11, Material.LAVA_STILL);

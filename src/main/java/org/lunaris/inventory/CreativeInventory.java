@@ -22,6 +22,13 @@ public class CreativeInventory extends Inventory {
             new ItemStack(Material.GRASS, 1),
             new ItemStack(Material.DIRT, 1),
             new ItemStack(Material.COBBLESTONE, 1),
+            new ItemStack(Material.PLANKS, 1, 0),
+            new ItemStack(Material.PLANKS, 1, 1),
+            new ItemStack(Material.PLANKS, 1, 2),
+            new ItemStack(Material.PLANKS, 1, 3),
+            new ItemStack(Material.PLANKS, 1, 4),
+            new ItemStack(Material.PLANKS, 1, 5),
+            new ItemStack(Material.BEDROCK, 1),
             new ItemStack(Material.WOOL, 1, 0),
             new ItemStack(Material.WOOL, 1, 1),
             new ItemStack(Material.WOOL, 1, 2),
@@ -38,6 +45,12 @@ public class CreativeInventory extends Inventory {
             new ItemStack(Material.WOOL, 1, 13),
             new ItemStack(Material.WOOL, 1, 14),
             new ItemStack(Material.WOOL, 1, 15),
+            new ItemStack(Material.COBWEB, 1),
+            new ItemStack(Material.OBSIDIAN, 1),
+            new ItemStack(Material.BUCKET, 1, 0),
+            new ItemStack(Material.BUCKET, 1, 1),
+            new ItemStack(Material.BUCKET, 1, 8),
+            new ItemStack(Material.BUCKET, 1, 10),
     };
 
     public CreativeInventory() {

@@ -117,7 +117,7 @@ public class World {
     public void updateNeighbor(Block block) {
         for (BlockFace face : BlockFace.values()) {
             Block side = block.getSide(face);
-            side.getSpecifiedMaterial().onNeighborBlockChange(side, block);
+            side.getHandle().onNeighborBlockChange(side, block);
         }
     }
 

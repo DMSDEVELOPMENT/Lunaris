@@ -12,10 +12,9 @@ import org.lunaris.event.player.PlayerInteractEvent;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
-import org.lunaris.material.BlockMaterial;
-import org.lunaris.material.ItemMaterial;
+import org.lunaris.material.BlockHandle;
+import org.lunaris.material.ItemHandle;
 import org.lunaris.material.Material;
-import org.lunaris.material.SpecifiedMaterial;
 import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
 import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
 import org.lunaris.network.protocol.packet.Packet19LevelEvent;
@@ -51,29 +50,29 @@ public class BlockMaster {
             //cancel things
             return;
         }
-        BlockMaterial targetMaterial = target.getSpecifiedMaterial();
+        BlockHandle targetMaterial = target.getHandle();
         if(!player.isSneaking() && targetMaterial.canBeActivated() && targetMaterial.onActivate(target, hand, player))
             return;
         if(hand != null && hand.getType() != Material.AIR) {
-            SpecifiedMaterial handMaterial = hand.getSpecifiedMaterial();
-            if(!handMaterial.isBlock()) {
-                ItemMaterial itemMaterial = (ItemMaterial) handMaterial;
-                if(itemMaterial.canBeUsed() && itemMaterial.useOn(target, hand, player)) {
+            if(hand.isItem()) {
+                ItemHandle itemHandle = hand.getItemHandle();
+                if(itemHandle.canBeUsed() && itemHandle.useOn(hand, target, blockFace, player)) {
                     if(hand.getAmount() <= 0) {
                         player.getInventory().setItemInHand(hand);
                         return;
                     }
                 }
             }else {
-                BlockMaterial blockMaterial = (BlockMaterial) handMaterial;
-                if(sider.getSpecifiedMaterial().canBeReplaced() && blockMaterial.canBePlaced()) {
+                BlockHandle blockHandle = hand.getBlockHandle();
+                if(sider.getHandle().canBeReplaced() && blockHandle.canBePlaced()) {
                     BlockPlaceEvent placeEvent = new BlockPlaceEvent(player, hand, new BlockVector(sider.getX(), sider.getY(), sider.getZ()));
                     this.server.getEventManager().call(placeEvent);
                     if(placeEvent.isCancelled()) {
                         return;
                     }
-                    if(blockMaterial.place(hand, sider, target, blockFace, clickPosition.getX(), clickPosition.getY(), clickPosition.getZ(), player)) {
-                        sider.getChunk().sendPacket(new Packet18LevelSoundEvent(Sound.PLACE, sider.getLocation(), hand.getType().getId(), 1, false, false));if(player.getGamemode() != Gamemode.CREATIVE) {
+                    if(blockHandle.place(hand, sider, target, blockFace, clickPosition.getX(), clickPosition.getY(), clickPosition.getZ(), player)) {
+                        sider.getChunk().sendPacket(new Packet18LevelSoundEvent(Sound.PLACE, sider.getLocation(), hand.getType().getId(), 1, false, false));
+                        if(player.getGamemode() != Gamemode.CREATIVE) {
                             hand.setAmount(hand.getAmount() - 1);
                             player.getInventory().setItemInHand(hand.getAmount() == 0 ? null : hand);
                         }
@@ -193,7 +192,7 @@ public class BlockMaster {
     private double getBreakTime(Block block, Player player, ItemStack hand) {
         if(hand == null)
             hand = ItemStack.AIR;
-        BlockMaterial material = block.getSpecifiedMaterial();
+        BlockHandle material = block.getHandle();
         double hardness = material.getHardness();
         boolean correctTool = hand.isOfToolType(material.getRequiredToolType());
         boolean canHarvestWithHand = material.canHarvestWithHand();

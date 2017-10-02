@@ -9,8 +9,8 @@ import org.lunaris.util.math.AxisAlignedBB;
  */
 public abstract class FlowableBlock extends TransparentBlock {
 
-    protected FlowableBlock(Material material, String name) {
-        super(material, name);
+    protected FlowableBlock(Material type, String name) {
+        super(type, name);
     }
 
     @Override

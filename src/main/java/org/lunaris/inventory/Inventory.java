@@ -63,7 +63,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
     public int getMaxStackSize(ItemStack is) {
         if(is == null)
             return 0;
-        return Math.min(getMaxStackSize(), is.getType().getSpecifiedMaterial().getMaxStackSize());
+        return Math.min(getMaxStackSize(), is.getMaxStackSize());
     }
 
     public void setMaxStackSize(int maxStackSize) {
@@ -189,7 +189,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
             return -1;
         for(int i = 0; i < this.items.length; ++i) {
             ItemStack is = this.items[i];
-            if(is != null && is.getType() == type && is.getAmount() < type.getSpecifiedMaterial().getMaxStackSize())
+            if(is != null && is.getType() == type && is.getAmount() < is.getMaxStackSize())
                 return i;
         }
         return -1;
@@ -200,7 +200,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
             return -1;
         for(int i = 0; i < this.items.length; ++i) {
             ItemStack is = this.items[i];
-            if(is != null && is.getAmount() < is.getType().getSpecifiedMaterial().getMaxStackSize() && is.isSimilar(item))
+            if(is != null && is.getAmount() < is.getMaxStackSize() && is.isSimilar(item))
                 return i;
         }
         return -1;

@@ -1,7 +1,8 @@
 package org.lunaris.material;
 
 import org.lunaris.material.block.*;
-import org.lunaris.material.item.*;
+import org.lunaris.material.item.ItemBucket;
+import org.lunaris.material.item.ItemString;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -29,7 +30,8 @@ public enum Material {
     FARM_LAND(BlockFarmland.class, 60),
     NETHER_PORTAL(BlockStone.class, 60), //fix
     GRASS_PATH(BlockGrassPath.class, 198),
-    STRING(ItemString.class, 287);
+    STRING(ItemString.class, 287),
+    BUCKET(ItemBucket.class, 325, true);
 
     private final static Map<Integer, Material> BY_ID = new HashMap<>();
 
@@ -37,9 +39,9 @@ public enum Material {
         for (Material material : values()) {
             BY_ID.put(material.id, material);
             try {
-                Constructor<? extends SpecifiedMaterial> constructor = material.matClass.getDeclaredConstructor();
+                Constructor<? extends MaterialHandle> constructor = material.handleClass.getDeclaredConstructor();
                 constructor.setAccessible(true);
-                material.specifiedMaterial = constructor.newInstance();
+                material.handle = constructor.newInstance();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -52,17 +54,17 @@ public enum Material {
 
     private final int id;
     private final boolean hasMeta;
-    private final Class<? extends SpecifiedMaterial> matClass;
-    private SpecifiedMaterial specifiedMaterial;
+    private final Class<? extends MaterialHandle> handleClass;
+    private MaterialHandle handle;
 
-    Material(Class<? extends SpecifiedMaterial> specifiedMaterialClass, int id) {
-        this(specifiedMaterialClass, id, false);
+    Material(Class<? extends MaterialHandle> handleClass, int id) {
+        this(handleClass, id, false);
     }
 
-    Material(Class<? extends SpecifiedMaterial> specifiedMaterialClass, int id, boolean hasMeta) {
+    Material(Class<? extends MaterialHandle> handleClass, int id, boolean hasMeta) {
         this.id = id;
         this.hasMeta = hasMeta;
-        this.matClass = specifiedMaterialClass;
+        this.handleClass = handleClass;
     }
 
     public int getId() {
@@ -73,8 +75,8 @@ public enum Material {
         return this.hasMeta;
     }
 
-    public SpecifiedMaterial getSpecifiedMaterial() {
-        return this.specifiedMaterial;
+    public MaterialHandle getHandle() {
+        return this.handle;
     }
 
 }

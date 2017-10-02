@@ -15,7 +15,7 @@ public class BlockWool extends ColoredBlock {
     public ItemToolType getRequiredToolType() {
         return ItemToolType.SHEARS;
     }
-    
+
     @Override
     public double getHardness() {
         return 0.8;

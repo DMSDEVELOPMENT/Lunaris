@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * Created by RINES on 16.09.17.
  */
-public class Inventory implements Iterable<ItemStack> {
+public abstract class Inventory implements Iterable<ItemStack> {
 
     private final ItemStack[] items;
     private final InventoryType type;
@@ -33,6 +33,8 @@ public class Inventory implements Iterable<ItemStack> {
         this.type = type;
         this.title = title == null ? type.getTitle() : title;
     }
+
+    abstract int getReservedInventoryId();
 
     public InventoryType getType() {
         return this.type;

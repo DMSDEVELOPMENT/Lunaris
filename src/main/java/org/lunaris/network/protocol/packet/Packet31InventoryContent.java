@@ -15,6 +15,7 @@ public class Packet31InventoryContent extends MinePacket {
     public Packet31InventoryContent() {}
 
     public Packet31InventoryContent(int inventoryId, ItemStack[] items) {
+        this.inventoryId = inventoryId;
         this.items = items;
     }
 

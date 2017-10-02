@@ -18,7 +18,7 @@ public enum InventorySection {
     FIXED_INVENTORY(123),
     CURSOR(124);
 
-    private final static Map<Integer, InventorySection> byIds = new HashMap<>();
+    private final static Map<Byte, InventorySection> byIds = new HashMap<>();
 
     static {
         for(InventorySection section : values())
@@ -26,16 +26,16 @@ public enum InventorySection {
     }
 
     public static InventorySection getById(int id) {
-        return byIds.get(id);
+        return byIds.get((byte) id);
     }
 
-    private final int id;
+    private final byte id;
 
     InventorySection(int id) {
-        this.id = id;
+        this.id = (byte) id;
     }
 
-    public int getId() {
+    public byte getId() {
         return this.id;
     }
 

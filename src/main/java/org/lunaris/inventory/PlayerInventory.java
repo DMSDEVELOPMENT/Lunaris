@@ -27,6 +27,11 @@ public class PlayerInventory extends Inventory {
     }
 
     @Override
+    int getReservedInventoryId() {
+        return InventorySection.INVENTORY.getId();
+    }
+
+    @Override
     public int size() {
         return super.size() - 4; //because of armor inventory
     }

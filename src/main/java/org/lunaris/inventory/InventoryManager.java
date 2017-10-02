@@ -13,6 +13,8 @@ import java.util.Set;
  */
 public class InventoryManager {
 
+    private final static CreativeInventory creative = new CreativeInventory();
+
     private final Player player;
     private final Map<Inventory, Integer> inventories = new HashMap<>();
     private final Map<Integer, Inventory> reverted = new HashMap<>();
@@ -26,8 +28,10 @@ public class InventoryManager {
 
     public InventoryManager(Player player) {
         this.player = player;
-        addInventory(this.playerInventory = new PlayerInventory(player), InventorySection.INVENTORY.getId());
-        addInventory(this.cursorInventory = new CursorInventory(player), InventorySection.CURSOR.getId());
+        addInventory(this.playerInventory = new PlayerInventory(player), true);
+        addInventory(this.cursorInventory = new CursorInventory(player), true);
+        this.inventories.put(creative, creative.getReservedInventoryId());
+        this.reverted.put(creative.getReservedInventoryId(), creative);
     }
 
     public int getInventoryId(Inventory inventory) {
@@ -40,7 +44,11 @@ public class InventoryManager {
     }
 
     public int addInventory(Inventory inventory) {
-        return addInventory(inventory, null);
+        return addInventory(inventory, inventory.getReservedInventoryId() == -1 ? null : inventory.getReservedInventoryId());
+    }
+
+    public int addInventory(Inventory inventory, boolean permament) {
+        return addInventory(inventory, inventory.getReservedInventoryId() == -1 ? null : inventory.getReservedInventoryId(), permament);
     }
 
     public int addInventory(Inventory inventory, Integer forcedId) {
@@ -87,7 +95,16 @@ public class InventoryManager {
         //close
     }
 
+    public CreativeInventory getCreativeInventory() {
+        return creative;
+    }
+
     public PlayerInventory getPlayerInventory() {
         return this.playerInventory;
     }
+
+    public CursorInventory getCursorInventory() {
+        return this.cursorInventory;
+    }
+
 }

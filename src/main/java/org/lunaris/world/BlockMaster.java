@@ -66,7 +66,7 @@ public class BlockMaster {
                 }
             }else {
                 BlockMaterial blockMaterial = (BlockMaterial) handMaterial;
-                if(sider.getType() == Material.AIR && blockMaterial.canBePlaced()) {
+                if(sider.getSpecifiedMaterial().canBeReplaced() && blockMaterial.canBePlaced()) {
                     BlockPlaceEvent placeEvent = new BlockPlaceEvent(player, hand, new BlockVector(sider.getX(), sider.getY(), sider.getZ()));
                     this.server.getEventManager().call(placeEvent);
                     if(placeEvent.isCancelled()) {
@@ -116,8 +116,7 @@ public class BlockMaster {
             }case CREATIVE: {
                 //not there
                 break;
-            }
-            default: {
+            }default: {
                 //shall not happen
                 break;
             }
@@ -130,7 +129,7 @@ public class BlockMaster {
 
     public void onBlockStopBreak(Packet24PlayerAction packet) {
         Player player = packet.getPlayer();
-        if (packet.getZ() != 0 || packet.getY() != 0 || packet.getZ() != 0) {
+        if (packet.getX() != 0 || packet.getY() != 0 || packet.getZ() != 0) {
             player.getLocation().getChunk().sendPacket(
                 new Packet19LevelEvent(
                     Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
@@ -148,10 +147,6 @@ public class BlockMaster {
 
     public void onBlockContinueBreak(Packet24PlayerAction packet) {
         Player player = packet.getPlayer();
-        if(player.getGamemode() == Gamemode.CREATIVE) {
-            processBlockBreak(player, player.getWorld().getBlockAt(packet.getX(), packet.getY(), packet.getZ()));
-            return;
-        }
         if(player.getBreakingBlockTask() == null)
             return;
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
@@ -159,7 +154,11 @@ public class BlockMaster {
         new PunchBlockParticle(player.getWorld().getBlockAt(position), face).sendToNearbyPlayers();
     }
 
-    private void processBlockBreak(Player player, Block block) {
+    public void processBlockBreak(Player player, Block block) {
+        processBlockBreak(player, block, true);
+    }
+
+    public void processBlockBreak(Player player, Block block, boolean withDrops) {
         //check somewhere whether this block can be broken by players tool
         BlockBreakEvent event = new BlockBreakEvent(player, block);
         this.server.getEventManager().call(event);
@@ -170,6 +169,11 @@ public class BlockMaster {
         //drop drops
         new DestroyBlockParticle(block).sendToNearbyPlayers();
         block.setType(Material.AIR);
+        Scheduler.Task task = player.getBreakingBlockTask();
+        if (task != null) {
+            task.cancel();
+            player.setBreakingBlockTask(null);
+        }
     }
 
     private long getExactBreakTimeInMillis(Block block, Player player) {

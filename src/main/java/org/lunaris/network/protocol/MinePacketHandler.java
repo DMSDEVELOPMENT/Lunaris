@@ -11,6 +11,7 @@ import org.lunaris.network.NetworkManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.resourcepacks.ResourcePack;
+import org.lunaris.world.BlockVector;
 import org.lunaris.world.Location;
 
 import java.util.*;
@@ -297,14 +298,14 @@ public class MinePacketHandler {
                 }
                 case USE_ITEM: {
                     UseItemData data = (UseItemData) packet.getData();
-                    System.out.println("Active action: " + data.getType());
                     switch(data.getType()) {
                         case CLICK_BLOCK: {
                             player.setDataFlag(false, EntityDataFlag.ACTION, false, true);
                             this.server.getWorldProvider().getBlockMaster().onRightClickBlock(player, data.getBlockPosition(), data.getBlockFace(), data.getClickPosition());
                             return;
                         }case BREAK_BLOCK: {
-
+                            BlockVector vec = data.getBlockPosition();
+                            this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ()));
                             return;
                         }case CLICK_AIR: {
 

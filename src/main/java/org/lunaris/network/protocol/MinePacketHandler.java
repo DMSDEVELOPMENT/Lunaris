@@ -246,7 +246,11 @@ public class MinePacketHandler {
     }
 
     public void handle(Packet2CAnimate packet) {
-        packet.getPlayer().getLocation().getChunk().sendPacket(packet);
+        sync(() -> {
+            Collection<Player> players = packet.getPlayer().getLocation().getChunk().getApplicablePlayers();
+            players.remove(packet.getPlayer());
+            this.server.getNetworkManager().sendPacket(players, packet);
+        });
     }
 
     public void handle(Packet30PlayerHotbar packet) {

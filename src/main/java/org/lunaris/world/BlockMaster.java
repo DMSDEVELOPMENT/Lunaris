@@ -34,6 +34,21 @@ public class BlockMaster {
         this.server = server;
     }
 
+    public void onRightClickBlock(Player player, BlockVector blockPosition, BlockFace blockFace, Vector3d clickPosition) {
+        ItemStack hand = player.getInventory().getItemInHand();
+        Block target = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
+        Block sider = target.getSide(blockFace);
+        if(sider.getY() > 255 || sider.getY() < 0 || target.getType() == Material.AIR || player.getGamemode() == Gamemode.SPECTATOR)
+            return;
+        PlayerInteractEvent event = new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, target);
+        this.server.getEventManager().call(event);
+        if(event.isCancelled()) {
+            //cancel things
+            return;
+        }
+
+    }
+
     public void onBlockStartBreak(Packet24PlayerAction packet) {
         Player player = packet.getPlayer();
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());

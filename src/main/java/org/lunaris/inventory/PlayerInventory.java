@@ -47,6 +47,38 @@ public class PlayerInventory extends Inventory {
         setItem(this.itemInHandIndex, hand);
     }
 
+    public ItemStack getHelmet() {
+        return getItem(getSize());
+    }
+
+    public void setHelmet(ItemStack item) {
+        setItem(getSize(), item);
+    }
+
+    public ItemStack getChestplate() {
+        return getItem(getSize() + 1);
+    }
+
+    public void setChestplate(ItemStack item) {
+        setItem(getSize() + 1, item);
+    }
+
+    public ItemStack getLeggings() {
+        return getItem(getSize() + 2);
+    }
+
+    public void setLeggings(ItemStack item) {
+        setItem(getSize() + 2, item);
+    }
+
+    public ItemStack getBoots() {
+        return getItem(getSize() + 3);
+    }
+
+    public void setBoots(ItemStack item) {
+        setItem(getSize() + 3, item);
+    }
+
     public void updateItemInHandFor(Player... players) {
         ItemStack item = getItemInHand();
         for(Player player : players) {
@@ -88,15 +120,15 @@ public class PlayerInventory extends Inventory {
     }
 
     public void sendCreativeContents() {
-        Packet31InventoryContent packet = new Packet31InventoryContent(InventorySection.CREATIVE.getId(), new ItemStack[]{
-                new ItemStack(Material.WOOL, 1, 0),
-                new ItemStack(Material.WOOL, 1, 1),
-                new ItemStack(Material.WOOL, 1, 2),
-                new ItemStack(Material.WOOL, 1, 3),
-                new ItemStack(Material.WOOL, 1, 4),
-                new ItemStack(Material.STONE, 1)
-        });
-        this.holder.sendPacket(packet);
+//        Packet31InventoryContent packet = new Packet31InventoryContent(InventorySection.CREATIVE.getId(), new ItemStack[]{
+//                new ItemStack(Material.WOOL, 1, 0),
+//                new ItemStack(Material.WOOL, 1, 1),
+//                new ItemStack(Material.WOOL, 1, 2),
+//                new ItemStack(Material.WOOL, 1, 3),
+//                new ItemStack(Material.WOOL, 1, 4),
+//                new ItemStack(Material.STONE, 1)
+//        });
+//        this.holder.sendPacket(packet);
     }
 
     private void sendArmorSlot(int index, ItemStack item) {

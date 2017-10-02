@@ -351,7 +351,7 @@ public class Inventory implements Iterable<ItemStack> {
 
             @Override
             public ItemStack next() {
-                return items[this.index++];
+                return getItem(this.index++);
             }
 
         };

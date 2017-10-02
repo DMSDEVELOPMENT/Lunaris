@@ -21,6 +21,7 @@ public class CommandManager {
         new Say();
         new Timings();
         new Test();
+        new Give();
     }
 
     public boolean isCommand(String line) {

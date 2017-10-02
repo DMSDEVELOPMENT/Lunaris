@@ -3,11 +3,10 @@ package org.lunaris.network.protocol;
 import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.EntityDataFlag;
+import org.lunaris.entity.data.Gamemode;
 import org.lunaris.event.player.*;
-import org.lunaris.inventory.transaction.BasicInventoryTransaction;
-import org.lunaris.inventory.transaction.InventoryAction;
-import org.lunaris.inventory.transaction.InventoryActionData;
-import org.lunaris.inventory.transaction.InventoryTransaction;
+import org.lunaris.inventory.transaction.*;
+import org.lunaris.item.ItemStack;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.network.protocol.packet.*;
@@ -270,7 +269,21 @@ public class MinePacketHandler {
                     break;
                 }
                 case USE_ITEM: {
+                    UseItemData data = (UseItemData) packet.getData();
+                    switch(data.getType()) {
+                        case CLICK_BLOCK: {
+                            player.setDataFlag(false, EntityDataFlag.ACTION, false, true);
+                            if(true /*can interact with this location*/)
+                                this.server.getWorldProvider().getBlockMaster().onRightClickBlock(player, data.getBlockPosition(), data.getBlockFace(), data.getClickPosition());
+                            break;
+                        }case BREAK_BLOCK: {
 
+                            break;
+                        }case CLICK_AIR: {
+
+                            break;
+                        }
+                    }
                     break;
                 }
                 case USE_ITEM_ON_ENTITY: {

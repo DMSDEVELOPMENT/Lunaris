@@ -39,6 +39,10 @@ public class ItemStack implements Cloneable {
         this.data = data < 0 ? 0 : data;
     }
 
+    public ItemStack(int id, int amount, int data) {
+        this(Material.getById(id), amount, data);
+    }
+
     public ItemStack(String stringData) {
         String[] b = stringData.trim().replace(' ', '_').replace("minecraft:", "").split(":");
 

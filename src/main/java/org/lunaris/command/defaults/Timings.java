@@ -12,7 +12,7 @@ import org.lunaris.util.logger.ChatColor;
 public class Timings extends Command {
 
     public Timings() {
-        super("timings", LPermission.ADMINISTRATIVE);
+        super("timings", LPermission.OPERATOR);
     }
 
     @Override

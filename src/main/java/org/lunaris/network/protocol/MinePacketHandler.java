@@ -305,7 +305,7 @@ public class MinePacketHandler {
                             return;
                         }case BREAK_BLOCK: {
                             BlockVector vec = data.getBlockPosition();
-                            this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ()));
+                            this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ()), false);
                             return;
                         }case CLICK_AIR: {
 

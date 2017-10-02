@@ -162,11 +162,11 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
             if (face != prevFace) {
                 Block sideBlock = block.getSide(face);
                 if (sideBlock.getSpecifiedMaterial().canBeFlowedInto() && (!(sideBlock.getSpecifiedMaterial() instanceof LiquidBlock) || sideBlock.getData() > 0)) {
-                    if (!sideBlock.getSide(BlockFace.DOWN).getSpecifiedMaterial().canBeFlowedInto())
+                    if (sideBlock.getSide(BlockFace.DOWN).getSpecifiedMaterial().canBeFlowedInto())
                         return distance;
 
                     if (distance < 4) {
-                        int j = this.calculateFlowCost(block, distance + 1, face.getOpposite());
+                        int j = this.calculateFlowCost(sideBlock, distance + 1, face.getOpposite());
 
                         if (j < cost)
                             cost = j;
@@ -186,8 +186,8 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
             if (sideBlock.getSpecifiedMaterial().canBeFlowedInto() && (!(sideBlock.getSpecifiedMaterial() instanceof LiquidBlock) || sideBlock.getData() > 0)) {
                 int cost;
 
-                if (sideBlock.getSide(BlockFace.DOWN).getSpecifiedMaterial().canBeFlowedInto()) {
-                    cost = this.calculateFlowCost(block, 1, face.getOpposite());
+                if (!sideBlock.getSide(BlockFace.DOWN).getSpecifiedMaterial().canBeFlowedInto()) {
+                    cost = this.calculateFlowCost(sideBlock, 1, face.getOpposite());
                 } else {
                     cost = 0;
                 }

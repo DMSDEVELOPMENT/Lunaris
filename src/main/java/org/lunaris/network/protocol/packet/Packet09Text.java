@@ -33,7 +33,7 @@ public class Packet09Text extends MinePacket {
     public void read(MineBuffer buffer) {
         this.type = MessageType.values()[buffer.readByte()];
         this.isLocalized = buffer.readBoolean();
-//        buffer.readBoolean(); //unspecified
+        buffer.readBoolean(); //unspecified
         switch(type) {
             case POPUP:
             case CHAT:

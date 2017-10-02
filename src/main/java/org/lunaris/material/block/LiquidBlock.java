@@ -56,6 +56,11 @@ public abstract class LiquidBlock extends TransparentBlock {
     }
 
     @Override
+    public boolean canBeFlowedInto() {
+        return true;
+    }
+
+    @Override
     public AxisAlignedBB getBoundingBox(Block block) {
         return null;
     }

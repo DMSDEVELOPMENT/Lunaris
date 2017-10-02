@@ -56,12 +56,8 @@ public class BlockMaster {
         if(hand != null && hand.getType() != Material.AIR) {
             if(hand.isItem()) {
                 ItemHandle itemHandle = hand.getItemHandle();
-                if(itemHandle.canBeUsed() && itemHandle.useOn(hand, target, blockFace, player)) {
-                    if(hand.getAmount() <= 0) {
-                        player.getInventory().setItemInHand(hand);
-                        return;
-                    }
-                }
+                if(itemHandle.canBeUsed() && itemHandle.useOn(hand, target, blockFace, player))
+                    return;
             }else {
                 BlockHandle blockHandle = hand.getBlockHandle();
                 if(sider.getHandle().canBeReplaced() && blockHandle.canBePlaced()) {

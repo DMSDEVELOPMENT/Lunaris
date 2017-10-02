@@ -54,11 +54,16 @@ public class ItemBucket extends ItemHandle {
                 PlayerBucketFillEvent event = new PlayerBucketFillEvent(player, block);
                 Lunaris.getInstance().getEventManager().call(event);
                 if (!event.isCancelled()) {
+                    ItemStack result = new ItemStack(Material.BUCKET, 1, getDataFromTarget(block.getType()));
                     block.setType(Material.AIR);
                     if (player.getGamemode() == Gamemode.SURVIVAL) {
                         item.setAmount(item.getAmount() - 1);
-                        player.getInventory().setItemInHand(item);
-                        player.getInventory().addItem(new ItemStack(Material.BUCKET, 1, getDataFromTarget(block.getType())));
+                        if(item.getAmount() == 0)
+                            player.getInventory().setItemInHand(result);
+                        else {
+                            player.getInventory().setItemInHand(item);
+                            player.getInventory().addItem(result);
+                        }
                     }
                     return true;
                 } else {

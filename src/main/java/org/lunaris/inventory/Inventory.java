@@ -89,6 +89,8 @@ public abstract class Inventory implements Iterable<ItemStack> {
     }
 
     public void setItem(int index, ItemStack item) {
+        if(item != null && item.getAmount() == 0)
+            item = null;
         setItemWithoutUpdate(index, item);
         sendSlot(this.viewers, index);
     }

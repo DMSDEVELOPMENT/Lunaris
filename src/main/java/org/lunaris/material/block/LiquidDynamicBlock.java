@@ -22,7 +22,6 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
 
     @Override
     public void onBlockAdd(Block block) {
-        //System.out.println(getType() + " add");
         if (!this.checkForMixing(block))
             block.getWorld().scheduleUpdate(block, this.tickRate(block));
     }

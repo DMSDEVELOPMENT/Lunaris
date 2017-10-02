@@ -3,9 +3,9 @@ package org.lunaris.command;
 import org.lunaris.Lunaris;
 import org.lunaris.entity.data.LPermission;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by RINES on 15.09.17.
@@ -13,20 +13,33 @@ import java.util.stream.Collectors;
 public abstract class Command {
 
     private final String name;
+    private String description = "";
     private final List<String> aliases;
-    private final CommandParameter[] parameters;
+    private final List<CommandParameter[]> parameters = new ArrayList<>();
     private final LPermission requiredPermission;
 
-    public Command(String name, LPermission requiredPermission, CommandParameter... parameters) {
-        this(name, null, requiredPermission, parameters);
+    public Command(String name, LPermission requiredPermission) {
+        this(name, null, requiredPermission);
     }
 
-    public Command(String name, List<String> aliases, LPermission requiredPermission, CommandParameter... parameters) {
+    public Command(String name, List<String> aliases, LPermission requiredPermission) {
         this.name = name.toLowerCase();
-        this.aliases = aliases == null ? Collections.emptyList() : aliases.stream().map(String::toLowerCase).collect(Collectors.toList());
+        if (aliases == null) {
+            this.aliases = Collections.singletonList(name);
+        } else {
+            this.aliases = new ArrayList<>(aliases);
+            this.aliases.add(name);
+        }
         this.requiredPermission = requiredPermission;
-        this.parameters = parameters;
         Lunaris.getInstance().getCommandManager().register(this);
+    }
+
+    protected void setDescription(String description) {
+        this.description = description;
+    }
+
+    protected void addParametersVariant(CommandParameter... parameters) {
+        this.parameters.add(parameters);
     }
 
     public abstract void execute(CommandSender sender, String[] args);
@@ -35,11 +48,15 @@ public abstract class Command {
         return name;
     }
 
+    public String getDescription() {
+        return this.description;
+    }
+
     public List<String> getAliases() {
         return aliases;
     }
 
-    public CommandParameter[] getParameters() {
+    public List<CommandParameter[]> getParametersVariants() {
         return parameters;
     }
 

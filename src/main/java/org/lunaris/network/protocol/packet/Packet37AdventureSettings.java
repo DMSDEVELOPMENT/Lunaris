@@ -13,7 +13,7 @@ public class Packet37AdventureSettings extends MinePacket {
     public static final int BITFLAG_SECOND_SET = 1 << 16;
 
     public long flags;
-    public CommandPermissionLevel commandPermissions = CommandPermissionLevel.NORMAL;
+    public Packet4CAvailableCommands.CommandPermission commandPermissions = Packet4CAvailableCommands.CommandPermission.NORMAL;
     public long flags2;
     public long playerPermission = 1;
     public long customFlags;
@@ -32,7 +32,7 @@ public class Packet37AdventureSettings extends MinePacket {
     @Override
     public void read(MineBuffer buffer) {
         this.flags = buffer.readUnsignedVarLong();
-        this.commandPermissions = CommandPermissionLevel.values()[(int) buffer.readUnsignedVarLong()];
+        this.commandPermissions = Packet4CAvailableCommands.CommandPermission.values()[(int) buffer.readUnsignedVarLong()];
         this.flags2 = buffer.readUnsignedVarLong();
         this.playerPermission = buffer.readUnsignedVarLong();
         this.customFlags = buffer.readUnsignedVarLong();
@@ -66,14 +66,6 @@ public class Packet37AdventureSettings extends MinePacket {
             this.flags2 &= ~flag;
         else
             this.flags &= ~flag;
-    }
-
-    public enum CommandPermissionLevel {
-        NORMAL,
-        OPERATOR,
-        HOST,
-        AUTOMATION,
-        ADMIN
     }
 
     public enum Flag {

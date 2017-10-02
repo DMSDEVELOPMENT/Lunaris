@@ -18,6 +18,7 @@ import java.util.Collection;
  * Created by RINES on 13.09.17.
  */
 public abstract class Chunk {
+    private static final int WORLD_LIMIT = 3_000_000;
 
     private final static byte[] ETERNAL8 = new byte[1 << 8];
 
@@ -113,8 +114,7 @@ public abstract class Chunk {
     }
 
     public Block getBlock(int x, int y, int z) {
-        final int modulus = 3_000_000;
-        if (x >= modulus || x < -modulus || y < 0 || y > 255 || z >= modulus || z < -modulus)
+        if (x >= WORLD_LIMIT || x < -WORLD_LIMIT || y < 0 || y > 255 || z >= WORLD_LIMIT || z < -WORLD_LIMIT)
             return new Block(new Location(this.world, x, y, z), Material.AIR);
         ChunkSection section = getSection(y);
         return new Block(new Location(this.world, x, y, z), Material.getById(section.getId(x, y, z)), section.getData(x, y, z));
@@ -149,8 +149,7 @@ public abstract class Chunk {
     }
 
     public void setBlock(int x, int y, int z, int id, int data) {
-        final int modulus = 3_000_000;
-        if (x >= modulus || x < -modulus || y < 0 || y > 255 || z >= modulus || z < -modulus)
+        if (x >= WORLD_LIMIT || x < -WORLD_LIMIT || y < 0 || y > 255 || z >= WORLD_LIMIT || z < -WORLD_LIMIT)
             return;
         getSection(y).set(x, y, z, (short) id, (byte) data);
         if (loaded)

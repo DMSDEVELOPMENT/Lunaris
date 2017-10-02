@@ -128,7 +128,7 @@ public enum ChatColor {
         }
     }
 
-    private ChatColor(char code, String name) {
+    ChatColor(char code, String name) {
         this.code = code;
         this.name = name;
         this.toString = new String(new char[]{
@@ -164,6 +164,10 @@ public enum ChatColor {
             }
         }
         return new String(b);
+    }
+    
+    public static String colored(String text) {
+        return translateAlternateColorCodes('&', text);
     }
 
     /**

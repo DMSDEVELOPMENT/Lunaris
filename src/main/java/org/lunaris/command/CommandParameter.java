@@ -7,45 +7,26 @@ public class CommandParameter {
 
     public String name;
     public CommandParameterType type;
-    public boolean optional;
-
-    public String enum_type;
-    public String[] enum_values;
-
-    public CommandParameter(String name, CommandParameterType type, boolean optional) {
-        this.name = name;
-        this.type = type;
-        this.optional = optional;
-    }
-
-    public CommandParameter(String name, boolean optional) {
-        this(name, CommandParameterType.RAW_TEXT, optional);
-    }
+    public boolean optional = false;
+    public String[] enumValues;
 
     public CommandParameter(String name) {
-        this(name, false);
+        this(name, CommandParameterType.STRING);
     }
 
-    public CommandParameter(String name, boolean optional, String enumType) {
+    public CommandParameter(String name, CommandParameterType type) {
+        this.name = name;
+        this.type = type;
+    }
+
+    public CommandParameter(String name, String[] enumValues) {
         this.name = name;
         this.type = CommandParameterType.STRING_ENUM;
-        this.optional = optional;
-        this.enum_type = enumType;
+        this.enumValues = enumValues;
     }
 
-    public CommandParameter(String name, boolean optional, String[] enumValues) {
-        this.name = name;
-        this.type = CommandParameterType.STRING_ENUM;
-        this.optional = optional;
-        this.enum_values = enumValues;
+    public CommandParameter optional() {
+        this.optional = true;
+        return this;
     }
-
-    public CommandParameter(String name, String enumType){
-        this(name, false, enumType);
-    }
-
-    public CommandParameter(String name, String[] enumValues){
-        this(name, false, enumValues);
-    }
-
 }

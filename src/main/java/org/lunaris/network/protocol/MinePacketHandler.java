@@ -259,6 +259,17 @@ public class MinePacketHandler {
         packet.getPlayer().sendPacket(new Packet46ChunkRadiusUpdate(value));
         packet.getPlayer().setChunksView(value);
     }
+    
+    public void handle(Packet4DCommandRequest packet) {
+        sync(() -> {
+            Player player = packet.getPlayer();
+            PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, packet.command);
+            server.getEventManager().call(event);
+            if (event.isCancelled())
+                return;
+            server.getCommandManager().handle(event.getCommand(), player);
+        });
+    }
 
     public void handle(Packet1EInventoryTransaction packet) {
         sync(() -> {

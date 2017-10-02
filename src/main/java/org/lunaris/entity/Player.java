@@ -13,7 +13,6 @@ import org.lunaris.material.Material;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
-import org.lunaris.network.util.PacketsBush;
 import org.lunaris.server.Scheduler;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.world.Location;
@@ -148,6 +147,10 @@ public class Player extends LivingEntity implements CommandSender {
 
     public void sendPopup(String message, String subtitle) {
         sendPacket(new Packet09Text(Packet09Text.MessageType.POPUP, message, subtitle));
+    }
+    
+    public void sendAvailableCommands() {
+        sendPacket(new Packet4CAvailableCommands(Lunaris.getInstance().getCommandManager().getAvailableCommands(this)));
     }
 
     @Override

@@ -4,6 +4,7 @@ import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.EntityDataFlag;
+import org.lunaris.entity.data.LPermission;
 import org.lunaris.event.player.PlayerDisconnectEvent;
 import org.lunaris.event.player.PlayerJoinEvent;
 import org.lunaris.event.player.PlayerLoginEvent;
@@ -34,6 +35,7 @@ public class PlayerProvider {
 
     public Player createPlayer(Packet01Login packet, RakNetClientSession session) {
         Player player = new Player(this.entityProvider.getNextEntityID(), session, packet);
+        player.setPermission(LPermission.OPERATOR);
         this.playersBySessions.put(session, player);
         this.server.getLogger().info("%s (%s) is logging in..", player.getName(), player.getAddress());
         return player;
@@ -109,6 +111,7 @@ public class PlayerProvider {
         player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
         player.getAdventureSettings().update();
         player.getWorld().addPlayerToWorld(player);
+        player.sendAvailableCommands();
         PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
         this.server.getEventManager().call(joinEvent);
     }

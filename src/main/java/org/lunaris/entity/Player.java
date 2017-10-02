@@ -126,7 +126,7 @@ public class Player extends LivingEntity implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        sendPacket(new Packet09Text(Packet09Text.MessageType.RAW, "", message, false));
+        sendPacket(new Packet09Text(Packet09Text.MessageType.RAW, "", message));
     }
 
     @Override
@@ -135,7 +135,7 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     public void sendTip(String message) {
-        sendPacket(new Packet09Text(Packet09Text.MessageType.TIP, "", message, false));
+        sendPacket(new Packet09Text(Packet09Text.MessageType.TIP, "", message));
     }
 
     public void sendTip(String message, Object... args) {
@@ -147,7 +147,7 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     public void sendPopup(String message, String subtitle) {
-        sendPacket(new Packet09Text(Packet09Text.MessageType.POPUP, message, subtitle, false));
+        sendPacket(new Packet09Text(Packet09Text.MessageType.POPUP, message, subtitle));
     }
 
     @Override

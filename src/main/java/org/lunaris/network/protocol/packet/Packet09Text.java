@@ -12,15 +12,14 @@ public class Packet09Text extends MinePacket {
     private String source = "";
     private String message = "";
     private String[] parameters = new String[0];
-    private boolean isLocalized;
+    private String xuid = "";
 
     public Packet09Text() {}
 
-    public Packet09Text(MessageType type, String source, String message, boolean isLocalized, String... parameters) {
+    public Packet09Text(MessageType type, String source, String message, String... parameters) {
         this.type = type;
         this.source = source;
         this.message = message;
-        this.isLocalized = isLocalized;
         this.parameters = parameters;
     }
 
@@ -32,18 +31,23 @@ public class Packet09Text extends MinePacket {
     @Override
     public void read(MineBuffer buffer) {
         this.type = MessageType.values()[buffer.readByte()];
-        this.isLocalized = buffer.readBoolean();
         buffer.readBoolean(); //unspecified
         switch(type) {
-            case POPUP:
             case CHAT:
             case WHISPER:
             case ANNOUNCEMENT: {
+                this.source = buffer.readString();
                 this.message = buffer.readString();
+                this.xuid = buffer.readString();
+                break;
+            }case POPUP: {
+                this.message = buffer.readString();
+                this.source = buffer.readString();
+                break;
             }case RAW:
             case TIP:
             case SYSTEM: {
-                this.source = buffer.readString();
+                this.message = buffer.readString();
                 break;
             }case TRANSLATION: {
                 this.message = buffer.readString();
@@ -59,13 +63,19 @@ public class Packet09Text extends MinePacket {
     @Override
     public void write(MineBuffer buffer) {
         buffer.writeByte((byte) this.type.ordinal());
-        buffer.writeBoolean(this.isLocalized);
+        buffer.writeBoolean(false);
         switch(this.type) {
-            case POPUP:
             case CHAT:
             case WHISPER:
             case ANNOUNCEMENT: {
                 buffer.writeString(this.source);
+                buffer.writeString(this.message);
+                buffer.writeString(this.xuid);
+                break;
+            }case POPUP: {
+                buffer.writeString(this.message);
+                buffer.writeString(this.source);
+                break;
             }case RAW:
             case TIP:
             case SYSTEM: {
@@ -95,10 +105,6 @@ public class Packet09Text extends MinePacket {
 
     public String[] getParameters() {
         return parameters;
-    }
-
-    public boolean isLocalized() {
-        return isLocalized;
     }
 
     public enum MessageType {

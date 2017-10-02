@@ -121,7 +121,6 @@ public class World {
     }
 
     public void updateNeighbor(Block block) {
-        System.out.println("UPD "+block);
         for (BlockFace face : BlockFace.values()) {
             Block side = block.getSide(face);
             side.getHandle().onNeighborBlockChange(side, block);

@@ -87,7 +87,7 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
 
             Block bottomBlock = block.getSide(BlockFace.DOWN);
 
-            if (bottomBlock.getHandle().canBeFlowedInto()) {
+            if (canFlowInto(bottomBlock)) {
                 if (isLava(block.getType()) && isWater(bottomBlock.getType())) {
                     BlockFromToEvent event = new BlockFromToEvent(bottomBlock, new Block(bottomBlock.getLocation(), Material.STONE));
                     Lunaris.getInstance().getEventManager().call(event);
@@ -126,7 +126,7 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
     }
 
     private void flowIntoBlock(Block block, int newFlowDecay) {
-        if (block.getHandle().canBeFlowedInto()) {
+        if (canFlowInto(block)) {
             if (block.getType() != Material.AIR) {
                 if (isLava(getType())) {
                     this.triggerLavaMixEffects(block);
@@ -201,5 +201,11 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
             }
         }
         return set;
+    }
+
+    private boolean canFlowInto(Block block) {
+        if (isWater(block.getType()) && getFlowingType() == Material.WATER)
+            return false;
+        return !isLava(block.getType()) && block.getHandle().canBeFlowedInto();
     }
 }

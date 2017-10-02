@@ -63,7 +63,7 @@ public class EntityMovement {
         float drot = pow2(this.yaw - this.lastYaw) + pow2(this.pitch - this.lastPitch);
         float dmotion = pow2(this.motionX - this.lastMotionX) + pow2(this.motionY - this.lastMotionY) + pow2(this.motionZ - this.lastMotionZ);
         if(dpos > .0001F || drot > 1F) {
-            if(addMovement(this.x, this.y + this.entity.getBaseOffset(), this.z, this.yaw, this.pitch)) {
+            if(addMovement(this.x, this.y, this.z, this.yaw, this.pitch)) {
                 this.lastX = x;
                 this.lastY = y;
                 this.lastZ = z;

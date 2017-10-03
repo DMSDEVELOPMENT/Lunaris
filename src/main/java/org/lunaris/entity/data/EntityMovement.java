@@ -3,6 +3,7 @@ package org.lunaris.entity.data;
 import org.lunaris.Lunaris;
 import org.lunaris.entity.Entity;
 import org.lunaris.event.entity.EntityMoveEvent;
+import org.lunaris.network.NetworkManager;
 import org.lunaris.network.protocol.packet.Packet12MoveEntity;
 import org.lunaris.network.protocol.packet.Packet28SetEntityMotion;
 import org.lunaris.util.math.Vector3d;
@@ -17,6 +18,8 @@ public class EntityMovement {
     private final Entity entity;
     protected float x, y, z, lastX, lastY, lastZ, yaw, pitch, headYaw, lastYaw, lastPitch, motionX, motionY, motionZ,
         lastMotionX, lastMotionY, lastMotionZ;
+
+    protected long lastMovementTick;
 
     public EntityMovement(Entity entity) {
         this.entity = entity;
@@ -65,7 +68,7 @@ public class EntityMovement {
         float drot = pow2(this.yaw - this.lastYaw) + pow2(this.pitch - this.lastPitch);
         float dmotion = pow2(this.motionX - this.lastMotionX) + pow2(this.motionY - this.lastMotionY) + pow2(this.motionZ - this.lastMotionZ);
         if(dpos > .0001F || drot > 1F) {
-            if(addMovement(this.x, this.y, this.z, this.yaw, this.pitch, this.headYaw)) {
+            if(addMovement(this.x, this.y, this.z, this.yaw, this.pitch, this.headYaw, dpos > 2F)) {
                 this.lastX = x;
                 this.lastY = y;
                 this.lastZ = z;
@@ -91,7 +94,11 @@ public class EntityMovement {
         location.setPitch(this.pitch);
     }
 
-    protected boolean addMovement(float x, float y, float z, float yaw, float pitch, float headYaw) {
+    protected boolean addMovement(float x, float y, float z, float yaw, float pitch, float headYaw, boolean forced) {
+        long current = System.currentTimeMillis();
+        if(!forced && current < this.lastMovementTick + NetworkManager.NETWORK_TICK)
+            return false;
+        this.lastMovementTick = current;
         EntityMoveEvent event = new EntityMoveEvent(this.entity, x, y, z, yaw, pitch);
         Lunaris.getInstance().getEventManager().call(event);
         if(event.isCancelled())

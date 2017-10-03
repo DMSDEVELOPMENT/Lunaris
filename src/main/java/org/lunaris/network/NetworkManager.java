@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public class NetworkManager {
 
     public final static int SUPPORTED_CLIENT_PROTOCOL_VERSION = 137;
+    public final static long NETWORK_TICK = Scheduler.ONE_TICK_IN_MILLIS >> 1;
 
     private final Lunaris server;
 
@@ -43,7 +44,7 @@ public class NetworkManager {
         this.server = server;
         this.rakNet = new RakNetProvider(this, server);
         this.mineProvider = new MinePacketProvider(server, this);
-        this.executor.scheduleAtFixedRate(this::tick, 0L, Scheduler.ONE_TICK_IN_MILLIS >> 1, TimeUnit.MILLISECONDS);
+        this.executor.scheduleAtFixedRate(this::tick, 0L, NETWORK_TICK, TimeUnit.MILLISECONDS);
     }
 
     public void disable() {

@@ -37,12 +37,13 @@ public class Packet13MovePlayer extends MinePacket {
         this.onGround = true;
     }
 
-    public Packet13MovePlayer(long entityId, float x, float y, float z, float yaw, float pitch) {
+    public Packet13MovePlayer(long entityId, float x, float y, float z, float yaw, float pitch, float headYaw) {
         this.entityId = entityId;
         this.x = x;
         this.y = y;
         this.z = z;
-        this.yaw = this.headYaw = yaw;
+        this.yaw = yaw;
+        this.headYaw = yaw;
         this.pitch = pitch;
     }
 
@@ -58,9 +59,9 @@ public class Packet13MovePlayer extends MinePacket {
         this.x = position.x;
         this.y = position.y;
         this.z = position.z;
-        this.yaw = buffer.readFloat();
-        this.headYaw = buffer.readFloat();
         this.pitch = buffer.readFloat();
+        this.headYaw = buffer.readFloat();
+        this.yaw = buffer.readFloat();
         this.mode = buffer.readByte();
         this.onGround = buffer.readBoolean();
         this.ridingEntityId = buffer.readVarLong();
@@ -74,9 +75,9 @@ public class Packet13MovePlayer extends MinePacket {
     public void write(MineBuffer buffer) {
         buffer.writeEntityRuntimeId(this.entityId);
         buffer.writeVector3f(this.x, this.y, this.z);
-        buffer.writeFloat(this.yaw);
-        buffer.writeFloat(this.headYaw);
         buffer.writeFloat(this.pitch);
+        buffer.writeFloat(this.headYaw);
+        buffer.writeFloat(this.yaw);
         buffer.writeByte((byte) this.mode);
         buffer.writeBoolean(this.onGround);
         buffer.writeVarLong(this.ridingEntityId);

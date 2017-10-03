@@ -15,7 +15,7 @@ import org.lunaris.world.Location;
 public class EntityMovement {
 
     private final Entity entity;
-    protected float x, y, z, lastX, lastY, lastZ, yaw, pitch, lastYaw, lastPitch, motionX, motionY, motionZ,
+    protected float x, y, z, lastX, lastY, lastZ, yaw, pitch, headYaw, lastYaw, lastPitch, motionX, motionY, motionZ,
         lastMotionX, lastMotionY, lastMotionZ;
 
     public EntityMovement(Entity entity) {
@@ -24,12 +24,13 @@ public class EntityMovement {
 
     public void setPositionAndRotation(Location location) {
         setPosition(location);
-        setRotation(location.getYaw(), location.getPitch());
+        setRotation(location.getYaw(), location.getPitch(), location.getYaw());
     }
 
-    public void setPositionAndRotation(double x, double y, double z, double yaw, double pitch) {
+    public void setPositionAndRotation(double x, double y, double z, double yaw, double pitch, double headYaw) {
         setPosition(x, y, z);
-        setRotation(yaw, pitch);
+        setRotation(yaw, pitch, headYaw
+        );
     }
 
     public void teleport(Location location) {
@@ -47,9 +48,10 @@ public class EntityMovement {
         this.z = (float) z;
     }
 
-    public void setRotation(double yaw, double pitch) {
+    public void setRotation(double yaw, double pitch, double headYaw) {
         this.yaw = (float) yaw;
         this.pitch = (float) pitch;
+        this.headYaw = (float) headYaw;
     }
 
     public void setMotion(Vector3d motion) {
@@ -63,7 +65,7 @@ public class EntityMovement {
         float drot = pow2(this.yaw - this.lastYaw) + pow2(this.pitch - this.lastPitch);
         float dmotion = pow2(this.motionX - this.lastMotionX) + pow2(this.motionY - this.lastMotionY) + pow2(this.motionZ - this.lastMotionZ);
         if(dpos > .0001F || drot > 1F) {
-            if(addMovement(this.x, this.y, this.z, this.yaw, this.pitch)) {
+            if(addMovement(this.x, this.y, this.z, this.yaw, this.pitch, this.headYaw)) {
                 this.lastX = x;
                 this.lastY = y;
                 this.lastZ = z;
@@ -89,12 +91,12 @@ public class EntityMovement {
         location.setPitch(this.pitch);
     }
 
-    protected boolean addMovement(float x, float y, float z, float yaw, float pitch) {
+    protected boolean addMovement(float x, float y, float z, float yaw, float pitch, float headYaw) {
         EntityMoveEvent event = new EntityMoveEvent(this.entity, x, y, z, yaw, pitch);
         Lunaris.getInstance().getEventManager().call(event);
         if(event.isCancelled())
             return false;
-        this.entity.getLocation().getChunk().sendPacket(new Packet12MoveEntity(this.entity.getEntityID(), x, y, z, yaw, pitch));
+        this.entity.getLocation().getChunk().sendPacket(new Packet12MoveEntity(this.entity.getEntityID(), x, y, z, yaw, pitch, headYaw));
         return true;
     }
 

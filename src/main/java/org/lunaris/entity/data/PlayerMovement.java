@@ -24,7 +24,7 @@ public class PlayerMovement extends EntityMovement {
         float drot = pow2(this.yaw - this.lastYaw) + pow2(this.pitch - this.lastPitch);
         float dmotion = pow2(this.motionX - this.lastMotionX) + pow2(this.motionY - this.lastMotionY) + pow2(this.motionZ - this.lastMotionZ);
         if(dpos > .0001F || drot > 1F) {
-            if(addMovement(this.x, this.y, this.z, this.yaw, this.pitch)) {
+            if(addMovement(this.x, this.y, this.z, this.yaw, this.pitch, this.headYaw)) {
                 this.lastX = x;
                 this.lastY = y;
                 this.lastZ = z;
@@ -46,14 +46,14 @@ public class PlayerMovement extends EntityMovement {
     }
 
     @Override
-    protected boolean addMovement(float x, float y, float z, float yaw, float pitch) {
+    protected boolean addMovement(float x, float y, float z, float yaw, float pitch, float headYaw) {
         PlayerMoveEvent event = new PlayerMoveEvent((Player) getEntity(), x, y, z, yaw, pitch);
         Lunaris.getInstance().getEventManager().call(event);
         if(event.isCancelled())
             return false;
         Collection<Player> players = getEntity().getLocation().getChunk().getApplicablePlayers();
         players.remove(getEntity());
-        Lunaris.getInstance().getNetworkManager().sendPacket(players, new Packet13MovePlayer(getEntity().getEntityID(), x, y, z, yaw, pitch));
+        Lunaris.getInstance().getNetworkManager().sendPacket(players, new Packet13MovePlayer(getEntity().getEntityID(), x, y, z, yaw, pitch, headYaw));
         return true;
     }
 

@@ -140,7 +140,7 @@ public class MinePacketHandler {
     public void handle(Packet13MovePlayer packet) {
         Player player = packet.getPlayer();
         sync(() -> {
-            player.moveTo(packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch());
+            player.moveTo(packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch(), packet.getHeadYaw());
             player.recalculateCollisions();
             //set on ground
         });

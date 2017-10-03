@@ -30,12 +30,13 @@ public class Packet12MoveEntity extends MinePacket {
         this.onGround = true;
     }
 
-    public Packet12MoveEntity(long entityId, float x, float y, float z, float yaw, float pitch) {
+    public Packet12MoveEntity(long entityId, float x, float y, float z, float yaw, float pitch, float headYaw) {
         this.entityId = entityId;
         this.x = x;
         this.y = y;
         this.z = z;
-        this.yaw = this.headYaw = yaw;
+        this.yaw = yaw;
+        this.headYaw = headYaw;
         this.pitch = pitch;
     }
 

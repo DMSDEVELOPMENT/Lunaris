@@ -87,8 +87,8 @@ public class Entity extends Metadatable {
         this.movement.update(); //notify players around new chunk
     }
 
-    public void moveTo(double x, double y, double z, double yaw, double pitch) {
-        this.movement.setPositionAndRotation(x, y, z, yaw, pitch);
+    public void moveTo(double x, double y, double z, double yaw, double pitch, double headYaw) {
+        this.movement.setPositionAndRotation(x, y, z, yaw, pitch, headYaw);
         this.movement.refill(this.location);
     }
 

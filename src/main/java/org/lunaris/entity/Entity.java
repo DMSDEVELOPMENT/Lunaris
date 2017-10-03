@@ -89,7 +89,6 @@ public class Entity extends Metadatable {
 
     public void moveTo(double x, double y, double z, double yaw, double pitch, double headYaw) {
         this.movement.setPositionAndRotation(x, y, z, yaw, pitch, headYaw);
-        this.movement.refill(this.location);
     }
 
     public void setDisplayName(String name) {

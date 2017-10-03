@@ -32,8 +32,7 @@ public class EntityMovement {
 
     public void setPositionAndRotation(double x, double y, double z, double yaw, double pitch, double headYaw) {
         setPosition(x, y, z);
-        setRotation(yaw, pitch, headYaw
-        );
+        setRotation(yaw, pitch, headYaw);
     }
 
     public void teleport(Location location) {
@@ -74,6 +73,7 @@ public class EntityMovement {
                 this.lastZ = z;
                 this.lastYaw = yaw;
                 this.lastPitch = pitch;
+                refill(this.entity.getLocation());
             }
         }
         if(dmotion > .0025F || dmotion > .0001F && getMotion().lengthSquared() <= .0001F) {

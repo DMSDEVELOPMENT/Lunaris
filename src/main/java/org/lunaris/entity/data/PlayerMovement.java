@@ -31,6 +31,7 @@ public class PlayerMovement extends EntityMovement {
                 this.lastZ = z;
                 this.lastYaw = yaw;
                 this.lastPitch = pitch;
+                refill(getEntity().getLocation());
             }
             this.speedX = this.lastX - this.x;
             this.speedY = this.lastY - this.y;

@@ -7,28 +7,41 @@ import org.lunaris.util.math.Vector3d;
  */
 public class Location extends Position {
 
-    private double yaw, pitch;
+    private double yaw, headYaw, pitch;
 
     public Location(World world, double x, double y, double z) {
         this(world, x, y, z, 0D, 0D);
     }
 
     public Location(World world, double x, double y, double z, double yaw, double pitch) {
+        this(world, x, y, z, yaw, yaw, pitch);
+    }
+
+    public Location(World world, double x, double y, double z, double yaw, double headYaw, double pitch) {
         super(world, x, y, z);
         this.yaw = yaw;
+        this.headYaw = headYaw;
         this.pitch = pitch;
     }
 
     public double getYaw() {
-        return yaw;
+        return this.yaw;
     }
 
     public void setYaw(double yaw) {
         this.yaw = yaw;
     }
 
+    public double getHeadYaw() {
+        return this.headYaw;
+    }
+
+    public void setHeadYaw(double headYaw) {
+        this.headYaw = headYaw;
+    }
+
     public double getPitch() {
-        return pitch;
+        return this.pitch;
     }
 
     public void setPitch(double pitch) {
@@ -130,6 +143,6 @@ public class Location extends Position {
 
     @Override
     public String toString() {
-        return "Location(world=" + getWorld() + ", x=" + x + ", y=" + y + ", z=" + z + ", yaw=" + yaw + ", pitch=" + pitch + ")";
+        return "Location(world=" + getWorld() + ", x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", yaw=" + this.yaw + ", pitch=" + this.pitch + ")";
     }
 }

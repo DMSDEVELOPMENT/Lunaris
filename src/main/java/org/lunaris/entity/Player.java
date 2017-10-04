@@ -8,8 +8,6 @@ import org.lunaris.event.player.PlayerKickEvent;
 import org.lunaris.inventory.Inventory;
 import org.lunaris.inventory.InventoryManager;
 import org.lunaris.inventory.PlayerInventory;
-import org.lunaris.item.ItemStack;
-import org.lunaris.material.Material;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
@@ -49,7 +47,6 @@ public class Player extends LivingEntity implements CommandSender {
 
     private int foodLevel = 20;
     private float foodSaturationLevel = 20F;
-    private boolean onGround = true;
     private boolean invulnerable = false;
     private boolean sprinting;
     private boolean sneaking;
@@ -78,11 +75,6 @@ public class Player extends LivingEntity implements CommandSender {
 
         this.adventureSettings = new AdventureSettings(this);
         this.inventoryManager = new InventoryManager(this);
-    }
-
-    @Override
-    protected EntityMovement generateEntityMovement() {
-        return new PlayerMovement(this);
     }
 
     /**
@@ -237,8 +229,8 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void tick(long current, float dT) {
+        super.tick(current, dT);
         World world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfViewChunk(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
     }
@@ -345,6 +337,20 @@ public class Player extends LivingEntity implements CommandSender {
         return this.inventoryManager.getPlayerInventory();
     }
 
+    @Override
+    public void teleport(Location location) {
+        if(getWorld() == null)
+            initWorld(location.getWorld());
+        if(getWorld() != location.getWorld()) {
+            sendPacket(new Packet13MovePlayer(getEntityID(), getX() + 1000000, 4000, getZ() + 1000000, 0F, 0F, 0F).mode(Packet13MovePlayer.MODE_RESET));
+            getWorld().removePlayerFromWorld(this);
+            initWorld(location.getWorld());
+            location.getWorld().addPlayerToWorld(this);
+        }
+        setPositionAndRotation(location);
+        sendPacket(new Packet13MovePlayer(this).mode(Packet13MovePlayer.MODE_RESET));
+    }
+
     public Gamemode getGamemode() {
         return this.gamemode;
     }
@@ -375,10 +381,6 @@ public class Player extends LivingEntity implements CommandSender {
         return this.foodSaturationLevel;
     }
 
-    public boolean isOnGround() {
-        return this.onGround;
-    }
-
     public boolean isInvulnerable() {
         return this.invulnerable;
     }
@@ -401,27 +403,27 @@ public class Player extends LivingEntity implements CommandSender {
 
     @Override
     public float getWidth() {
-        return 0.6f;
+        return .6F;
     }
 
     @Override
-    public float getLength() {
-        return 0.6f;
+    public float getStepHeight() {
+        return .6F;
+    }
+
+    @Override
+    public void fall() {
+
     }
 
     @Override
     public float getHeight() {
-        return 1.8f;
+        return 1.8F;
     }
 
     @Override
     public float getEyeHeight() {
         return 1.62f;
-    }
-
-    @Override
-    public float getBaseOffset() {
-        return this.getEyeHeight();
     }
 
     public enum IngameState {

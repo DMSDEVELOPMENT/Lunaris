@@ -7,6 +7,7 @@ import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.network.protocol.packet.Packet27SetEntityData;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.util.math.LMath;
+import org.lunaris.world.Chunk;
 import org.lunaris.world.Location;
 import org.lunaris.world.World;
 
@@ -15,20 +16,22 @@ import java.util.*;
 /**
  * Created by RINES on 13.09.17.
  */
-public class Entity extends Metadatable {
+public abstract class Entity extends Metadatable implements Movable {
 
     private final long entityID;
-    private final EntityMovement movement;
-    private Location location;
+    private final MovementData movement;
+    private World world;
 
     private final Map<Integer, Attribute> attributes = new HashMap<>();
 
     private int fireTicks;
-    private int fallDistance;
 
-    private AxisAlignedBB boundingBox;
-    private Set<Block> blocksAround;
-    private Set<Block> collisionBlocks;
+    private AxisAlignedBB boundingBox = new AxisAlignedBB( 0, 0, 0, 0, 0, 0 );
+
+    private boolean collidedVertically;
+    private boolean collidedHorizontally;
+    private boolean onGround;
+    private float fallDistance;
 
     protected Entity(long entityID) {
         this.entityID = entityID;
@@ -54,41 +57,87 @@ public class Entity extends Metadatable {
         a.setValue(value);
     }
 
+    public void teleport(Location location) {
+        if(this.world != location.getWorld())
+            throw new IllegalArgumentException("Entities can not be teleported between worlds!");
+        this.setPositionAndRotation(location);
+    }
+
     public Location getLocation() {
-        return this.location;
+        return this.movement.getLocation(this.world);
     }
 
-    public double getX() {
-        return this.location.getX();
+    public Chunk getChunk() {
+        return this.world.getChunkAt(((int) getX()) >> 4, ((int) getZ()) >> 4);
     }
 
-    public double getY() {
-        return this.location.getY();
+    @Override
+    public float getX() {
+        return this.movement.getX();
     }
 
-    public double getZ() {
-        return this.location.getZ();
+    @Override
+    public float getY() {
+        return this.movement.getY();
+    }
+
+    @Override
+    public float getZ() {
+        return this.movement.getZ();
+    }
+
+    @Override
+    public float getMotionX() {
+        return this.movement.getMotionX();
+    }
+
+    @Override
+    public float getMotionY() {
+        return this.movement.getMotionY();
+    }
+
+    @Override
+    public float getMotionZ() {
+        return this.movement.getMotionZ();
+    }
+
+    @Override
+    public float getYaw() {
+        return this.movement.getYaw();
+    }
+
+    @Override
+    public float getHeadYaw() {
+        return this.movement.getHeadYaw();
+    }
+
+    @Override
+    public float getPitch() {
+        return this.movement.getPitch();
+    }
+
+    @Override
+    public Location getLocation(World world) {
+        throw new IllegalStateException("Unsupported method");
+    }
+
+    @Override
+    public void setPosition(float x, float y, float z) {
+        this.movement.setPosition(x, y, z);
+    }
+
+    @Override
+    public void setRotation(float yaw, float headYaw, float pitch) {
+        this.movement.setRotation(yaw, headYaw, pitch);
+    }
+
+    @Override
+    public void setMotion(float x, float y, float z) {
+        this.movement.setMotion(x, y, z);
     }
 
     public World getWorld() {
-        return this.location.getWorld();
-    }
-
-    public void initializeLocation(Location location) {
-        if(this.location != null)
-            throw new IllegalStateException("You can not use this method after entity's location has already been initialized.");
-        this.location = location;
-    }
-
-    public void teleport(Location location) {
-        this.movement.teleport(location);
-        this.movement.update(); //notify players around old chunk
-        this.location = location;
-        this.movement.update(); //notify players around new chunk
-    }
-
-    public void moveTo(double x, double y, double z, double yaw, double pitch, double headYaw) {
-        this.movement.setPositionAndRotation(x, y, z, yaw, pitch, headYaw);
+        return this.world;
     }
 
     public void setDisplayName(String name) {
@@ -116,12 +165,9 @@ public class Entity extends Metadatable {
         getWorld().removeEntityFromWorld(this);
     }
 
-    public void tick() {
-//        for(Block block : getCollisionBlocks()) {
-//            block.getSpecifiedMaterial().onEntityCollide(block, this);
-//        }
+    public void tick(long current, float dT) {
+        this.movement.tickMovement(current, dT);
         if(this.fireTicks > 0) {
-            //check fire resistance
             if(this instanceof LivingEntity)
                 ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.FIRE, 1);
             setDataFlag(false, EntityDataFlag.ON_FIRE, this.fireTicks --> 1, true);
@@ -130,90 +176,122 @@ public class Entity extends Metadatable {
             setDirtyMetadata(false);
             Lunaris.getInstance().getNetworkManager().broadcastPacket(new Packet27SetEntityData(this.entityID, getDataProperties()));
         }
-        this.movement.update();
-        if(getY() <= -16) {
+        if(getY() <= 16)
             if(this instanceof LivingEntity)
                 ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.VOID, 1);
             else
                 remove();
-        }
-//        if(!(this instanceof Player))
-//            recalculateCollisions();
     }
 
-    public void recalculateCollisions() {
-        this.blocksAround = this.collisionBlocks = null;
+    /**
+     * Внутренний метод для расчета коллизий сущности после последнего перемещения
+     * @param motionX движение по x
+     * @param motionY движение по y
+     * @param motionZ движение по z
+     * @param dx разница перемещения по x
+     * @param dy разница перемещения по y
+     * @param dz разница перемещения по z
+     */
+    public void setupCollisionFlags(float motionX, float motionY, float motionZ, float dx, float dy, float dz) {
+        this.collidedVertically = motionY != dy;
+        this.collidedHorizontally = motionX != dx || motionZ != dz;
+        this.onGround = motionY != dy && motionY < 0;
     }
 
-    protected Set<Block> getCollisionBlocks() {
-        if(this.collisionBlocks != null)
-            return this.collisionBlocks;
-        this.collisionBlocks = new HashSet<>();
-        for(Block block : getBlocksAround())
-            if(block.collidesWithBB(this.boundingBox, true))
-                this.collisionBlocks.add(block);
-        return this.collisionBlocks;
+    /**
+     * Внутренний метод для расчета дистанции падения сущности после последнего перемещения
+     * @param dy разница перемещения по y
+     */
+    public void setupFallDistance(float dy) {
+        if(this.onGround) {
+            if(this.fallDistance > 0F)
+                fall();
+            this.fallDistance = 0;
+        }else if(dy < 0F)
+            this.fallDistance -= dy;
     }
 
-    protected Set<Block> getBlocksAround() {
-        if(this.blocksAround != null)
-            return this.blocksAround;
-        int minX = LMath.floorDouble(this.boundingBox.minX);
-        int minY = LMath.floorDouble(this.boundingBox.minY);
-        int minZ = LMath.floorDouble(this.boundingBox.minZ);
-        int maxX = LMath.ceilDouble(this.boundingBox.maxX);
-        int maxY = LMath.ceilDouble(this.boundingBox.maxY);
-        int maxZ = LMath.ceilDouble(this.boundingBox.maxZ);
-        final int X = this.location.getBlockX(), Y = this.location.getBlockY(), Z = this.location.getBlockZ();
-
-        this.blocksAround = new HashSet<>();
-
-        World world = getWorld();
-        for (int z = minZ; z <= maxZ; ++z)
-            for (int x = minX; x <= maxX; ++x)
-                for (int y = minY; y <= maxY; ++y)
-                    this.blocksAround.add(world.getBlockAt(X + x, Y + y, Z + z));
-        return this.blocksAround;
+    /**
+     * Внутренний метод для установки мира сущности после ее создания
+     * @param world мир
+     */
+    public void initWorld(World world) {
+        this.world = world;
     }
 
     public void setOnFire(int ticks) {
         this.fireTicks = ticks;
     }
 
-    public void setFallDistance(int fallDistance) {
+    public void setFallDistance(float fallDistance) {
         this.fallDistance = fallDistance;
     }
 
+    /**
+     * Сколько тиков осталось гореть этой сущности
+     * @return сколько тиков осталось гореть этой сущности
+     */
     public int getFireTicks() {
         return this.fireTicks;
     }
 
-    public int getFallDistance() {
-        return fallDistance;
-    }
-
+    /**
+     * Высота глаз сущности
+     * @return высоту глаз сущности
+     */
     public float getEyeHeight() {
         return this.getHeight() / 2 + 0.1f;
     }
 
-    public float getHeight() {
-        return 0F;
+    /**
+     * Высота сущности
+     * @return высоту сущности
+     */
+    public abstract float getHeight();
+
+    /**
+     * Ширина сущности
+     * @return ширину сущности
+     */
+    public abstract float getWidth();
+
+    /**
+     * Получение максимальной высоты, на которую может подняться сущность за одно перемещение
+     * @return максимальную высоту, на которую может подняться сущность за одно перемещение
+     */
+    public abstract float getStepHeight();
+
+    /**
+     * Метод, вызываемый при падении сущности на землю с высоты
+     */
+    public abstract void fall();
+
+    public AxisAlignedBB getBoundingBox() {
+        return this.boundingBox;
     }
 
-    public float getWidth() {
-        return 0F;
+    public boolean isCollidedVertically() {
+        return this.collidedVertically;
     }
 
-    public float getLength() {
-        return 0F;
+    public boolean isCollidedHorizontally() {
+        return this.collidedHorizontally;
     }
 
-    public float getBaseOffset() {
-        return 0F;
+    public boolean isOnGround() {
+        return this.onGround;
     }
 
-    protected EntityMovement generateEntityMovement() {
-        return new EntityMovement(this);
+    public boolean hasJustMoved() {
+        return this.movement.isDirty();
+    }
+
+    public float getFallDistance() {
+        return this.fallDistance;
+    }
+
+    private MovementData generateEntityMovement() {
+        return new MovementData(this);
     }
 
     @Override

@@ -50,7 +50,8 @@ public class EntityDamageEvent extends Event implements Cancellable {
         UNKNOWN,
         FIRE,
         ENTITY_ATTACK,
-        VOID
+        VOID,
+        FALL
     }
 
 }

@@ -21,23 +21,13 @@ public class Packet12MoveEntity extends MinePacket {
 
     public Packet12MoveEntity(Entity entity) {
         this.entityId = entity.getEntityID();
-        Location loc = entity.getLocation();
-        this.x = (float) loc.getX();
-        this.y = (float) loc.getY();
-        this.z = (float) loc.getZ();
-        this.yaw = this.headYaw = (float) loc.getYaw();
-        this.pitch = (float) loc.getPitch();
-        this.onGround = true;
-    }
-
-    public Packet12MoveEntity(long entityId, float x, float y, float z, float yaw, float pitch, float headYaw) {
-        this.entityId = entityId;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.headYaw = headYaw;
-        this.pitch = pitch;
+        this.x = entity.getX();
+        this.y = entity.getY() + entity.getEyeHeight();
+        this.z = entity.getZ();
+        this.yaw = entity.getYaw();
+        this.headYaw = entity.getHeadYaw();
+        this.pitch = entity.getPitch();
+        this.onGround = entity.isOnGround();
     }
 
     @Override

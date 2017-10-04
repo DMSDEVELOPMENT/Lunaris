@@ -1,6 +1,7 @@
 package org.lunaris.network.protocol;
 
 import org.lunaris.Lunaris;
+import org.lunaris.block.Block;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.event.player.*;
@@ -11,6 +12,7 @@ import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.resourcepacks.ResourcePack;
 import org.lunaris.world.BlockVector;
+import org.lunaris.world.Location;
 
 import java.util.*;
 
@@ -140,9 +142,45 @@ public class MinePacketHandler {
     public void handle(Packet13MovePlayer packet) {
         Player player = packet.getPlayer();
         sync(() -> {
-            player.moveTo(packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch(), packet.getHeadYaw());
-            player.recalculateCollisions();
-            //set on ground
+            Location from = player.getLocation(), to = player.getLocation();
+            to.setComponents(packet.getX(), packet.getY() - player.getEyeHeight(), packet.getZ());
+            to.setYaw(packet.getYaw());
+            to.setHeadYaw(packet.getHeadYaw());
+            to.setPitch(packet.getPitch());
+            if(to.getX() - from.getX() == 0 &&
+                    to.getY() - from.getY() == 0 &&
+                    to.getZ() - from.getZ() == 0 &&
+                    to.getYaw() - from.getYaw() == 0 &&
+                    to.getHeadYaw() - from.getHeadYaw() == 0 &&
+                    to.getPitch() - from.getPitch() == 0)
+                return;
+            PlayerMoveEvent event = new PlayerMoveEvent(player, to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
+            this.server.getEventManager().call(event);
+            if(event.isCancelled())
+                to = from;
+            if(to.getX() != packet.getX() || to.getY() != packet.getY() - player.getEyeHeight() || to.getZ() != packet.getZ() ||
+                    to.getYaw() != packet.getYaw() || to.getHeadYaw() != packet.getHeadYaw() || to.getPitch() != packet.getPitch()) {
+                player.teleport(to);
+            }
+            player.setPositionAndRotation(to);
+            float hwidth = player.getWidth() / 2;
+            player.getBoundingBox().setBounds(
+                    player.getX() - hwidth,
+                    player.getY(),
+                    player.getZ() - hwidth,
+                    player.getX() + hwidth,
+                    player.getY() + player.getHeight(),
+                    player.getZ() + hwidth
+            );
+            boolean changeWorld = !to.getWorld().equals(from.getWorld());
+            boolean changeXZ = (int) from.getX() != (int) to.getX() || (int) from.getZ() != (int) to.getZ();
+            boolean changeY = (int) from.getY() != (int) to.getY();
+            if(changeWorld || changeXZ || changeY) {
+                Block block = from.getWorld().getBlockAt(from.getBlockX(), from.getBlockY(), from.getBlockZ());
+                block.getHandle().onStepOff(block, player);
+                block = to.getWorld().getBlockAt(to.getBlockX(), to.getBlockY(), to.getBlockZ());
+                block.getHandle().onStepOn(block, player);
+            }
         });
     }
 

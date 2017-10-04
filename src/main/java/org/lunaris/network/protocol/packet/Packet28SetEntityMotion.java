@@ -1,5 +1,6 @@
 package org.lunaris.network.protocol.packet;
 
+import org.lunaris.entity.Entity;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 
@@ -14,6 +15,10 @@ public class Packet28SetEntityMotion extends MinePacket {
     private float motionZ;
 
     public Packet28SetEntityMotion() {}
+
+    public Packet28SetEntityMotion(Entity entity) {
+        this(entity.getEntityID(), entity.getMotionX(), entity.getMotionY(), entity.getMotionZ());
+    }
 
     public Packet28SetEntityMotion(long entityId, float motionX, float motionY, float motionZ) {
         this.entityId = entityId;

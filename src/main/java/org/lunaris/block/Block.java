@@ -18,7 +18,7 @@ public class Block {
 
     private Location location;
 
-    private AxisAlignedBB boundingBox, collisionBoundingBox;
+    private AxisAlignedBB boundingBox;
 
     public Block(Location location, Material type) {
         this(location, type, 0);
@@ -122,28 +122,9 @@ public class Block {
     }
 
     public AxisAlignedBB getBoundingBox() {
-        return boundingBox;
-    }
-
-    public AxisAlignedBB getCollisionBoundingBox() {
-        return collisionBoundingBox;
-    }
-
-    public void setBoundingBox(AxisAlignedBB boundingBox) {
-        this.boundingBox = boundingBox;
-    }
-
-    public void setCollisionBoundingBox(AxisAlignedBB collisionBoundingBox) {
-        this.collisionBoundingBox = collisionBoundingBox;
-    }
-
-    public boolean collidesWithBB(AxisAlignedBB bb) {
-        return collidesWithBB(bb, false);
-    }
-
-    public boolean collidesWithBB(AxisAlignedBB bb, boolean collisionBB) {
-        AxisAlignedBB bb1 = collisionBB ? this.getCollisionBoundingBox() : this.getBoundingBox();
-        return bb1 != null && bb.intersectsWith(bb1);
+        if(this.boundingBox == null)
+            this.boundingBox = getHandle().recalculateBoundingBox(this);
+        return this.boundingBox;
     }
 
     @Override

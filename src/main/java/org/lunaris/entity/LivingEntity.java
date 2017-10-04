@@ -13,7 +13,7 @@ import org.lunaris.event.player.PlayerRespawnEvent;
 /**
  * Created by RINES on 14.09.17.
  */
-public class LivingEntity extends Entity {
+public abstract class LivingEntity extends Entity {
 
     protected LivingEntity(long entityID) {
         super(entityID);
@@ -67,8 +67,8 @@ public class LivingEntity extends Entity {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void tick(long current, float dT) {
+        super.tick(current, dT);
         if(getHealth() < 1F) {
             if(this instanceof Player) {
                 Player p = (Player) this;
@@ -88,6 +88,13 @@ public class LivingEntity extends Entity {
                 remove();
             }
         }
+    }
+
+    @Override
+    public void fall() {
+        double damage = getFallDistance() - 3;
+        if(damage > 0D)
+            damage(EntityDamageEvent.DamageCause.FALL, damage);
     }
 
 }

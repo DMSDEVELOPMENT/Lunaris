@@ -1,7 +1,5 @@
 package org.lunaris.server;
 
-import co.aikar.timings.Timings;
-
 import org.lunaris.Lunaris;
 import org.lunaris.world.BlockMaster;
 import org.lunaris.world.Difficulty;
@@ -16,9 +14,13 @@ import java.util.concurrent.TimeUnit;
  * Created by RINES on 14.09.17.
  */
 public class WorldProvider {
+
+    private final static long TARGET_TPS_NANOS = TimeUnit.SECONDS.toNanos( 1 ) / 20;
     
     private final List<World> worlds = new ArrayList<>();
     private final BlockMaster blockMaster;
+
+    private float lastTickTime;
     
     public WorldProvider(Lunaris server) {
         this.worlds.add(new World(server, "Test World", Dimension.OVERWORLD, Difficulty.PEACEFUL));
@@ -43,7 +45,11 @@ public class WorldProvider {
     }
 
     private void tick() {
-        this.worlds.forEach(World::tick);
+        long currentNanos = System.nanoTime();
+        long current = System.currentTimeMillis();
+        this.worlds.forEach(world -> world.tick(current, this.lastTickTime));
+        long diff = System.nanoTime() - currentNanos;
+        this.lastTickTime = (diff < TARGET_TPS_NANOS ? TARGET_TPS_NANOS : diff) / 1_000_000_000F;
     }
     
 }

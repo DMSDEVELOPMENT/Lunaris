@@ -25,13 +25,13 @@ public class BlockGrassPath extends BlockGrass {
     }
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox(Block block) {
+    public AxisAlignedBB recalculateBoundingBox(Block block) {
         return new AxisAlignedBB(
             block.getX(),
             block.getY(),
             block.getZ(),
             block.getX() + 1,
-            block.getY() + .9375,
+            block.getY() + .9375F,
             block.getZ() + 1
         );
     }

@@ -19,7 +19,7 @@ public class Packet13MovePlayer extends MinePacket {
     private long entityId;
     private float x, y, z;
     private float yaw, headYaw, pitch;
-    private int mode = MODE_NORMAL;
+    private int mode = MODE_RESET;
     private boolean onGround;
     private long ridingEntityId;
     private int unknown1, unknown2;
@@ -28,13 +28,13 @@ public class Packet13MovePlayer extends MinePacket {
 
     public Packet13MovePlayer(Player player) {
         this.entityId = player.getEntityID();
-        Location loc = player.getLocation();
-        this.x = (float) loc.getX();
-        this.y = (float) loc.getY();
-        this.z = (float) loc.getZ();
-        this.yaw = this.headYaw = (float) loc.getYaw();
-        this.pitch = (float) loc.getPitch();
-        this.onGround = true;
+        this.x = player.getX();
+        this.y = player.getY();
+        this.z = player.getZ();
+        this.yaw = player.getYaw();
+        this.headYaw = player.getHeadYaw();
+        this.pitch = player.getPitch();
+        this.onGround = player.isOnGround();
     }
 
     public Packet13MovePlayer(long entityId, float x, float y, float z, float yaw, float pitch, float headYaw) {
@@ -43,7 +43,7 @@ public class Packet13MovePlayer extends MinePacket {
         this.y = y;
         this.z = z;
         this.yaw = yaw;
-        this.headYaw = yaw;
+        this.headYaw = headYaw;
         this.pitch = pitch;
     }
 
@@ -133,6 +133,11 @@ public class Packet13MovePlayer extends MinePacket {
 
     public int getUnknown2() {
         return unknown2;
+    }
+
+    public Packet13MovePlayer mode(int mode) {
+        this.mode = mode;
+        return this;
     }
 
 }

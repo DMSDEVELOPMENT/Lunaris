@@ -5,6 +5,18 @@ package org.lunaris.util.math;
  */
 public class LMath {
 
+    private static final int BIG_ENOUGH_INT = 16 * 1024;
+    private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
+    private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5;
+
+    public static float pow2(float value) {
+        return value * value;
+    }
+
+    public static double pow2(double value) {
+        return value * value;
+    }
+
     public static int floorDouble(double n) {
         int i = (int) n;
         return n >= i ? i : i - 1;
@@ -18,6 +30,14 @@ public class LMath {
     public static int floorFloat(float n) {
         int i = (int) n;
         return n >= i ? i : i - 1;
+    }
+
+    public static int fastFloor(float x) {
+        return (int) ( x + BIG_ENOUGH_FLOOR ) - BIG_ENOUGH_INT;
+    }
+
+    public static int fastCeil(float x) {
+        return BIG_ENOUGH_INT - (int) ( BIG_ENOUGH_FLOOR - x );
     }
 
     public static int ceilFloat(float n) {

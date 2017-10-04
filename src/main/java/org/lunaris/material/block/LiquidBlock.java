@@ -61,12 +61,7 @@ public abstract class LiquidBlock extends TransparentBlock {
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(Block block) {
-        return null;
-    }
-
-    @Override
-    protected AxisAlignedBB recalculateCollisionBoundingBox(Block block) {
+    public AxisAlignedBB recalculateBoundingBox(Block block) {
         return new AxisAlignedBB(block.getX(), block.getY(), block.getZ(), block.getX() + 1, block.getY() + 1 - getFluidHeightPercent(block), block.getZ() + 1);
     }
 

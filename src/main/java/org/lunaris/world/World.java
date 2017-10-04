@@ -12,10 +12,7 @@ import org.lunaris.event.chunk.ChunkLoadedEvent;
 import org.lunaris.event.chunk.ChunkPreLoadEvent;
 import org.lunaris.event.chunk.ChunkUnloadedEvent;
 import org.lunaris.material.Material;
-import org.lunaris.network.protocol.packet.Packet0CAddPlayer;
-import org.lunaris.network.protocol.packet.Packet0ERemoveEntity;
-import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
-import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
+import org.lunaris.network.protocol.packet.*;
 import org.lunaris.util.math.MathHelper;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
@@ -27,6 +24,7 @@ import org.lunaris.world.util.LongObjectHashMap;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -161,7 +159,7 @@ public class World {
         unloadChunk(getChunkAt(x, z));
     }
 
-    public void tick() {
+    public void tick(long current, float dT) {
         Timings.getWorldTickTimer(this).startTiming();
         if (++this.time >= 24000)
             this.time = 0;
@@ -170,10 +168,30 @@ public class World {
         this.blockUpdateScheduler.tick();
         Timings.getChunksTickTimer().stopTiming();
         this.followerTask.tick();
-        Timings.getEntitiesTickTimer().startTiming();
-        this.entities.forEach(Entity::tick);
-        Timings.getEntitiesTickTimer().stopTiming();
+        tickEntities(current, dT);
         Timings.getWorldTickTimer(this).stopTiming();
+    }
+
+    private void tickEntities(long current, float dT) {
+        Timings.getEntitiesTickTimer().startTiming();
+        Set<Entity> moved = new HashSet<>();
+        for(Entity entity : new LinkedList<>(this.entities)) {
+            entity.tick(current, dT);
+            if(entity.hasJustMoved())
+                moved.add(entity);
+        }
+        for(Entity entity : moved) {
+            Chunk chunk = entity.getChunk();
+            if(chunk == null || !chunk.isLoaded())
+                continue;
+            Packet12MoveEntity packetMovement = new Packet12MoveEntity(entity);
+            Packet28SetEntityMotion packetMotion = new Packet28SetEntityMotion(entity);
+            Collection<Player> players = getApplicablePlayers(entity.getLocation());
+            players.remove(entity);
+            this.server.getNetworkManager().sendPacket(players, packetMovement);
+            this.server.getNetworkManager().sendPacket(players, packetMotion);
+        }
+        Timings.getEntitiesTickTimer().stopTiming();
     }
 
     public void scheduleUpdate(Block block, int delay) {
@@ -182,6 +200,10 @@ public class World {
 
     public int getTime() {
         return this.time;
+    }
+
+    public Collection<Entity> getEntities() {
+        return this.entities;
     }
 
     Collection<Player> getApplicablePlayers(Chunk chunk) {
@@ -274,4 +296,14 @@ public class World {
     public String toString() {
         return "World(name=" + this.name + ")";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o)
+            return true;
+        if(!(o instanceof World))
+            return false;
+        return this.name.equals(((World) o).name);
+    }
+
 }

@@ -18,7 +18,7 @@ public class CommandVersion extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        sender.sendMessage(ChatColor.colored("This server is running &aLunaris&f version &a" + Lunaris.getInstance().getServerVersion()));
+        sender.sendMessage(ChatColor.colored("This server is running &aLunaris&r version &a" + Lunaris.getInstance().getServerVersion()));
     }
 
 }

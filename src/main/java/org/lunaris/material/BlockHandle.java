@@ -122,19 +122,7 @@ public class BlockHandle extends MaterialHandle {
         return true;
     }
 
-    public AxisAlignedBB getBoundingBox(Block block) {
-        if (block.getBoundingBox() == null)
-            block.setBoundingBox(recalculateBoundingBox(block));
-        return block.getBoundingBox();
-    }
-
-    public AxisAlignedBB getCollisionBoundingBox(Block block) {
-        if (block.getCollisionBoundingBox() == null)
-            block.setCollisionBoundingBox(recalculateCollisionBoundingBox(block));
-        return block.getCollisionBoundingBox();
-    }
-
-    protected AxisAlignedBB recalculateBoundingBox(Block block) {
+    public AxisAlignedBB recalculateBoundingBox(Block block) {
         return new AxisAlignedBB(
             block.getX(),
             block.getY(),
@@ -143,10 +131,6 @@ public class BlockHandle extends MaterialHandle {
             block.getY() + 1,
             block.getZ() + 1
         );
-    }
-
-    protected AxisAlignedBB recalculateCollisionBoundingBox(Block block) {
-        return getBoundingBox(block);
     }
 
     public boolean canBeFlowedInto() {
@@ -179,6 +163,24 @@ public class BlockHandle extends MaterialHandle {
 
     public boolean canBeClimbed() {
         return false;
+    }
+
+    /**
+     * Когда сущность заходит на блок
+     * @param block блок
+     * @param entity сущность
+     */
+    public void onStepOn(Block block, Entity entity) {
+
+    }
+
+    /**
+     * Когда сущность сходит с блока
+     * @param block блок
+     * @param entity сущность
+     */
+    public void onStepOff(Block block, Entity entity) {
+
     }
 
     public void onEntityCollide(Block block, Entity entity) {

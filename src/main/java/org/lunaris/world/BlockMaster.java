@@ -110,7 +110,7 @@ public class BlockMaster {
                         (float) position.x, (float) position.y, (float) position.z,
                         (int) (65535 / breakTime)
                 ));
-                player.getBlockBreakingData().runBreak(player, block, exactBreakingTime);
+                player.getBlockBreakingData().runBreak(player, block, exactBreakingTime, exactBreakingTime);
             }case CREATIVE: {
                 //not there
                 break;
@@ -144,6 +144,24 @@ public class BlockMaster {
         if(!player.isBreakingBlock())
             return;
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
+        Block block = player.getWorld().getBlockAt(position);
+        long time = getExactBreakTimeInMillis(block, player);
+        if(player.getBlockBreakingData().getBlockBreakingTime() < time) {
+            long passed = System.currentTimeMillis() - player.getBlockBreakingData().getBreakStartTime();
+            double breakTime = getBreakTimeInTicks(block, player) - passed / 50;
+            block.getChunk().sendPacket(new Packet19LevelEvent(
+                    Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
+                    (float) position.x, (float) position.y, (float) position.z,
+                    0
+            ));
+            block.getChunk().sendPacket(new Packet19LevelEvent(
+                    Packet19LevelEvent.EVENT_BLOCK_START_BREAK,
+                    (float) position.x, (float) position.y, (float) position.z,
+                    (int) (65535 / breakTime)
+            ));
+            player.getBlockBreakingData().runBreak(player, block, time, time - passed);
+            return;
+        }
         BlockFace face = BlockFace.fromIndex(packet.getFace());
         new PunchBlockParticle(player.getWorld().getBlockAt(position), face).sendToNearbyPlayers();
     }

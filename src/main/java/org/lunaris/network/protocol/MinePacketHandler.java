@@ -4,6 +4,7 @@ import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.EntityDataFlag;
+import org.lunaris.entity.misc.Gamemode;
 import org.lunaris.event.player.*;
 import org.lunaris.inventory.transaction.*;
 import org.lunaris.item.ItemStack;
@@ -337,7 +338,19 @@ public class MinePacketHandler {
                             return;
                         }case BREAK_BLOCK: {
                             BlockVector vec = data.getBlockPosition();
-                            this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ()), false);
+                            if(player.getGamemode() == Gamemode.CREATIVE)
+                                this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ()), false);
+                            else {
+                                if(!player.isBreakingBlock())
+                                    player.sendPacket(new Packet15UpdateBlock(player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ())));
+//                                else {
+//                                    long passed = System.currentTimeMillis() - player.getBlockBreakingData().getBreakStartTime();
+//                                    float percentage = (float) passed / player.getBlockBreakingData().getBlockBreakingTime();
+//                                    if(percentage >= .75F)
+//                                        this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ()), true);
+//                                    this.server.broadcastMessage(percentage + "%");
+//                                }
+                            }
                             return;
                         }case CLICK_AIR: {
 

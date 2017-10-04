@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class BlockBreakingData {
 
     private Scheduler.Task blockBreakingTask;
-    private long blockBreakingTime;
+    private long blockBreakingTime, breakStartTime;
 
     public void clear() {
         if(this.blockBreakingTask != null) {
@@ -23,13 +23,14 @@ public class BlockBreakingData {
         this.blockBreakingTime = 0L;
     }
 
-    public void runBreak(Player player, Block block, long time) {
+    public void runBreak(Player player, Block block, long time, long schedulerTime) {
         if(isBreakingBlock())
             clear();
         this.blockBreakingTime = time;
+        this.breakStartTime = System.currentTimeMillis();
         this.blockBreakingTask = Lunaris.getInstance().getScheduler().schedule(
                 () -> Lunaris.getInstance().getWorldProvider().getBlockMaster().processBlockBreak(player, block),
-                time - Scheduler.ONE_TICK_IN_MILLIS,
+                schedulerTime - Scheduler.ONE_TICK_IN_MILLIS,
                 TimeUnit.MILLISECONDS
         );
     }
@@ -40,6 +41,10 @@ public class BlockBreakingData {
 
     public long getBlockBreakingTime() {
         return this.blockBreakingTime;
+    }
+
+    public long getBreakStartTime() {
+        return this.breakStartTime;
     }
 
 }

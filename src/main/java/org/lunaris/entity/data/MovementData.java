@@ -9,17 +9,14 @@ import org.lunaris.world.Location;
 import org.lunaris.world.World;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by RINES on 30.09.17.
  */
 public class MovementData implements Movable {
 
-    private final static float TICK_RATE = TimeUnit.MILLISECONDS.toNanos(50) / (float) TimeUnit.SECONDS.toNanos(1);
-    private final static float GRAVITY = 0.04f;
-    private final static float DRAG = 0.02f;
-    private final static float EPSILON = 1E-5F;
+    private final static float TICK_RATE = .05F;
+    private final static float GRAVITY = 0.04F;
 
     private final Entity entity;
 
@@ -88,7 +85,7 @@ public class MovementData implements Movable {
 
     @Override
     public void setPosition(float x, float y, float z) {
-        if(Math.abs(this.x - x) < EPSILON && Math.abs(this.y - y) < EPSILON && Math.abs(this.z - z) < EPSILON)
+        if(Math.abs(this.x - x) < LMath.EPSILON && Math.abs(this.y - y) < LMath.EPSILON && Math.abs(this.z - z) < LMath.EPSILON)
             return;
         this.x = x;
         this.y = y;
@@ -101,11 +98,11 @@ public class MovementData implements Movable {
         yaw = normalize(yaw);
         headYaw = normalize(headYaw);
         pitch = normalize(pitch);
-        if(Math.abs(this.yaw - yaw) < EPSILON && Math.abs(this.headYaw - headYaw) < EPSILON && Math.abs(this.pitch - pitch) < EPSILON)
+        if(Math.abs(this.yaw - yaw) < LMath.EPSILON && Math.abs(this.headYaw - headYaw) < LMath.EPSILON && Math.abs(this.pitch - pitch) < LMath.EPSILON)
             return;
         this.yaw = yaw;
-        this.headYaw = yaw;
-        this.pitch = yaw;
+        this.headYaw = headYaw;
+        this.pitch = pitch;
         this.dirty = true;
     }
 

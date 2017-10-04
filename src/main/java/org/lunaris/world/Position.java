@@ -1,5 +1,6 @@
 package org.lunaris.world;
 
+import org.lunaris.block.Block;
 import org.lunaris.util.math.Vector3d;
 
 /**
@@ -16,6 +17,10 @@ public class Position extends Vector3d {
 
     public World getWorld() {
         return this.world;
+    }
+
+    public Block getBlock() {
+        return this.world.getBlockAt(getBlockX(), getBlockY(), getBlockZ());
     }
 
     @Override

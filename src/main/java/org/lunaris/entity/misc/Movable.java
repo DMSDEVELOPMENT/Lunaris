@@ -1,5 +1,6 @@
 package org.lunaris.entity.misc;
 
+import org.lunaris.Lunaris;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.Location;
 import org.lunaris.world.World;
@@ -82,13 +83,9 @@ public interface Movable {
     }
 
     default Vector3d getDirection() {
-        double rY = Math.toRadians(getYaw());
-        double rP = Math.toRadians(getPitch());
-        double y = -Math.sin(rP);
-        double cosP = Math.cos(rP);
-        double x = -cosP * Math.sin(rY);
-        double z = cosP * Math.cos(rY);
-        return new Vector3d(x, y, z);
+        double rx = Math.toRadians(getYaw()), ry = Math.toRadians(getPitch());
+        double xz = Math.cos(ry);
+        return new Vector3d(-xz * Math.sin(rx), -Math.sin(ry), xz * Math.cos(rx));
     }
 
     default Vector3d getHeadDirection() {

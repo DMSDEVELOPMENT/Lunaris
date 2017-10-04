@@ -1,8 +1,13 @@
 package org.lunaris.material.block;
 
+import org.lunaris.block.Block;
 import org.lunaris.block.BlockColor;
+import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.material.Material;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author xtrafrancyz
@@ -60,4 +65,10 @@ public class BlockPlanks extends SolidBlock {
     public BlockColor getColor(int data) {
         return BlockColor.WOOD_BLOCK_COLOR;
     }
+
+    @Override
+    public List<ItemStack> getDrops(Block block, ItemStack hand) {
+        return Collections.singletonList(new ItemStack(Material.PLANKS, 1, block.getData()));
+    }
+
 }

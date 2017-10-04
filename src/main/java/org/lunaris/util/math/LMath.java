@@ -8,6 +8,7 @@ public class LMath {
     private static final int BIG_ENOUGH_INT = 16 * 1024;
     private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
     private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5;
+    public final static float EPSILON = 1E-5F;
 
     public static float pow2(float value) {
         return value * value;

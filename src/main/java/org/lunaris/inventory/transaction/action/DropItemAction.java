@@ -32,7 +32,7 @@ public class DropItemAction extends InventoryAction {
                 source.getInventory().sendContents(source);
                 return false;
             }
-            item.setVelocity(source.getDirection().normalize().multiply(.4F));
+            item.setVelocity(source.getDirection().multiply(.4F));
             return true;
         }) != null;
     }

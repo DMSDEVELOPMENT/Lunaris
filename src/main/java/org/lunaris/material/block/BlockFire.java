@@ -5,7 +5,7 @@ import org.lunaris.block.Block;
 import org.lunaris.block.BlockColor;
 import org.lunaris.entity.Entity;
 import org.lunaris.entity.Player;
-import org.lunaris.entity.data.Gamemode;
+import org.lunaris.entity.misc.Gamemode;
 import org.lunaris.event.entity.EntityBurnEvent;
 import org.lunaris.item.ItemStack;
 import org.lunaris.material.Material;

@@ -3,20 +3,23 @@ package org.lunaris.entity;
 import org.lunaris.Lunaris;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.EntityDataOption;
+import org.lunaris.entity.misc.EntityType;
 import org.lunaris.event.EventManager;
 import org.lunaris.event.entity.EntityDamageByEntityEvent;
 import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.event.entity.EntityDeathEvent;
 import org.lunaris.event.player.PlayerDeathEvent;
 import org.lunaris.event.player.PlayerRespawnEvent;
+import org.lunaris.network.protocol.MinePacket;
+import org.lunaris.network.protocol.packet.Packet0DAddEntity;
 
 /**
  * Created by RINES on 14.09.17.
  */
 public abstract class LivingEntity extends Entity {
 
-    protected LivingEntity(long entityID) {
-        super(entityID);
+    protected LivingEntity(long entityID, EntityType entityType) {
+        super(entityID, entityType);
     }
 
     public float getHealth() {
@@ -95,6 +98,11 @@ public abstract class LivingEntity extends Entity {
         double damage = getFallDistance() - 3;
         if(damage > 0D)
             damage(EntityDamageEvent.DamageCause.FALL, damage);
+    }
+
+    @Override
+    public MinePacket createSpawnPacket() {
+        return new Packet0DAddEntity(this);
     }
 
 }

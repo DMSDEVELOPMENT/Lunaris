@@ -4,7 +4,7 @@ import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockFace;
 import org.lunaris.entity.Player;
-import org.lunaris.entity.data.Gamemode;
+import org.lunaris.entity.misc.Gamemode;
 import org.lunaris.event.block.BlockBreakEvent;
 import org.lunaris.event.block.BlockPlaceEvent;
 import org.lunaris.event.player.PlayerHitFireEvent;
@@ -24,6 +24,7 @@ import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.particle.DestroyBlockParticle;
 import org.lunaris.world.particle.PunchBlockParticle;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -161,7 +162,11 @@ public class BlockMaster {
             player.sendPacket(new Packet15UpdateBlock(block)); //restore block to players
             return;
         }
-        //drop drops
+        if(withDrops) {
+            List<ItemStack> drops = block.getHandle().getDrops(block, player.getInventory().getItemInHand());
+            if(drops != null)
+                drops.forEach(drop -> block.getWorld().dropItem(drop, block.getLocation()));
+        }
         new DestroyBlockParticle(block).sendToNearbyPlayers();
         block.setType(Material.AIR);
         Scheduler.Task task = player.getBreakingBlockTask();

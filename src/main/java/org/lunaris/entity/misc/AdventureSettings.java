@@ -1,4 +1,4 @@
-package org.lunaris.entity.data;
+package org.lunaris.entity.misc;
 
 import org.lunaris.entity.Player;
 import org.lunaris.network.protocol.packet.Packet37AdventureSettings;

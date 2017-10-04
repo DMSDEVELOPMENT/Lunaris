@@ -2,8 +2,11 @@ package org.lunaris.entity;
 
 import org.lunaris.Lunaris;
 import org.lunaris.entity.data.*;
+import org.lunaris.entity.misc.EntityType;
+import org.lunaris.entity.misc.Movable;
 import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.material.block.LiquidBlock;
+import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet27SetEntityData;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.Chunk;
@@ -18,7 +21,9 @@ import java.util.*;
 public abstract class Entity extends Metadatable implements Movable {
 
     private final long entityID;
+    private final EntityType entityType;
     private final MovementData movement;
+
     private World world;
 
     private final Map<Integer, Attribute> attributes = new HashMap<>();
@@ -32,14 +37,23 @@ public abstract class Entity extends Metadatable implements Movable {
     private boolean onGround;
     private float fallDistance;
 
-    protected Entity(long entityID) {
+    protected Entity(long entityID, EntityType entityType) {
         this.entityID = entityID;
+        this.entityType = entityType;
         this.movement = generateEntityMovement();
     }
 
     @Override
     public long getEntityID() {
         return this.entityID;
+    }
+
+    public EntityType getEntityType() {
+        return this.entityType;
+    }
+
+    public Collection<Attribute> getAttributes() {
+        return this.attributes.values();
     }
 
     public Attribute getAttribute(int id) {
@@ -264,6 +278,8 @@ public abstract class Entity extends Metadatable implements Movable {
      * Метод, вызываемый при падении сущности на землю с высоты
      */
     public abstract void fall();
+
+    public abstract MinePacket createSpawnPacket();
 
     public AxisAlignedBB getBoundingBox() {
         return this.boundingBox;

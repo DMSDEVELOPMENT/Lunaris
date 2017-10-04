@@ -1,4 +1,4 @@
-package org.lunaris.entity.data;
+package org.lunaris.entity.misc;
 
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.Location;

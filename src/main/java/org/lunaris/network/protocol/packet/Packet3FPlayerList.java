@@ -1,7 +1,7 @@
 package org.lunaris.network.protocol.packet;
 
 import org.lunaris.entity.Player;
-import org.lunaris.entity.data.Skin;
+import org.lunaris.entity.misc.Skin;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 

@@ -4,7 +4,7 @@ import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.EntityDataFlag;
-import org.lunaris.entity.data.LPermission;
+import org.lunaris.entity.misc.LPermission;
 import org.lunaris.event.player.PlayerDisconnectEvent;
 import org.lunaris.event.player.PlayerJoinEvent;
 import org.lunaris.event.player.PlayerLoginEvent;
@@ -24,17 +24,15 @@ public class PlayerProvider {
     private final Map<UUID, Player> playersByUUIDs = new HashMap<>();
     private final Map<RakNetClientSession, Player> playersBySessions = new ConcurrentHashMap<>();
     private final Lunaris server;
-    private final EntityProvider entityProvider;
     private final Scheduler scheduler;
 
     public PlayerProvider(Lunaris server) {
         this.server = server;
-        this.entityProvider = server.getEntityProvider();
         this.scheduler = server.getScheduler();
     }
 
     public Player createPlayer(Packet01Login packet, RakNetClientSession session) {
-        Player player = new Player(this.entityProvider.getNextEntityID(), session, packet);
+        Player player = this.server.getEntityProvider().createPlayer(packet, session);
         player.setPermission(LPermission.OPERATOR);
         this.playersBySessions.put(session, player);
         this.server.getLogger().info("%s (%s) is logging in..", player.getName(), player.getAddress());

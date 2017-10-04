@@ -1,6 +1,7 @@
 package org.lunaris.server;
 
 import org.lunaris.command.CommandManager;
+import org.lunaris.entity.EntityProvider;
 import org.lunaris.entity.Player;
 import org.lunaris.event.EventManager;
 import org.lunaris.plugin.PluginManager;

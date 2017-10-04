@@ -1,4 +1,4 @@
-package org.lunaris.entity.data;
+package org.lunaris.entity.misc;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;

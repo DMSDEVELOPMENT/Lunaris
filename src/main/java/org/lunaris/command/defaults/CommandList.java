@@ -4,7 +4,7 @@ import org.lunaris.Lunaris;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.Player;
-import org.lunaris.entity.data.LPermission;
+import org.lunaris.entity.misc.LPermission;
 import org.lunaris.util.logger.ChatColor;
 
 import java.util.Collection;

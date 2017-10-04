@@ -5,7 +5,7 @@ import co.aikar.timings.TimingsExport;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandParameter;
 import org.lunaris.command.CommandSender;
-import org.lunaris.entity.data.LPermission;
+import org.lunaris.entity.misc.LPermission;
 import org.lunaris.util.logger.ChatColor;
 
 /**

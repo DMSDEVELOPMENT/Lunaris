@@ -1,7 +1,7 @@
 package org.lunaris.command;
 
 import org.lunaris.Lunaris;
-import org.lunaris.entity.data.LPermission;
+import org.lunaris.entity.misc.LPermission;
 
 import java.util.ArrayList;
 import java.util.Collections;

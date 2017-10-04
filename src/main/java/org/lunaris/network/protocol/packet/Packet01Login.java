@@ -3,7 +3,7 @@ package org.lunaris.network.protocol.packet;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import org.lunaris.entity.data.Skin;
+import org.lunaris.entity.misc.Skin;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 

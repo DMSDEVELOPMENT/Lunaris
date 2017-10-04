@@ -11,6 +11,7 @@ import org.lunaris.entity.Player;
 import org.lunaris.event.chunk.ChunkLoadedEvent;
 import org.lunaris.event.chunk.ChunkPreLoadEvent;
 import org.lunaris.event.chunk.ChunkUnloadedEvent;
+import org.lunaris.item.ItemStack;
 import org.lunaris.material.Material;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.util.math.MathHelper;
@@ -27,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by RINES on 13.09.17.
@@ -70,9 +72,8 @@ public class World {
         this.entities.add(player);
         this.followerTask.updatePlayer(player);
         Collection<Player> without = getPlayersWithout(player);
-        this.server.getNetworkManager().sendPacket(without, new Packet0CAddPlayer(player));
-        without.stream().map(Packet0CAddPlayer::new).forEach(player::sendPacket);
-        //        this.server.getNetworkManager().sendPacket(without, new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
+        this.server.getNetworkManager().sendPacket(without, player.createSpawnPacket());
+        without.stream().map(Player::createSpawnPacket).forEach(player::sendPacket);
     }
 
     public void removePlayerFromWorld(Player player) {
@@ -82,12 +83,12 @@ public class World {
 
     public void addEntityToWorld(Entity entity) {
         this.entities.add(entity);
-        //send add entity packet
+        this.server.getNetworkManager().sendPacket(this.players, entity.createSpawnPacket());
     }
 
     public void removeEntityFromWorld(Entity entity) {
         this.entities.remove(entity);
-        this.server.getNetworkManager().sendPacket(getPlayers(), new Packet0ERemoveEntity(entity.getEntityID()));
+        this.server.getNetworkManager().sendPacket(this.players, new Packet0ERemoveEntity(entity.getEntityID()));
     }
 
     public boolean isChunkLoadedAt(int x, int z) {
@@ -202,8 +203,30 @@ public class World {
         return this.time;
     }
 
+    public void dropItem(ItemStack itemStack, Vector3d position) {
+        this.server.getEntityProvider().spawnItem(
+                position instanceof Location
+                        ? (Location) position
+                        : new Location(this, position.getX(), position.getY(), position.getZ()),
+                itemStack
+        );
+    }
+
     public Collection<Entity> getEntities() {
         return this.entities;
+    }
+
+    public Collection<Entity> getNearbyEntities(Location location, double radius) {
+        return this.entities.stream().filter(e -> e.getLocation().distance(location) <= radius).collect(Collectors.toSet());
+    }
+
+    public <T extends Entity> Collection<T> getNearbyEntitiesByClass(Class<T> entityClass, Location location, double radius) {
+        Set<T> result = new HashSet<>();
+        for(Entity entity : this.entities) {
+            if(entityClass.isAssignableFrom(entity.getClass()) && entity.getLocation().distance(location) <= radius)
+                result.add((T) entity);
+        }
+        return result;
     }
 
     Collection<Player> getApplicablePlayers(Chunk chunk) {

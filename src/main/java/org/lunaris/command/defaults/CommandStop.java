@@ -3,7 +3,7 @@ package org.lunaris.command.defaults;
 import org.lunaris.Lunaris;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandSender;
-import org.lunaris.entity.data.LPermission;
+import org.lunaris.entity.misc.LPermission;
 
 /**
  * Created by RINES on 15.09.17.

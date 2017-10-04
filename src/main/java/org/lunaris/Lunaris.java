@@ -4,6 +4,7 @@ import co.aikar.timings.Timings;
 import jline.console.ConsoleReader;
 
 import org.lunaris.command.CommandManager;
+import org.lunaris.entity.EntityProvider;
 import org.lunaris.entity.Player;
 import org.lunaris.event.EventManager;
 import org.lunaris.event.Listener;
@@ -11,7 +12,6 @@ import org.lunaris.network.NetworkManager;
 import org.lunaris.network.protocol.packet.Packet09Text;
 import org.lunaris.plugin.PluginManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
-import org.lunaris.server.EntityProvider;
 import org.lunaris.server.IServer;
 import org.lunaris.server.PlayerList;
 import org.lunaris.server.PlayerProvider;

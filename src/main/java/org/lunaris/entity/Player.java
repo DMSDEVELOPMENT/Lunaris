@@ -3,11 +3,14 @@ package org.lunaris.entity;
 import org.lunaris.Lunaris;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.data.*;
+import org.lunaris.entity.misc.*;
 import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.event.player.PlayerKickEvent;
+import org.lunaris.event.player.PlayerPickupItemEvent;
 import org.lunaris.inventory.Inventory;
 import org.lunaris.inventory.InventoryManager;
 import org.lunaris.inventory.PlayerInventory;
+import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
@@ -18,6 +21,7 @@ import org.lunaris.world.Sound;
 import org.lunaris.world.World;
 import org.lunaris.world.util.LongHash;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -61,8 +65,8 @@ public class Player extends LivingEntity implements CommandSender {
 
     private final AdventureSettings adventureSettings;
 
-    public Player(int entityID, RakNetClientSession session, Packet01Login packetLogin) {
-        super(entityID);
+    Player(int entityID, RakNetClientSession session, Packet01Login packetLogin) {
+        super(entityID, EntityType.PLAYER);
         this.session = session;
         this.ip = session.getAddress().getAddress().getHostAddress();
         this.username = ChatColor.stripColor(packetLogin.getUsername());
@@ -233,6 +237,26 @@ public class Player extends LivingEntity implements CommandSender {
         super.tick(current, dT);
         World world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfViewChunk(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
+        world.getNearbyEntitiesByClass(Item.class, getLocation(), 1D).forEach(item -> {
+            if(current < item.getPickupDelay())
+                return;
+            PlayerPickupItemEvent event = new PlayerPickupItemEvent(this, item);
+            Lunaris.getInstance().getEventManager().call(event);
+            if(event.isCancelled())
+                return;
+            ItemStack is = item.getItemStack();
+            PlayerInventory pinv = getInventory();
+            Collection<ItemStack> left = pinv.addItem(is).values();
+            if(!left.isEmpty()) {
+                ItemStack leftIS = left.iterator().next();
+                if(leftIS.getAmount() == is.getAmount())
+                    return;
+                is.setAmount(is.getAmount() - leftIS.getAmount());
+            }
+            Lunaris.getInstance().getNetworkManager().sendPacket(world.getPlayers(), new Packet11PickupItem(item.getEntityID(), getEntityID()));
+            if(is.getAmount() == 0)
+                item.remove();
+        });
     }
 
     public RakNetClientSession getSession() {
@@ -414,6 +438,11 @@ public class Player extends LivingEntity implements CommandSender {
     @Override
     public void fall() {
 
+    }
+
+    @Override
+    public MinePacket createSpawnPacket() {
+        return new Packet0CAddPlayer(this);
     }
 
     @Override

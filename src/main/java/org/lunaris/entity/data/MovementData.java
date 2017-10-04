@@ -2,6 +2,7 @@ package org.lunaris.entity.data;
 
 import org.lunaris.block.Block;
 import org.lunaris.entity.Entity;
+import org.lunaris.entity.misc.Movable;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.util.math.LMath;
 import org.lunaris.world.Location;

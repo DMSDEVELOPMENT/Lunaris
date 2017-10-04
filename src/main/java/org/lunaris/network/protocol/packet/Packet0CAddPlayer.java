@@ -18,7 +18,7 @@ public class Packet0CAddPlayer extends MinePacket {
     private String name;
     private long entityId;
     private float x, y, z, speedX, speedY, speedZ;
-    private float yaw, pitch;
+    private float yaw, headYaw, pitch;
     private ItemStack hand;
     private EntityMetadata metadata;
 
@@ -28,13 +28,15 @@ public class Packet0CAddPlayer extends MinePacket {
         this.uuid = player.getClientUUID();
         this.name = player.getName();
         this.entityId = player.getEntityID();
-        Location loc = player.getLocation();
-        this.x = (float) loc.getX();
-        this.y = (float) loc.getY();
-        this.z = (float) loc.getZ();
-        this.speedX = this.speedY = this.speedZ = 0F;
-        this.yaw = (float) loc.getYaw();
-        this.pitch = (float) loc.getPitch();
+        this.x = player.getX();
+        this.y = player.getY();
+        this.z = player.getZ();
+        this.speedX = player.getMotionX();
+        this.speedY = player.getMotionY();
+        this.speedZ = player.getMotionZ();
+        this.yaw = player.getYaw();
+        this.headYaw = player.getHeadYaw();
+        this.pitch = player.getPitch();
         this.hand = player.getInventory().getItemInHand();
         this.metadata = player.getDataProperties();
     }
@@ -53,14 +55,15 @@ public class Packet0CAddPlayer extends MinePacket {
     public void write(MineBuffer buffer) {
         buffer.writeUUID(this.uuid);
         buffer.writeString(this.name);
-        buffer.writeEntityRuntimeId(this.entityId);
+        buffer.writeEntityUniqueId(this.entityId);
         buffer.writeEntityRuntimeId(this.entityId);
         buffer.writeVector3f(this.x, this.y, this.z);
         buffer.writeVector3f(this.speedX, this.speedY, this.speedZ);
         buffer.writeFloat(this.pitch);
-        buffer.writeFloat(this.yaw); //head rotation
+        buffer.writeFloat(this.headYaw);
         buffer.writeFloat(this.yaw);
         buffer.writeItemStack(this.hand);
         buffer.writeMetadata(this.metadata);
+
     }
 }

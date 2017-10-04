@@ -6,8 +6,8 @@ import org.lunaris.command.CommandParameter;
 import org.lunaris.command.CommandParameterType;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.Player;
-import org.lunaris.entity.data.Gamemode;
-import org.lunaris.entity.data.LPermission;
+import org.lunaris.entity.misc.Gamemode;
+import org.lunaris.entity.misc.LPermission;
 
 /**
  * Created by RINES on 01.10.17.

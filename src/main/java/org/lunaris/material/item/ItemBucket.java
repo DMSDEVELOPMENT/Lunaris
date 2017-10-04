@@ -4,7 +4,7 @@ import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
 import org.lunaris.block.BlockFace;
 import org.lunaris.entity.Player;
-import org.lunaris.entity.data.Gamemode;
+import org.lunaris.entity.misc.Gamemode;
 import org.lunaris.event.player.PlayerBucketEmptyEvent;
 import org.lunaris.event.player.PlayerBucketFillEvent;
 import org.lunaris.item.ItemStack;

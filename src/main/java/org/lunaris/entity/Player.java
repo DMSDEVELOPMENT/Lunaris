@@ -237,7 +237,7 @@ public class Player extends LivingEntity implements CommandSender {
         super.tick(current, dT);
         World world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfViewChunk(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
-        world.getNearbyEntitiesByClass(Item.class, getLocation(), 1D).forEach(item -> {
+        world.getNearbyEntitiesByClass(Item.class, getLocation(), .75D).forEach(item -> {
             if(current < item.getPickupDelay())
                 return;
             PlayerPickupItemEvent event = new PlayerPickupItemEvent(this, item);
@@ -252,7 +252,8 @@ public class Player extends LivingEntity implements CommandSender {
                 if(leftIS.getAmount() == is.getAmount())
                     return;
                 is.setAmount(is.getAmount() - leftIS.getAmount());
-            }
+            }else
+                is.setAmount(0);
             Lunaris.getInstance().getNetworkManager().sendPacket(world.getPlayers(), new Packet11PickupItem(item.getEntityID(), getEntityID()));
             if(is.getAmount() == 0)
                 item.remove();

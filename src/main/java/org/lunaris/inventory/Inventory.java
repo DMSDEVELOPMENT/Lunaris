@@ -89,7 +89,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
     }
 
     public void setItem(int index, ItemStack item) {
-        if(item != null && item.getAmount() == 0)
+        if(item != null && (item.getType() == Material.AIR || item.getAmount() <= 0))
             item = null;
         setItemWithoutUpdate(index, item);
         sendSlot(this.viewers, index);
@@ -250,7 +250,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
                 throw new IllegalArgumentException("Can not add air to the inventory");
         Map<Integer, ItemStack> leftover = new HashMap<>();
         for(int i = 0; i < items.length; ++i) {
-            ItemStack item = items[i];
+            ItemStack item = items[i].clone();
             int max = getMaxStackSize(item);
             while(true) {
                 int firstPartial = firstPartial(item);
@@ -292,7 +292,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
                 throw new IllegalArgumentException("Can not remove air from the inventory");
         Map<Integer, ItemStack> leftover = new HashMap<>();
         for(int i = 0; i < items.length; ++i) {
-            ItemStack item = items[i];
+            ItemStack item = items[i].clone();
             int deletable = item.getAmount();
             while(true) {
                 int first = first(item, false);

@@ -55,7 +55,7 @@ public class BasicInventoryTransaction implements InventoryTransaction {
             if(target != null && target.getType() != Material.AIR)
                 needItems.add(target);
             if(!action.isValid(this.player)) {
-                System.out.println("IS NOT VALID");
+                System.out.println(this.player.getName() + " performed non valid transaction!");
                 return false;
             }
             target = action.getSourceItem();

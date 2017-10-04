@@ -19,6 +19,7 @@ public class MovementData implements Movable {
     private final static float TICK_RATE = TimeUnit.MILLISECONDS.toNanos(50) / (float) TimeUnit.SECONDS.toNanos(1);
     private final static float GRAVITY = 0.04f;
     private final static float DRAG = 0.02f;
+    private final static float EPSILON = 1E-5F;
 
     private final Entity entity;
 
@@ -87,6 +88,8 @@ public class MovementData implements Movable {
 
     @Override
     public void setPosition(float x, float y, float z) {
+        if(Math.abs(this.x - x) < EPSILON && Math.abs(this.y - y) < EPSILON && Math.abs(this.z - z) < EPSILON)
+            return;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -95,9 +98,14 @@ public class MovementData implements Movable {
 
     @Override
     public void setRotation(float yaw, float headYaw, float pitch) {
-        this.yaw = normalize(yaw);
-        this.headYaw = normalize(headYaw);
-        this.pitch = normalize(pitch);
+        yaw = normalize(yaw);
+        headYaw = normalize(headYaw);
+        pitch = normalize(pitch);
+        if(Math.abs(this.yaw - yaw) < EPSILON && Math.abs(this.headYaw - headYaw) < EPSILON && Math.abs(this.pitch - pitch) < EPSILON)
+            return;
+        this.yaw = yaw;
+        this.headYaw = yaw;
+        this.pitch = yaw;
         this.dirty = true;
     }
 
@@ -106,7 +114,6 @@ public class MovementData implements Movable {
         this.motionX = x;
         this.motionY = y;
         this.motionZ = z;
-        this.dirty = true;
     }
 
     public boolean isDirty() {

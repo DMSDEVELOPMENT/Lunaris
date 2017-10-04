@@ -79,7 +79,7 @@ public class ItemStack implements Cloneable {
     }
 
     public void setAmount(int amount) {
-        this.amount = amount;
+        this.amount = Math.max(0, amount);
     }
 
     public int getMaxStackSize() {

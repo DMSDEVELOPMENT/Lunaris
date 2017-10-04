@@ -189,7 +189,7 @@ public abstract class Entity extends Metadatable implements Movable {
             setDirtyMetadata(false);
             Lunaris.getInstance().getNetworkManager().broadcastPacket(new Packet27SetEntityData(this.entityID, getDataProperties()));
         }
-        if(getY() <= 16)
+        if(getY() <= -16)
             if(this instanceof LivingEntity)
                 ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.VOID, 1);
             else

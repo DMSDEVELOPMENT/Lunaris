@@ -30,8 +30,8 @@ public class Packet11PickupItem extends MinePacket {
 
     @Override
     public void write(MineBuffer buffer) {
-        buffer.writeUnsignedVarLong(this.itemEntityID);
-        buffer.writeUnsignedVarLong(this.playerEntityID);
+        buffer.writeEntityRuntimeId(this.itemEntityID);
+        buffer.writeEntityRuntimeId(this.playerEntityID);
     }
 
 }

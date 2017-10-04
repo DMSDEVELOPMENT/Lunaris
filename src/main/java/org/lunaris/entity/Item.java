@@ -29,7 +29,7 @@ public class Item extends Entity {
 
     @Override
     public float getHeight() {
-        return .25F;
+        return .4F;
     }
 
     @Override

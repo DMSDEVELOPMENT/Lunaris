@@ -24,6 +24,7 @@ import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.particle.DestroyBlockParticle;
 import org.lunaris.world.particle.PunchBlockParticle;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +72,7 @@ public class BlockMaster {
                         sider.getChunk().sendPacket(new Packet18LevelSoundEvent(Sound.PLACE, sider.getLocation(), hand.getType().getId(), 1, false, false));
                         if(player.getGamemode() != Gamemode.CREATIVE) {
                             hand.setAmount(hand.getAmount() - 1);
-                            player.getInventory().setItemInHand(hand.getAmount() == 0 ? null : hand);
+                            player.getInventory().setItemInHand(hand.getAmount() <= 0 ? null : hand);
                         }
                     }
                 }
@@ -162,13 +163,11 @@ public class BlockMaster {
             player.sendPacket(new Packet15UpdateBlock(block)); //restore block to players
             return;
         }
-        if(withDrops) {
-            List<ItemStack> drops = block.getHandle().getDrops(block, player.getInventory().getItemInHand());
-            if(drops != null)
-                drops.forEach(drop -> block.getWorld().dropItem(drop, block.getLocation().add(0D, 1D, 0D)));
-        }
+        List<ItemStack> drops = withDrops ? block.getHandle().getDrops(block, player.getInventory().getItemInHand()) : Collections.emptyList();
         new DestroyBlockParticle(block).sendToNearbyPlayers();
         block.setType(Material.AIR);
+        if(drops != null)
+            drops.forEach(drop -> block.getWorld().dropItem(drop.clone(), block.getLocation().add(.5D, .5D, .5D)));
         Scheduler.Task task = player.getBreakingBlockTask();
         if (task != null) {
             task.cancel();

@@ -1,13 +1,6 @@
 package org.lunaris.command;
 
-import org.lunaris.command.defaults.CommandGive;
-import org.lunaris.command.defaults.CommandList;
-import org.lunaris.command.defaults.CommandOp;
-import org.lunaris.command.defaults.CommandSay;
-import org.lunaris.command.defaults.CommandStop;
-import org.lunaris.command.defaults.CommandTest;
-import org.lunaris.command.defaults.CommandTimings;
-import org.lunaris.command.defaults.CommandVersion;
+import org.lunaris.command.defaults.*;
 import org.lunaris.util.exception.CommandExecutionException;
 import org.lunaris.util.logger.ChatColor;
 
@@ -34,6 +27,7 @@ public class CommandManager {
         new CommandTest();
         new CommandOp();
         new CommandGive();
+        new CommandTPS();
     }
 
     public boolean isCommand(String line) {

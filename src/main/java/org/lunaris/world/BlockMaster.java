@@ -197,16 +197,13 @@ public class BlockMaster {
         //handle enchantments
         int efficiencyLoreLevel = 0;
         int hasteEffectLevel = 0;
-//        boolean insideOfWaterWithoutAquaAffinity = player.isInsideOfWater();
-//        boolean outOfWaterButNotOnGround = !player.isInsideOfWater() && !player.isOnGround();
-        boolean insideOfWaterWithoutAquaAffinity = false;
-        boolean outOfWaterButNotOnGround = false;
-        return getBreakTime(hardness, correctTool, canHarvestWithHand, material.getType(), toolType, tier, efficiencyLoreLevel, hasteEffectLevel, insideOfWaterWithoutAquaAffinity, outOfWaterButNotOnGround);
+        boolean insideOfWaterWithoutAquaAffinity = player.isInsideOfWater();
+        return getBreakTime(hardness, correctTool, canHarvestWithHand, material.getType(), toolType, tier, efficiencyLoreLevel, hasteEffectLevel, insideOfWaterWithoutAquaAffinity, player.isOnGround());
     }
 
     private double getBreakTime(double hardness, boolean correctTool, boolean canHarvestWithHand, Material blockType,
                                 ItemToolType toolType, ItemTier tier, int efficiencyLoreLevel, int hasteEffectLevel,
-                                boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
+                                boolean insideOfWaterWithoutAquaAffinity, boolean onGround) {
         double baseTime = ((correctTool || canHarvestWithHand) ? 1.5D : 5D) * hardness;
         double speed = 1D / baseTime;
         boolean isWoolBlock = blockType == Material.WOOL, isCobweb = blockType == Material.COBWEB;
@@ -214,7 +211,7 @@ public class BlockMaster {
             speed *= getToolBreakTimeBonus(toolType, tier, isWoolBlock, isCobweb);
         speed += getSpeedBonusByEfficiencyLore(efficiencyLoreLevel);
         speed *= getSpeedRateByHasteLore(hasteEffectLevel);
-        if(insideOfWaterWithoutAquaAffinity || outOfWaterButNotOnGround)
+        if(insideOfWaterWithoutAquaAffinity || !onGround)
             speed *= .2D;
         return 1D / speed;
     }

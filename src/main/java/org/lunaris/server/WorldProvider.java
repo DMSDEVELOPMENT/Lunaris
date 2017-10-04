@@ -44,6 +44,10 @@ public class WorldProvider {
         return this.worlds.stream().filter(w -> w.getName().equals(name)).findAny().orElse(null);
     }
 
+    public float getLastTickTime() {
+        return this.lastTickTime;
+    }
+
     private void tick() {
         long currentNanos = System.nanoTime();
         long current = System.currentTimeMillis();

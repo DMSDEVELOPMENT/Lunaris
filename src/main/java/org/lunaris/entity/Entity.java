@@ -1,12 +1,11 @@
 package org.lunaris.entity;
 
 import org.lunaris.Lunaris;
-import org.lunaris.block.Block;
 import org.lunaris.entity.data.*;
 import org.lunaris.event.entity.EntityDamageEvent;
+import org.lunaris.material.block.LiquidBlock;
 import org.lunaris.network.protocol.packet.Packet27SetEntityData;
 import org.lunaris.util.math.AxisAlignedBB;
-import org.lunaris.util.math.LMath;
 import org.lunaris.world.Chunk;
 import org.lunaris.world.Location;
 import org.lunaris.world.World;
@@ -280,6 +279,11 @@ public abstract class Entity extends Metadatable implements Movable {
 
     public boolean isOnGround() {
         return this.onGround;
+    }
+
+    public boolean isInsideOfWater() {
+        Location location = getLocation().add(0D, getEyeHeight(), 0D);
+        return this.world.getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ()).getHandle() instanceof LiquidBlock;
     }
 
     public boolean hasJustMoved() {

@@ -162,6 +162,7 @@ public class MovementData implements Movable {
                     dy = oldDy;
                     dz = oldDz;
                     this.entity.getBoundingBox().setBounds(box);
+                    this.jumpingOffset = 0F;
                 }else
                     this.jumpingOffset += .5F;
             }
@@ -189,7 +190,7 @@ public class MovementData implements Movable {
                     getY() + this.entity.getHeight(),
                     getZ() + hwidth
             );
-            move(0F, 0F, 0F); //??
+            this.dirty = true;
         }
     }
 
@@ -201,7 +202,6 @@ public class MovementData implements Movable {
         Block block;
         if((block = world.getBlockAt(bx, by, bz)).getHandle().isSolid() && block.getBoundingBox().intersectsWith(bb)) {
             float diffX = this.x - bx, diffY = this.y - by, diffZ = this.z - bz;
-            double force = Math.random() * .2 + .1;
             boolean freeMinusX = !world.getBlockAt(bx - 1, by, bz).getHandle().isSolid();
             boolean freeMinusY = !world.getBlockAt(bx, by - 1, bz).getHandle().isSolid();
             boolean freeMinusZ = !world.getBlockAt(bx, by, bz - 1).getHandle().isSolid();
@@ -233,7 +233,7 @@ public class MovementData implements Movable {
 
         private void accept(MovementData movement) {
             int sign = (this.direction & 1) == 0 ? -1 : 1;
-            float force = this.force * sign;
+            float force = sign * ((float) Math.random() * .2F + .1F);
             if((this.direction & 2) != 0)
                 movement.changeMotion(0F, force, 0F);
             else if((this.direction & 4) != 0)

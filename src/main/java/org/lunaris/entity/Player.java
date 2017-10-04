@@ -14,7 +14,6 @@ import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
-import org.lunaris.server.Scheduler;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.world.Location;
 import org.lunaris.world.Sound;
@@ -61,7 +60,7 @@ public class Player extends LivingEntity implements CommandSender {
 
     private final Set<Long> chunksSent = new HashSet<>();
 
-    private Scheduler.Task breakingBlockTask;
+    private final BlockBreakingData blockBreakingData = new BlockBreakingData();
 
     private final AdventureSettings adventureSettings;
 
@@ -237,25 +236,25 @@ public class Player extends LivingEntity implements CommandSender {
         super.tick(current, dT);
         World world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfViewChunk(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
-        world.getNearbyEntitiesByClass(Item.class, getLocation(), .75D).forEach(item -> {
-            if(current < item.getPickupDelay())
+        world.getNearbyEntitiesByClass(Item.class, getLocation(), 1.25D, .5D).forEach(item -> {
+            if (current < item.getPickupDelay())
                 return;
             PlayerPickupItemEvent event = new PlayerPickupItemEvent(this, item);
             Lunaris.getInstance().getEventManager().call(event);
-            if(event.isCancelled())
+            if (event.isCancelled())
                 return;
             ItemStack is = item.getItemStack();
             PlayerInventory pinv = getInventory();
             Collection<ItemStack> left = pinv.addItem(is).values();
-            if(!left.isEmpty()) {
+            if (!left.isEmpty()) {
                 ItemStack leftIS = left.iterator().next();
-                if(leftIS.getAmount() == is.getAmount())
+                if (leftIS.getAmount() == is.getAmount())
                     return;
                 is.setAmount(is.getAmount() - leftIS.getAmount());
-            }else
+            } else
                 is.setAmount(0);
             Lunaris.getInstance().getNetworkManager().sendPacket(world.getPlayers(), new Packet11PickupItem(item.getEntityID(), getEntityID()));
-            if(is.getAmount() == 0)
+            if (is.getAmount() == 0)
                 item.remove();
         });
     }
@@ -410,12 +409,12 @@ public class Player extends LivingEntity implements CommandSender {
         return this.invulnerable;
     }
 
-    public Scheduler.Task getBreakingBlockTask() {
-        return this.breakingBlockTask;
+    public BlockBreakingData getBlockBreakingData() {
+        return this.blockBreakingData;
     }
 
-    public void setBreakingBlockTask(Scheduler.Task breakingBlockTask) {
-        this.breakingBlockTask = breakingBlockTask;
+    public boolean isBreakingBlock() {
+        return this.blockBreakingData.isBreakingBlock();
     }
 
     public AdventureSettings getAdventureSettings() {

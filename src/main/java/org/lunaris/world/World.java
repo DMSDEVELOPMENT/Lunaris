@@ -14,6 +14,7 @@ import org.lunaris.event.chunk.ChunkUnloadedEvent;
 import org.lunaris.item.ItemStack;
 import org.lunaris.material.Material;
 import org.lunaris.network.protocol.packet.*;
+import org.lunaris.util.math.LMath;
 import org.lunaris.util.math.MathHelper;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
@@ -224,6 +225,19 @@ public class World {
         Set<T> result = new HashSet<>();
         for(Entity entity : this.entities) {
             if(entityClass.isAssignableFrom(entity.getClass()) && entity.getLocation().distance(location) <= radius)
+                result.add((T) entity);
+        }
+        return result;
+    }
+
+    public <T extends Entity> Collection<T> getNearbyEntitiesByClass(Class<T> entityClass, Location location, double radiusXZ, double radiusY) {
+        Set<T> result = new HashSet<>();
+        radiusXZ *= radiusXZ;
+        for(Entity entity : this.entities) {
+            if(!entityClass.isAssignableFrom(entity.getClass()))
+                continue;
+            Location loc = entity.getLocation();
+            if(Math.abs(loc.getY() - location.getY()) <= radiusY && LMath.pow2(loc.getX() - location.getX()) + LMath.pow2(loc.getZ() - location.getZ()) <= radiusXZ)
                 result.add((T) entity);
         }
         return result;

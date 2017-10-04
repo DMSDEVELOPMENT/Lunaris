@@ -19,14 +19,12 @@ import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
 import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
 import org.lunaris.network.protocol.packet.Packet19LevelEvent;
 import org.lunaris.network.protocol.packet.Packet24PlayerAction;
-import org.lunaris.server.Scheduler;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.particle.DestroyBlockParticle;
 import org.lunaris.world.particle.PunchBlockParticle;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by RINES on 24.09.17.
@@ -85,9 +83,12 @@ public class BlockMaster {
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         BlockFace face = BlockFace.fromIndex(packet.getFace());
         World world = player.getWorld();
-        if(player.getBreakingBlockTask() != null || player.getLocation().distanceSquared(position) > 100)
+        if(player.getLocation().distanceSquared(position) > 100)
             return;
         Block block = world.getBlockAt(position);
+        long exactBreakingTime = getExactBreakTimeInMillis(block, player);
+        if(player.isBreakingBlock() && player.getBlockBreakingData().getBlockBreakingTime() >= exactBreakingTime)
+            return;
         Block sider = block.getSide(face);
         PlayerInteractEvent interactEvent = new PlayerInteractEvent(player, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, block);
         this.server.getEventManager().call(interactEvent);
@@ -109,7 +110,7 @@ public class BlockMaster {
                         (float) position.x, (float) position.y, (float) position.z,
                         (int) (65535 / breakTime)
                 ));
-                player.setBreakingBlockTask(this.server.getScheduler().schedule(() -> processBlockBreak(player, block), getExactBreakTimeInMillis(block, player) - Scheduler.ONE_TICK_IN_MILLIS, TimeUnit.MILLISECONDS));
+                player.getBlockBreakingData().runBreak(player, block, exactBreakingTime);
             }case CREATIVE: {
                 //not there
                 break;
@@ -135,16 +136,12 @@ public class BlockMaster {
                 )
             );
         }
-        Scheduler.Task task = player.getBreakingBlockTask();
-        if (task != null) {
-            task.cancel();
-            player.setBreakingBlockTask(null);
-        }
+        player.getBlockBreakingData().clear();
     }
 
     public void onBlockContinueBreak(Packet24PlayerAction packet) {
         Player player = packet.getPlayer();
-        if(player.getBreakingBlockTask() == null)
+        if(!player.isBreakingBlock())
             return;
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         BlockFace face = BlockFace.fromIndex(packet.getFace());
@@ -168,11 +165,7 @@ public class BlockMaster {
         block.setType(Material.AIR);
         if(drops != null)
             drops.forEach(drop -> block.getWorld().dropItem(drop.clone(), block.getLocation().add(.5D, .5D, .5D)));
-        Scheduler.Task task = player.getBreakingBlockTask();
-        if (task != null) {
-            task.cancel();
-            player.setBreakingBlockTask(null);
-        }
+        player.getBlockBreakingData().clear();
     }
 
     private long getExactBreakTimeInMillis(Block block, Player player) {

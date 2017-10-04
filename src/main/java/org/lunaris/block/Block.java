@@ -86,7 +86,7 @@ public class Block {
     }
 
     public Location getLocation() {
-        return this.location;
+        return this.location.clone();
     }
 
     public World getWorld() {

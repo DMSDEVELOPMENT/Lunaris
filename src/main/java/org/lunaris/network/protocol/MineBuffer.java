@@ -168,11 +168,11 @@ public class MineBuffer {
     }
 
     public void writeEntityRuntimeId(long id) {
-        writeUnsignedVarLong(id);
+        writeVarLong(id);
     }
 
     public long readEntityRuntimeId() {
-        return readUnsignedVarLong();
+        return readVarLong();
     }
 
     public void writeEntityUniqueId(long id) {

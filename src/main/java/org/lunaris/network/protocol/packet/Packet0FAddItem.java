@@ -1,6 +1,7 @@
 package org.lunaris.network.protocol.packet;
 
 import org.lunaris.entity.Item;
+import org.lunaris.entity.data.EntityMetadata;
 import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
@@ -14,6 +15,7 @@ public class Packet0FAddItem extends MinePacket {
     private ItemStack itemStack;
     private float x, y, z;
     private float motionX, motionY, motionZ;
+    private EntityMetadata metadata;
 
     public Packet0FAddItem() {}
 
@@ -26,6 +28,7 @@ public class Packet0FAddItem extends MinePacket {
         this.motionX = item.getMotionX();
         this.motionY = item.getMotionY();
         this.motionZ = item.getMotionZ();
+        this.metadata = item.getDataProperties();
     }
 
     @Override
@@ -45,6 +48,7 @@ public class Packet0FAddItem extends MinePacket {
         buffer.writeItemStack(this.itemStack);
         buffer.writeVector3f(this.x, this.y, this.z);
         buffer.writeVector3f(this.motionX, this.motionY, this.motionZ);
+        buffer.writeMetadata(this.metadata);
     }
 
 }

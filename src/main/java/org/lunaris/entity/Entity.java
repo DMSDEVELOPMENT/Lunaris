@@ -37,6 +37,8 @@ public abstract class Entity extends Metadatable implements Movable {
     private boolean onGround;
     private float fallDistance;
 
+    private int lastVoidDamage = 0;
+
     protected Entity(long entityID, EntityType entityType) {
         this.entityID = entityID;
         this.entityType = entityType;
@@ -181,7 +183,7 @@ public abstract class Entity extends Metadatable implements Movable {
     public void tick(long current, float dT) {
         this.movement.tickMovement(current, dT);
         if(this.fireTicks > 0) {
-            if(this instanceof LivingEntity)
+            if((this.fireTicks % 10 == 0 || this.fireTicks == 1) && this instanceof LivingEntity)
                 ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.FIRE, 1);
             setDataFlag(false, EntityDataFlag.ON_FIRE, this.fireTicks --> 1, true);
         }
@@ -190,9 +192,12 @@ public abstract class Entity extends Metadatable implements Movable {
             Lunaris.getInstance().getNetworkManager().broadcastPacket(new Packet27SetEntityData(this.entityID, getDataProperties()));
         }
         if(getY() <= -16)
-            if(this instanceof LivingEntity)
-                ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.VOID, 1);
-            else
+            if(this instanceof LivingEntity) {
+                if(++this.lastVoidDamage == 5) {
+                    this.lastVoidDamage = 0;
+                    ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.VOID, 4);
+                }
+            }else
                 remove();
     }
 
@@ -216,12 +221,14 @@ public abstract class Entity extends Metadatable implements Movable {
      * @param dy разница перемещения по y
      */
     public void setupFallDistance(float dy) {
-        if(this.onGround) {
-            if(this.fallDistance > 0F)
-                fall();
-            this.fallDistance = 0;
-        }else if(dy < 0F)
-            this.fallDistance -= dy;
+        //Not woring properly
+//        if(this.onGround) {
+//            if(this.fallDistance > 0F)
+//                fall();
+//            this.fallDistance = 0;
+//        }else if(dy < 0F) {
+//            this.fallDistance -= dy;
+//        }
     }
 
     /**
@@ -280,6 +287,18 @@ public abstract class Entity extends Metadatable implements Movable {
     public abstract void fall();
 
     public abstract MinePacket createSpawnPacket();
+
+    public void sendPacketToNearbyPlayers(MinePacket packet) {
+        Lunaris.getInstance().getNetworkManager().sendPacket(getApplicablePlayers(), packet);
+    }
+
+    public void sendPacketToAllWorldPlayers(MinePacket packet) {
+        Lunaris.getInstance().getNetworkManager().sendPacket(this.world.getPlayers(), packet);
+    }
+
+    public Collection<Player> getApplicablePlayers() {
+        return this.world.getApplicablePlayers(getLocation());
+    }
 
     public AxisAlignedBB getBoundingBox() {
         return this.boundingBox;

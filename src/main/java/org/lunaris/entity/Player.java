@@ -328,7 +328,7 @@ public class Player extends LivingEntity implements CommandSender {
         health.setMaxValue(health.getDefaultValue());
         health.setValue(health.getMaxValue());
         setDirtyMetadata(false);
-        sendPacket(new Packet2DRespawn((float) location.getX(), (float) location.getY(), (float) location.getZ()));
+//        sendPacket(new Packet2DRespawn((float) location.getX(), (float) location.getY(), (float) location.getZ()));
         sendPacket(new Packet1DUpdateAttributes(
                 getEntityID(),
                 getAttribute(Attribute.MAX_HEALTH),

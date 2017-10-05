@@ -1,8 +1,7 @@
 package org.lunaris.material;
 
 import org.lunaris.material.block.*;
-import org.lunaris.material.item.ItemBucket;
-import org.lunaris.material.item.ItemString;
+import org.lunaris.material.item.*;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -30,6 +29,20 @@ public enum Material {
     FARM_LAND(BlockFarmland.class, 60),
     NETHER_PORTAL(BlockStone.class, 60), //fix
     GRASS_PATH(BlockGrassPath.class, 198),
+    //now items begin:
+    IRON_SHOVEL(ItemShovelIron.class, 256),
+    IRON_PICKAXE(ItemPickaxeIron.class, 257),
+    IRON_AXE(ItemAxeIron.class, 258),
+    //some items
+    DIAMOND(ItemHandle.class, 264),
+    IRON_INGOT(ItemHandle.class, 265),
+    GOLD_INGOT(ItemHandle.class, 266),
+    IRON_SWORD(ItemSwordIron.class, 267),
+    WOODEN_SWORD(ItemSwordWooden.class, 268),
+    WOODEN_SHOVEL(ItemShovelWooden.class, 269),
+    WOODEN_PICKAXE(ItemPickaxeWooden.class, 270),
+    WOODEN_AXE(ItemAxeWooden.class, 271),
+    //some items
     STRING(ItemString.class, 287),
     BUCKET(ItemBucket.class, 325, true);
 
@@ -39,9 +52,35 @@ public enum Material {
         for (Material material : values()) {
             BY_ID.put(material.id, material);
             try {
-                Constructor<? extends MaterialHandle> constructor = material.handleClass.getDeclaredConstructor();
-                constructor.setAccessible(true);
-                material.handle = constructor.newInstance();
+                constructorCycle:
+                for(Constructor<?> constructor : material.handleClass.getDeclaredConstructors()) {
+                    switch(constructor.getParameterCount()) {
+                        case 0: {
+                            constructor.setAccessible(true);
+                            material.handle = (MaterialHandle) constructor.newInstance();
+                            break constructorCycle;
+                        }case 1: {
+                            if(constructor.getParameterTypes()[0] == String.class) {
+                                constructor.setAccessible(true);
+                                material.handle = (MaterialHandle) constructor.newInstance(material.name().toLowerCase());
+                                break constructorCycle;
+                            }else if(constructor.getParameterTypes()[0] == Material.class) {
+                                constructor.setAccessible(true);
+                                material.handle = (MaterialHandle) constructor.newInstance(material);
+                                break constructorCycle;
+                            }
+                        }case 2: {
+                            Class<?>[] types = constructor.getParameterTypes();
+                            if(types[0] == Material.class && types[1] == String.class) {
+                                constructor.setAccessible(true);
+                                material.handle = (MaterialHandle) constructor.newInstance(material, material.name().toLowerCase());
+                                break constructorCycle;
+                            }
+                        }default:
+                            break;
+                    }
+                    throw new IllegalStateException("Can not find valid constructor for material handle");
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

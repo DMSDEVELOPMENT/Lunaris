@@ -51,7 +51,7 @@ public class ItemHandle extends MaterialHandle {
     }
 
     public int getMaxDurability() {
-        return -1;
+        return getTier().getMaxDurability();
     }
 
     public boolean canBeUsed() {

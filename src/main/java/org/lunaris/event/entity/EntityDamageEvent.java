@@ -51,7 +51,12 @@ public class EntityDamageEvent extends Event implements Cancellable {
         FIRE,
         ENTITY_ATTACK,
         VOID,
-        FALL
+        FALL,
+        CACTI
+    }
+
+    public enum DamageModifier {
+
     }
 
 }

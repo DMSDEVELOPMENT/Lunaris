@@ -2,14 +2,18 @@ package org.lunaris.network.protocol;
 
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
+import org.lunaris.entity.Entity;
+import org.lunaris.entity.LivingEntity;
 import org.lunaris.entity.Player;
 import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.entity.misc.Gamemode;
 import org.lunaris.event.player.*;
 import org.lunaris.inventory.transaction.*;
 import org.lunaris.item.ItemStack;
+import org.lunaris.item.ItemToolType;
 import org.lunaris.jwt.EncryptionHandler;
 import org.lunaris.jwt.EncryptionRequestForger;
+import org.lunaris.material.ItemHandle;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.network.util.ConnectionState;
 import org.lunaris.resourcepacks.ResourcePackManager;
@@ -384,7 +388,51 @@ public class MinePacketHandler {
                     break;
                 }
                 case USE_ITEM_ON_ENTITY: {
-
+                    UseItemOnEntityData data = (UseItemOnEntityData) packet.getData();
+                    Entity entity = player.getWorld().getEntityById(data.getEntityID());
+                    if(entity == null)
+                        return;
+                    if(!data.getItemInHand().equals(player.getInventory().getItemInHand())) {
+                        player.getInventory().sendContents(player);
+                        return;
+                    }
+                    if(player.getGamemode() == Gamemode.SPECTATOR)
+                        return;
+                    ItemStack item = player.getInventory().getItemInHand();
+                    switch(data.getType()) {
+                        case INTERACT: {
+                            PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(player, entity);
+                            event.call();
+                            if(event.isCancelled())
+                                return;
+                            ItemHandle handle = item.getHandle().isBlock() ? null : item.getItemHandle();
+                            if(handle != null && handle.canBeUsed() && handle.useOn(entity, item, player)) {
+                                if(handle.getMaxDurability() > 0) {
+                                    item.setData(item.getData() + 1);
+                                    if(item.getData() >= handle.getMaxDurability())
+                                        player.getInventory().setItemInHand(null);
+                                    else
+                                        player.getInventory().setItemInHand(item);
+                                }
+                            }
+                            break;
+                        }case ATTACK: {
+                            if(!(entity instanceof LivingEntity) || entity instanceof Player && ((Player) entity).getGamemode() == Gamemode.CREATIVE)
+                                return;
+                            double itemDamage = item.getHandle().getAttackDamage();
+                            //check enchantments
+                            //call events
+                            ((LivingEntity) entity).damage(player, itemDamage);
+                            if(item.getToolType() != ItemToolType.NONE) {
+                                item.setData(item.getData() + 1);
+                                if(item.getData() >= item.getItemHandle().getMaxDurability())
+                                    player.getInventory().setItemInHand(null);
+                                else
+                                    player.getInventory().setItemInHand(item);
+                            }
+                            break;
+                        }
+                    }
                     break;
                 }
                 case RELEASE_ITEM: {

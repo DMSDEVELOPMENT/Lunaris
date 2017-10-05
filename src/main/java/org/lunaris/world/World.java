@@ -50,7 +50,7 @@ public class World {
 
     private final LongObjectHashMap<Chunk> chunks = new LongObjectHashMap<>();
     private final Set<Player> players = new HashSet<>();
-    private final Set<Entity> entities = new HashSet<>();
+    private final LongObjectHashMap<Entity> entities = new LongObjectHashMap<>();
 
     private final ChunksFollowerTask followerTask;
     private final BlockUpdateScheduler blockUpdateScheduler;
@@ -70,7 +70,7 @@ public class World {
         if (this.players.contains(player))
             return;
         this.players.add(player);
-        this.entities.add(player);
+        this.entities.put(player.getEntityID(), player);
         this.followerTask.updatePlayer(player);
         Collection<Player> without = getPlayersWithout(player);
         this.server.getNetworkManager().sendPacket(without, player.createSpawnPacket());
@@ -83,12 +83,12 @@ public class World {
     }
 
     public void addEntityToWorld(Entity entity) {
-        this.entities.add(entity);
+        this.entities.put(entity.getEntityID(), entity);
         this.server.getNetworkManager().sendPacket(this.players, entity.createSpawnPacket());
     }
 
     public void removeEntityFromWorld(Entity entity) {
-        this.entities.remove(entity);
+        this.entities.remove(entity.getEntityID());
         this.server.getNetworkManager().sendPacket(this.players, new Packet0ERemoveEntity(entity.getEntityID()));
     }
 
@@ -177,7 +177,7 @@ public class World {
     private void tickEntities(long current, float dT) {
         Timings.getEntitiesTickTimer().startTiming();
         Set<Entity> moved = new HashSet<>();
-        for(Entity entity : new LinkedList<>(this.entities)) {
+        for(Entity entity : new LinkedList<>(this.entities.values())) {
             entity.tick(current, dT);
             if(entity.hasJustMoved())
                 moved.add(entity);
@@ -213,17 +213,21 @@ public class World {
         );
     }
 
+    public Entity getEntityById(long entityID) {
+        return this.entities.get(entityID);
+    }
+
     public Collection<Entity> getEntities() {
-        return this.entities;
+        return this.entities.values();
     }
 
     public Collection<Entity> getNearbyEntities(Location location, double radius) {
-        return this.entities.stream().filter(e -> e.getLocation().distance(location) <= radius).collect(Collectors.toSet());
+        return this.entities.values().stream().filter(e -> e.getLocation().distance(location) <= radius).collect(Collectors.toSet());
     }
 
     public <T extends Entity> Collection<T> getNearbyEntitiesByClass(Class<T> entityClass, Location location, double radius) {
         Set<T> result = new HashSet<>();
-        for(Entity entity : this.entities) {
+        for(Entity entity : this.entities.values()) {
             if(entityClass.isAssignableFrom(entity.getClass()) && entity.getLocation().distance(location) <= radius)
                 result.add((T) entity);
         }
@@ -233,7 +237,7 @@ public class World {
     public <T extends Entity> Collection<T> getNearbyEntitiesByClass(Class<T> entityClass, Location location, double radiusXZ, double radiusY) {
         Set<T> result = new HashSet<>();
         radiusXZ *= radiusXZ;
-        for(Entity entity : this.entities) {
+        for(Entity entity : this.entities.values()) {
             if(!entityClass.isAssignableFrom(entity.getClass()))
                 continue;
             Location loc = entity.getLocation();

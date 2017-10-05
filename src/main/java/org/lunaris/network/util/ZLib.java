@@ -37,11 +37,11 @@ public class ZLib {
     public static byte[] inflate(InputStream stream) throws IOException {
         InflaterInputStream inputStream = new InflaterInputStream(stream);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[256];
         int length;
 
         try {
-            while ((length = inputStream.read(buffer)) != -1) {
+            while ((length = inputStream.read(buffer)) > -1) {
                 outputStream.write(buffer, 0, length);
             }
         } finally {

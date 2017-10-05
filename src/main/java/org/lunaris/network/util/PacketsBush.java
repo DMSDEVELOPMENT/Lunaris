@@ -1,6 +1,7 @@
 package org.lunaris.network.util;
 
 import org.lunaris.Lunaris;
+import org.lunaris.jwt.EncryptionHandler;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 
 /**
@@ -11,12 +12,24 @@ public class PacketsBush {
     private final static byte prefix = (byte) 0xfe;
     private final static int compressionLevel = Lunaris.getInstance().getServerSettings().getNetworkCompressionLevel();
 
+    private final RakNetClientSession session;
+    private EncryptionHandler encryptor;
+
     private byte[] data = new byte[16];
     private int actualLength = 0;
     private int maxLength;
 
     public PacketsBush(RakNetClientSession session) {
-        maxLength = (int) (session.getMaximumTransferUnit() * 1.3f);
+        this.session = session;
+        this.maxLength = (int) (session.getMaximumTransferUnit() * 1.3f);
+    }
+
+    public void setupEncryptor(EncryptionHandler encryptor) {
+        this.encryptor = encryptor;
+    }
+
+    public EncryptionHandler getEncryptor() {
+        return this.encryptor;
     }
 
     public void collect(byte[] data) {
@@ -43,6 +56,8 @@ public class PacketsBush {
                 System.arraycopy(this.data, 0, actual, 0, this.actualLength);
                 this.actualLength = 0;
                 actual = ZLib.deflate(actual, compressionLevel);
+                if(this.session.getConnectionState() == ConnectionState.LOGGED_IN && this.encryptor != null)
+                    actual = this.encryptor.encryptInputForClient(actual);
                 byte[] result = new byte[actual.length + 1];
                 result[0] = prefix;
                 System.arraycopy(actual, 0, result, 1, actual.length);

@@ -4,12 +4,13 @@ import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 
 /**
- * Created by RINES on 13.09.17.
+ * Created by RINES on 05.10.17.
  */
-public class Packet03ServerToClientHandshake extends MinePacket {
+public class Packet04EncryptionResponse extends MinePacket {
+
     @Override
     public int getId() {
-        return 3;
+        return 0x04;
     }
 
     @Override
@@ -21,4 +22,5 @@ public class Packet03ServerToClientHandshake extends MinePacket {
     public void write(MineBuffer buffer) {
 
     }
+
 }

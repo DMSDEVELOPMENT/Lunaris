@@ -35,7 +35,7 @@ public class Player extends LivingEntity implements CommandSender {
 
     private final String username;
     private final UUID clientUUID;
-    private final long clientID;
+    private final String xboxID;
     private final int protocolVersion;
     private final Skin skin;
     private final String skinGeometryName;
@@ -70,7 +70,7 @@ public class Player extends LivingEntity implements CommandSender {
         this.ip = session.getAddress().getAddress().getHostAddress();
         this.username = ChatColor.stripColor(packetLogin.getUsername());
         this.clientUUID = packetLogin.getClientUuid();
-        this.clientID = packetLogin.getClientId();
+        this.xboxID = packetLogin.getXboxID();
         this.protocolVersion = packetLogin.getProtocolVersion();
         this.skin = packetLogin.getSkin();
         this.skinGeometryName = packetLogin.getSkinGeometryName();
@@ -161,8 +161,8 @@ public class Player extends LivingEntity implements CommandSender {
         return clientUUID;
     }
 
-    public long getClientID() {
-        return clientID;
+    public String getXboxID() {
+        return this.xboxID;
     }
 
     public int getProtocolVersion() {
@@ -236,7 +236,7 @@ public class Player extends LivingEntity implements CommandSender {
         super.tick(current, dT);
         World world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfViewChunk(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
-        world.getNearbyEntitiesByClass(Item.class, getLocation(), 1.25D, .5D).forEach(item -> {
+        world.getNearbyEntitiesByClass(Item.class, getLocation(), 1.5D, .5D).forEach(item -> {
             if (current < item.getPickupDelay())
                 return;
             PlayerPickupItemEvent event = new PlayerPickupItemEvent(this, item);

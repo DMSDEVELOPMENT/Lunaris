@@ -43,6 +43,10 @@ public class ServerSettings {
 
     private final IngameSettings ingameSettings;
 
+    private final boolean encryptedConnection;
+
+    private final boolean onlineMode;
+
     public ServerSettings(IServer server) {
         File configFile = new File("lunaris.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
@@ -79,6 +83,8 @@ public class ServerSettings {
             this.timingsVerbose = config.getOrSetBoolean("timings.verbose", false);
             this.timingsHistoryInterval = config.getOrSetInt("timings.history-interval", 6000);
             this.timingsHistoryLength = config.getOrSetInt("timings.history-length", 72000);
+            this.encryptedConnection = config.getOrSetBoolean("use-encrypted-connection", true);
+            this.onlineMode = config.getOrSetBoolean("online-mode", true);
             config.save(configFile);
         }catch(Exception ex) {
             throw new IllegalArgumentException("Server Settings file can not be loaded", ex);
@@ -147,6 +153,14 @@ public class ServerSettings {
 
     public IngameSettings getIngameSettings() {
         return this.ingameSettings;
+    }
+
+    public boolean isUsingEncryptedConnection() {
+        return this.encryptedConnection;
+    }
+
+    public boolean isInOnlineMode() {
+        return this.onlineMode;
     }
 
     public static class IngameSettings {

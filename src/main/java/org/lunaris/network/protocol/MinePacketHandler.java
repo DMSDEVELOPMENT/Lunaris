@@ -8,7 +8,10 @@ import org.lunaris.entity.misc.Gamemode;
 import org.lunaris.event.player.*;
 import org.lunaris.inventory.transaction.*;
 import org.lunaris.item.ItemStack;
+import org.lunaris.jwt.EncryptionHandler;
+import org.lunaris.jwt.EncryptionRequestForger;
 import org.lunaris.network.NetworkManager;
+import org.lunaris.network.util.ConnectionState;
 import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.resourcepacks.ResourcePack;
@@ -24,6 +27,7 @@ public class MinePacketHandler {
 
     private final Lunaris server = Lunaris.getInstance();
     private final NetworkManager networkManager;
+    private final EncryptionRequestForger FORGER = new EncryptionRequestForger();
 
     public MinePacketHandler(NetworkManager manager) {
         this.networkManager = manager;
@@ -41,13 +45,17 @@ public class MinePacketHandler {
             }
             return;
         }
+        if(packet.getDisconnectReason() != null) {
+            player.disconnect(packet.getDisconnectReason());
+            return;
+        }
         boolean valid = true;
         String name = player.getName();
         if(name.length() < 3 || name.length() > 16)
             valid = false;
         else {
             if(name.contains(" ")) {
-                player.disconnect("We don't allow spaces, sorreh");
+                player.disconnect("We don't allow spaces in names, sorreh");
                 return;
             }
             for(char c : name.toLowerCase().toCharArray())
@@ -76,17 +84,33 @@ public class MinePacketHandler {
                 player.disconnect();
                 return;
             }
-            player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.LOGIN_SUCCESS));
-            player.sendPacket(new Packet06ResourcePacksInfo());
+            if(Lunaris.getInstance().getServerSettings().isUsingEncryptedConnection()) {
+                EncryptionHandler encryptor = new EncryptionHandler(Lunaris.getInstance().getEncryptionKeyFactory());
+                encryptor.supplyClientKey(packet.getClientPublicKey());
+                if(encryptor.beginClientsideEncryption()) {
+                    player.getSession().setConnectionState(ConnectionState.ENCRYPTION_INIT);
+                    player.getSession().setupEncryptor(encryptor);
+                    String encryptionRequestJWT = FORGER.forge(encryptor.getServerPublic(), encryptor.getServerPrivate(), encryptor.getClientSalt());
+                    Packet03EncryptionRequest encryptionPacket = new Packet03EncryptionRequest(encryptionRequestJWT);
+                    player.sendPacket(encryptionPacket);
+                }
+            }else {
+                player.getSession().setConnectionState(ConnectionState.LOGGED_IN);
+                player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.LOGIN_SUCCESS));
+                player.sendPacket(new Packet06ResourcePacksInfo());
+            }
         });
     }
 
-    public void handle(Packet04ClientToServerHandshake packet) {
-
+    public void handle(Packet04EncryptionResponse packet) {
+        Player player = packet.getPlayer();
+        player.getSession().setConnectionState(ConnectionState.LOGGED_IN);
+        player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.LOGIN_SUCCESS));
+        player.sendPacket(new Packet06ResourcePacksInfo());
     }
 
     public void handle(Packet05Disconnect packet) {
-
+        packet.getPlayer().disconnect("Disconnected");
     }
 
     public void handle(Packet08ResourcePackResponse packet) {

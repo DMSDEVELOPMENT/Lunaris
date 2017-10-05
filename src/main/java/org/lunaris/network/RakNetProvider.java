@@ -90,6 +90,8 @@ public class RakNetProvider {
                     PacketDataInput input = packet.getDataInput();
                     byte[] bytes = new byte[input.remaining()];
                     input.readFully(bytes);
+                    if(session.getEncryptor() != null)
+                        bytes = session.getEncryptor().decryptInputFromClient(bytes);
                     bytes = ZLib.inflate(bytes, 1 << 26);
                     buf = new MineBuffer(Unpooled.copiedBuffer(bytes));
                     int position;

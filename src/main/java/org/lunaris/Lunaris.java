@@ -8,6 +8,7 @@ import org.lunaris.entity.EntityProvider;
 import org.lunaris.entity.Player;
 import org.lunaris.event.EventManager;
 import org.lunaris.event.Listener;
+import org.lunaris.jwt.EncryptionKeyFactory;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.network.protocol.packet.Packet09Text;
 import org.lunaris.plugin.PluginManager;
@@ -54,6 +55,8 @@ public class Lunaris implements IServer {
     private PlayerList playerList;
 
     private PluginManager pluginManager;
+
+    private EncryptionKeyFactory encryptionKeyFactory;
 
     private static boolean shuttingDown;
 
@@ -139,6 +142,7 @@ public class Lunaris implements IServer {
         this.playerList = new PlayerList(this);
         this.pluginManager = new PluginManager(this);
         this.pluginManager.loadPlugins();
+        this.encryptionKeyFactory = new EncryptionKeyFactory(this);
 
         this.eventManager.register(new Listener() {
 
@@ -220,6 +224,10 @@ public class Lunaris implements IServer {
 
     public NetworkManager getNetworkManager() {
         return this.networkManager;
+    }
+
+    public EncryptionKeyFactory getEncryptionKeyFactory() {
+        return this.encryptionKeyFactory;
     }
 
 }

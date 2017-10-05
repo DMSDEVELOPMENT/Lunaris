@@ -71,15 +71,16 @@ public class Packet3FPlayerList extends MinePacket {
             this.uuid = uuid;
         }
 
-        public Entry(UUID uuid, long entityId, String name, Skin skin) {
+        public Entry(UUID uuid, long entityId, String name, Skin skin, String xboxID) {
             this.uuid = uuid;
             this.entityId = entityId;
             this.name = name;
             this.skin = skin;
+            this.xboxUserId = xboxID;
         }
 
         public Entry(Player player) {
-            this(player.getClientUUID(), player.getEntityID(), player.getName(), player.getSkin());
+            this(player.getClientUUID(), player.getEntityID(), player.getName(), player.getSkin(), player.getXboxID());
         }
 
     }

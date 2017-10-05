@@ -32,6 +32,7 @@ package org.lunaris.network.raknet.session;
 
 import io.netty.channel.Channel;
 
+import org.lunaris.jwt.EncryptionHandler;
 import org.lunaris.network.raknet.RakNetPacket;
 import org.lunaris.network.raknet.protocol.ConnectionType;
 import org.lunaris.network.raknet.protocol.Reliability;
@@ -41,6 +42,7 @@ import org.lunaris.network.raknet.protocol.login.NewIncomingConnection;
 import org.lunaris.network.raknet.protocol.message.EncapsulatedPacket;
 import org.lunaris.network.raknet.protocol.message.acknowledge.Record;
 import org.lunaris.network.raknet.server.RakNetServer;
+import org.lunaris.network.util.ConnectionState;
 import org.lunaris.network.util.PacketsBush;
 
 import java.net.InetSocketAddress;
@@ -59,6 +61,7 @@ public class RakNetClientSession extends org.lunaris.network.raknet.session.RakN
     private final long timeCreated;
     private long timestamp;
     private final PacketsBush bush;
+    private ConnectionState connectionState = ConnectionState.LOGGING_IN;
 
     /**
      * Constructs a <code>RakNetClientSession</code> with the specified
@@ -86,6 +89,22 @@ public class RakNetClientSession extends org.lunaris.network.raknet.session.RakN
      */
     public RakNetServer getServer() {
         return this.server;
+    }
+
+    public void setupEncryptor(EncryptionHandler encryptor) {
+        this.bush.setupEncryptor(encryptor);
+    }
+
+    public EncryptionHandler getEncryptor() {
+        return this.bush.getEncryptor();
+    }
+
+    public ConnectionState getConnectionState() {
+        return this.connectionState;
+    }
+
+    public void setConnectionState(ConnectionState connectionState) {
+        this.connectionState = connectionState;
     }
 
     /**

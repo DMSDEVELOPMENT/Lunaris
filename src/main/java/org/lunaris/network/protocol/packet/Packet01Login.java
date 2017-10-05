@@ -1,16 +1,22 @@
 package org.lunaris.network.protocol.packet;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.lunaris.Lunaris;
 import org.lunaris.entity.misc.Skin;
+import org.lunaris.jwt.JwtAlgorithm;
+import org.lunaris.jwt.JwtSignatureException;
+import org.lunaris.jwt.JwtToken;
+import org.lunaris.jwt.MojangChainValidator;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 
-import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.security.interfaces.ECPublicKey;
 import java.util.Base64;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -18,9 +24,14 @@ import java.util.UUID;
  */
 public class Packet01Login extends MinePacket {
 
+    private static Boolean validate;
+
     private String username;
     private UUID clientUuid;
-    private long clientId;
+    private String xboxID;
+    private ECPublicKey clientPublicKey;
+
+    private String disconnectReason;
 
     private Skin skin;
     private String skinGeometryName;
@@ -36,49 +47,80 @@ public class Packet01Login extends MinePacket {
     @Override
     public void read(MineBuffer buffer) {
         this.protocolVersion = buffer.readInt();
-        buffer.readUnsignedVarInt(); //byte array (payload) size
-        decode(buffer);
+        decode(buffer.readByteArray());
     }
 
-    private void decode(MineBuffer buffer) {
+    private void decode(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        byte[] stringBuffer = new byte[buffer.getInt()];
+        buffer.get(stringBuffer);
+        String jwt = new String( stringBuffer );
+        JSONObject json;
         try {
-            Map<String, List<String>> map = new Gson().fromJson(new String(buffer.readBytes(buffer.readUnsignedInt()), StandardCharsets.UTF_8),
-                    new TypeToken<Map<String, List<String>>>() {
-                    }.getType());
-            if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
-            List<String> chains = map.get("chain");
-            for (String c : chains) {
-                JsonObject chainMap = decodeToken(c);
-                if (chainMap == null) continue;
-                if (chainMap.has("extraData")) {
-                    JsonObject extra = chainMap.get("extraData").getAsJsonObject();
-                    if (extra.has("displayName")) this.username = extra.get("displayName").getAsString();
-                    if (extra.has("identity")) this.clientUuid = UUID.fromString(extra.get("identity").getAsString());
+            json = this.parseJwtString( jwt );
+        } catch ( ParseException e ) {
+            e.printStackTrace();
+            return;
+        }
+
+        Object jsonChainRaw = json.get( "chain" );
+        if ( jsonChainRaw == null || !( jsonChainRaw instanceof JSONArray) ) {
+            return;
+        }
+
+        MojangChainValidator chainValidator = new MojangChainValidator(Lunaris.getInstance().getEncryptionKeyFactory());
+        JSONArray jsonChain = (JSONArray) jsonChainRaw;
+        for ( Object jsonTokenRaw : jsonChain ) {
+            if ( jsonTokenRaw instanceof String ) {
+                try {
+                    JwtToken token = JwtToken.parse( (String) jsonTokenRaw );
+                    chainValidator.addToken( token );
+                } catch ( IllegalArgumentException e ) {
+                    e.printStackTrace();
                 }
             }
-        }finally {
-            decodeSkinData(buffer);
         }
+
+        if(validate == null)
+            validate = Lunaris.getInstance().getServerSettings().isInOnlineMode();
+        if (validate && !chainValidator.validate()) {
+            this.disconnectReason = "You can login only using XBOX account.";
+            return;
+        }
+        byte[] skin = new byte[buffer.getInt()];
+        buffer.get( skin );
+
+        JwtToken skinToken = JwtToken.parse( new String( skin ) );
+
+        try {
+            skinToken.validateSignature( JwtAlgorithm.ES384, chainValidator.getTrustedKeys().get( skinToken.getHeader().getProperty( "x5u" ) ) );
+        } catch ( JwtSignatureException e ) {
+            if(validate) {
+                this.disconnectReason = "Your skin is invalid or corrupted.";
+                return;
+            }
+        }
+        String capeData = skinToken.getClaim( "CapeData" );
+        this.skin = new Skin((String) skinToken.getClaim("SkinData"), skinToken.getClaim("SkinId"));
+        if(!capeData.isEmpty())
+            this.skin.setCape(this.skin.new Cape(Base64.getDecoder().decode(capeData)));
+        this.skinGeometryName = skinToken.getClaim("SkinGeometryName");
+        this.skinGeometry = Base64.getDecoder().decode((String) skinToken.getClaim("SkinGeometry"));
+
+        this.username = chainValidator.getUsername();
+        this.clientUuid = chainValidator.getUuid();
+        this.xboxID = chainValidator.getXboxId();
+        this.clientPublicKey = chainValidator.getClientPublicKey();
     }
 
-    private void decodeSkinData(MineBuffer buffer) {
-        JsonObject skinToken = decodeToken(new String(buffer.readBytes(buffer.readUnsignedInt())));
-        String skinId = null;
-        if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
-        if (skinToken.has("SkinId")) skinId = skinToken.get("SkinId").getAsString();
-        if (skinToken.has("SkinData")) {
-            this.skin = new Skin(skinToken.get("SkinData").getAsString(), skinId);
-            if (skinToken.has("CapeData"))
-                this.skin.setCape(this.skin.new Cape(Base64.getDecoder().decode(skinToken.get("CapeData").getAsString())));
+    private JSONObject parseJwtString( String jwt ) throws ParseException {
+        Object jsonParsed = new JSONParser().parse( jwt );
+        if ( jsonParsed instanceof JSONObject ) {
+            return (JSONObject) jsonParsed;
+        } else {
+            throw new ParseException( ParseException.ERROR_UNEXPECTED_TOKEN );
         }
-        if (skinToken.has("SkinGeometryName")) this.skinGeometryName = skinToken.get("SkinGeometryName").getAsString();
-        if (skinToken.has("SkinGeometry")) this.skinGeometry = Base64.getDecoder().decode(skinToken.get("SkinGeometry").getAsString());
-    }
-
-    private JsonObject decodeToken(String token) {
-        String[] base = token.split("\\.");
-        if (base.length < 2) return null;
-        return new Gson().fromJson(new String(Base64.getDecoder().decode(base[1]), StandardCharsets.UTF_8), JsonObject.class);
     }
 
     @Override
@@ -87,30 +129,39 @@ public class Packet01Login extends MinePacket {
     }
 
     public int getProtocolVersion() {
-        return protocolVersion;
+        return this.protocolVersion;
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public UUID getClientUuid() {
-        return clientUuid;
+        return this.clientUuid;
     }
 
-    public long getClientId() {
-        return clientId;
+    public String getXboxID() {
+        return this.xboxID;
     }
 
     public Skin getSkin() {
-        return skin;
+        return this.skin;
     }
 
     public String getSkinGeometryName() {
-        return skinGeometryName;
+        return this.skinGeometryName;
     }
 
     public byte[] getSkinGeometry() {
-        return skinGeometry;
+        return this.skinGeometry;
     }
+
+    public ECPublicKey getClientPublicKey() {
+        return this.clientPublicKey;
+    }
+
+    public String getDisconnectReason() {
+        return this.disconnectReason;
+    }
+
 }

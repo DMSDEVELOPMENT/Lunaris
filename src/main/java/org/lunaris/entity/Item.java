@@ -18,7 +18,7 @@ public class Item extends Entity {
     private float lastUpdateDt;
 
     Item(long entityID, ItemStack itemStack) {
-        this(entityID, itemStack, 2000L);
+        this(entityID, itemStack, 500L);
     }
 
     Item(long entityID, ItemStack itemStack, long pickupDelay) {

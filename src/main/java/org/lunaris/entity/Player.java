@@ -236,7 +236,7 @@ public class Player extends LivingEntity implements CommandSender {
         super.tick(current, dT);
         World world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfViewChunk(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
-        world.getNearbyEntitiesByClass(Item.class, getLocation(), 1.5D, .5D).forEach(item -> {
+        world.getNearbyEntitiesByClass(Item.class, getLocation().add(0, 1, 0), 1.5D, 1.5D).forEach(item -> {
             if (current < item.getPickupDelay())
                 return;
             PlayerPickupItemEvent event = new PlayerPickupItemEvent(this, item);
@@ -427,7 +427,7 @@ public class Player extends LivingEntity implements CommandSender {
 
     @Override
     public float getWidth() {
-        return .6F;
+        return .8F;
     }
 
     @Override

@@ -26,6 +26,7 @@ public class DropItemAction extends InventoryAction {
     @Override
     public boolean execute(Player source) {
         return Lunaris.getInstance().getEntityProvider().spawnItem(source.getLocation().add(0F, 1.3F, 0F), getTargetItem(), item -> {
+            item.setPickupDelay(2000L);
             PlayerDropItemEvent event = new PlayerDropItemEvent(source, item);
             event.call();
             if(event.isCancelled()) {

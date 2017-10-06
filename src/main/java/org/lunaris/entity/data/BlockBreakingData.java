@@ -1,42 +1,31 @@
 package org.lunaris.entity.data;
 
-import org.lunaris.Lunaris;
-import org.lunaris.block.Block;
-import org.lunaris.entity.Player;
-import org.lunaris.server.Scheduler;
-
-import java.util.concurrent.TimeUnit;
-
 /**
  * Created by RINES on 05.10.17.
  */
 public class BlockBreakingData {
 
-    private Scheduler.Task blockBreakingTask;
-    private long blockBreakingTime, breakStartTime;
+    private long blockBreakingTime, breakStartTime, passed;
 
     public void clear() {
-        if(this.blockBreakingTask != null) {
-            this.blockBreakingTask.cancel();
-            this.blockBreakingTask = null;
-        }
         this.blockBreakingTime = 0L;
     }
 
-    public void runBreak(Player player, Block block, long time, long schedulerTime) {
-        if(isBreakingBlock())
-            clear();
+    public void startBreak(long time) {
         this.blockBreakingTime = time;
         this.breakStartTime = System.currentTimeMillis();
-        this.blockBreakingTask = Lunaris.getInstance().getScheduler().schedule(
-                () -> Lunaris.getInstance().getWorldProvider().getBlockMaster().processBlockBreak(player, block),
-                schedulerTime - Scheduler.ONE_TICK_IN_MILLIS,
-                TimeUnit.MILLISECONDS
-        );
+        this.passed = 0L;
+    }
+
+    public void updateBreak(long newTime) {
+        long current = System.currentTimeMillis();
+        this.passed += current - this.breakStartTime;
+        this.breakStartTime = current;
+        this.blockBreakingTime = newTime - this.passed;
     }
 
     public boolean isBreakingBlock() {
-        return this.blockBreakingTask != null;
+        return this.blockBreakingTime != 0L;
     }
 
     public long getBlockBreakingTime() {
@@ -45,6 +34,10 @@ public class BlockBreakingData {
 
     public long getBreakStartTime() {
         return this.breakStartTime;
+    }
+
+    public long getOvertime() {
+        return this.passed;
     }
 
 }

@@ -86,9 +86,6 @@ public class BlockMaster {
         if(player.getLocation().distanceSquared(position) > 100)
             return;
         Block block = world.getBlockAt(position);
-        long exactBreakingTime = getExactBreakTimeInMillis(block, player);
-        if(player.isBreakingBlock() && player.getBlockBreakingData().getBlockBreakingTime() >= exactBreakingTime)
-            return;
         Block sider = block.getSide(face);
         PlayerInteractEvent interactEvent = new PlayerInteractEvent(player, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, block);
         this.server.getEventManager().call(interactEvent);
@@ -110,7 +107,7 @@ public class BlockMaster {
                         (float) position.x, (float) position.y, (float) position.z,
                         (int) (65535 / breakTime)
                 ));
-                player.getBlockBreakingData().runBreak(player, block, exactBreakingTime, exactBreakingTime);
+                player.getBlockBreakingData().startBreak(getExactBreakTimeInMillis(block, player));
             }case CREATIVE: {
                 //not there
                 break;
@@ -136,7 +133,7 @@ public class BlockMaster {
                 )
             );
         }
-        player.getBlockBreakingData().clear();
+        //clear breaking block data?
     }
 
     public void onBlockContinueBreak(Packet24PlayerAction packet) {
@@ -146,21 +143,19 @@ public class BlockMaster {
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         Block block = player.getWorld().getBlockAt(position);
         long time = getExactBreakTimeInMillis(block, player);
-        if(player.getBlockBreakingData().getBlockBreakingTime() < time) {
-            long passed = System.currentTimeMillis() - player.getBlockBreakingData().getBreakStartTime();
-            double breakTime = getBreakTimeInTicks(block, player) - passed / 50;
-            block.getChunk().sendPacket(new Packet19LevelEvent(
-                    Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
-                    (float) position.x, (float) position.y, (float) position.z,
-                    0
-            ));
-            block.getChunk().sendPacket(new Packet19LevelEvent(
-                    Packet19LevelEvent.EVENT_BLOCK_START_BREAK,
-                    (float) position.x, (float) position.y, (float) position.z,
-                    (int) (65535 / breakTime)
-            ));
-            player.getBlockBreakingData().runBreak(player, block, time, time - passed);
-            return;
+        if(player.getBlockBreakingData().getBlockBreakingTime() != time) {
+            player.getBlockBreakingData().updateBreak(time);
+//            double breakTime = getBreakTimeInTicks(block, player) - player.getBlockBreakingData().getOvertime() / 50;
+//            block.getChunk().sendPacket(new Packet19LevelEvent(
+//                    Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
+//                    (float) position.x, (float) position.y, (float) position.z,
+//                    0
+//            ));
+//            block.getChunk().sendPacket(new Packet19LevelEvent(
+//                    Packet19LevelEvent.EVENT_BLOCK_START_BREAK,
+//                    (float) position.x, (float) position.y, (float) position.z,
+//                    (int) (65535 / breakTime)
+//            ));
         }
         BlockFace face = BlockFace.fromIndex(packet.getFace());
         new PunchBlockParticle(player.getWorld().getBlockAt(position), face).sendToNearbyPlayers();
@@ -178,12 +173,16 @@ public class BlockMaster {
             player.sendPacket(new Packet15UpdateBlock(block)); //restore block to players
             return;
         }
-        List<ItemStack> drops = withDrops ? block.getHandle().getDrops(block, player.getInventory().getItemInHand()) : Collections.emptyList();
+        ItemStack hand = player.getInventory().getItemInHand();
+        List<ItemStack> drops = withDrops ? block.getHandle().getDrops(block, hand) : Collections.emptyList();
         new DestroyBlockParticle(block).sendToNearbyPlayers();
         block.setType(Material.AIR);
         if(drops != null)
             drops.forEach(drop -> block.getWorld().dropItem(drop.clone(), block.getLocation().add(.5D, .5D, .5D)));
-        player.getBlockBreakingData().clear();
+        if(!hand.getHandle().isBlock() && hand.getItemHandle().getToolType() != ItemToolType.NONE) {
+            hand.setData(hand.getData() + 1);
+            player.getInventory().setItemInHand(hand.getData() == hand.getItemHandle().getMaxDurability() ? null : hand);
+        }
     }
 
     private long getExactBreakTimeInMillis(Block block, Player player) {

@@ -5,6 +5,7 @@ import org.lunaris.block.Block;
 import org.lunaris.entity.Entity;
 import org.lunaris.entity.LivingEntity;
 import org.lunaris.entity.Player;
+import org.lunaris.entity.data.BlockBreakingData;
 import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.entity.misc.Gamemode;
 import org.lunaris.event.player.*;
@@ -366,19 +367,21 @@ public class MinePacketHandler {
                             return;
                         }case BREAK_BLOCK: {
                             BlockVector vec = data.getBlockPosition();
+                            Block block = player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ());
                             if(player.getGamemode() == Gamemode.CREATIVE)
-                                this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ()), false);
+                                this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, block, false);
                             else {
                                 if(!player.isBreakingBlock())
                                     player.sendPacket(new Packet15UpdateBlock(player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ())));
-//                                else {
-//                                    long passed = System.currentTimeMillis() - player.getBlockBreakingData().getBreakStartTime();
-//                                    float percentage = (float) passed / player.getBlockBreakingData().getBlockBreakingTime();
-//                                    if(percentage >= .75F)
-//                                        this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ()), true);
-//                                    this.server.broadcastMessage(percentage + "%");
-//                                }
+                                else {
+                                    BlockBreakingData bdata = player.getBlockBreakingData();
+                                    long passed = System.currentTimeMillis() - bdata.getBreakStartTime() + bdata.getOvertime();
+                                    long delta = bdata.getBlockBreakingTime() - passed;
+                                    if(delta <= 100)
+                                        this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, block, true);
+                                }
                             }
+                            player.getBlockBreakingData().clear();
                             return;
                         }case CLICK_AIR: {
 

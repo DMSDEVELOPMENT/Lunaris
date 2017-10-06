@@ -30,18 +30,18 @@ public enum Material {
     NETHER_PORTAL(BlockStone.class, 60), //fix
     GRASS_PATH(BlockGrassPath.class, 198),
     //now items begin:
-    IRON_SHOVEL(ItemShovelIron.class, 256),
-    IRON_PICKAXE(ItemPickaxeIron.class, 257),
-    IRON_AXE(ItemAxeIron.class, 258),
+    IRON_SHOVEL(ItemShovelIron.class, 256, true),
+    IRON_PICKAXE(ItemPickaxeIron.class, 257, true),
+    IRON_AXE(ItemAxeIron.class, 258, true),
     //some items
     DIAMOND(ItemHandle.class, 264),
     IRON_INGOT(ItemHandle.class, 265),
     GOLD_INGOT(ItemHandle.class, 266),
-    IRON_SWORD(ItemSwordIron.class, 267),
-    WOODEN_SWORD(ItemSwordWooden.class, 268),
-    WOODEN_SHOVEL(ItemShovelWooden.class, 269),
-    WOODEN_PICKAXE(ItemPickaxeWooden.class, 270),
-    WOODEN_AXE(ItemAxeWooden.class, 271),
+    IRON_SWORD(ItemSwordIron.class, 267, true),
+    WOODEN_SWORD(ItemSwordWooden.class, 268, true),
+    WOODEN_SHOVEL(ItemShovelWooden.class, 269, true),
+    WOODEN_PICKAXE(ItemPickaxeWooden.class, 270, true),
+    WOODEN_AXE(ItemAxeWooden.class, 271, true),
     //some items
     STRING(ItemString.class, 287),
     BUCKET(ItemBucket.class, 325, true);

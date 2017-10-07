@@ -19,12 +19,14 @@ import org.lunaris.util.math.LMath;
 import org.lunaris.util.math.MathHelper;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
+import org.lunaris.world.tracker.EntityTracker;
 import org.lunaris.world.util.BlockUpdateScheduler;
 import org.lunaris.world.util.ChunkUnloaderTask;
 import org.lunaris.world.util.ChunksFollowerTask;
 import org.lunaris.world.util.LongHash;
 import org.lunaris.world.util.LongObjectHashMap;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -55,12 +57,14 @@ public class World {
 
     private final ChunksFollowerTask followerTask;
     private final BlockUpdateScheduler blockUpdateScheduler;
+    private final EntityTracker entityTracker;
 
     public World(Lunaris server, String name, Dimension dimension, Difficulty difficulty) {
         this.server = server;
         this.name = name;
         this.dimension = dimension;
         this.difficulty = difficulty;
+        this.entityTracker = new EntityTracker(server, this);
         if (server.getServerSettings().isUnloadChunks())
             server.getScheduler().scheduleRepeatable(new ChunkUnloaderTask(server, this, chunks), 30, 30, TimeUnit.SECONDS);
         blockUpdateScheduler = new BlockUpdateScheduler(this);
@@ -72,14 +76,15 @@ public class World {
             return;
         this.players.add(player);
         this.entities.put(player.getEntityID(), player);
+        this.entityTracker.track(player);
         this.followerTask.updatePlayer(player);
-        Collection<Player> without = getPlayersWithout(player);
+        /*Collection<Player> without = getPlayersWithout(player);
         this.server.getNetworkManager().sendPacket(without, player.createSpawnPacket());
         without.stream().map(Player::createSpawnPacket).forEach(player::sendPacket);
         this.entities.values().stream()
                 .filter(e -> e.getEntityType() != EntityType.PLAYER)
                 .map(Entity::createSpawnPacket)
-                .forEach(player::sendPacket);
+                .forEach(player::sendPacket);*/
     }
 
     public void removePlayerFromWorld(Player player) {
@@ -89,12 +94,14 @@ public class World {
 
     public void addEntityToWorld(Entity entity) {
         this.entities.put(entity.getEntityID(), entity);
-        this.server.getNetworkManager().sendPacket(this.players, entity.createSpawnPacket());
+        this.entityTracker.track(entity);
+        //this.server.getNetworkManager().sendPacket(this.players, entity.createSpawnPacket());
     }
 
     public void removeEntityFromWorld(Entity entity) {
         this.entities.remove(entity.getEntityID());
-        this.server.getNetworkManager().sendPacket(this.players, new Packet0ERemoveEntity(entity.getEntityID()));
+        this.entityTracker.untrack(entity);
+        //this.server.getNetworkManager().sendPacket(this.players, new Packet0ERemoveEntity(entity.getEntityID()));
     }
 
     public boolean isChunkLoadedAt(int x, int z) {
@@ -181,23 +188,9 @@ public class World {
 
     private void tickEntities(long current, float dT) {
         Timings.getEntitiesTickTimer().startTiming();
-        Set<Entity> moved = new HashSet<>();
-        for(Entity entity : new LinkedList<>(this.entities.values())) {
+        for(Entity entity : new ArrayList<>(this.entities.values()))
             entity.tick(current, dT);
-            if(entity.hasJustMoved())
-                moved.add(entity);
-        }
-        for(Entity entity : moved) {
-            Chunk chunk = entity.getChunk();
-            if(chunk == null || !chunk.isLoaded())
-                continue;
-            Packet12MoveEntity packetMovement = new Packet12MoveEntity(entity);
-            Packet28SetEntityMotion packetMotion = new Packet28SetEntityMotion(entity);
-            Collection<Player> players = getApplicablePlayers(entity.getLocation());
-            players.remove(entity);
-            this.server.getNetworkManager().sendPacket(players, packetMovement);
-            this.server.getNetworkManager().sendPacket(players, packetMotion);
-        }
+        entityTracker.tick();
         Timings.getEntitiesTickTimer().stopTiming();
     }
 
@@ -309,6 +302,10 @@ public class World {
 
     public Location getSpawnLocation() {
         return this.spawnLocation.clone();
+    }
+    
+    public EntityTracker getEntityTracker() {
+        return entityTracker;
     }
 
     public Collection<Player> getPlayers() {

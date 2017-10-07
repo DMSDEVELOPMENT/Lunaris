@@ -189,10 +189,6 @@ public abstract class Entity extends Metadatable implements Movable {
                 ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.FIRE, 1);
             setDataFlag(false, EntityDataFlag.ON_FIRE, this.fireTicks --> 1, true);
         }
-        if(isDirtyMetadata()) {
-            setDirtyMetadata(false);
-            Lunaris.getInstance().getNetworkManager().broadcastPacket(new Packet27SetEntityData(this.entityID, getDataProperties()));
-        }
         if(getY() <= -16)
             if(this instanceof LivingEntity) {
                 if(++this.lastVoidDamage == 5) {
@@ -283,22 +279,31 @@ public abstract class Entity extends Metadatable implements Movable {
     public abstract float getStepHeight();
 
     /**
+     * Дальность видимости ентити
+     *
+     * @return дальность видимости в блоках
+     */
+    public int getTrackRange() {
+        return 64;
+    }
+
+    /**
      * Метод, вызываемый при падении сущности на землю с высоты
      */
     public abstract void fall();
 
     public abstract MinePacket createSpawnPacket();
 
-    public void sendPacketToNearbyPlayers(MinePacket packet) {
-        Lunaris.getInstance().getNetworkManager().sendPacket(getApplicablePlayers(), packet);
+    public void sendPacketToWatchers(MinePacket packet) {
+        this.world.getEntityTracker().sendPacketToWatchers(this, packet);
     }
 
     public void sendPacketToAllWorldPlayers(MinePacket packet) {
         Lunaris.getInstance().getNetworkManager().sendPacket(this.world.getPlayers(), packet);
     }
 
-    public Collection<Player> getApplicablePlayers() {
-        return this.world.getApplicablePlayers(getLocation());
+    public Collection<Player> getWatchers() {
+        return this.world.getEntityTracker().getWatchers(this);
     }
 
     public AxisAlignedBB getBoundingBox() {

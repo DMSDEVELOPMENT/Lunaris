@@ -253,7 +253,7 @@ public class Player extends LivingEntity implements CommandSender {
                 is.setAmount(is.getAmount() - leftIS.getAmount());
             } else
                 is.setAmount(0);
-            Lunaris.getInstance().getNetworkManager().sendPacket(world.getPlayers(), new Packet11PickupItem(item.getEntityID(), getEntityID()));
+            getWorld().getEntityTracker().sendPacketToWatchers(this, new Packet11PickupItem(item.getEntityID(), getEntityID()));
             if (is.getAmount() == 0)
                 item.remove();
         });

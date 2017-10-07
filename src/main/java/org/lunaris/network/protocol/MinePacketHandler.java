@@ -215,8 +215,7 @@ public class MinePacketHandler {
     }
 
     public void handle(Packet18LevelSoundEvent packet) {
-        Player p = packet.getPlayer();
-        sync(() -> this.networkManager.sendPacket(getApplicablePlayersWithout(p), packet));
+        sync(() -> packet.getPlayer().sendPacketToWatchers(packet));
     }
 
     public void handle(Packet1FMobEquipment packet) {
@@ -274,7 +273,7 @@ public class MinePacketHandler {
                 break;
             }case JUMP: {
                 sync(() -> {
-                    this.networkManager.sendPacket(getApplicablePlayersWithout(p), packet);
+                    p.sendPacketToWatchers(packet);
                     PlayerJumpEvent event = new PlayerJumpEvent(p);
                     this.server.getEventManager().call(event);
                 });
@@ -308,7 +307,7 @@ public class MinePacketHandler {
     }
 
     public void handle(Packet2CAnimate packet) {
-        sync(() -> this.networkManager.sendPacket(getApplicablePlayersWithout(packet.getPlayer()), packet));
+        sync(() -> packet.getPlayer().sendPacketToWatchers(packet));
     }
 
     public void handle(Packet30PlayerHotbar packet) {
@@ -456,12 +455,6 @@ public class MinePacketHandler {
 
     public void handle(Packet32InventorySlot packet) {
 
-    }
-
-    private Collection<Player> getApplicablePlayersWithout(Player p) {
-        Collection<Player> players = p.getWorld().getApplicablePlayers(p.getLocation());
-        players.remove(p);
-        return players;
     }
 
     private void sync(Runnable run) {

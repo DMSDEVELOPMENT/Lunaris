@@ -16,4 +16,8 @@ public class MathHelper {
     public static int pow2(int a) {
         return a * a;
     }
+
+    public static float pow2(float a) {
+        return a * a;
+    }
 }

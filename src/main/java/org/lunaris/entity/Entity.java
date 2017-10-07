@@ -23,6 +23,7 @@ public abstract class Entity extends Metadatable implements Movable {
     private final long entityID;
     private final EntityType entityType;
     private final MovementData movement;
+    private final long creationTime = System.currentTimeMillis();
 
     private World world;
 
@@ -181,7 +182,8 @@ public abstract class Entity extends Metadatable implements Movable {
     }
 
     public void tick(long current, float dT) {
-        this.movement.tickMovement(current, dT);
+        if(this.entityType != EntityType.PLAYER)
+            this.movement.tickMovement(current, dT);
         if(this.fireTicks > 0) {
             if((this.fireTicks % 10 == 0 || this.fireTicks == 1) && this instanceof LivingEntity)
                 ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.FIRE, 1);
@@ -221,14 +223,13 @@ public abstract class Entity extends Metadatable implements Movable {
      * @param dy разница перемещения по y
      */
     public void setupFallDistance(float dy) {
-        //Not woring properly
-//        if(this.onGround) {
-//            if(this.fallDistance > 0F)
-//                fall();
-//            this.fallDistance = 0;
-//        }else if(dy < 0F) {
-//            this.fallDistance -= dy;
-//        }
+        if(this.onGround) {
+            if(this.fallDistance > 0F && System.currentTimeMillis() - this.creationTime > 1000L)
+                fall();
+            this.fallDistance = 0;
+        }else if(dy < 0F) {
+            this.fallDistance -= dy;
+        }
     }
 
     /**

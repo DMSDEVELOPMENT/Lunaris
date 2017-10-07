@@ -87,7 +87,7 @@ public enum Material {
     //milk?
     BRICK(ItemHandle.class, 336),
     CLAY_BALL(ItemHandle.class, 337),
-    SUGAR_CANE(ItemHandle.class, "reeds", 338),
+//    SUGAR_CANE(ItemHandle.class, "reeds", 338),
     PAPER(ItemHandle.class, 339),
     BOOK(ItemHandle.class, 340),
     SLIME_BALL(ItemHandle.class, 341),

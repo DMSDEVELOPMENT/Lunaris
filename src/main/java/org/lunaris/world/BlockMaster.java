@@ -249,7 +249,7 @@ public class BlockMaster {
                     case DIAMOND:
                         return 8;
                     case GOLD:
-                        return 12;
+                        return 16;
                     default:
                         return 1;
                 }

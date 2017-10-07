@@ -378,6 +378,8 @@ public class MinePacketHandler {
                                     long delta = bdata.getBlockBreakingTime() - passed;
                                     if(delta <= 100)
                                         this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, block, true);
+                                    else
+                                        player.sendPacket(new Packet15UpdateBlock(block));
                                 }
                             }
                             player.getBlockBreakingData().clear();

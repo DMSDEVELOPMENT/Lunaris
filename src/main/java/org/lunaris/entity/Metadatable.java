@@ -48,7 +48,7 @@ public abstract class Metadatable {
             this.getDataProperties().put(data);
             if(send) {
                 EntityMetadata metadata = new EntityMetadata().put(this.dataProperties.get(data.getId()));
-                ((Entity)this).sendPacketToWatchers(new Packet27SetEntityData(getEntityID(), metadata));
+                ((Entity) this).sendPacketToWatchers(new Packet27SetEntityData(getEntityID(), metadata));
             }else
                 this.dirtyMetadata = true;
             return true;

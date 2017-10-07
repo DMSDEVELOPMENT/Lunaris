@@ -432,7 +432,7 @@ public class Player extends LivingEntity implements CommandSender {
 
     @Override
     public float getStepHeight() {
-        return .6F;
+        return .8F;
     }
 
     @Override

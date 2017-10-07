@@ -8,6 +8,7 @@ import org.lunaris.block.Block;
 import org.lunaris.block.BlockFace;
 import org.lunaris.entity.Entity;
 import org.lunaris.entity.Player;
+import org.lunaris.entity.misc.EntityType;
 import org.lunaris.event.chunk.ChunkLoadedEvent;
 import org.lunaris.event.chunk.ChunkPreLoadEvent;
 import org.lunaris.event.chunk.ChunkUnloadedEvent;
@@ -75,6 +76,10 @@ public class World {
         Collection<Player> without = getPlayersWithout(player);
         this.server.getNetworkManager().sendPacket(without, player.createSpawnPacket());
         without.stream().map(Player::createSpawnPacket).forEach(player::sendPacket);
+        this.entities.values().stream()
+                .filter(e -> e.getEntityType() != EntityType.PLAYER)
+                .map(Entity::createSpawnPacket)
+                .forEach(player::sendPacket);
     }
 
     public void removePlayerFromWorld(Player player) {

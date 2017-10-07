@@ -65,7 +65,7 @@ public abstract class LivingEntity extends Entity {
 
     void damage0(double damage) {
         setHealth(Math.min(getMaxHealth(), Math.max(0F, (float) (getHealth() - damage))));
-        sendPacketToNearbyPlayers(new Packet1BEntityEvent(this, getHealth() <= 0F ? Packet1BEntityEvent.EntityEvent.DEATH_ANIMATION : Packet1BEntityEvent.EntityEvent.HURT_ANIMATION));
+        sendPacketToWatchers(new Packet1BEntityEvent(this, getHealth() <= 0F ? Packet1BEntityEvent.EntityEvent.DEATH_ANIMATION : Packet1BEntityEvent.EntityEvent.HURT_ANIMATION));
     }
 
     @Override

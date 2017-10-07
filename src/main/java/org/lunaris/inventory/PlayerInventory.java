@@ -96,7 +96,7 @@ public class PlayerInventory extends Inventory {
     }
 
     public void updateItemInHandFor(Collection<Player> players) {
-        updateItemInHandFor(players.stream().toArray(Player[]::new));
+        updateItemInHandFor(players.toArray(new Player[players.size()]));
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.lunaris.material.Material;
 /**
  * Created by RINES on 07.10.17.
  */
-public class ItemPickaxeGold extends ItemAbstractShovel {
+public class ItemPickaxeGold extends ItemAbstractPickaxe {
 
     ItemPickaxeGold(Material type, String name) {
         super(type, name);

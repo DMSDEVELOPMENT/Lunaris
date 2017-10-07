@@ -436,11 +436,6 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     @Override
-    public void fall() {
-
-    }
-
-    @Override
     public MinePacket createSpawnPacket() {
         return new Packet0CAddPlayer(this);
     }

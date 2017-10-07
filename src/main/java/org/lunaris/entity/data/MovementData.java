@@ -2,6 +2,7 @@ package org.lunaris.entity.data;
 
 import org.lunaris.block.Block;
 import org.lunaris.entity.Entity;
+import org.lunaris.entity.misc.EntityType;
 import org.lunaris.entity.misc.Movable;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.util.math.LMath;
@@ -272,6 +273,8 @@ public class MovementData implements Movable {
     }
 
     private void checkWhetherInsideBlocks(World world) {
+        if(this.entity.getEntityType() == EntityType.PLAYER)
+            return;
         AxisAlignedBB bb = this.entity.getBoundingBox();
         int bx = LMath.fastFloor(this.x);
         int by = LMath.fastFloor(this.y);

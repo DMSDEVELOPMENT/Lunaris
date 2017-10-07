@@ -2,6 +2,7 @@ package org.lunaris.entity;
 
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.misc.EntityType;
+import org.lunaris.entity.misc.Gamemode;
 import org.lunaris.event.entity.EntityDamageByEntityEvent;
 import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.event.entity.EntityDeathEvent;
@@ -44,6 +45,11 @@ public abstract class LivingEntity extends Entity {
     }
 
     public void damage(EntityDamageEvent.DamageCause cause, double damage) {
+        if(getEntityType() == EntityType.PLAYER) {
+            Player p = (Player) this;
+            if(p.getGamemode() == Gamemode.CREATIVE || p.isInvulnerable())
+                return;
+        }
         EntityDamageEvent event = new EntityDamageEvent(this, cause, damage);
         event.call();
         if(event.isCancelled())
@@ -52,6 +58,11 @@ public abstract class LivingEntity extends Entity {
     }
 
     public void damage(Entity damager, double damage) {
+        if(getEntityType() == EntityType.PLAYER) {
+            Player p = (Player) this;
+            if(p.getGamemode() == Gamemode.CREATIVE || p.isInvulnerable())
+                return;
+        }
         EntityDamageEvent event1 = new EntityDamageEvent(this, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage);
         event1.call();
         if(event1.isCancelled())

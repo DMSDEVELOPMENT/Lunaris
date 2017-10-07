@@ -14,5 +14,8 @@ release.properties
 buildNumber.properties
 .mvn/timing.properties
 
+### MacOS
+.DS_Store
+
 ### User
 run/

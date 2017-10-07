@@ -1,4 +1,4 @@
-package org.lunaris.material.item;
+package org.lunaris.material.item.tool;
 
 import org.lunaris.item.ItemTier;
 import org.lunaris.material.Material;
@@ -6,9 +6,9 @@ import org.lunaris.material.Material;
 /**
  * Created by RINES on 06.10.17.
  */
-public class ItemShovelWooden extends ItemAbstractShovel {
+public class ItemAxeWooden extends ItemAbstractAxe {
 
-    public ItemShovelWooden(Material type, String name) {
+    ItemAxeWooden(Material type, String name) {
         super(type, name);
     }
 
@@ -19,7 +19,7 @@ public class ItemShovelWooden extends ItemAbstractShovel {
 
     @Override
     public int getAttackDamage() {
-        return 1;
+        return 3;
     }
 
 }

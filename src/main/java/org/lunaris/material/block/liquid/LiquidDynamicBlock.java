@@ -1,4 +1,4 @@
-package org.lunaris.material.block;
+package org.lunaris.material.block.liquid;
 
 import org.lunaris.Lunaris;
 import org.lunaris.block.BUFlag;

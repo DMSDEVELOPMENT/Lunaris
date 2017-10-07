@@ -5,7 +5,7 @@ import org.lunaris.entity.data.*;
 import org.lunaris.entity.misc.EntityType;
 import org.lunaris.entity.misc.Movable;
 import org.lunaris.event.entity.EntityDamageEvent;
-import org.lunaris.material.block.LiquidBlock;
+import org.lunaris.material.block.liquid.LiquidBlock;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet27SetEntityData;
 import org.lunaris.util.math.AxisAlignedBB;

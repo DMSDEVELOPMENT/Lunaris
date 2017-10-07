@@ -1,4 +1,4 @@
-package org.lunaris.material.item;
+package org.lunaris.material.item.tool;
 
 import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
@@ -8,15 +8,15 @@ import org.lunaris.material.Material;
 /**
  * Created by RINES on 06.10.17.
  */
-public abstract  class ItemAbstractPickaxe extends ItemHandle {
+public abstract  class ItemAbstractAxe extends ItemHandle {
 
-    ItemAbstractPickaxe(Material type, String name) {
+    ItemAbstractAxe(Material type, String name) {
         super(type, name);
     }
 
     @Override
     public ItemToolType getToolType() {
-        return ItemToolType.PICKAXE;
+        return ItemToolType.AXE;
     }
 
     @Override

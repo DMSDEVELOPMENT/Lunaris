@@ -1,20 +1,20 @@
-package org.lunaris.material.item;
+package org.lunaris.material.item.tool;
 
 import org.lunaris.item.ItemTier;
 import org.lunaris.material.Material;
 
 /**
- * Created by RINES on 06.10.17.
+ * Created by RINES on 07.10.17.
  */
-public class ItemShovelIron extends ItemAbstractShovel {
+public class ItemAxeGold extends ItemAbstractAxe {
 
-    public ItemShovelIron(Material type, String name) {
+    ItemAxeGold(Material type, String name) {
         super(type, name);
     }
 
     @Override
     public ItemTier getTier() {
-        return ItemTier.IRON;
+        return ItemTier.GOLD;
     }
 
     @Override

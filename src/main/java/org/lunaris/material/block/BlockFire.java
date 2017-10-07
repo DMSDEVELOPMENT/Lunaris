@@ -9,6 +9,7 @@ import org.lunaris.entity.misc.Gamemode;
 import org.lunaris.event.entity.EntityBurnEvent;
 import org.lunaris.item.ItemStack;
 import org.lunaris.material.Material;
+import org.lunaris.material.block.liquid.FlowableBlock;
 
 /**
  * Created by RINES on 24.09.17.

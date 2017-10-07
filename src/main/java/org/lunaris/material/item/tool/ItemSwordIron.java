@@ -1,4 +1,4 @@
-package org.lunaris.material.item;
+package org.lunaris.material.item.tool;
 
 import org.lunaris.item.ItemTier;
 import org.lunaris.material.Material;
@@ -8,7 +8,7 @@ import org.lunaris.material.Material;
  */
 public class ItemSwordIron extends ItemAbstractSword {
 
-    public ItemSwordIron(Material type, String name) {
+    ItemSwordIron(Material type, String name) {
         super(type, name);
     }
 

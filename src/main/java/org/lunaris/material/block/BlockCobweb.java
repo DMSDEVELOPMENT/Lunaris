@@ -6,6 +6,7 @@ import org.lunaris.entity.Entity;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.material.Material;
+import org.lunaris.material.block.liquid.FlowableBlock;
 
 import java.util.Collections;
 import java.util.List;

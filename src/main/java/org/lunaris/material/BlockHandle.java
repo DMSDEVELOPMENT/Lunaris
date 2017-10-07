@@ -42,7 +42,7 @@ public class BlockHandle extends MaterialHandle {
     }
 
     public boolean onBreak(ItemStack item, Block block) {
-        getDrops(block, item);
+        getDrops(block, item == null ? ItemStack.AIR : item);
         //        return this.getLevel().setBlock(this, new BlockAir(), true, true);
         return true;
     }
@@ -52,7 +52,7 @@ public class BlockHandle extends MaterialHandle {
     }
 
     public void dropBlockAsItem(Block block) {
-        for (ItemStack drop : getDrops(block, null)) {
+        for (ItemStack drop : getDrops(block, ItemStack.AIR)) {
             // drop item in world
         }
     }

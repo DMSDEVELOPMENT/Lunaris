@@ -1,4 +1,4 @@
-package org.lunaris.material.item;
+package org.lunaris.material.item.tool;
 
 import org.lunaris.item.ItemTier;
 import org.lunaris.material.Material;
@@ -6,20 +6,20 @@ import org.lunaris.material.Material;
 /**
  * Created by RINES on 06.10.17.
  */
-public class ItemPickaxeIron extends ItemAbstractPickaxe {
+public class ItemShovelWooden extends ItemAbstractShovel {
 
-    public ItemPickaxeIron(Material type, String name) {
+    ItemShovelWooden(Material type, String name) {
         super(type, name);
     }
 
     @Override
     public ItemTier getTier() {
-        return ItemTier.IRON;
+        return ItemTier.WOODEN;
     }
 
     @Override
     public int getAttackDamage() {
-        return 4;
+        return 1;
     }
 
 }

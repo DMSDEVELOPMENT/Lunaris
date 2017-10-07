@@ -1,4 +1,4 @@
-package org.lunaris.material.block;
+package org.lunaris.material.block.liquid;
 
 import org.lunaris.Lunaris;
 import org.lunaris.block.Block;
@@ -8,6 +8,7 @@ import org.lunaris.entity.Player;
 import org.lunaris.event.block.BlockFromToEvent;
 import org.lunaris.item.ItemStack;
 import org.lunaris.material.Material;
+import org.lunaris.material.block.TransparentBlock;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.Sound;

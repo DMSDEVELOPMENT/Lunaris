@@ -7,7 +7,9 @@ import org.lunaris.material.Material;
  * @author xtrafrancyz
  */
 public class ItemString extends ItemHandle {
-    protected ItemString() {
+
+    ItemString() {
         super(Material.STRING, "String");
     }
+
 }

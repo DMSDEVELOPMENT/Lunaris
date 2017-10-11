@@ -296,8 +296,8 @@ public abstract class Entity extends Metadatable implements Movable {
         this.world.getEntityTracker().sendPacketToWatchers(this, packet);
     }
 
-    public void sendPacketToAllWorldPlayers(MinePacket packet) {
-        Lunaris.getInstance().getNetworkManager().sendPacket(this.world.getPlayers(), packet);
+    public void sendPacketToWatchersAndMe(MinePacket packet) {
+        sendPacketToWatchers(packet);
     }
 
     public Collection<Player> getWatchers() {

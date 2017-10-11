@@ -196,6 +196,13 @@ public class Player extends LivingEntity implements CommandSender {
         Lunaris.getInstance().getNetworkManager().sendPacket(this, packet);
     }
 
+    @Override
+    public void sendPacketToWatchersAndMe(MinePacket packet) {
+        Collection<Player> watchers = getWatchers();
+        watchers.add(this);
+        Lunaris.getInstance().getNetworkManager().sendPacket(watchers, packet);
+    }
+
     public void disconnect() {
         disconnect("You have been disconnected");
     }

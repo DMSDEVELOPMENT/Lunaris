@@ -106,6 +106,6 @@ public class TrackedEntity {
     }
 
     public Set<Player> getTrackingPlayers() {
-        return trackingPlayers;
+        return new HashSet<>(trackingPlayers);
     }
 }

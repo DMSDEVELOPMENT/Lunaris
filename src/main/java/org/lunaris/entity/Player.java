@@ -15,6 +15,7 @@ import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
+import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.Location;
 import org.lunaris.world.Sound;
 import org.lunaris.world.World;
@@ -448,6 +449,11 @@ public class Player extends LivingEntity implements CommandSender {
     @Override
     public float getEyeHeight() {
         return 1.62f;
+    }
+
+    @Override
+    public void setVelocity(Vector3d velocity) {
+        sendPacket(new Packet28SetEntityMotion(getEntityID(), (float) velocity.getX(), (float) velocity.getY(), (float) velocity.getZ()));
     }
 
     public enum IngameState {

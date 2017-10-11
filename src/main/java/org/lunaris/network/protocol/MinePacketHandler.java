@@ -28,6 +28,7 @@ import java.util.*;
  * Created by RINES on 13.09.17.
  */
 public class MinePacketHandler {
+    private static final long PLAYER_USE_DELAY = 160L;
 
     private final Lunaris server = Lunaris.getInstance();
     private final NetworkManager networkManager;
@@ -401,6 +402,10 @@ public class MinePacketHandler {
                     }
                     if(player.getGamemode() == Gamemode.SPECTATOR)
                         return;
+                    long time = System.currentTimeMillis();
+                    if (time - player.getLastUseTime() < PLAYER_USE_DELAY)
+                        return;
+                    player.setLastUseTime(time);
                     ItemStack item = player.getInventory().getItemInHand();
                     switch(data.getType()) {
                         case INTERACT: {

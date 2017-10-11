@@ -61,6 +61,8 @@ public class Player extends LivingEntity implements CommandSender {
     private final BlockBreakingData blockBreakingData = new BlockBreakingData();
 
     private final AdventureSettings adventureSettings;
+    
+    private long lastUseTime = -1;
 
     Player(int entityID, RakNetClientSession session, Packet01Login packetLogin) {
         super(entityID, EntityType.PLAYER);
@@ -258,7 +260,7 @@ public class Player extends LivingEntity implements CommandSender {
                 is.setAmount(is.getAmount() - leftIS.getAmount());
             } else
                 is.setAmount(0);
-            getWorld().getEntityTracker().sendPacketToWatchers(this, new Packet11PickupItem(item.getEntityID(), getEntityID()));
+            sendPacketToWatchersAndMe(new Packet11PickupItem(item.getEntityID(), getEntityID()));
             if (is.getAmount() == 0)
                 item.remove();
         });
@@ -321,8 +323,8 @@ public class Player extends LivingEntity implements CommandSender {
         health.setMaxValue(health.getDefaultValue());
         health.setValue(health.getMaxValue());
         setDirtyMetadata(false);
-//        sendPacket(new Packet2DRespawn((float) location.getX(), (float) location.getY(), (float) location.getZ()));
-        sendPacket(new Packet1DUpdateAttributes(
+        sendPacketToWatchers(new Packet2DRespawn((float) location.getX(), (float) location.getY(), (float) location.getZ()));
+        sendPacketToWatchersAndMe(new Packet1DUpdateAttributes(
                 getEntityID(),
                 getAttribute(Attribute.MAX_HEALTH),
                 getAttribute(Attribute.MAX_HUNGER),
@@ -404,6 +406,14 @@ public class Player extends LivingEntity implements CommandSender {
 
     public boolean isBreakingBlock() {
         return this.blockBreakingData.isBreakingBlock();
+    }
+
+    public long getLastUseTime() {
+        return lastUseTime;
+    }
+    
+    public void setLastUseTime(long time) {
+        this.lastUseTime = time;
     }
 
     public AdventureSettings getAdventureSettings() {

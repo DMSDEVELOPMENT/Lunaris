@@ -42,6 +42,7 @@ public abstract class Entity extends Metadatable implements Movable {
         this.entityID = entityID;
         this.entityType = entityType;
         this.movement = generateEntityMovement();
+        this.setDataFlag(false, EntityDataFlag.GRAVITY, true, false);
     }
 
     @Override

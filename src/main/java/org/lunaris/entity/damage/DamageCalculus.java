@@ -28,7 +28,7 @@ public class DamageCalculus {
     public static Vector3d calculateAttackVelocity(Entity damager, LivingEntity victim) {
         if(damager.getWorld() != victim.getWorld())
             return new Vector3d(0D, 0D, 0D);
-        int knockbackLevel = 0;
+        int knockbackLevel = 5;
         int sprinting = 0;
         if(damager.getEntityType() == EntityType.PLAYER) {
             Player p = (Player) damager;
@@ -40,7 +40,10 @@ public class DamageCalculus {
                 sprinting = 1;
         }
         double amplitude = sprinting + knockbackLevel;
-        return damager.getLocation().subtract(victim.getLocation()).normalize().multiply(amplitude);
+        Vector3d velocity = victim.getLocation().subtract(damager.getLocation()).normalize().multiply(amplitude * 0.1);
+        velocity.y += 0.2;
+        velocity.y = Math.max(-0.4, Math.min(0.5, velocity.y));
+        return velocity;
     }
 
     private static double applyArmorModifiers(LivingEntity victim, DamageSource source, double damage) {
@@ -50,7 +53,7 @@ public class DamageCalculus {
         if(victim.getEntityType() == EntityType.PLAYER) {
             PlayerInventory inventory = ((Player) victim).getInventory();
             for(ItemStack is : inventory.getArmorContents()) {
-                if(is != null)
+                if(is != null && is.isItem())
                     armor += is.getItemHandle().getArmorPoints();
             }
         }
@@ -61,6 +64,8 @@ public class DamageCalculus {
         if(source.isPure())
             return damage;
         PotionEffect effect = victim.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+        if (effect == null)
+            return damage;
         return Math.max(0D, damage * (25F - effect.getLevel() * 5) / 25F);
     }
 

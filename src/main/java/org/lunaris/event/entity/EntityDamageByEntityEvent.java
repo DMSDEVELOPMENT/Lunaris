@@ -2,12 +2,10 @@ package org.lunaris.event.entity;
 
 import org.lunaris.entity.Entity;
 import org.lunaris.entity.LivingEntity;
+import org.lunaris.entity.damage.DamageCalculus;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
-import org.lunaris.util.Validate;
-
-import java.util.Map;
-import java.util.function.Function;
+import org.lunaris.util.math.Vector3d;
 
 /**
  * Created by RINES on 24.09.17.
@@ -16,34 +14,15 @@ public class EntityDamageByEntityEvent extends Event implements Cancellable {
 
     private final Entity damager;
     private final LivingEntity victim;
-    private double baseDamage;
+    private double damage;
+    private Vector3d victimVelocity;
     private boolean cancelled;
 
-    private Map<EntityDamageEvent.DamageModifier, Double> modifiers;
-    private Map<EntityDamageEvent.DamageModifier, Function<Double, Double>> modifierFunctions;
-
-    public EntityDamageByEntityEvent(Entity damager, LivingEntity victim, double baseDamage) {
+    public EntityDamageByEntityEvent(Entity damager, LivingEntity victim, double damage) {
         this.damager = damager;
         this.victim = victim;
-        setBaseDamage(baseDamage);
-    }
-
-    public void setBaseDamage(double damage) {
-        this.baseDamage = damage;
-        calculateFinalDamage();
-    }
-
-    public double getFinalDamage() {
-        double damage = 0D;
-        for(EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values())
-            damage += getDamage(modifier);
-        return Math.max(0D, damage);
-    }
-
-    public double getDamage(EntityDamageEvent.DamageModifier modifier) {
-        Validate.notNull(modifier, "Cannot have null DamageModifier");
-        Double damage = this.modifiers.get(modifier);
-        return damage == null ? 0D : damage;
+        this.damage = damage;
+        this.victimVelocity = DamageCalculus.calculateAttackVelocity(damager, victim);
     }
 
     public Entity getDamager() {
@@ -54,8 +33,16 @@ public class EntityDamageByEntityEvent extends Event implements Cancellable {
         return this.victim;
     }
 
-    public double getBaseDamage() {
-        return this.baseDamage;
+    public double getDamage() {
+        return this.damage;
+    }
+
+    public Vector3d getVictimVelocity() {
+        return this.victimVelocity;
+    }
+
+    public void setVictimVelocity(Vector3d velocity) {
+        this.victimVelocity = velocity;
     }
 
     @Override
@@ -66,18 +53,6 @@ public class EntityDamageByEntityEvent extends Event implements Cancellable {
     @Override
     public boolean isCancelled() {
         return this.cancelled;
-    }
-
-    private void calculateFinalDamage() {
-        if(this.modifiers != null)
-            this.modifiers.clear();
-        if(this.modifierFunctions != null)
-            this.modifierFunctions.clear();
-        setupModifiers();
-    }
-
-    private void setupModifiers() {
-
     }
 
 }

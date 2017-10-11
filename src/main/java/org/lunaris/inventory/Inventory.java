@@ -125,6 +125,17 @@ public abstract class Inventory implements Iterable<ItemStack> {
         });
     }
 
+    public void decreaseDurability(int slot) {
+        ItemStack item = getItem(slot);
+        if(item == null || item.getHandle().isBlock())
+            return;
+        int maxDurability = item.getItemHandle().getMaxDurability();
+        if(maxDurability == -1)
+            return;
+        item.setData(item.getData() + 1);
+        setItem(slot, item.getData() >= maxDurability ? null : item);
+    }
+
     public boolean contains(int id) {
         for(ItemStack is : this.items)
             if(is == null && id == 0 || is != null && is.getType().getId() == id)

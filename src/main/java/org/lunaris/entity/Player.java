@@ -4,7 +4,6 @@ import org.lunaris.Lunaris;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.data.*;
 import org.lunaris.entity.misc.*;
-import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.event.player.PlayerKickEvent;
 import org.lunaris.event.player.PlayerPickupItemEvent;
 import org.lunaris.inventory.Inventory;
@@ -15,7 +14,6 @@ import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
-import org.lunaris.util.math.Vector3d;
 import org.lunaris.world.Location;
 import org.lunaris.world.Sound;
 import org.lunaris.world.World;
@@ -312,18 +310,6 @@ public class Player extends LivingEntity implements CommandSender {
             default:
                 break;
         }
-    }
-
-    @Override
-    public void damage(EntityDamageEvent.DamageCause cause, double damage) {
-        if(!isInvulnerable())
-            super.damage(cause, damage);
-    }
-
-    @Override
-    public void damage(Entity damager, double damage) {
-        if(!isInvulnerable())
-            super.damage(damager, damage);
     }
 
     public void respawn(Location location) {

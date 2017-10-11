@@ -52,6 +52,10 @@ public interface Movable {
         setMotion(getMotionX() + dMotionX, getMotionY() + dMotionY, getMotionZ() + dMotionZ);
     }
 
+    default void changeMotion(Vector3d velocity) {
+        changeMotion((float) velocity.getX(), (float) velocity.getY(), (float) velocity.getZ());
+    }
+
     default void setRotation(float yaw, float pitch) {
         setRotation(yaw, yaw, pitch);
     }

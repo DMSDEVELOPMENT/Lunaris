@@ -124,6 +124,15 @@ public class PlayerInventory extends Inventory {
         return armor;
     }
 
+    public void decreaseHandDurability() {
+        decreaseDurability(this.itemInHandIndex);
+    }
+
+    public void decreaseArmorDurability() {
+        for(int i = getSize(); i < getSize() + 4; ++i)
+            decreaseDurability(i);
+    }
+
     public void equipItem0(int slot) {
         if(!isHotbarSlot(slot)) {
             sendContents(this.holder);

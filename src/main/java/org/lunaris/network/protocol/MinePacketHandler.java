@@ -11,7 +11,6 @@ import org.lunaris.entity.misc.Gamemode;
 import org.lunaris.event.player.*;
 import org.lunaris.inventory.transaction.*;
 import org.lunaris.item.ItemStack;
-import org.lunaris.item.ItemToolType;
 import org.lunaris.jwt.EncryptionHandler;
 import org.lunaris.jwt.EncryptionRequestForger;
 import org.lunaris.material.ItemHandle;
@@ -421,19 +420,12 @@ public class MinePacketHandler {
                             }
                             break;
                         }case ATTACK: {
-                            if(!(entity instanceof LivingEntity) || entity instanceof Player && ((Player) entity).getGamemode() == Gamemode.CREATIVE)
+                            if(!(entity instanceof LivingEntity))
                                 return;
                             double itemDamage = item.getHandle().getAttackDamage();
                             //check enchantments
                             //call events
                             ((LivingEntity) entity).damage(player, itemDamage);
-                            if(item.getToolType() != ItemToolType.NONE) {
-                                item.setData(item.getData() + 1);
-                                if(item.getData() >= item.getItemHandle().getMaxDurability())
-                                    player.getInventory().setItemInHand(null);
-                                else
-                                    player.getInventory().setItemInHand(item);
-                            }
                             break;
                         }
                     }

@@ -1,6 +1,5 @@
 package org.lunaris.entity.data;
 
-import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.network.protocol.packet.Packet28SetEntityMotion;
 
@@ -12,6 +11,7 @@ public class PlayerMovementData extends MovementData {
     private final Player player;
     private float prevX, prevY, prevZ;
     private float dX, dY, dZ;
+    private float mx, my, mz;
 
     public PlayerMovementData(Player player) {
         super(player);
@@ -20,7 +20,9 @@ public class PlayerMovementData extends MovementData {
 
     @Override
     public void setMotion(float x, float y, float z) {
-        this.player.sendPacket(new Packet28SetEntityMotion(this.player.getEntityID(), x, y, z));
+        this.mx = x;
+        this.my = y;
+        this.mz = z;
     }
 
     @Override
@@ -44,6 +46,10 @@ public class PlayerMovementData extends MovementData {
         double x = super.x, y = super.y, z = super.z;
 //        if(LMath.pow2(px - x) + LMath.pow2(py - y) + LMath.pow2(pz - z) >= 1)
 //            this.player.sendPacket(new Packet13MovePlayer(this.player).mode(Packet13MovePlayer.MODE_RESET)); //teleporting when lagging
+        if(this.mx != 0F || this.my != 0F || this.mz != 0F) {
+            this.player.sendPacket(new Packet28SetEntityMotion(this.player.getEntityID(), this.mx, this.my, this.mz));
+            this.mx = this.my = this.mz = 0F;
+        }
     }
 
     @Override

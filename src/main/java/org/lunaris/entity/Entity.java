@@ -1,10 +1,9 @@
 package org.lunaris.entity;
 
-import org.lunaris.Lunaris;
+import org.lunaris.entity.damage.DamageSource;
 import org.lunaris.entity.data.*;
 import org.lunaris.entity.misc.EntityType;
 import org.lunaris.entity.misc.Movable;
-import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.material.block.liquid.LiquidBlock;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.util.math.AxisAlignedBB;
@@ -184,14 +183,14 @@ public abstract class Entity extends Metadatable implements Movable {
         this.movement.tickMovement(current, dT);
         if(this.fireTicks > 0) {
             if((this.fireTicks % 10 == 0 || this.fireTicks == 1) && this instanceof LivingEntity)
-                ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.FIRE, 1);
+                ((LivingEntity) this).damage(DamageSource.ON_FIRE, 1);
             setDataFlag(false, EntityDataFlag.ON_FIRE, this.fireTicks --> 1, true);
         }
         if(getY() <= -16)
             if(this instanceof LivingEntity) {
                 if(++this.lastVoidDamage == 5) {
                     this.lastVoidDamage = 0;
-                    ((LivingEntity) this).damage(EntityDamageEvent.DamageCause.VOID, 4);
+                    ((LivingEntity) this).damage(DamageSource.VOID, 4);
                 }
             }else
                 remove();

@@ -1,5 +1,6 @@
 package org.lunaris.entity;
 
+import org.lunaris.entity.damage.DamageSource;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.misc.EntityType;
 import org.lunaris.entity.misc.Gamemode;
@@ -7,11 +8,16 @@ import org.lunaris.event.entity.EntityDamageByEntityEvent;
 import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.event.entity.EntityDeathEvent;
 import org.lunaris.event.player.PlayerDeathEvent;
+import org.lunaris.item.potion.PotionEffect;
+import org.lunaris.item.potion.PotionEffectType;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet0DAddEntity;
 import org.lunaris.network.protocol.packet.Packet1BEntityEvent;
 import org.lunaris.network.protocol.packet.Packet2DRespawn;
 import org.lunaris.world.Location;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by RINES on 14.09.17.
@@ -51,10 +57,10 @@ public abstract class LivingEntity extends Entity {
     }
 
     public void damage(double damage) {
-        damage(EntityDamageEvent.DamageCause.UNKNOWN, damage);
+        damage(DamageSource.UNKNOWN, damage);
     }
 
-    public void damage(EntityDamageEvent.DamageCause cause, double damage) {
+    public void damage(DamageSource source, double damage) {
         if(isInvulnerable())
             return;
         if(getEntityType() == EntityType.PLAYER) {
@@ -62,11 +68,11 @@ public abstract class LivingEntity extends Entity {
             if(p.getGamemode() == Gamemode.CREATIVE)
                 return;
         }
-        EntityDamageEvent event = new EntityDamageEvent(this, cause, damage);
+        EntityDamageEvent event = new EntityDamageEvent(this, source, damage);
         event.call();
         if(event.isCancelled())
             return;
-        damage0(damage);
+        damage0(event.getFinalDamage());
     }
 
     public void damage(Entity damager, double damage) {
@@ -77,15 +83,20 @@ public abstract class LivingEntity extends Entity {
             if(p.getGamemode() == Gamemode.CREATIVE)
                 return;
         }
-        EntityDamageEvent event1 = new EntityDamageEvent(this, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage);
+        EntityDamageEvent event1 = new EntityDamageEvent(this, DamageSource.ENTITY_ATTACK, damage);
         event1.call();
         if(event1.isCancelled())
             return;
-        EntityDamageByEntityEvent event2 = new EntityDamageByEntityEvent(damager, this, event1.getDamage());
+        EntityDamageByEntityEvent event2 = new EntityDamageByEntityEvent(damager, this, event1.getFinalDamage());
         event2.call();
         if(event2.isCancelled())
             return;
-        damage0(event2.getFinalDamage());
+        if(damager.getEntityType() == EntityType.PLAYER)
+            ((Player) damager).getInventory().decreaseHandDurability();
+        if(getEntityType() == EntityType.PLAYER)
+            ((Player) this).getInventory().decreaseArmorDurability();
+        changeMotion(event2.getVictimVelocity());
+        damage0(event2.getDamage());
     }
 
     void damage0(double damage) {
@@ -120,12 +131,27 @@ public abstract class LivingEntity extends Entity {
 //        Lunaris.getInstance().broadcastMessage(getFallDistance() + "");
         double damage = getFallDistance() - 3;
         if(damage > 0D)
-            damage(EntityDamageEvent.DamageCause.FALL, damage);
+            damage(DamageSource.FALL, damage);
     }
 
     @Override
     public MinePacket createSpawnPacket() {
         return new Packet0DAddEntity(this);
+    }
+
+    public boolean hasPotionEffect(PotionEffectType type) {
+        //TODO:
+        return false;
+    }
+
+    public Collection<PotionEffect> getActivePotionEffects() {
+        //TODO:
+        return Collections.emptySet();
+    }
+
+    public PotionEffect getPotionEffect(PotionEffectType type) {
+        //TODO:
+        return null;
     }
 
 }

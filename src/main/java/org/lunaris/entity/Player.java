@@ -51,7 +51,6 @@ public class Player extends LivingEntity implements CommandSender {
 
     private int foodLevel = 20;
     private float foodSaturationLevel = 20F;
-    private boolean invulnerable = false;
     private boolean sprinting;
     private boolean sneaking;
 
@@ -406,10 +405,6 @@ public class Player extends LivingEntity implements CommandSender {
         return this.foodSaturationLevel;
     }
 
-    public boolean isInvulnerable() {
-        return this.invulnerable;
-    }
-
     public BlockBreakingData getBlockBreakingData() {
         return this.blockBreakingData;
     }
@@ -452,8 +447,8 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     @Override
-    public void setVelocity(Vector3d velocity) {
-        sendPacket(new Packet28SetEntityMotion(getEntityID(), (float) velocity.getX(), (float) velocity.getY(), (float) velocity.getZ()));
+    protected MovementData generateEntityMovement() {
+        return new PlayerMovementData(this);
     }
 
     public enum IngameState {

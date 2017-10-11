@@ -18,6 +18,8 @@ import org.lunaris.world.Location;
  */
 public abstract class LivingEntity extends Entity {
 
+    private boolean invulnerable = false;
+
     protected LivingEntity(long entityID, EntityType entityType) {
         super(entityID, entityType);
     }
@@ -40,14 +42,24 @@ public abstract class LivingEntity extends Entity {
         setHealth(a.getValue());
     }
 
+    public void setInvulnerable(boolean value) {
+        this.invulnerable = value;
+    }
+
+    public boolean isInvulnerable() {
+        return this.invulnerable || System.currentTimeMillis() < getCreationTime() + 1000L;
+    }
+
     public void damage(double damage) {
         damage(EntityDamageEvent.DamageCause.UNKNOWN, damage);
     }
 
     public void damage(EntityDamageEvent.DamageCause cause, double damage) {
+        if(isInvulnerable())
+            return;
         if(getEntityType() == EntityType.PLAYER) {
             Player p = (Player) this;
-            if(p.getGamemode() == Gamemode.CREATIVE || p.isInvulnerable())
+            if(p.getGamemode() == Gamemode.CREATIVE)
                 return;
         }
         EntityDamageEvent event = new EntityDamageEvent(this, cause, damage);
@@ -58,9 +70,11 @@ public abstract class LivingEntity extends Entity {
     }
 
     public void damage(Entity damager, double damage) {
+        if(isInvulnerable())
+            return;
         if(getEntityType() == EntityType.PLAYER) {
             Player p = (Player) this;
-            if(p.getGamemode() == Gamemode.CREATIVE || p.isInvulnerable())
+            if(p.getGamemode() == Gamemode.CREATIVE)
                 return;
         }
         EntityDamageEvent event1 = new EntityDamageEvent(this, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage);
@@ -103,6 +117,7 @@ public abstract class LivingEntity extends Entity {
 
     @Override
     public void fall() {
+//        Lunaris.getInstance().broadcastMessage(getFallDistance() + "");
         double damage = getFallDistance() - 3;
         if(damage > 0D)
             damage(EntityDamageEvent.DamageCause.FALL, damage);

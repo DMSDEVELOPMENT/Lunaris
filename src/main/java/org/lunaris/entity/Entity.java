@@ -7,7 +7,6 @@ import org.lunaris.entity.misc.Movable;
 import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.material.block.liquid.LiquidBlock;
 import org.lunaris.network.protocol.MinePacket;
-import org.lunaris.network.protocol.packet.Packet27SetEntityData;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.Chunk;
 import org.lunaris.world.Location;
@@ -219,7 +218,7 @@ public abstract class Entity extends Metadatable implements Movable {
      */
     public void setupFallDistance(float dy) {
         if(this.onGround) {
-            if(this.fallDistance > 0F && System.currentTimeMillis() - this.creationTime > 1000L)
+            if(this.fallDistance > 0F)
                 fall();
             this.fallDistance = 0;
         }else if(dy < 0F) {
@@ -334,8 +333,12 @@ public abstract class Entity extends Metadatable implements Movable {
         return this.fallDistance;
     }
 
-    private MovementData generateEntityMovement() {
+    protected MovementData generateEntityMovement() {
         return new MovementData(this);
+    }
+
+    public final long getCreationTime() {
+        return this.creationTime;
     }
 
     @Override

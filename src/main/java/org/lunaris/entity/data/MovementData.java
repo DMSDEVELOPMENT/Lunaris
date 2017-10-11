@@ -16,19 +16,19 @@ import java.util.*;
  */
 public class MovementData implements Movable {
 
-    private final static float TICK_RATE = .05F;
-    private final static float GRAVITY = 0.04F;
+    protected final static float TICK_RATE = .05F;
+    protected final static float GRAVITY = 0.04F;
 
     private final Entity entity;
 
-    private float x, y, z;
-    private float motionX, motionY, motionZ;
-    private float yaw, headYaw, pitch;
+    protected float x, y, z;
+    protected float motionX, motionY, motionZ;
+    protected float yaw, headYaw, pitch;
 
-    private boolean dirty;
-    private float lastUpdateDt;
+    protected boolean dirty;
+    protected float lastUpdateDt;
 
-    private float jumpingOffset;
+    protected float jumpingOffset;
 
     public MovementData(Entity entity) {
         this.entity = entity;
@@ -125,7 +125,8 @@ public class MovementData implements Movable {
         this.lastUpdateDt += dT;
         if (this.lastUpdateDt >= TICK_RATE) {
             // Calc motion
-            changeMotion(0, -GRAVITY, 0);
+            if(this.entity.getDataFlag(false, EntityDataFlag.GRAVITY))
+                this.motionY -= GRAVITY;
 
             // Check if we are stuck in a block
             checkWhetherInsideBlocks(this.entity.getWorld());
@@ -238,7 +239,7 @@ public class MovementData implements Movable {
 
             // Check for grounding states
             this.entity.setupCollisionFlags(movX, movY, movZ, dX, dY, dZ);
-            this.entity.setupFallDistance(dY);
+            setupFallDistance(dY);
 
             // We did not move so we collided, set motion to 0 to escape hell
             if (movX != dX) {
@@ -272,7 +273,11 @@ public class MovementData implements Movable {
         }
     }
 
-    private void checkWhetherInsideBlocks(World world) {
+    protected void setupFallDistance(float dy) {
+        this.entity.setupFallDistance(dy);
+    }
+
+    protected void checkWhetherInsideBlocks(World world) {
         if(this.entity.getEntityType() == EntityType.PLAYER)
             return;
         AxisAlignedBB bb = this.entity.getBoundingBox();
@@ -299,19 +304,19 @@ public class MovementData implements Movable {
         }
     }
 
-    private static class DirectionPushData {
+    protected static class DirectionPushData {
 
         private byte direction = -1;
         private float force = 9999F;
 
-        private void check(boolean valid, int direction, float force) {
+        protected void check(boolean valid, int direction, float force) {
             if (valid && force < this.force) {
                 this.direction = (byte) direction;
                 this.force = force;
             }
         }
 
-        private void accept(MovementData movement) {
+        protected void accept(MovementData movement) {
             int sign = (this.direction & 1) == 0 ? -1 : 1;
             float force = sign * ((float) Math.random() * .2F + .1F);
             if ((this.direction & 2) != 0)
@@ -324,7 +329,7 @@ public class MovementData implements Movable {
 
     }
 
-    private static List<AxisAlignedBB> getCollisionCubes(Entity theEntity, AxisAlignedBB bb, boolean includeEntities) {
+    protected static List<AxisAlignedBB> getCollisionCubes(Entity theEntity, AxisAlignedBB bb, boolean includeEntities) {
         World world = theEntity.getWorld();
         int minX = LMath.fastFloor(bb.getMinX());
         int minY = LMath.fastFloor(bb.getMinY());
@@ -360,7 +365,7 @@ public class MovementData implements Movable {
         return collisions;
     }
 
-    private static Collection<Entity> getNearbyEntities(Entity theEntity, AxisAlignedBB bb) {
+    protected static Collection<Entity> getNearbyEntities(Entity theEntity, AxisAlignedBB bb) {
         World world = theEntity.getWorld();
         Set<Entity> result = null;
         for (Entity entity : world.getEntities())

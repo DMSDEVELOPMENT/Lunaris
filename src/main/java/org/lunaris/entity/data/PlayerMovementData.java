@@ -3,7 +3,6 @@ package org.lunaris.entity.data;
 import org.lunaris.Lunaris;
 import org.lunaris.entity.Player;
 import org.lunaris.network.protocol.packet.Packet28SetEntityMotion;
-import org.lunaris.world.Location;
 
 /**
  * Created by RINES on 11.10.17.
@@ -30,16 +29,10 @@ public class PlayerMovementData extends MovementData {
         this.dX = x - this.prevX;
         this.dY = y - this.prevY;
         this.dZ = z = this.prevZ;
-        Lunaris.getInstance().broadcastMessage(String.format("%.5f %.5f %.5f", this.dX, this.dY, this.dZ));
         this.prevX = x;
         this.prevY = y;
         this.prevZ = z;
-    }
-
-    @Override
-    public void setPositionAndRotation(Location loc) {
-        super.setPositionAndRotation(loc);
-        Lunaris.getInstance().broadcastMessage("YEP");
+        this.player.setupFallDistance(this.dY);
     }
 
     @Override
@@ -55,11 +48,7 @@ public class PlayerMovementData extends MovementData {
 
     @Override
     protected void setupFallDistance(float dy) {
-//        Lunaris.getInstance().broadcastMessage(this.dY + " " + dy);
-        if(this.dY <= 0F) {
-//            Lunaris.getInstance().broadcastMessage("!" + this.dY + " " + dy + "!");
-            super.setupFallDistance(dy);
-        }
+        //Handled in another method
     }
 
 }

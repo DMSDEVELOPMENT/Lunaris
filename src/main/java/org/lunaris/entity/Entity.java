@@ -342,6 +342,11 @@ public abstract class Entity extends Metadatable implements Movable {
     }
 
     @Override
+    public void setPositionAndRotation(Location location) {
+        this.movement.setPositionAndRotation(location);
+    }
+
+    @Override
     public int hashCode() {
         return (int) this.entityID;
     }

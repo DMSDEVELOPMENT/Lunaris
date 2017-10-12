@@ -1,6 +1,7 @@
 package org.lunaris.entity.misc;
 
 import org.lunaris.api.util.math.Vector3d;
+import org.lunaris.api.world.BlockFace;
 import org.lunaris.api.world.Location;
 import org.lunaris.world.LWorld;
 
@@ -95,6 +96,24 @@ public interface Movable {
         double sinP = Math.sin(rP);
         double cosP = Math.cos(rP);
         return new Vector3d(cosY * cosP, sinP, sinY * cosP);
+    }
+
+    default BlockFace getTargetBlockFace() {
+        double rotation = getHeadYaw() % 360;
+        if (rotation < 0) {
+            rotation += 360.0;
+        }
+        if ((0 <= rotation && rotation < 45) || (315 <= rotation && rotation < 360)) {
+            return BlockFace.SOUTH;
+        } else if (45 <= rotation && rotation < 135) {
+            return BlockFace.WEST;
+        } else if (135 <= rotation && rotation < 225) {
+            return BlockFace.NORTH;
+        } else if (225 <= rotation && rotation < 315) {
+            return BlockFace.EAST;
+        } else {
+            return null;
+        }
     }
 
 }

@@ -5,10 +5,14 @@ import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.item.ItemToolType;
 import org.lunaris.api.material.Material;
 import org.lunaris.api.world.Block;
+import org.lunaris.api.world.BlockFace;
+import org.lunaris.block.BlockColor;
+import org.lunaris.block.LBlock;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.LWorld;
 import org.lunaris.world.tileentity.ChestTileEntity;
+import org.lunaris.world.tileentity.TileEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,20 +59,36 @@ public class BlockChest extends TransparentBlock {
     }
 
     @Override
+    public boolean place(ItemStack stack, Block block, Block against, BlockFace blockFace, double fx, double fy, double fz, Player player) {
+        int[] faces = {2, 5, 3, 4};
+        int data = faces[player == null ? 0 : ((LPlayer) player).getTargetBlockFace().getHorizontalIndex()];
+        //check for parity
+        block.setTypeAndData(getType(), data);
+        return true;
+    }
+
+    @Override
     public void onBlockAdd(Block block) {
         ((LWorld) block.getWorld()).registerTileEntity(new ChestTileEntity(block.getLocation()));
     }
 
     @Override
     public boolean onBreak(ItemStack item, Block block) {
-        LWorld world = (LWorld) block.getWorld();
-        world.unregisterTileEntity(world.getTileEntityAt(block.getLocation()));
+        TileEntity tileEntity = ((LBlock) block).getTileEntity();
+        if(tileEntity == null)
+            return true;
+        ((LWorld) block.getWorld()).unregisterTileEntity(tileEntity);
         return true;
     }
 
     @Override
     public boolean onActivate(Block block, ItemStack item, Player player) {
-        ((LPlayer) player).openInventory(((ChestTileEntity) ((LWorld) block.getWorld()).getTileEntityAt(block.getLocation())).getInventory());
+        ChestTileEntity tileEntity = (ChestTileEntity) ((LBlock) block).getTileEntity();
+        if(tileEntity == null) {
+            tileEntity = new ChestTileEntity(block.getLocation());
+            ((LWorld) block.getWorld()).registerTileEntity(tileEntity);
+        }
+        ((LPlayer) player).openInventory(tileEntity.getInventory());
         return true;
     }
 
@@ -76,10 +96,18 @@ public class BlockChest extends TransparentBlock {
     public List<ItemStack> getDrops(Block block, ItemStack hand) {
         List<ItemStack> items = new ArrayList<>();
         items.add(new ItemStack(Material.CHEST));
-        for(ItemStack is : ((ChestTileEntity) ((LWorld) block.getWorld()).getTileEntityAt(block.getLocation())).getInventory())
+        ChestTileEntity tileEntity = (ChestTileEntity) ((LBlock) block).getTileEntity();
+        if(tileEntity == null)
+            return items;
+        for(ItemStack is : tileEntity.getInventory())
             if(is != null && is.getType() != Material.AIR)
                 items.add(is);
         return items;
+    }
+
+    @Override
+    public BlockColor getColor(int data) {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 
 }

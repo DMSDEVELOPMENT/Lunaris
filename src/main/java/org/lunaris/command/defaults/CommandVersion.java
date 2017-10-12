@@ -1,6 +1,6 @@
 package org.lunaris.command.defaults;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.misc.LPermission;
@@ -18,7 +18,7 @@ public class CommandVersion extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        sender.sendMessage(ChatColor.colored("This server is running &aLunaris&r version &a" + Lunaris.getInstance().getServerVersion()));
+        sender.sendMessage(ChatColor.colored("This server is running &aLunaris&r version &a" + LunarisServer.getInstance().getServerVersion()));
     }
 
 }

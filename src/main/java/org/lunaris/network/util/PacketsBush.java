@@ -1,6 +1,6 @@
 package org.lunaris.network.util;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.jwt.EncryptionHandler;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 
@@ -10,7 +10,7 @@ import org.lunaris.network.raknet.session.RakNetClientSession;
 public class PacketsBush {
 
     private final static byte prefix = (byte) 0xfe;
-    private final static int compressionLevel = Lunaris.getInstance().getServerSettings().getNetworkCompressionLevel();
+    private final static int compressionLevel = LunarisServer.getInstance().getServerSettings().getNetworkCompressionLevel();
 
     private final RakNetClientSession session;
     private EncryptionHandler encryptor;

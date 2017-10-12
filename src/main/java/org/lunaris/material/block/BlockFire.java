@@ -1,12 +1,12 @@
 package org.lunaris.material.block;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.api.entity.Entity;
 import org.lunaris.api.world.Block;
 import org.lunaris.block.BlockColor;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.api.entity.Gamemode;
-import org.lunaris.event.entity.EntityBurnEvent;
+import org.lunaris.api.event.entity.EntityBurnEvent;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
 import org.lunaris.material.block.liquid.FlowableBlock;
@@ -51,7 +51,7 @@ public class BlockFire extends FlowableBlock {
         if (entity instanceof LPlayer && ((LPlayer) entity).getGamemode() == Gamemode.CREATIVE)
             return;
         EntityBurnEvent event = new EntityBurnEvent(entity, 20 << 3);
-        Lunaris.getInstance().getEventManager().call(event);
+        LunarisServer.getInstance().getEventManager().call(event);
         if (event.isCancelled())
             return;
         entity.setOnFire(event.getFireTicks());

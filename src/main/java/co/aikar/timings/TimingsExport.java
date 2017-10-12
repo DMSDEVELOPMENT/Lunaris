@@ -2,7 +2,7 @@ package co.aikar.timings;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.command.CommandSender;
 import org.lunaris.util.JsonUtil;
 import org.lunaris.util.logger.ChatColor;
@@ -26,7 +26,7 @@ import static co.aikar.timings.TimingsManager.HISTORY;
 public class TimingsExport {
 
     public static void report(CommandSender sender) {
-        Lunaris server = Lunaris.getInstance();
+        LunarisServer server = LunarisServer.getInstance();
         JsonObject out = new JsonObject();
         out.addProperty("version", server.getSupportedClientVersion());
         out.addProperty("maxplayers", server.getServerSettings().getMaxPlayersOnServer());

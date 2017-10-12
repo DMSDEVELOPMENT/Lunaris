@@ -39,7 +39,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.network.raknet.NoListenerException;
 import org.lunaris.network.raknet.Packet;
 import org.lunaris.network.raknet.RakNet;
@@ -143,7 +143,7 @@ public class RakNetServer implements GeminusRakNetPeer, RakNetServerListener {
      * @param maximumTransferUnit the maximum transfer unit.
      */
     public RakNetServer(String address, int port, int maxConnections, int maximumTransferUnit) {
-        this(address, port, maxConnections, (int) (maximumTransferUnit * Lunaris.getInstance().getServerSettings().getMtuScaleFactor()), null);
+        this(address, port, maxConnections, (int) (maximumTransferUnit * LunarisServer.getInstance().getServerSettings().getMtuScaleFactor()), null);
     }
 
     /**
@@ -734,7 +734,7 @@ public class RakNetServer implements GeminusRakNetPeer, RakNetServerListener {
                             session.update();
                             if (session.getPacketsReceivedThisSecond() >= RakNet.getMaxPacketsPerSecond()) {
                                 this.blockAddress(session.getInetAddress(), "Too many packets", RakNet.MAX_PACKETS_PER_SECOND_BLOCK);
-                                Lunaris.getInstance().getLogger().info("Session %s blocked for %s", session.getInetAddress(), RakNet.MAX_PACKETS_PER_SECOND_BLOCK);
+                                LunarisServer.getInstance().getLogger().info("Session %s blocked for %s", session.getInetAddress(), RakNet.MAX_PACKETS_PER_SECOND_BLOCK);
                             }
                         } catch (Throwable throwable) {
                             // An error related to the session occurred, remove it

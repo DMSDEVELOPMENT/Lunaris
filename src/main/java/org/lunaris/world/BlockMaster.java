@@ -1,15 +1,15 @@
 package org.lunaris.world;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.api.world.Sound;
 import org.lunaris.block.LBlock;
 import org.lunaris.api.world.BlockFace;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.api.entity.Gamemode;
-import org.lunaris.event.block.BlockBreakEvent;
-import org.lunaris.event.block.BlockPlaceEvent;
-import org.lunaris.event.player.PlayerHitFireEvent;
-import org.lunaris.event.player.PlayerInteractEvent;
+import org.lunaris.api.event.block.BlockBreakEvent;
+import org.lunaris.api.event.block.BlockPlaceEvent;
+import org.lunaris.api.event.player.PlayerHitFireEvent;
+import org.lunaris.api.event.player.PlayerInteractEvent;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.item.ItemTier;
 import org.lunaris.api.item.ItemToolType;
@@ -32,9 +32,9 @@ import java.util.List;
  */
 public class BlockMaster {
 
-    private final Lunaris server;
+    private final LunarisServer server;
 
-    public BlockMaster(Lunaris server) {
+    public BlockMaster(LunarisServer server) {
         this.server = server;
     }
 

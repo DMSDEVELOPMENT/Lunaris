@@ -26,7 +26,7 @@ package co.aikar.timings;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.util.JsonUtil;
 
@@ -84,7 +84,7 @@ public class TimingsHistory {
         final Map<Integer, AtomicInteger> entityCounts = new HashMap<>();
         final Map<Integer, AtomicInteger> blockEntityCounts = new HashMap<>();
         final Gson GSON = new Gson();
-        Lunaris.getInstance().getWorldProvider().getWorlds().forEach(world -> {
+        LunarisServer.getInstance().getWorldProvider().getWorlds().forEach(world -> {
             JsonArray jsonWorld = new JsonArray();
             world.getLoadedChunks().forEach(chunk -> {
                 JsonArray jsonChunk = new JsonArray();
@@ -210,7 +210,7 @@ public class TimingsHistory {
         final double avg;
 
         PingRecord() {
-            final Collection<LPlayer> onlinePlayers = Lunaris.getInstance().getOnlinePlayers();
+            final Collection<LPlayer> onlinePlayers = LunarisServer.getInstance().getOnlinePlayers();
             int totalPing = 0;
             for (LPlayer player : onlinePlayers) {
 //                totalPing += player.getPing();

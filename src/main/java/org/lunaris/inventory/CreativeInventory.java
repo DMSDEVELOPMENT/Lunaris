@@ -1,5 +1,6 @@
 package org.lunaris.inventory;
 
+import org.lunaris.api.inventory.InventoryType;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.transaction.InventorySection;
 import org.lunaris.api.item.ItemStack;
@@ -9,7 +10,7 @@ import org.lunaris.network.protocol.packet.Packet31InventoryContent;
 /**
  * Created by RINES on 02.10.17.
  */
-public class CreativeInventory extends Inventory {
+public class CreativeInventory extends LInventory {
 
     private final ItemStack[] items = new ItemStack[]{
             new ItemStack(Material.STONE, 1, 0),

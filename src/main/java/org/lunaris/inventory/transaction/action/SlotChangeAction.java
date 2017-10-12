@@ -2,7 +2,7 @@ package org.lunaris.inventory.transaction.action;
 
 import org.lunaris.api.entity.Player;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.inventory.Inventory;
+import org.lunaris.inventory.LInventory;
 import org.lunaris.inventory.transaction.InventoryAction;
 import org.lunaris.api.item.ItemStack;
 
@@ -14,16 +14,16 @@ import java.util.Set;
  */
 public class SlotChangeAction extends InventoryAction {
 
-    private final Inventory inventory;
+    private final LInventory inventory;
     private final int slot;
 
-    public SlotChangeAction(Inventory inventory, int slot, ItemStack sourceItem, ItemStack targetItem) {
+    public SlotChangeAction(LInventory inventory, int slot, ItemStack sourceItem, ItemStack targetItem) {
         super(sourceItem, targetItem);
         this.inventory = inventory;
         this.slot = slot;
     }
 
-    public Inventory getInventory() {
+    public LInventory getInventory() {
         return this.inventory;
     }
 

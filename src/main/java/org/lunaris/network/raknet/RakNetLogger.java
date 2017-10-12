@@ -30,7 +30,6 @@
  */
 package org.lunaris.network.raknet;
 
-import org.lunaris.Lunaris;
 import org.lunaris.network.raknet.client.RakNetClient;
 import org.lunaris.network.raknet.server.RakNetServer;
 import org.lunaris.util.logger.OwnLogger;

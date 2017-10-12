@@ -1,6 +1,6 @@
 package org.lunaris.command.defaults;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandParameter;
 import org.lunaris.command.CommandParameterType;
@@ -25,7 +25,7 @@ public class CommandOp extends Command {
             sender.sendMessage(ChatColor.colored("&cEnter the player name"));
             return;
         }
-        LPlayer player = Lunaris.getInstance().getPlayer(args[0]);
+        LPlayer player = LunarisServer.getInstance().getPlayer(args[0]);
         if (player == null) {
             sender.sendMessage(ChatColor.RED + "Player %s not found", args[0]);
             return;

@@ -2,7 +2,7 @@ package org.lunaris.world;
 
 import co.aikar.timings.Timings;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.api.entity.Entity;
 import org.lunaris.api.entity.Player;
 import org.lunaris.api.world.*;
@@ -10,9 +10,9 @@ import org.lunaris.block.BUFlag;
 import org.lunaris.block.LBlock;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.event.chunk.ChunkLoadedEvent;
-import org.lunaris.event.chunk.ChunkPreLoadEvent;
-import org.lunaris.event.chunk.ChunkUnloadedEvent;
+import org.lunaris.api.event.chunk.ChunkLoadedEvent;
+import org.lunaris.api.event.chunk.ChunkPreLoadEvent;
+import org.lunaris.api.event.chunk.ChunkUnloadedEvent;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
 import org.lunaris.network.protocol.packet.*;
@@ -20,7 +20,7 @@ import org.lunaris.util.math.LMath;
 import org.lunaris.util.math.MathHelper;
 import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
-import org.lunaris.world.tileentity.TileEntity;
+import org.lunaris.world.tileentity.LTileEntity;
 import org.lunaris.world.tracker.EntityTracker;
 import org.lunaris.world.util.BlockUpdateScheduler;
 import org.lunaris.world.util.ChunkUnloaderTask;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 public class LWorld implements World {
 
-    private final Lunaris server;
+    private final LunarisServer server;
 
     private final String name;
 
@@ -55,13 +55,13 @@ public class LWorld implements World {
     private final LongObjectHashMap<LChunk> chunks = new LongObjectHashMap<>();
     private final Set<LPlayer> players = new HashSet<>();
     private final LongObjectHashMap<LEntity> entities = new LongObjectHashMap<>();
-    private final LongObjectHashMap<TileEntity> tileEntities = new LongObjectHashMap<>();
+    private final LongObjectHashMap<LTileEntity> tileEntities = new LongObjectHashMap<>();
 
     private final ChunksFollowerTask followerTask;
     private final BlockUpdateScheduler blockUpdateScheduler;
     private final EntityTracker entityTracker;
 
-    public LWorld(Lunaris server, String name, Dimension dimension, Difficulty difficulty) {
+    public LWorld(LunarisServer server, String name, Dimension dimension, Difficulty difficulty) {
         this.server = server;
         this.name = name;
         this.dimension = dimension;
@@ -106,19 +106,19 @@ public class LWorld implements World {
         //this.server.getNetworkManager().sendPacket(this.players, new Packet0ERemoveEntity(entity.getEntityID()));
     }
 
-    public void registerTileEntity(TileEntity tileEntity) {
+    public void registerTileEntity(LTileEntity tileEntity) {
         this.tileEntities.put(hash(tileEntity.getLocation()), tileEntity);
     }
 
-    public TileEntity getTileEntityAt(int x, int y, int z) {
+    public LTileEntity getTileEntityAt(int x, int y, int z) {
         return this.tileEntities.get(hash(x, y, z));
     }
 
-    public TileEntity getTileEntityAt(Vector3d position) {
+    public LTileEntity getTileEntityAt(Vector3d position) {
         return this.tileEntities.get(hash(position));
     }
 
-    public void unregisterTileEntity(TileEntity tileEntity) {
+    public void unregisterTileEntity(LTileEntity tileEntity) {
         this.tileEntities.remove(hash(tileEntity.getLocation()));
     }
 
@@ -201,7 +201,7 @@ public class LWorld implements World {
         Timings.getChunksTickTimer().stopTiming();
         this.followerTask.tick();
         tickEntities(current, dT);
-        this.tileEntities.values().forEach(TileEntity::tick);
+        this.tileEntities.values().forEach(LTileEntity::tick);
         Timings.getWorldTickTimer(this).stopTiming();
     }
 

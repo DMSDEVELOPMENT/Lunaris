@@ -1,5 +1,6 @@
 package org.lunaris.inventory;
 
+import org.lunaris.api.inventory.InventoryType;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.transaction.InventorySection;
 import org.lunaris.api.item.ItemStack;
@@ -11,7 +12,7 @@ import java.util.Collections;
 /**
  * Created by RINES on 16.09.17.
  */
-public class PlayerInventory extends Inventory {
+public class PlayerInventory extends LInventory {
 
     private final LPlayer holder;
     private int itemInHandIndex;

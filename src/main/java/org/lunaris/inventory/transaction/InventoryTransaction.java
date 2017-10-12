@@ -1,6 +1,6 @@
 package org.lunaris.inventory.transaction;
 
-import org.lunaris.inventory.Inventory;
+import org.lunaris.inventory.LInventory;
 
 import java.util.Set;
 
@@ -13,7 +13,7 @@ public interface InventoryTransaction {
 
     Set<InventoryAction> getActions();
 
-    Set<Inventory> getInventories();
+    Set<LInventory> getInventories();
 
     void addAction(InventoryAction action);
 

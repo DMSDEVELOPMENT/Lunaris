@@ -1,13 +1,13 @@
 package org.lunaris.material.block.liquid;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.api.entity.Entity;
 import org.lunaris.api.world.Block;
 import org.lunaris.block.LBlock;
 import org.lunaris.api.world.BlockFace;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.event.block.BlockFromToEvent;
+import org.lunaris.api.event.block.BlockFromToEvent;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
 import org.lunaris.material.block.TransparentBlock;
@@ -207,7 +207,7 @@ public abstract class LiquidBlock extends TransparentBlock {
                     return false;
 
                 BlockFromToEvent event = new BlockFromToEvent(block, new LBlock(block.getLocation(), to));
-                Lunaris.getInstance().getEventManager().call(event);
+                LunarisServer.getInstance().getEventManager().call(event);
                 if (!event.isCancelled()) {
                     block.setType(to);
                     this.triggerLavaMixEffects(block);

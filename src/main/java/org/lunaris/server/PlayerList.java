@@ -1,6 +1,6 @@
 package org.lunaris.server;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.network.protocol.packet.Packet3FPlayerList;
 
@@ -12,9 +12,9 @@ import java.util.Iterator;
  */
 public class PlayerList {
 
-    private final Lunaris server;
+    private final LunarisServer server;
 
-    public PlayerList(Lunaris server) {
+    public PlayerList(LunarisServer server) {
         this.server = server;
     }
 

@@ -15,8 +15,8 @@ public class InventoryManager {
     private final static CreativeInventory creative = new CreativeInventory();
 
     private final LPlayer player;
-    private final Map<Inventory, Integer> inventories = new HashMap<>();
-    private final Map<Integer, Inventory> reverted = new HashMap<>();
+    private final Map<LInventory, Integer> inventories = new HashMap<>();
+    private final Map<Integer, LInventory> reverted = new HashMap<>();
     private final Set<Integer> permamentInventories = new HashSet<>();
 
     private int idIncrementor = 4;
@@ -32,28 +32,28 @@ public class InventoryManager {
         this.reverted.put(creative.getReservedInventoryId(), creative);
     }
 
-    public int getInventoryId(Inventory inventory) {
+    public int getInventoryId(LInventory inventory) {
         Integer id = this.inventories.get(inventory);
         return id == null ? -1 : id;
     }
 
-    public Inventory getInventoryById(int id) {
+    public LInventory getInventoryById(int id) {
         return this.reverted.get(id);
     }
 
-    public int addInventory(Inventory inventory) {
+    public int addInventory(LInventory inventory) {
         return addInventory(inventory, inventory.getReservedInventoryId() == -1 ? null : inventory.getReservedInventoryId());
     }
 
-    public int addInventory(Inventory inventory, boolean permament) {
+    public int addInventory(LInventory inventory, boolean permament) {
         return addInventory(inventory, inventory.getReservedInventoryId() == -1 ? null : inventory.getReservedInventoryId(), permament);
     }
 
-    public int addInventory(Inventory inventory, Integer forcedId) {
+    public int addInventory(LInventory inventory, Integer forcedId) {
         return addInventory(inventory, forcedId, false);
     }
 
-    public int addInventory(Inventory inventory, Integer forceId, boolean permament) {
+    public int addInventory(LInventory inventory, Integer forceId, boolean permament) {
         int id = getInventoryId(inventory);
         if(id != -1)
             return id;
@@ -70,14 +70,14 @@ public class InventoryManager {
         }
     }
 
-    public void removeInventory(Inventory inventory) {
+    public void removeInventory(LInventory inventory) {
         inventory.close(this.player);
         Integer id = this.inventories.remove(inventory);
         if(id != null)
             this.reverted.remove(id);
     }
 
-    public void sendInventory(Inventory inventory) {
+    public void sendInventory(LInventory inventory) {
         inventory.sendContents(this.player);
     }
 
@@ -86,7 +86,7 @@ public class InventoryManager {
     }
 
     public void closeInventory(int inventoryID) {
-        Inventory inventory = this.reverted.get(inventoryID);
+        LInventory inventory = this.reverted.get(inventoryID);
         if(inventory == null)
             return;
         removeInventory(inventory);

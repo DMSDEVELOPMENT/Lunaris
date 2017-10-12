@@ -1,6 +1,6 @@
 package org.lunaris.network.protocol;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.api.world.Block;
 import org.lunaris.block.LBlock;
 import org.lunaris.entity.LEntity;
@@ -9,7 +9,7 @@ import org.lunaris.entity.LPlayer;
 import org.lunaris.entity.data.BlockBreakingData;
 import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.api.entity.Gamemode;
-import org.lunaris.event.player.*;
+import org.lunaris.api.event.player.*;
 import org.lunaris.inventory.transaction.*;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.jwt.EncryptionHandler;
@@ -31,7 +31,7 @@ import java.util.*;
 public class MinePacketHandler {
     private static final long PLAYER_USE_DELAY = 160L;
 
-    private final Lunaris server = Lunaris.getInstance();
+    private final LunarisServer server = LunarisServer.getInstance();
     private final NetworkManager networkManager;
     private final EncryptionRequestForger FORGER = new EncryptionRequestForger();
 
@@ -90,8 +90,8 @@ public class MinePacketHandler {
                 player.disconnect();
                 return;
             }
-            if(Lunaris.getInstance().getServerSettings().isUsingEncryptedConnection()) {
-                EncryptionHandler encryptor = new EncryptionHandler(Lunaris.getInstance().getEncryptionKeyFactory());
+            if(LunarisServer.getInstance().getServerSettings().isUsingEncryptedConnection()) {
+                EncryptionHandler encryptor = new EncryptionHandler(LunarisServer.getInstance().getEncryptionKeyFactory());
                 encryptor.supplyClientKey(packet.getClientPublicKey());
                 if(encryptor.beginClientsideEncryption()) {
                     player.getSession().setConnectionState(ConnectionState.ENCRYPTION_INIT);
@@ -231,7 +231,7 @@ public class MinePacketHandler {
             }
             p.setDataFlag(false, EntityDataFlag.ACTION, false, true);
             p.getInventory().equipItem0(packet.getHotbarSlot());
-            Set<LPlayer> players = new HashSet<>(Lunaris.getInstance().getOnlinePlayers());
+            Set<LPlayer> players = new HashSet<>(LunarisServer.getInstance().getOnlinePlayers());
             players.remove(packet.getPlayer());
             this.networkManager.sendPacket(players, packet);
         });
@@ -295,7 +295,7 @@ public class MinePacketHandler {
                 //somewhy never happens
                 sync(() -> {
                     PlayerRespawnEvent respawn = new PlayerRespawnEvent(p, p.getWorld().getSpawnLocation());
-                    Lunaris.getInstance().getEventManager().call(respawn);
+                    LunarisServer.getInstance().getEventManager().call(respawn);
                     p.respawn(respawn.getLocation());
                 });
                 break;

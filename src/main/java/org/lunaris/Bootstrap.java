@@ -32,7 +32,7 @@ public class Bootstrap {
         } catch (IOException ex) {
             throw new IllegalStateException("Could not load console worker!");
         }
-        new Lunaris(logger, consoleReader);
+        new LunarisServer(logger, consoleReader);
     }
 
 }

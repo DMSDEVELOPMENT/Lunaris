@@ -3,12 +3,12 @@ package org.lunaris.world.tileentity;
 import org.lunaris.api.entity.Player;
 import org.lunaris.api.world.Location;
 import org.lunaris.inventory.ChestInventory;
-import org.lunaris.inventory.ContainerInventory;
+import org.lunaris.inventory.LContainerInventory;
 
 /**
  * Created by RINES on 12.10.17.
  */
-public class ChestTileEntity extends ContainerTileEntity {
+public class ChestTileEntity extends LContainerTileEntity {
 
     public ChestTileEntity(Location location) {
         super(location);
@@ -30,7 +30,7 @@ public class ChestTileEntity extends ContainerTileEntity {
     }
 
     @Override
-    ContainerInventory generateInventory() {
+    LContainerInventory generateInventory() {
         return new ChestInventory(this);
     }
 

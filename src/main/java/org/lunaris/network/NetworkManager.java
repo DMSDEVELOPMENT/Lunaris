@@ -2,7 +2,7 @@ package org.lunaris.network;
 
 import co.aikar.timings.Timings;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.network.protocol.MineBuffer;
@@ -11,7 +11,7 @@ import org.lunaris.network.protocol.MinePacketProvider;
 import org.lunaris.network.raknet.RakNetPacket;
 import org.lunaris.network.raknet.protocol.Reliability;
 import org.lunaris.network.raknet.session.RakNetClientSession;
-import org.lunaris.server.Scheduler;
+import org.lunaris.api.server.Scheduler;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class NetworkManager {
     public final static int SUPPORTED_CLIENT_PROTOCOL_VERSION = 137;
     public final static long NETWORK_TICK = Scheduler.ONE_TICK_IN_MILLIS >> 1;
 
-    private final Lunaris server;
+    private final LunarisServer server;
 
     private final RakNetProvider rakNet;
 
@@ -40,7 +40,7 @@ public class NetworkManager {
     private final ScheduledExecutorService executor = Scheduler.createScheduledExecutor("Packet Compiler", 1);
     private final Queue<QueuedPacket> sendQueue = new ConcurrentLinkedQueue<>();
 
-    public NetworkManager(Lunaris server) {
+    public NetworkManager(LunarisServer server) {
         this.server = server;
         this.rakNet = new RakNetProvider(this, server);
         this.mineProvider = new MinePacketProvider(server, this);

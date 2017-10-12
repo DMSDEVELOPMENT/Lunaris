@@ -1,8 +1,8 @@
 package org.lunaris.inventory.transaction.action;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.event.player.PlayerDropItemEvent;
+import org.lunaris.api.event.player.PlayerDropItemEvent;
 import org.lunaris.inventory.transaction.InventoryAction;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
@@ -23,7 +23,7 @@ public class DropItemAction extends InventoryAction {
 
     @Override
     public boolean execute(LPlayer source) {
-        return Lunaris.getInstance().getEntityProvider().spawnItem(source.getLocation().add(0F, 1.3F, 0F), getTargetItem(), item -> {
+        return LunarisServer.getInstance().getEntityProvider().spawnItem(source.getLocation().add(0F, 1.3F, 0F), getTargetItem(), item -> {
             item.setPickupDelay(2000L);
             PlayerDropItemEvent event = new PlayerDropItemEvent(source, item);
             event.call();

@@ -1,6 +1,6 @@
 package org.lunaris.world.particle;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.network.protocol.packet.Packet19LevelEvent;
 import org.lunaris.api.world.Location;
@@ -37,7 +37,7 @@ public abstract class Particle {
     }
 
     public void send(Collection<LPlayer> players) {
-        Lunaris.getInstance().getNetworkManager().sendPacket(players, createPacket());
+        LunarisServer.getInstance().getNetworkManager().sendPacket(players, createPacket());
     }
 
     public void sendToNearbyPlayers() {

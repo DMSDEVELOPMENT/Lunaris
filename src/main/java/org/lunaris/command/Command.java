@@ -1,6 +1,6 @@
 package org.lunaris.command;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.misc.LPermission;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public abstract class Command {
             this.aliases.add(name);
         }
         this.requiredPermission = requiredPermission;
-        Lunaris.getInstance().getCommandManager().register(this);
+        LunarisServer.getInstance().getCommandManager().register(this);
     }
 
     protected void setDescription(String description) {

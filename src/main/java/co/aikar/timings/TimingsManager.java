@@ -1,6 +1,6 @@
 package co.aikar.timings;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 
 import java.util.*;
 
@@ -42,7 +42,7 @@ public class TimingsManager {
                 timing.tick(violated);
             }
 
-            TimingsHistory.playerTicks += Lunaris.getInstance().getOnlinePlayers().size();
+            TimingsHistory.playerTicks += LunarisServer.getInstance().getOnlinePlayers().size();
             TimingsHistory.timedTicks++;
         }
     }

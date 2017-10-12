@@ -9,7 +9,7 @@ import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.LChunk;
 import org.lunaris.api.world.Location;
 import org.lunaris.world.LWorld;
-import org.lunaris.world.tileentity.TileEntity;
+import org.lunaris.world.tileentity.LTileEntity;
 
 /**
  * Created by RINES on 13.09.17.
@@ -131,7 +131,7 @@ public class LBlock implements Block {
         return this.boundingBox;
     }
 
-    public TileEntity getTileEntity() {
+    public LTileEntity getTileEntity() {
         return getWorld().getTileEntityAt(this.location);
     }
 

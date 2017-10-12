@@ -1,6 +1,6 @@
 package org.lunaris.command.defaults;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandParameter;
 import org.lunaris.command.CommandParameterType;
@@ -29,7 +29,7 @@ public class CommandTest extends Command {
                 sender.sendMessage("Enter player name");
                 return;
             }
-            player = Lunaris.getInstance().getPlayer(args[0]);
+            player = LunarisServer.getInstance().getPlayer(args[0]);
             if (player == null) {
                 sender.sendMessage("Player not found");
                 return;

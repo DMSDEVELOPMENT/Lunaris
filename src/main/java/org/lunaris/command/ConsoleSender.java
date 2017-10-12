@@ -1,6 +1,6 @@
 package org.lunaris.command;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.misc.LPermission;
 import org.lunaris.util.logger.ChatColor;
 
@@ -18,12 +18,12 @@ public class ConsoleSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        Lunaris.getInstance().getLogger().info(ChatColor.translateAlternateColorCodes('&', message));
+        LunarisServer.getInstance().getLogger().info(ChatColor.translateAlternateColorCodes('&', message));
     }
 
     @Override
     public void sendMessage(String message, Object... args) {
-        Lunaris.getInstance().getLogger().info(ChatColor.translateAlternateColorCodes('&', String.format(message, args)));
+        LunarisServer.getInstance().getLogger().info(ChatColor.translateAlternateColorCodes('&', String.format(message, args)));
     }
 
     @Override

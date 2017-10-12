@@ -1,6 +1,6 @@
 package org.lunaris.command.defaults;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.misc.LPermission;
@@ -17,7 +17,7 @@ public class CommandStop extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        Lunaris.getInstance().disable();
+        LunarisServer.getInstance().disable();
     }
 
 }

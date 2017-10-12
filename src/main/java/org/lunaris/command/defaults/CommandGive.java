@@ -1,6 +1,6 @@
 package org.lunaris.command.defaults;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandParameter;
 import org.lunaris.command.CommandParameterType;
@@ -33,7 +33,7 @@ public class CommandGive extends Command {
     public void execute(CommandSender sender, String[] args) {
         if (args.length < 2)
             return;
-        LPlayer target = Lunaris.getInstance().getPlayer(args[0]);
+        LPlayer target = LunarisServer.getInstance().getPlayer(args[0]);
         if (target == null) {
             sender.sendMessage("Target player is not online.");
             return;

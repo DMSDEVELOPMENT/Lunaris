@@ -2,7 +2,7 @@ package org.lunaris.util.logger;
 
 import jline.console.ConsoleReader;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -50,7 +50,7 @@ public class OwnLogger extends Logger {
 
     public static Logger getLogger(String name) {
         Logger logger = new Logger(name, null) {
-            OwnLogger ownLogger = Lunaris.getInstance().getLogger();
+            OwnLogger ownLogger = LunarisServer.getInstance().getLogger();
 
             @Override
             public void log(LogRecord record) {

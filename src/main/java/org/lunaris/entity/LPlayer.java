@@ -1,15 +1,15 @@
 package org.lunaris.entity;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.api.entity.EntityType;
 import org.lunaris.api.entity.Gamemode;
 import org.lunaris.api.entity.Player;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.data.*;
 import org.lunaris.entity.misc.*;
-import org.lunaris.event.player.PlayerKickEvent;
-import org.lunaris.event.player.PlayerPickupItemEvent;
-import org.lunaris.inventory.Inventory;
+import org.lunaris.api.event.player.PlayerKickEvent;
+import org.lunaris.api.event.player.PlayerPickupItemEvent;
+import org.lunaris.inventory.LInventory;
 import org.lunaris.inventory.InventoryManager;
 import org.lunaris.inventory.PlayerInventory;
 import org.lunaris.api.item.ItemStack;
@@ -47,7 +47,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
     private String disconnectingReason = "Just disconnected";
 
-    private Gamemode gamemode = Lunaris.getInstance().getServerSettings().getDefaultGamemode();
+    private Gamemode gamemode = LunarisServer.getInstance().getServerSettings().getDefaultGamemode();
     private final InventoryManager inventoryManager;
 
     private int foodLevel = 20;
@@ -57,7 +57,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
     private LPermission permission = LPermission.USER;
 
-    private int chunksView = Lunaris.getInstance().getServerSettings().getChunksView();
+    private int chunksView = LunarisServer.getInstance().getServerSettings().getChunksView();
 
     private final Set<Long> chunksSent = new HashSet<>();
 
@@ -148,7 +148,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     }
     
     public void sendAvailableCommands() {
-        sendPacket(new Packet4CAvailableCommands(Lunaris.getInstance().getCommandManager().getAvailableCommands(this)));
+        sendPacket(new Packet4CAvailableCommands(LunarisServer.getInstance().getCommandManager().getAvailableCommands(this)));
     }
 
     @Override
@@ -196,14 +196,14 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     }
 
     public void sendPacket(MinePacket packet) {
-        Lunaris.getInstance().getNetworkManager().sendPacket(this, packet);
+        LunarisServer.getInstance().getNetworkManager().sendPacket(this, packet);
     }
 
     @Override
     public void sendPacketToWatchersAndMe(MinePacket packet) {
         Collection<LPlayer> watchers = getWatchers();
         watchers.add(this);
-        Lunaris.getInstance().getNetworkManager().sendPacket(watchers, packet);
+        LunarisServer.getInstance().getNetworkManager().sendPacket(watchers, packet);
     }
 
     public void disconnect() {
@@ -214,7 +214,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
         if(this.ingameState == IngameState.DISCONNECTING)
             throw new IllegalStateException("Disconnected player can't be disconnected");
         sendPacket(new Packet05Disconnect(reason));
-        Lunaris.getInstance().getScheduler().run(() -> this.session.getServer().removeSession(this.session));
+        LunarisServer.getInstance().getScheduler().run(() -> this.session.getServer().removeSession(this.session));
         if(reason == null)
             reason = "Unknown reason";
         this.disconnectingReason = reason.replace("\n", "\\n");
@@ -227,7 +227,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
     public void kick(String reason) {
         PlayerKickEvent event = new PlayerKickEvent(this, reason);
-        Lunaris.getInstance().getEventManager().call(event);
+        LunarisServer.getInstance().getEventManager().call(event);
         if(event.isCancelled())
             return;
         disconnect(reason);
@@ -250,7 +250,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
             if (current < item.getPickupDelay())
                 return;
             PlayerPickupItemEvent event = new PlayerPickupItemEvent(this, item);
-            Lunaris.getInstance().getEventManager().call(event);
+            LunarisServer.getInstance().getEventManager().call(event);
             if (event.isCancelled())
                 return;
             ItemStack is = item.getItemStack();
@@ -346,7 +346,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
         return this.inventoryManager;
     }
 
-    public void openInventory(Inventory inventory) {
+    public void openInventory(LInventory inventory) {
         this.inventoryManager.addInventory(inventory);
         this.inventoryManager.sendInventory(inventory);
     }

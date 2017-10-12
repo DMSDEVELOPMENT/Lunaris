@@ -1,7 +1,7 @@
 package org.lunaris.inventory.transaction;
 
 import org.lunaris.entity.LPlayer;
-import org.lunaris.inventory.Inventory;
+import org.lunaris.inventory.LInventory;
 import org.lunaris.inventory.transaction.action.SlotChangeAction;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
@@ -14,7 +14,7 @@ import java.util.*;
 public class BasicInventoryTransaction implements InventoryTransaction {
 
     private final LPlayer player;
-    private final Set<Inventory> inventories = new HashSet<>();
+    private final Set<LInventory> inventories = new HashSet<>();
     private final Set<InventoryAction> actions = new HashSet<>();
     private final long creationTime;
     private boolean hasExecuted;
@@ -36,7 +36,7 @@ public class BasicInventoryTransaction implements InventoryTransaction {
     }
 
     @Override
-    public Set<Inventory> getInventories() {
+    public Set<LInventory> getInventories() {
         return this.inventories;
     }
 

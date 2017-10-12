@@ -1,7 +1,7 @@
 package co.aikar.timings;
 
-import org.lunaris.Lunaris;
-import org.lunaris.event.Event;
+import org.lunaris.LunarisServer;
+import org.lunaris.api.event.Event;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.server.ServerSettings;
 import org.lunaris.world.LWorld;
@@ -35,7 +35,7 @@ public final class Timings {
 
 
     static {
-        ServerSettings config = Lunaris.getInstance().getServerSettings();
+        ServerSettings config = LunarisServer.getInstance().getServerSettings();
         setTimingsEnabled(config.isTimingsEnabledByDefault());
         setVerboseEnabled(config.isTimingsVerbose());
         setHistoryInterval(config.getTimingsHistoryInterval());
@@ -134,7 +134,7 @@ public final class Timings {
         Queue<TimingsHistory> oldQueue = TimingsManager.HISTORY;
         int frames = (getHistoryLength() / getHistoryInterval());
         if (length > maxLength) {
-            Lunaris.getInstance().getLogger().warning(
+            LunarisServer.getInstance().getLogger().warning(
                     "Timings Length too high. Requested " + length + ", max is " + maxLength
                             + ". To get longer history, you must increase your interval. Set Interval to "
                             + Math.ceil(length / MAX_HISTORY_FRAMES)

@@ -12,7 +12,7 @@ import org.lunaris.entity.LPlayer;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.LWorld;
 import org.lunaris.world.tileentity.ChestTileEntity;
-import org.lunaris.world.tileentity.TileEntity;
+import org.lunaris.world.tileentity.LTileEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +74,7 @@ public class BlockChest extends TransparentBlock {
 
     @Override
     public boolean onBreak(ItemStack item, Block block) {
-        TileEntity tileEntity = ((LBlock) block).getTileEntity();
+        LTileEntity tileEntity = ((LBlock) block).getTileEntity();
         if(tileEntity == null)
             return true;
         ((LWorld) block.getWorld()).unregisterTileEntity(tileEntity);

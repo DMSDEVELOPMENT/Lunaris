@@ -1,6 +1,6 @@
 package org.lunaris.world;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.api.entity.Player;
 import org.lunaris.api.world.Chunk;
 import org.lunaris.api.world.Location;
@@ -56,7 +56,7 @@ public abstract class LChunk implements Chunk {
         load0();
         loaded = true;
         //System.out.println("Chunk " + getX() + " " + getZ() + " loaded");
-        Lunaris.getInstance().getScheduler().run(() -> {
+        LunarisServer.getInstance().getScheduler().run(() -> {
             for (LPlayer player : getWatcherPlayers())
                 sendTo(player);
         });
@@ -149,7 +149,7 @@ public abstract class LChunk implements Chunk {
      * Отсылает пакет всем игрокам, которые видят этот чанк (но могу ти не находиться в нем).
      */
     public void sendPacket(MinePacket packet) {
-        Lunaris.getInstance().getNetworkManager().sendPacket(getWatcherPlayers(), packet);
+        LunarisServer.getInstance().getNetworkManager().sendPacket(getWatcherPlayers(), packet);
     }
 
     public LWorld getWorld() {

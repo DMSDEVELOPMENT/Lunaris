@@ -1,11 +1,11 @@
 package org.lunaris.material.block.liquid;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.api.world.Block;
 import org.lunaris.block.BUFlag;
 import org.lunaris.block.LBlock;
 import org.lunaris.api.world.BlockFace;
-import org.lunaris.event.block.BlockFromToEvent;
+import org.lunaris.api.event.block.BlockFromToEvent;
 import org.lunaris.api.material.Material;
 import org.lunaris.world.BlockUpdateType;
 
@@ -94,7 +94,7 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
             if (canFlowInto(bottomBlock)) {
                 if (isLava(block.getType()) && isWater(bottomBlock.getType())) {
                     BlockFromToEvent event = new BlockFromToEvent(bottomBlock, new LBlock(bottomBlock.getLocation(), Material.STONE));
-                    Lunaris.getInstance().getEventManager().call(event);
+                    LunarisServer.getInstance().getEventManager().call(event);
                     if (!event.isCancelled()) {
                         bottomBlock.setType(Material.STONE);
                         this.triggerLavaMixEffects(bottomBlock);

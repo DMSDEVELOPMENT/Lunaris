@@ -1,6 +1,7 @@
 package org.lunaris.server;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
+import org.lunaris.api.server.Scheduler;
 import org.lunaris.world.BlockMaster;
 import org.lunaris.world.Difficulty;
 import org.lunaris.api.world.Dimension;
@@ -22,7 +23,7 @@ public class WorldProvider {
 
     private float lastTickTime;
     
-    public WorldProvider(Lunaris server) {
+    public WorldProvider(LunarisServer server) {
         this.worlds.add(new LWorld(server, "Test World", Dimension.OVERWORLD, Difficulty.PEACEFUL));
         this.blockMaster = new BlockMaster(server);
         server.getScheduler().scheduleRepeatable(this::tick, 0L, Scheduler.ONE_TICK_IN_MILLIS, TimeUnit.MILLISECONDS);
@@ -37,7 +38,7 @@ public class WorldProvider {
     }
     
     public LWorld getWorld(int index) {
-        return this.worlds.get(index);
+        return index >= this.worlds.size() ? null : this.worlds.get(index);
     }
     
     public LWorld getWorld(String name) {

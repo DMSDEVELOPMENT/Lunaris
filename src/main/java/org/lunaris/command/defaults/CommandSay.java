@@ -1,6 +1,6 @@
 package org.lunaris.command.defaults;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandParameter;
 import org.lunaris.command.CommandParameterType;
@@ -26,7 +26,7 @@ public class CommandSay extends Command {
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < args.length; ++i)
             sb.append(args[i]).append(" ");
-        Lunaris.getInstance().broadcastMessage(ChatColor.colored("&d[Server]&r ") + sb.toString().trim());
+        LunarisServer.getInstance().broadcastMessage(ChatColor.colored("&d[Server]&r ") + sb.toString().trim());
     }
 
 }

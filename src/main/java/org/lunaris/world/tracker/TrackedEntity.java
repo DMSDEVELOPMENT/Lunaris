@@ -1,6 +1,6 @@
 package org.lunaris.world.tracker;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.PlayerInventory;
@@ -42,7 +42,7 @@ public class TrackedEntity {
      * Отпраляет пакет всем игрокам, смотрящим за этим ентити
      */
     public void sendPacket(MinePacket packet) {
-        Lunaris.getInstance().getNetworkManager().sendPacket(trackingPlayers, packet);
+        LunarisServer.getInstance().getNetworkManager().sendPacket(trackingPlayers, packet);
     }
 
     public void update(Collection<LPlayer> players) {

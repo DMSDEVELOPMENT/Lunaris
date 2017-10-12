@@ -1,6 +1,6 @@
 package org.lunaris.world.tracker;
 
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.network.protocol.MinePacket;
@@ -14,11 +14,11 @@ import java.util.Set;
  * @author xtrafrancyz
  */
 public class EntityTracker {
-    private final Lunaris server;
+    private final LunarisServer server;
     private final LWorld world;
     private LongObjectHashMap<TrackedEntity> entities;
 
-    public EntityTracker(Lunaris server, LWorld world) {
+    public EntityTracker(LunarisServer server, LWorld world) {
         this.server = server;
         this.world = world;
         this.entities = new LongObjectHashMap<>();

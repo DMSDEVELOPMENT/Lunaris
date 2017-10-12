@@ -2,9 +2,9 @@ package org.lunaris.network;
 
 import co.aikar.timings.Timings;
 import io.netty.buffer.Unpooled;
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.event.player.PlayerConnectAsyncEvent;
+import org.lunaris.api.event.player.PlayerConnectAsyncEvent;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.packet.Packet01Login;
 import org.lunaris.network.raknet.RakNet;
@@ -30,7 +30,7 @@ public class RakNetProvider {
     private final IServer server;
     private final long guid = new Random().nextLong();
 
-    public RakNetProvider(NetworkManager manager, Lunaris server) {
+    public RakNetProvider(NetworkManager manager, LunarisServer server) {
         this.server = server;
         ServerSettings settings = server.getServerSettings();
         this.rakNet = new RakNetServer(

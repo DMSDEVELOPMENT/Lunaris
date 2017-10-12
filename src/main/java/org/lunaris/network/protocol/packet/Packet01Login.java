@@ -4,7 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.lunaris.Lunaris;
+import org.lunaris.LunarisServer;
 import org.lunaris.entity.misc.Skin;
 import org.lunaris.jwt.JwtAlgorithm;
 import org.lunaris.jwt.JwtSignatureException;
@@ -69,7 +69,7 @@ public class Packet01Login extends MinePacket {
             return;
         }
 
-        MojangChainValidator chainValidator = new MojangChainValidator(Lunaris.getInstance().getEncryptionKeyFactory());
+        MojangChainValidator chainValidator = new MojangChainValidator(LunarisServer.getInstance().getEncryptionKeyFactory());
         JSONArray jsonChain = (JSONArray) jsonChainRaw;
         for ( Object jsonTokenRaw : jsonChain ) {
             if ( jsonTokenRaw instanceof String ) {
@@ -83,7 +83,7 @@ public class Packet01Login extends MinePacket {
         }
 
         if(validate == null)
-            validate = Lunaris.getInstance().getServerSettings().isInOnlineMode();
+            validate = LunarisServer.getInstance().getServerSettings().isInOnlineMode();
         if (validate && !chainValidator.validate()) {
             this.disconnectReason = "You can login only using XBOX account.";
             return;

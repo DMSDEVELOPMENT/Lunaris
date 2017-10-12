@@ -1,7 +1,7 @@
 package org.lunaris.event.network;
 
-import org.lunaris.event.Cancellable;
-import org.lunaris.event.Event;
+import org.lunaris.api.event.Cancellable;
+import org.lunaris.api.event.Event;
 import org.lunaris.network.protocol.MinePacket;
 
 /**

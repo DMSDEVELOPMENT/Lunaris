@@ -6,7 +6,7 @@ import org.lunaris.api.entity.damage.DamageSource;
 import org.lunaris.entity.LLivingEntity;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.api.entity.EntityType;
-import org.lunaris.inventory.PlayerInventory;
+import org.lunaris.inventory.LPlayerInventory;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.item.potion.PotionEffect;
 import org.lunaris.item.potion.PotionEffectType;
@@ -53,7 +53,7 @@ public class DamageCalculus {
             return damage;
         int armor = 0;
         if(victim.getEntityType() == EntityType.PLAYER) {
-            PlayerInventory inventory = ((LPlayer) victim).getInventory();
+            LPlayerInventory inventory = ((LPlayer) victim).getInventory();
             for(ItemStack is : inventory.getArmorContents()) {
                 if(is != null && is.isItem())
                     armor += is.getItemHandle().getArmorPoints();

@@ -3,7 +3,7 @@ package org.lunaris.world.tracker;
 import org.lunaris.LunarisServer;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.inventory.PlayerInventory;
+import org.lunaris.inventory.LPlayerInventory;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
 import org.lunaris.network.protocol.MinePacket;
@@ -81,7 +81,7 @@ public class TrackedEntity {
                     player.sendPacket(new Packet28SetEntityMotion(entity));
                 }
                 if (entity instanceof LPlayer) {
-                    PlayerInventory inv = ((LPlayer) entity).getInventory();
+                    LPlayerInventory inv = ((LPlayer) entity).getInventory();
                     boolean hasArmor = false;
                     ItemStack[] armor = new ItemStack[4];
                     for (int i = 0; i < 4; i++) {

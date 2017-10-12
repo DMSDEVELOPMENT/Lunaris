@@ -11,7 +11,7 @@ import org.lunaris.api.event.player.PlayerKickEvent;
 import org.lunaris.api.event.player.PlayerPickupItemEvent;
 import org.lunaris.inventory.LInventory;
 import org.lunaris.inventory.InventoryManager;
-import org.lunaris.inventory.PlayerInventory;
+import org.lunaris.inventory.LPlayerInventory;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
@@ -254,7 +254,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
             if (event.isCancelled())
                 return;
             ItemStack is = item.getItemStack();
-            PlayerInventory pinv = getInventory();
+            LPlayerInventory pinv = getInventory();
             Collection<ItemStack> left = pinv.addItem(is).values();
             if (!left.isEmpty()) {
                 ItemStack leftIS = left.iterator().next();
@@ -351,7 +351,8 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
         this.inventoryManager.sendInventory(inventory);
     }
 
-    public PlayerInventory getInventory() {
+    @Override
+    public LPlayerInventory getInventory() {
         return this.inventoryManager.getPlayerInventory();
     }
 
@@ -385,7 +386,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
 
         }
-        PlayerInventory inventory = getInventory();
+        LPlayerInventory inventory = getInventory();
         inventory.sendContents(this);
         if(gamemode == Gamemode.CREATIVE)
             this.inventoryManager.getCreativeInventory().sendContents(this);

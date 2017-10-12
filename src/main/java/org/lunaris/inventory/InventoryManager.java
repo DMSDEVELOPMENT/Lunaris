@@ -21,12 +21,12 @@ public class InventoryManager {
 
     private int idIncrementor = 4;
 
-    private final PlayerInventory playerInventory;
+    private final LPlayerInventory playerInventory;
     private final CursorInventory cursorInventory;
 
     public InventoryManager(LPlayer player) {
         this.player = player;
-        addInventory(this.playerInventory = new PlayerInventory(player), true);
+        addInventory(this.playerInventory = new LPlayerInventory(player), true);
         addInventory(this.cursorInventory = new CursorInventory(player), true);
         this.inventories.put(creative, creative.getReservedInventoryId());
         this.reverted.put(creative.getReservedInventoryId(), creative);
@@ -96,7 +96,7 @@ public class InventoryManager {
         return creative;
     }
 
-    public PlayerInventory getPlayerInventory() {
+    public LPlayerInventory getPlayerInventory() {
         return this.playerInventory;
     }
 

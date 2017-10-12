@@ -1,5 +1,6 @@
 package org.lunaris.api.entity;
 
+import org.lunaris.api.inventory.PlayerInventory;
 import org.lunaris.api.world.Location;
 import org.lunaris.api.world.Sound;
 
@@ -126,5 +127,11 @@ public interface Player extends LivingEntity {
      * @param location the location to play sound at.
      */
     void playSound(Sound sound, Location location);
+
+    /**
+     * Get this player's inventory.
+     * @return this player's inventory.
+     */
+    PlayerInventory getInventory();
 
 }

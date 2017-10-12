@@ -3,7 +3,7 @@ package org.lunaris.event.block;
 import org.lunaris.api.entity.Player;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.world.BlockVector;
 
 /**

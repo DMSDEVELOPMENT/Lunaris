@@ -2,8 +2,8 @@ package org.lunaris.block;
 
 import org.lunaris.api.world.Block;
 import org.lunaris.api.world.BlockFace;
-import org.lunaris.material.BlockHandle;
-import org.lunaris.material.Material;
+import org.lunaris.material.LBlockHandle;
+import org.lunaris.api.material.Material;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.LChunk;
 import org.lunaris.api.world.Location;
@@ -75,8 +75,8 @@ public class LBlock implements Block {
         return this.type;
     }
 
-    public BlockHandle getHandle() {
-        return (BlockHandle) this.type.getHandle();
+    public LBlockHandle getHandle() {
+        return (LBlockHandle) this.type.getHandle();
     }
 
     public int getTypeId() {

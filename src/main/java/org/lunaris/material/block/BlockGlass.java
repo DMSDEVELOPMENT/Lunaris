@@ -1,6 +1,6 @@
 package org.lunaris.material.block;
 
-import org.lunaris.material.Material;
+import org.lunaris.api.material.Material;
 
 /**
  * Created by RINES on 07.10.17.

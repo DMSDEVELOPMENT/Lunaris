@@ -5,7 +5,7 @@ import org.lunaris.inventory.Inventory;
 import org.lunaris.inventory.transaction.action.CreativeInventoryAction;
 import org.lunaris.inventory.transaction.action.DropItemAction;
 import org.lunaris.inventory.transaction.action.SlotChangeAction;
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.packet.Packet1EInventoryTransaction;
 

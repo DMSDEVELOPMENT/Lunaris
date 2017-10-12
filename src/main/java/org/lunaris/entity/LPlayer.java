@@ -12,13 +12,13 @@ import org.lunaris.event.player.PlayerPickupItemEvent;
 import org.lunaris.inventory.Inventory;
 import org.lunaris.inventory.InventoryManager;
 import org.lunaris.inventory.PlayerInventory;
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.api.world.Location;
-import org.lunaris.world.Sound;
+import org.lunaris.api.world.Sound;
 import org.lunaris.world.LWorld;
 import org.lunaris.world.util.LongHash;
 

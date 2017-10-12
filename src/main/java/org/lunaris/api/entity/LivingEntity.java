@@ -1,6 +1,6 @@
 package org.lunaris.api.entity;
 
-import org.lunaris.entity.damage.DamageSource;
+import org.lunaris.api.entity.damage.DamageSource;
 
 /**
  * Created by RINES on 12.10.17.

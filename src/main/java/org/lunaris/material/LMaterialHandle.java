@@ -1,14 +1,17 @@
 package org.lunaris.material;
 
+import org.lunaris.api.material.Material;
+import org.lunaris.api.material.MaterialHandle;
+
 /**
  * Created by RINES on 13.09.17.
  */
-public abstract class MaterialHandle {
+public abstract class LMaterialHandle implements MaterialHandle {
 
     private final Material type;
     private final String name;
 
-    protected MaterialHandle(Material type, String name) {
+    protected LMaterialHandle(Material type, String name) {
         this.type = type;
         this.name = name;
     }
@@ -35,12 +38,12 @@ public abstract class MaterialHandle {
         return 1;
     }
 
-    public BlockHandle asBlock() {
-        return (BlockHandle) this;
+    public LBlockHandle asBlock() {
+        return (LBlockHandle) this;
     }
 
-    public ItemHandle asItem() {
-        return (ItemHandle) this;
+    public LItemHandle asItem() {
+        return (LItemHandle) this;
     }
 
 }

@@ -11,10 +11,10 @@ import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.api.entity.Gamemode;
 import org.lunaris.event.player.*;
 import org.lunaris.inventory.transaction.*;
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.jwt.EncryptionHandler;
 import org.lunaris.jwt.EncryptionRequestForger;
-import org.lunaris.material.ItemHandle;
+import org.lunaris.material.LItemHandle;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.network.util.ConnectionState;
 import org.lunaris.resourcepacks.ResourcePackManager;
@@ -414,7 +414,7 @@ public class MinePacketHandler {
                             event.call();
                             if(event.isCancelled())
                                 return;
-                            ItemHandle handle = item.getHandle().isBlock() ? null : item.getItemHandle();
+                            LItemHandle handle = item.getHandle().isBlock() ? null : (LItemHandle) item.getItemHandle();
                             if(handle != null && handle.canBeUsed() && handle.useOn(entity, item, player)) {
                                 if(handle.getMaxDurability() > 0) {
                                     item.setData(item.getData() + 1);

@@ -1,4 +1,4 @@
-package org.lunaris.item;
+package org.lunaris.api.item;
 
 /**
  * Created by RINES on 24.09.17.
@@ -17,6 +17,10 @@ public enum ItemTier {
         this.maxDurability = maxDurability;
     }
 
+    /**
+     * Get max durability of items of that tier.
+     * @return max durability of items of that tier.
+     */
     public int getMaxDurability() {
         return this.maxDurability;
     }

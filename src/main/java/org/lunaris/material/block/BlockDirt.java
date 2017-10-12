@@ -4,9 +4,10 @@ import org.lunaris.api.entity.Player;
 import org.lunaris.api.world.Block;
 import org.lunaris.block.BlockColor;
 import org.lunaris.api.world.BlockFace;
-import org.lunaris.item.ItemStack;
-import org.lunaris.item.ItemToolType;
-import org.lunaris.material.Material;
+import org.lunaris.api.item.ItemStack;
+import org.lunaris.api.item.ItemToolType;
+import org.lunaris.api.material.Material;
+import org.lunaris.material.LItemHandle;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,7 @@ public class BlockDirt extends SolidBlock {
     @Override
     public boolean onActivate(Block block, ItemStack item, Player player) {
         if (item != null && item.isItem() && item.isOfToolType(ItemToolType.HOE)) {
-            item.getItemHandle().useOn(item, block, BlockFace.UP, player);
+            ((LItemHandle) item.getItemHandle()).useOn(item, block, BlockFace.UP, player);
             block.setType(Material.FARM_LAND);
             return true;
         }

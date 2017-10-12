@@ -1,8 +1,9 @@
 package org.lunaris.entity;
 
 import org.lunaris.api.entity.Entity;
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.api.world.World;
-import org.lunaris.entity.damage.DamageSource;
+import org.lunaris.api.entity.damage.DamageSource;
 import org.lunaris.entity.data.*;
 import org.lunaris.api.entity.EntityType;
 import org.lunaris.entity.misc.Movable;
@@ -360,6 +361,13 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
     @Override
     public void setPositionAndRotation(Location location) {
         this.movement.setPositionAndRotation(location);
+    }
+
+    @Override
+    public Vector3d getDirection() {
+        double rx = Math.toRadians(getYaw()), ry = Math.toRadians(getPitch());
+        double xz = Math.cos(ry);
+        return new Vector3d(-xz * Math.sin(rx), -Math.sin(ry), xz * Math.cos(rx));
     }
 
     @Override

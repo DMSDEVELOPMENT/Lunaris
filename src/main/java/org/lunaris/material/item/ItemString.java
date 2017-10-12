@@ -1,12 +1,12 @@
 package org.lunaris.material.item;
 
-import org.lunaris.material.ItemHandle;
-import org.lunaris.material.Material;
+import org.lunaris.material.LItemHandle;
+import org.lunaris.api.material.Material;
 
 /**
  * @author xtrafrancyz
  */
-public class ItemString extends ItemHandle {
+public class ItemString extends LItemHandle {
 
     ItemString() {
         super(Material.STRING, "String");

@@ -1,4 +1,4 @@
-package org.lunaris.item;
+package org.lunaris.api.item;
 
 /**
  * Created by RINES on 13.09.17.

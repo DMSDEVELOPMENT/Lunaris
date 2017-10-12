@@ -85,11 +85,7 @@ public interface Movable {
         setVelocity(vector);
     }
 
-    default Vector3d getDirection() {
-        double rx = Math.toRadians(getYaw()), ry = Math.toRadians(getPitch());
-        double xz = Math.cos(ry);
-        return new Vector3d(-xz * Math.sin(rx), -Math.sin(ry), xz * Math.cos(rx));
-    }
+    Vector3d getDirection();
 
     default Vector3d getHeadDirection() {
         double rY = Math.toRadians(getHeadYaw());

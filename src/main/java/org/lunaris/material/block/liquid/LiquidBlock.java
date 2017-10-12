@@ -8,12 +8,12 @@ import org.lunaris.api.world.BlockFace;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.event.block.BlockFromToEvent;
-import org.lunaris.item.ItemStack;
-import org.lunaris.material.Material;
+import org.lunaris.api.item.ItemStack;
+import org.lunaris.api.material.Material;
 import org.lunaris.material.block.TransparentBlock;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.api.util.math.Vector3d;
-import org.lunaris.world.Sound;
+import org.lunaris.api.world.Sound;
 import org.lunaris.world.particle.GenericParticle;
 import org.lunaris.world.particle.ParticleType;
 

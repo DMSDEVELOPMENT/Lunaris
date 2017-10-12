@@ -1,7 +1,7 @@
 package org.lunaris.inventory.transaction;
 
 import org.lunaris.entity.LPlayer;
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.item.ItemStack;
 
 /**
  * Created by RINES on 01.10.17.

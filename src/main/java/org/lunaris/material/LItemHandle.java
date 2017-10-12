@@ -2,18 +2,20 @@ package org.lunaris.material;
 
 import org.lunaris.api.entity.Entity;
 import org.lunaris.api.entity.Player;
+import org.lunaris.api.material.ItemHandle;
+import org.lunaris.api.material.Material;
 import org.lunaris.api.world.Block;
 import org.lunaris.api.world.BlockFace;
-import org.lunaris.item.ItemStack;
-import org.lunaris.item.ItemTier;
-import org.lunaris.item.ItemToolType;
+import org.lunaris.api.item.ItemStack;
+import org.lunaris.api.item.ItemTier;
+import org.lunaris.api.item.ItemToolType;
 
 /**
  * Created by RINES on 24.09.17.
  */
-public class ItemHandle extends MaterialHandle {
+public class LItemHandle extends LMaterialHandle implements ItemHandle {
 
-    protected ItemHandle(Material type, String name) {
+    protected LItemHandle(Material type, String name) {
         super(type, name);
     }
 

@@ -4,7 +4,7 @@ import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.util.math.Vector3f;
 import org.lunaris.api.world.Location;
-import org.lunaris.world.Sound;
+import org.lunaris.api.world.Sound;
 
 /**
  * Created by RINES on 28.09.17.

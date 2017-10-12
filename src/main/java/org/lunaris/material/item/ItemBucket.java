@@ -9,15 +9,15 @@ import org.lunaris.entity.LPlayer;
 import org.lunaris.api.entity.Gamemode;
 import org.lunaris.event.player.PlayerBucketEmptyEvent;
 import org.lunaris.event.player.PlayerBucketFillEvent;
-import org.lunaris.item.ItemStack;
-import org.lunaris.material.ItemHandle;
-import org.lunaris.material.Material;
+import org.lunaris.api.item.ItemStack;
+import org.lunaris.material.LItemHandle;
+import org.lunaris.api.material.Material;
 import org.lunaris.material.block.liquid.LiquidBlock;
 
 /**
  * @author xtrafrancyz
  */
-public class ItemBucket extends ItemHandle {
+public class ItemBucket extends LItemHandle {
 
     ItemBucket() {
         super(Material.BUCKET, null);

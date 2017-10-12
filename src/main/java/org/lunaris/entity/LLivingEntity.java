@@ -2,7 +2,7 @@ package org.lunaris.entity;
 
 import org.lunaris.api.entity.Entity;
 import org.lunaris.api.entity.LivingEntity;
-import org.lunaris.entity.damage.DamageSource;
+import org.lunaris.api.entity.damage.DamageSource;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.api.entity.EntityType;
 import org.lunaris.api.entity.Gamemode;

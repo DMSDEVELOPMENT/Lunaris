@@ -1,5 +1,6 @@
 package org.lunaris.api.entity;
 
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.api.world.Chunk;
 import org.lunaris.api.world.Location;
 import org.lunaris.api.world.World;
@@ -58,6 +59,12 @@ public interface Entity {
      * @return this entity's location.
      */
     Location getLocation();
+
+    /**
+     * Get direction this entity is looking at.
+     * @return this entity's normalized direction vector.
+     */
+    Vector3d getDirection();
 
     /**
      * Get chunk this entity is currently in.

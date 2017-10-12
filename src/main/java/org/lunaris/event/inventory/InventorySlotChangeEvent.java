@@ -3,7 +3,7 @@ package org.lunaris.event.inventory;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 import org.lunaris.inventory.Inventory;
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.item.ItemStack;
 
 /**
  * Created by RINES on 01.10.17.

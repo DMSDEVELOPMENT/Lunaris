@@ -1,7 +1,7 @@
 package org.lunaris.nbt;
 
-import org.lunaris.item.ItemStack;
-import org.lunaris.material.Material;
+import org.lunaris.api.item.ItemStack;
+import org.lunaris.api.material.Material;
 import org.lunaris.nbt.stream.NBTInputStream;
 import org.lunaris.nbt.stream.NBTOutputStream;
 import org.lunaris.nbt.tag.CompoundTag;

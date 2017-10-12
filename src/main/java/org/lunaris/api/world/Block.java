@@ -1,7 +1,7 @@
 package org.lunaris.api.world;
 
-import org.lunaris.material.BlockHandle;
-import org.lunaris.material.Material;
+import org.lunaris.material.LBlockHandle;
+import org.lunaris.api.material.Material;
 
 /**
  * Created by RINES on 12.10.17.
@@ -73,7 +73,7 @@ public interface Block {
      * Get this block's handle.
      * @return this block's handle.
      */
-    BlockHandle getHandle();
+    LBlockHandle getHandle();
 
     /**
      * Change this block's material to given one.

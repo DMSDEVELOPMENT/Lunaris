@@ -1,4 +1,4 @@
-package org.lunaris.entity.damage;
+package org.lunaris.api.entity.damage;
 
 /**
  * Created by RINES on 11.10.17.
@@ -46,22 +46,42 @@ public enum DamageSource {
         this.bypassesCreative = bypassesCreative;
     }
 
+    /**
+     * Check whether this damage source ignores armor.
+     * @return if this damage source ignores armor.
+     */
     public boolean isBypassesArmor() {
         return this.bypassesArmor;
     }
 
+    /**
+     * Check whether this damage source ignores potion effects & enchantments resistance.
+     * @return if this damage source ignores potion effects & enchantments resistance.
+     */
     public boolean isPure() {
         return this.pure;
     }
 
+    /**
+     * Check whether this damage source is fire-based.
+     * @return if this damage source is related to fire in any way.
+     */
     public boolean isFireBased() {
         return this.fireBased;
     }
 
+    /**
+     * Check whether this damage source if magic-based.
+     * @return if this damage source if magic-based.
+     */
     public boolean isMagicBased() {
         return this.magicBased;
     }
 
+    /**
+     * Check whether players in creative gamemode will still take damage of this source type.
+     * @return if players in creative gamemode will still take damage of this source type.
+     */
     public boolean isBypassesCreative() {
         return this.bypassesCreative;
     }

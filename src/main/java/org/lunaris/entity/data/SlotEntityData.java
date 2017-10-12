@@ -1,7 +1,7 @@
 package org.lunaris.entity.data;
 
-import org.lunaris.material.Material;
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.material.Material;
+import org.lunaris.api.item.ItemStack;
 
 /**
  * author: MagicDroidX

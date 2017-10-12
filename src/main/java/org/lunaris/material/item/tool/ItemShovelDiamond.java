@@ -1,7 +1,7 @@
 package org.lunaris.material.item.tool;
 
-import org.lunaris.item.ItemTier;
-import org.lunaris.material.Material;
+import org.lunaris.api.item.ItemTier;
+import org.lunaris.api.material.Material;
 
 /**
  * Created by RINES on 07.10.17.

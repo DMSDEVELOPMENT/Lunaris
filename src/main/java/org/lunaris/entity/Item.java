@@ -2,7 +2,7 @@ package org.lunaris.entity;
 
 import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.api.entity.EntityType;
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet0FAddItem;
 import org.lunaris.util.math.LMath;

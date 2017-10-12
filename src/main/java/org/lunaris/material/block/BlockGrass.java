@@ -3,9 +3,10 @@ package org.lunaris.material.block;
 import org.lunaris.api.entity.Player;
 import org.lunaris.api.world.Block;
 import org.lunaris.api.world.BlockFace;
-import org.lunaris.item.ItemStack;
-import org.lunaris.item.ItemToolType;
-import org.lunaris.material.Material;
+import org.lunaris.api.item.ItemStack;
+import org.lunaris.api.item.ItemToolType;
+import org.lunaris.api.material.Material;
+import org.lunaris.material.LItemHandle;
 
 /**
  * Created by RINES on 24.09.17.
@@ -34,11 +35,11 @@ public class BlockGrass extends BlockDirt {
     public boolean onActivate(Block block, ItemStack item, Player player) {
         if (item != null && item.isItem()) {
             if (item.isOfToolType(ItemToolType.HOE)) {
-                item.getItemHandle().useOn(item, block, BlockFace.UP, player);
+                ((LItemHandle) item.getItemHandle()).useOn(item, block, BlockFace.UP, player);
                 block.setType(Material.FARM_LAND);
                 return true;
             } else if (item.isOfToolType(ItemToolType.SHOVEL)) {
-                item.getItemHandle().useOn(item, block, BlockFace.UP, player);
+                ((LItemHandle) item.getItemHandle()).useOn(item, block, BlockFace.UP, player);
                 block.setType(Material.GRASS_PATH);
                 return true;
             }

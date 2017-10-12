@@ -2,7 +2,7 @@ package org.lunaris.material.block.liquid;
 
 import org.lunaris.api.entity.Entity;
 import org.lunaris.api.world.Block;
-import org.lunaris.material.Material;
+import org.lunaris.api.material.Material;
 
 /**
  * @author xtrafrancyz

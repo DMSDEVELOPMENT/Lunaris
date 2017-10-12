@@ -2,14 +2,15 @@ package org.lunaris.entity.damage;
 
 import org.lunaris.api.entity.Entity;
 import org.lunaris.api.entity.LivingEntity;
+import org.lunaris.api.entity.damage.DamageSource;
 import org.lunaris.entity.LLivingEntity;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.api.entity.EntityType;
 import org.lunaris.inventory.PlayerInventory;
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.item.potion.PotionEffect;
 import org.lunaris.item.potion.PotionEffectType;
-import org.lunaris.material.Material;
+import org.lunaris.api.material.Material;
 import org.lunaris.api.util.math.Vector3d;
 
 import java.util.concurrent.ThreadLocalRandom;

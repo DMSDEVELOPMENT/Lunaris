@@ -1,8 +1,8 @@
 package org.lunaris.material.block.liquid;
 
 import org.lunaris.api.world.Block;
-import org.lunaris.material.Material;
-import org.lunaris.world.Dimension;
+import org.lunaris.api.material.Material;
+import org.lunaris.api.world.Dimension;
 
 /**
  * @author xtrafrancyz

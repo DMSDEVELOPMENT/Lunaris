@@ -3,7 +3,7 @@ package org.lunaris.inventory.transaction.action;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.Inventory;
 import org.lunaris.inventory.transaction.InventoryAction;
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.item.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,5 +1,8 @@
 package org.lunaris.api.entity;
 
+import org.lunaris.api.world.Location;
+import org.lunaris.api.world.Sound;
+
 import java.util.UUID;
 
 /**
@@ -116,5 +119,12 @@ public interface Player extends LivingEntity {
      * @return if this player is breaking block right now.
      */
     boolean isBreakingBlock();
+
+    /**
+     * Play sound for this player at given location.
+     * @param sound the sound itself.
+     * @param location the location to play sound at.
+     */
+    void playSound(Sound sound, Location location);
 
 }

@@ -1,4 +1,4 @@
-package org.lunaris.world;
+package org.lunaris.api.world;
 
 /**
  * Created by RINES on 28.09.17.

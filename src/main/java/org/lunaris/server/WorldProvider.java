@@ -3,7 +3,7 @@ package org.lunaris.server;
 import org.lunaris.Lunaris;
 import org.lunaris.world.BlockMaster;
 import org.lunaris.world.Difficulty;
-import org.lunaris.world.Dimension;
+import org.lunaris.api.world.Dimension;
 import org.lunaris.world.LWorld;
 
 import java.util.ArrayList;

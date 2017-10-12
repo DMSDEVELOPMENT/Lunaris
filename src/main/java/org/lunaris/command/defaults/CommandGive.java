@@ -7,8 +7,8 @@ import org.lunaris.command.CommandParameterType;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.entity.misc.LPermission;
-import org.lunaris.item.ItemStack;
-import org.lunaris.material.Material;
+import org.lunaris.api.item.ItemStack;
+import org.lunaris.api.material.Material;
 import org.lunaris.util.logger.ChatColor;
 
 /**

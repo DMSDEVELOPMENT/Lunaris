@@ -1,4 +1,6 @@
-package org.lunaris.util.math;
+package org.lunaris.api.util.math;
+
+import org.lunaris.util.math.LMath;
 
 /**
  * Created by RINES on 12.09.17.

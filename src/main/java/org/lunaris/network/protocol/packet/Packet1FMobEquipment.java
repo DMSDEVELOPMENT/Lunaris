@@ -1,6 +1,6 @@
 package org.lunaris.network.protocol.packet;
 
-import org.lunaris.item.ItemStack;
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 

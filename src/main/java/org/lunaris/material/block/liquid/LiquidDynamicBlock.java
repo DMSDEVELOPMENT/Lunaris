@@ -6,7 +6,7 @@ import org.lunaris.block.BUFlag;
 import org.lunaris.block.LBlock;
 import org.lunaris.api.world.BlockFace;
 import org.lunaris.event.block.BlockFromToEvent;
-import org.lunaris.material.Material;
+import org.lunaris.api.material.Material;
 import org.lunaris.world.BlockUpdateType;
 
 import java.util.EnumSet;

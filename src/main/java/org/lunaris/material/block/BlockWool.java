@@ -1,7 +1,7 @@
 package org.lunaris.material.block;
 
-import org.lunaris.item.ItemToolType;
-import org.lunaris.material.Material;
+import org.lunaris.api.item.ItemToolType;
+import org.lunaris.api.material.Material;
 
 /**
  * @author xtrafrancyz

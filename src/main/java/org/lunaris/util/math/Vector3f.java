@@ -1,5 +1,7 @@
 package org.lunaris.util.math;
 
+import org.lunaris.api.util.math.Vector2f;
+
 /**
  * Created by RINES on 12.09.17.
  */

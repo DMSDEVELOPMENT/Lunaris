@@ -1,7 +1,7 @@
 package org.lunaris.world.util;
 
 import org.lunaris.block.LBlock;
-import org.lunaris.material.Material;
+import org.lunaris.api.material.Material;
 import org.lunaris.world.BlockUpdateType;
 import org.lunaris.world.BlockVector;
 import org.lunaris.world.LWorld;

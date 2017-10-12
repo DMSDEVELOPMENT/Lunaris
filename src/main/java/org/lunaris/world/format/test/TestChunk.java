@@ -1,6 +1,6 @@
 package org.lunaris.world.format.test;
 
-import org.lunaris.material.Material;
+import org.lunaris.api.material.Material;
 import org.lunaris.world.LChunk;
 import org.lunaris.world.LWorld;
 

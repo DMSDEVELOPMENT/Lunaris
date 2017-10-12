@@ -6,7 +6,7 @@ import org.lunaris.api.world.Chunk;
 import org.lunaris.api.world.Location;
 import org.lunaris.block.LBlock;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.material.Material;
+import org.lunaris.api.material.Material;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet3AFullChunkData;

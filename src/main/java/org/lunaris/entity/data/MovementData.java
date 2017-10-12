@@ -1,5 +1,6 @@
 package org.lunaris.entity.data;
 
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.block.LBlock;
 import org.lunaris.entity.LEntity;
 import org.lunaris.api.entity.EntityType;
@@ -112,6 +113,13 @@ public class MovementData implements Movable {
         this.motionX = x;
         this.motionY = y;
         this.motionZ = z;
+    }
+
+    @Override
+    public Vector3d getDirection() {
+        double rx = Math.toRadians(getYaw()), ry = Math.toRadians(getPitch());
+        double xz = Math.cos(ry);
+        return new Vector3d(-xz * Math.sin(rx), -Math.sin(ry), xz * Math.cos(rx));
     }
 
     public boolean isDirty() {

@@ -4,8 +4,8 @@ import org.lunaris.Lunaris;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.event.player.PlayerDropItemEvent;
 import org.lunaris.inventory.transaction.InventoryAction;
-import org.lunaris.item.ItemStack;
-import org.lunaris.material.Material;
+import org.lunaris.api.item.ItemStack;
+import org.lunaris.api.material.Material;
 
 /**
  * Created by RINES on 01.10.17.

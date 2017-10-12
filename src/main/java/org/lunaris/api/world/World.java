@@ -3,7 +3,6 @@ package org.lunaris.api.world;
 import org.lunaris.api.entity.Entity;
 import org.lunaris.api.entity.Player;
 import org.lunaris.api.util.math.Vector3d;
-import org.lunaris.world.Dimension;
 
 import java.util.Collection;
 
@@ -118,5 +117,19 @@ public interface World {
      * @return spawn location for this world.
      */
     Location getSpawnLocation();
+
+    /**
+     * Play sound at given location with given pitch.
+     * @param sound the sound itself.
+     * @param location location to play sound at.
+     * @param pitch sound's pitch.
+     */
+    void playSound(Sound sound, Location location, float pitch);
+
+    /**
+     * Play sound for any world's player with default pitch.
+     * @param sound the sound itself.
+     */
+    void playSound(Sound sound);
 
 }

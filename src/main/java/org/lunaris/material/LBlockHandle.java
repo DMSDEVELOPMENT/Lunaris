@@ -5,6 +5,7 @@ import org.lunaris.api.entity.Player;
 import org.lunaris.api.material.BlockHandle;
 import org.lunaris.api.material.Material;
 import org.lunaris.api.world.Block;
+import org.lunaris.api.world.Location;
 import org.lunaris.block.BlockColor;
 import org.lunaris.api.world.BlockFace;
 import org.lunaris.api.item.ItemStack;
@@ -44,8 +45,7 @@ public class LBlockHandle extends LMaterialHandle implements BlockHandle {
     }
 
     public boolean onBreak(ItemStack item, Block block) {
-        getDrops(block, item == null ? ItemStack.AIR : item);
-        //        return this.getLevel().setBlock(this, new BlockAir(), true, true);
+//        getDrops(block, item == null ? ItemStack.AIR : item); ?????
         return true;
     }
 
@@ -54,9 +54,8 @@ public class LBlockHandle extends LMaterialHandle implements BlockHandle {
     }
 
     public void dropBlockAsItem(Block block) {
-        for (ItemStack drop : getDrops(block, ItemStack.AIR)) {
-            // drop item in world
-        }
+        Location position = block.getLocation();
+        getDrops(block, ItemStack.AIR).forEach(item -> block.getWorld().dropItem(item, position));
     }
 
     public void onNeighborBlockChange(Block block, Block neighborBlock) {

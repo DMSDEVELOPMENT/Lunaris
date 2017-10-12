@@ -318,10 +318,6 @@ public class Vector3d implements Cloneable {
         return this.x == other.x && this.y == other.y && this.z == other.z;
     }
 
-    public int rawHashCode() {
-        return super.hashCode();
-    }
-
     @Override
     public Vector3d clone() {
         try {

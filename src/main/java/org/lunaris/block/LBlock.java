@@ -1,5 +1,6 @@
 package org.lunaris.block;
 
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.world.Block;
 import org.lunaris.api.world.BlockFace;
 import org.lunaris.material.LBlockHandle;
@@ -61,7 +62,7 @@ public class LBlock implements Block {
             return;
         boolean typeChanged = false;
         if (type != this.type) {
-            getHandle().onBreak(null, this);
+            getHandle().onBreak(ItemStack.AIR, this);
             this.type = type;
             typeChanged = true;
         }

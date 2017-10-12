@@ -20,6 +20,7 @@ import org.lunaris.util.math.LMath;
 import org.lunaris.util.math.MathHelper;
 import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
+import org.lunaris.world.tileentity.TileEntity;
 import org.lunaris.world.tracker.EntityTracker;
 import org.lunaris.world.util.BlockUpdateScheduler;
 import org.lunaris.world.util.ChunkUnloaderTask;
@@ -54,6 +55,7 @@ public class LWorld implements World {
     private final LongObjectHashMap<LChunk> chunks = new LongObjectHashMap<>();
     private final Set<LPlayer> players = new HashSet<>();
     private final LongObjectHashMap<LEntity> entities = new LongObjectHashMap<>();
+    private final LongObjectHashMap<TileEntity> tileEntities = new LongObjectHashMap<>();
 
     private final ChunksFollowerTask followerTask;
     private final BlockUpdateScheduler blockUpdateScheduler;
@@ -102,6 +104,22 @@ public class LWorld implements World {
         this.entities.remove(entity.getEntityID());
         this.entityTracker.untrack(entity);
         //this.server.getNetworkManager().sendPacket(this.players, new Packet0ERemoveEntity(entity.getEntityID()));
+    }
+
+    public void registerTileEntity(TileEntity tileEntity) {
+        this.tileEntities.put(hash(tileEntity.getLocation()), tileEntity);
+    }
+
+    public TileEntity getTileEntityAt(int x, int y, int z) {
+        return this.tileEntities.get(hash(x, y, z));
+    }
+
+    public TileEntity getTileEntityAt(Vector3d position) {
+        return this.tileEntities.get(hash(position));
+    }
+
+    public void unregisterTileEntity(TileEntity tileEntity) {
+        this.tileEntities.remove(hash(tileEntity.getLocation()));
     }
 
     public boolean isChunkLoadedAt(int x, int z) {
@@ -183,6 +201,7 @@ public class LWorld implements World {
         Timings.getChunksTickTimer().stopTiming();
         this.followerTask.tick();
         tickEntities(current, dT);
+        this.tileEntities.values().forEach(TileEntity::tick);
         Timings.getWorldTickTimer(this).stopTiming();
     }
 
@@ -198,11 +217,15 @@ public class LWorld implements World {
         blockUpdateScheduler.scheduleUpdate(block, delay);
     }
 
+    @Override
     public int getTime() {
         return this.time;
     }
 
+    @Override
     public void dropItem(ItemStack itemStack, Vector3d position) {
+        if(itemStack == null || itemStack.getType() == Material.AIR)
+            throw new IllegalArgumentException("You can not drop air itemstack as item entity!");
         this.server.getEntityProvider().spawnItem(
                 position instanceof Location
                         ? (Location) position
@@ -289,6 +312,14 @@ public class LWorld implements World {
 
     private long hash(int x, int z) {
         return LongHash.toLong(x, z);
+    }
+
+    private long hash(int x, int y, int z) {
+        return LongHash.toHash(x, y, z);
+    }
+
+    private long hash(Vector3d position) {
+        return hash(position.getBlockX(), position.getBlockY(), position.getBlockZ());
     }
 
     public String getName() {

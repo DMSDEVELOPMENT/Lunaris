@@ -1,6 +1,6 @@
 package org.lunaris.event.inventory;
 
-import org.lunaris.entity.LPlayer;
+import org.lunaris.api.entity.Player;
 import org.lunaris.event.Event;
 import org.lunaris.inventory.Inventory;
 
@@ -10,9 +10,9 @@ import org.lunaris.inventory.Inventory;
 public class InventoryCloseEvent extends Event {
 
     private final Inventory inventory;
-    private final LPlayer player;
+    private final Player player;
 
-    public InventoryCloseEvent(Inventory inventory, LPlayer player) {
+    public InventoryCloseEvent(Inventory inventory, Player player) {
         this.inventory = inventory;
         this.player = player;
     }
@@ -21,7 +21,7 @@ public class InventoryCloseEvent extends Event {
         return this.inventory;
     }
 
-    public LPlayer getPlayer() {
+    public Player getPlayer() {
         return this.player;
     }
 

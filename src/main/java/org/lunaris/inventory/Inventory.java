@@ -1,6 +1,7 @@
 package org.lunaris.inventory;
 
 import org.lunaris.Lunaris;
+import org.lunaris.api.entity.Player;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.event.inventory.InventoryCloseEvent;
 import org.lunaris.event.inventory.InventoryOpenEvent;
@@ -22,7 +23,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
     private final String title;
     private int maxStackSize = 64;
 
-    private final Set<LPlayer> viewers = new HashSet<>();
+    private final Set<Player> viewers = new HashSet<>();
 
     Inventory(InventoryType type) {
         this(type, null);
@@ -114,8 +115,9 @@ public abstract class Inventory implements Iterable<ItemStack> {
         player.sendPacket(new Packet31InventoryContent(id, this.items));
     }
 
-    public void sendSlot(Collection<LPlayer> players, int index) {
-        players.forEach(player -> {
+    public void sendSlot(Collection<Player> players, int index) {
+        players.forEach(p -> {
+            LPlayer player = (LPlayer) p;
             int id = player.getInventoryManager().getInventoryId(this);
             if(id == -1) {
                 close(player);
@@ -334,11 +336,11 @@ public abstract class Inventory implements Iterable<ItemStack> {
             setItem(i, null);
     }
 
-    public Collection<LPlayer> getViewers() {
+    public Collection<Player> getViewers() {
         return this.viewers;
     }
 
-    boolean open(LPlayer player) {
+    boolean open(Player player) {
         InventoryOpenEvent event = new InventoryOpenEvent(this, player);
         Lunaris.getInstance().getEventManager().call(event);
         if(event.isCancelled())
@@ -347,7 +349,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
         return true;
     }
 
-    void close(LPlayer player) {
+    void close(Player player) {
         InventoryCloseEvent event = new InventoryCloseEvent(this, player);
         Lunaris.getInstance().getEventManager().call(event);
         this.viewers.remove(player);

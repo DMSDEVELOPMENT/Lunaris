@@ -2,6 +2,7 @@ package org.lunaris.api.world;
 
 import org.lunaris.api.entity.Entity;
 import org.lunaris.api.entity.Player;
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.util.math.Vector3d;
 
 import java.util.Collection;
@@ -131,5 +132,12 @@ public interface World {
      * @param sound the sound itself.
      */
     void playSound(Sound sound);
+
+    /**
+     * Drop item entity of given itemstack at specified position in this world.
+     * @param itemStack item's entity itemstack.
+     * @param position the position to drop item at.
+     */
+    void dropItem(ItemStack itemStack, Vector3d position);
 
 }

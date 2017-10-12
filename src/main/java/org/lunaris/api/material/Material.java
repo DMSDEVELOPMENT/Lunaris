@@ -43,6 +43,7 @@ public enum Material {
     COBWEB(BlockCobweb.class, 30),
     OBSIDIAN(BlockObsidian.class, 49),
     FIRE(BlockFire.class, 51),
+    CHEST(BlockChest.class, 54),
     FARM_LAND(BlockFarmland.class, 60),
     NETHER_PORTAL(BlockStone.class, 60), //fix
     GRASS_PATH(BlockGrassPath.class, 198),

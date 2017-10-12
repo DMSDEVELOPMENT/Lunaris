@@ -351,10 +351,6 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
         this.inventoryManager.sendInventory(inventory);
     }
 
-    public void closeInventory() {
-        this.inventoryManager.closeAndRemoveLastOpenedInventory();
-    }
-
     public PlayerInventory getInventory() {
         return this.inventoryManager.getPlayerInventory();
     }

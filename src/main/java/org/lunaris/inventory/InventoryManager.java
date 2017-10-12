@@ -20,7 +20,6 @@ public class InventoryManager {
     private final Set<Integer> permamentInventories = new HashSet<>();
 
     private int idIncrementor = 4;
-    private int lastOpenedInventory = -1;
 
     private final PlayerInventory playerInventory;
     private final CursorInventory cursorInventory;
@@ -86,12 +85,11 @@ public class InventoryManager {
         this.inventories.keySet().forEach(this::sendInventory);
     }
 
-    public void closeAndRemoveLastOpenedInventory() {
-        Inventory inventory = this.reverted.get(this.lastOpenedInventory);
+    public void closeInventory(int inventoryID) {
+        Inventory inventory = this.reverted.get(inventoryID);
         if(inventory == null)
             return;
         removeInventory(inventory);
-        //close
     }
 
     public CreativeInventory getCreativeInventory() {

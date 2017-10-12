@@ -17,4 +17,11 @@ public class LongHash {
         return (int) (l & 0xFFFFFFFF) + Integer.MIN_VALUE;
     }
 
+    public static int toHash(int x, int y, int z) {
+        x ^= x >>> 32;
+        y ^= y >>> 32;
+        z ^= z >>> 32;
+        return x + 31 * (y + 31 * z);
+    }
+
 }

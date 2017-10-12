@@ -1,5 +1,6 @@
 package org.lunaris.inventory.transaction.action;
 
+import org.lunaris.api.entity.Player;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.Inventory;
 import org.lunaris.inventory.transaction.InventoryAction;
@@ -44,7 +45,7 @@ public class SlotChangeAction extends InventoryAction {
 
     @Override
     public void onExecuteSuccess(LPlayer source) {
-        Set<LPlayer> players = new HashSet<>(this.inventory.getViewers());
+        Set<Player> players = new HashSet<>(this.inventory.getViewers());
         players.remove(source);
         this.inventory.sendSlot(players, this.slot);
     }

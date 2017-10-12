@@ -311,6 +311,10 @@ public class MinePacketHandler {
         sync(() -> packet.getPlayer().sendPacketToWatchers(packet));
     }
 
+    public void handle(Packet2FContainerClose packet) {
+        sync(() -> packet.getPlayer().getInventoryManager().closeInventory(packet.getInventoryID()));
+    }
+
     public void handle(Packet30PlayerHotbar packet) {
         if(packet.getInventoryId() != InventorySection.INVENTORY.getId())
             return;

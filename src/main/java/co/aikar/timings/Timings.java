@@ -6,7 +6,10 @@ import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.server.ServerSettings;
 import org.lunaris.world.LWorld;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static co.aikar.timings.TimingIdentifier.DEFAULT_GROUP;
 
@@ -33,6 +36,8 @@ public final class Timings {
     private static final Timing packetsSendingTimer;
     private static final Timing eventTimer;
 
+    private static final Map<Class<?>, Timing> eventTimings = new HashMap<>();
+    private static final Map<Class<?>, Timing> packetsTimings = new ConcurrentHashMap<>();
 
     static {
         ServerSettings config = LunarisServer.getInstance().getServerSettings();
@@ -74,7 +79,12 @@ public final class Timings {
     }
 
     public static Timing getPacketsSerializationTimer(MinePacket packet) {
-        return TimingsManager.getTiming(packetsSerializationTimer.name, packet.getClass().getSimpleName(), packetsSerializationTimer);
+        Timing t = packetsTimings.get(packet.getClass());
+        if (t == null) {
+            t = TimingsManager.getTiming(packetsSerializationTimer.name, packet.getClass().getSimpleName(), packetsSerializationTimer);
+            packetsTimings.put(packet.getClass(), t);
+        }
+        return t;
     }
 
     public static Timing getPacketsSendingTimer() {
@@ -82,7 +92,12 @@ public final class Timings {
     }
 
     public static Timing getEventTimer(Event event) {
-        return TimingsManager.getTiming(eventTimer.name, event.getClass().getSimpleName(), eventTimer);
+        Timing t = eventTimings.get(event.getClass());
+        if (t == null) {
+            t = TimingsManager.getTiming(eventTimer.name, event.getClass().getSimpleName(), eventTimer);
+            eventTimings.put(event.getClass(), t);
+        }
+        return t;
     }
 
     public static boolean isTimingsEnabled() {
@@ -135,10 +150,10 @@ public final class Timings {
         int frames = (getHistoryLength() / getHistoryInterval());
         if (length > maxLength) {
             LunarisServer.getInstance().getLogger().warning(
-                    "Timings Length too high. Requested " + length + ", max is " + maxLength
-                            + ". To get longer history, you must increase your interval. Set Interval to "
-                            + Math.ceil(length / MAX_HISTORY_FRAMES)
-                            + " to achieve this length.");
+                "Timings Length too high. Requested " + length + ", max is " + maxLength
+                    + ". To get longer history, you must increase your interval. Set Interval to "
+                    + Math.ceil(length / MAX_HISTORY_FRAMES)
+                    + " to achieve this length.");
         }
 
         TimingsManager.HISTORY = new TimingsManager.BoundedQueue<>(frames);

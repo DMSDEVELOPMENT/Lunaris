@@ -1,7 +1,12 @@
 package org.lunaris.event;
 
 import co.aikar.timings.Timings;
-import org.lunaris.api.event.*;
+
+import org.lunaris.api.event.Cancellable;
+import org.lunaris.api.event.Event;
+import org.lunaris.api.event.EventHandler;
+import org.lunaris.api.event.EventPriority;
+import org.lunaris.api.event.Listener;
 import org.lunaris.server.IServer;
 import org.lunaris.util.exception.EventExecutionException;
 
@@ -20,9 +25,10 @@ import java.util.function.Consumer;
 /**
  * Created by RINES on 13.09.17.
  */
+@SuppressWarnings("unchecked")
 public class EventManager {
 
-    private Map<Class<Event>, Set<Handler>> HANDLERS = new ConcurrentHashMap<>();
+    private Map<Class<? extends Event>, Set<Handler>> HANDLERS = new ConcurrentHashMap<>();
 
     private IServer server;
 
@@ -32,16 +38,17 @@ public class EventManager {
 
     public void call(Event event) {
         Set<Handler> handlers = HANDLERS.get(event.getClass());
-        if(handlers == null)
+        if (handlers == null)
             return;
         Timings.getEventTimer(event).startTiming();
         Cancellable cancellable = event instanceof Cancellable ? (Cancellable) event : null;
-        try {
-            for(Handler handler : handlers)
-                if(!handler.ignoreCancelled || cancellable == null || !cancellable.isCancelled())
+        for (Handler handler : handlers) {
+            try {
+                if (!handler.ignoreCancelled || cancellable == null || !cancellable.isCancelled())
                     handler.consumer.accept(event);
-        }catch(Exception ex) {
-            new EventExecutionException(ex).printStackTrace();
+            } catch (Exception ex) {
+                new EventExecutionException(ex).printStackTrace();
+            }
         }
         Timings.getEventTimer(event).stopTiming();
     }
@@ -49,17 +56,15 @@ public class EventManager {
     public void register(Listener listener) {
         Class<? extends Listener> clazz = listener.getClass();
         Class<Event> event = Event.class;
-        for(Method m : clazz.getDeclaredMethods()) {
-            if(m.getParameterCount() != 1 || !m.isAnnotationPresent(EventHandler.class))
+        for (Method m : clazz.getDeclaredMethods()) {
+            if (m.getParameterCount() != 1 || !m.isAnnotationPresent(EventHandler.class))
                 continue;
             Class<?> param = m.getParameterTypes()[0];
-            if(!event.isAssignableFrom(param))
+            if (!event.isAssignableFrom(param))
                 continue;
-            Set<Handler> handlers = HANDLERS.get(param);
-            if(handlers == null) {
-                handlers = new ConcurrentSkipListSet<>(Comparator.comparingInt(Handler::priority));
-                HANDLERS.put((Class<Event>) param, handlers);
-            }
+            Set<Handler> handlers = HANDLERS.computeIfAbsent((Class<Event>) param, c -> 
+                new ConcurrentSkipListSet<>(Comparator.comparingInt(Handler::priority))
+            );
             EventHandler annotation = m.getAnnotation(EventHandler.class);
             handlers.add(new Handler(annotation.priority(), annotation.ignoreCancelled(), constructConsumer(listener, m)));
         }
@@ -69,14 +74,14 @@ public class EventManager {
         try {
             MethodHandles.Lookup lookup = constructLookup(listener.getClass());
             return (Consumer<Event>) LambdaMetafactory.metafactory(
-                    lookup,
-                    "accept",
-                    MethodType.methodType(Consumer.class, listener.getClass()),
-                    MethodType.methodType(void.class, Object.class),
-                    lookup.unreflect(method),
-                    MethodType.methodType(void.class, method.getParameterTypes()[0])
+                lookup,
+                "accept",
+                MethodType.methodType(Consumer.class, listener.getClass()),
+                MethodType.methodType(void.class, Object.class),
+                lookup.unreflect(method),
+                MethodType.methodType(void.class, method.getParameterTypes()[0])
             ).getTarget().invoke(listener);
-        }catch(Throwable t) {
+        } catch (Throwable t) {
             this.server.getLogger().error(t, "Can not construct event handler consumer");
             return null;
         }
@@ -87,7 +92,7 @@ public class EventManager {
         constructor.setAccessible(true);
         try {
             return constructor.newInstance(owner);
-        }finally {
+        } finally {
             constructor.setAccessible(false);
         }
     }

@@ -1,5 +1,6 @@
 package org.lunaris.network;
 
+import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 
 import org.lunaris.LunarisServer;
@@ -90,7 +91,8 @@ public class NetworkManager {
     }
 
     private byte[] serialize(MinePacket packet) {
-        //Timings.getPacketsSerializationTimer(packet).startTiming();
+        Timing timing = Timings.getPacketsSerializationTimer(packet);
+        timing.startTiming();
         try {
             MineBuffer buffer = new MineBuffer(1 << 4);
             packet.write(buffer);
@@ -108,7 +110,7 @@ public class NetworkManager {
             new Exception("Can not serialize packet", ex).printStackTrace();
             return null;
         } finally {
-            //Timings.getPacketsSerializationTimer(packet).stopTiming();
+            timing.stopTiming();
         }
     }
 

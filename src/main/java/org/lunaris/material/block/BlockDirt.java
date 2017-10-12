@@ -1,9 +1,9 @@
 package org.lunaris.material.block;
 
-import org.lunaris.block.Block;
+import org.lunaris.api.entity.Player;
+import org.lunaris.api.world.Block;
 import org.lunaris.block.BlockColor;
-import org.lunaris.block.BlockFace;
-import org.lunaris.entity.Player;
+import org.lunaris.api.world.BlockFace;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.material.Material;

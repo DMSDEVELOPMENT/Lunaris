@@ -1,13 +1,14 @@
 package org.lunaris.material.block.liquid;
 
-import org.lunaris.block.Block;
-import org.lunaris.entity.Entity;
+import org.lunaris.api.entity.Entity;
+import org.lunaris.api.world.Block;
 import org.lunaris.material.Material;
 
 /**
  * @author xtrafrancyz
  */
 public class BlockWaterStill extends LiquidStaticBlock {
+
     public BlockWaterStill() {
         super(Material.WATER_STILL, "Still Water");
     }
@@ -25,4 +26,5 @@ public class BlockWaterStill extends LiquidStaticBlock {
     public int tickRate(Block block) {
         return 5;
     }
+
 }

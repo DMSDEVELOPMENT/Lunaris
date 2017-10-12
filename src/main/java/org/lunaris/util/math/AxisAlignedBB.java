@@ -1,5 +1,7 @@
 package org.lunaris.util.math;
 
+import org.lunaris.api.util.math.Vector3d;
+
 /**
  * Created by RINES on 24.09.17.
  */

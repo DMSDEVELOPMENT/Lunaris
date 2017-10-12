@@ -1,6 +1,6 @@
 package org.lunaris.network.protocol.packet;
 
-import org.lunaris.block.BlockFace;
+import org.lunaris.api.world.BlockFace;
 import org.lunaris.inventory.transaction.*;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;

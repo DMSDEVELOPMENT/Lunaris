@@ -1,9 +1,9 @@
 package org.lunaris.world.util;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.server.IServer;
-import org.lunaris.world.Chunk;
-import org.lunaris.world.World;
+import org.lunaris.world.LChunk;
+import org.lunaris.world.LWorld;
 
 /**
  * Created by RINES on 14.09.17.
@@ -14,11 +14,11 @@ public class ChunksFollowerTask {
 
     private final IServer server;
 
-    private final World world;
+    private final LWorld world;
 
     private int ticks;
 
-    public ChunksFollowerTask(IServer server, World world) {
+    public ChunksFollowerTask(IServer server, LWorld world) {
         this.server = server;
         this.world = world;
     }
@@ -30,13 +30,13 @@ public class ChunksFollowerTask {
         }
     }
     
-    public void updatePlayer(Player player) {
+    public void updatePlayer(LPlayer player) {
         int cx = player.getLocation().getBlockX() >> 4, cz = player.getLocation().getBlockZ() >> 4;
         int r = player.getChunksView();
         for (int x = -r; x <= r; x++) {
             for (int z = -r; z <= r; z++) {
                 if (x * x + z * z <= r * r) { // делаем область кругленькой
-                    Chunk chunk = this.world.loadChunk(x + cx, z + cz);
+                    LChunk chunk = this.world.loadChunk(x + cx, z + cz);
                     if (!player.hasChunkSent(chunk.getX(), chunk.getZ()))
                         chunk.sendTo(player);
                 }

@@ -2,10 +2,9 @@ package co.aikar.timings;
 
 import org.lunaris.Lunaris;
 import org.lunaris.event.Event;
-import org.lunaris.event.Listener;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.server.ServerSettings;
-import org.lunaris.world.World;
+import org.lunaris.world.LWorld;
 
 import java.util.Queue;
 
@@ -58,7 +57,7 @@ public final class Timings {
         eventTimer = TimingsManager.getTiming("Event Executions");
     }
 
-    public static Timing getWorldTickTimer(World world) {
+    public static Timing getWorldTickTimer(LWorld world) {
         return TimingsManager.getTiming(worldsTimer.name, world.getName(), worldsTimer);
     }
 

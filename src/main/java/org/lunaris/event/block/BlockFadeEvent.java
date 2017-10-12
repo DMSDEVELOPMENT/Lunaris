@@ -1,6 +1,6 @@
 package org.lunaris.event.block;
 
-import org.lunaris.block.Block;
+import org.lunaris.api.world.Block;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 
@@ -8,6 +8,7 @@ import org.lunaris.event.Event;
  * @author xtrafrancyz
  */
 public class BlockFadeEvent extends Event implements Cancellable {
+
     private final Block block;
     private boolean cancelled;
 
@@ -16,7 +17,7 @@ public class BlockFadeEvent extends Event implements Cancellable {
     }
 
     public Block getBlock() {
-        return block;
+        return this.block;
     }
 
     @Override
@@ -28,4 +29,5 @@ public class BlockFadeEvent extends Event implements Cancellable {
     public boolean isCancelled() {
         return this.cancelled;
     }
+
 }

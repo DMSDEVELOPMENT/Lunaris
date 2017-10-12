@@ -1,9 +1,10 @@
 package org.lunaris.material.block.liquid;
 
 import org.lunaris.Lunaris;
+import org.lunaris.api.world.Block;
 import org.lunaris.block.BUFlag;
-import org.lunaris.block.Block;
-import org.lunaris.block.BlockFace;
+import org.lunaris.block.LBlock;
+import org.lunaris.api.world.BlockFace;
 import org.lunaris.event.block.BlockFromToEvent;
 import org.lunaris.material.Material;
 import org.lunaris.world.BlockUpdateType;
@@ -22,12 +23,15 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
 
     @Override
     public void onBlockAdd(Block block) {
-        if (!this.checkForMixing(block))
-            block.getWorld().scheduleUpdate(block, this.tickRate(block));
+        if (!this.checkForMixing(block)) {
+            LBlock lb = (LBlock) block;
+            lb.getWorld().scheduleUpdate(lb, this.tickRate(lb));
+        }
     }
 
     @Override
-    public void onUpdate(Block block, BlockUpdateType type) {
+    public void onUpdate(Block b, BlockUpdateType type) {
+        LBlock block = (LBlock) b;
         if (type == BlockUpdateType.NORMAL) {
             this.checkForMixing(block);
             block.getWorld().scheduleUpdate(block, this.tickRate(block));
@@ -58,7 +62,7 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
                 }
 
                 if (adjacentSources[0] >= 2 && isWater(block.getType())) {
-                    Block bottomBlock = block.getSide(BlockFace.DOWN);
+                    LBlock bottomBlock = block.getSide(BlockFace.DOWN);
                     if (bottomBlock.getHandle().isSolid()) {
                         aaaa = 0;
                     } else if (bottomBlock.getType() == getType() && bottomBlock.getData() == 0) {
@@ -85,11 +89,11 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
                 this.setStaticBlock(block);
             }
 
-            Block bottomBlock = block.getSide(BlockFace.DOWN);
+            LBlock bottomBlock = block.getSide(BlockFace.DOWN);
 
             if (canFlowInto(bottomBlock)) {
                 if (isLava(block.getType()) && isWater(bottomBlock.getType())) {
-                    BlockFromToEvent event = new BlockFromToEvent(bottomBlock, new Block(bottomBlock.getLocation(), Material.STONE));
+                    BlockFromToEvent event = new BlockFromToEvent(bottomBlock, new LBlock(bottomBlock.getLocation(), Material.STONE));
                     Lunaris.getInstance().getEventManager().call(event);
                     if (!event.isCancelled()) {
                         bottomBlock.setType(Material.STONE);
@@ -121,11 +125,11 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
         }
     }
 
-    private void setStaticBlock(Block block) {
+    private void setStaticBlock(LBlock block) {
         block.setTypeAndData(getStaticType(), block.getData(), BUFlag.SEND_PACKET);
     }
 
-    private void flowIntoBlock(Block block, int newFlowDecay) {
+    private void flowIntoBlock(LBlock block, int newFlowDecay) {
         if (canFlowInto(block)) {
             if (block.getType() != Material.AIR) {
                 if (isLava(getType())) {
@@ -139,7 +143,7 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
         }
     }
 
-    private int getSmallestFlowDecay(Block block, int[] adjacentSources, int decay) {
+    private int getSmallestFlowDecay(LBlock block, int[] adjacentSources, int decay) {
         int blockDecay = this.getFlowDecay(block);
 
         if (blockDecay < 0) {
@@ -153,12 +157,12 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
         return (decay >= 0 && blockDecay >= decay) ? decay : blockDecay;
     }
 
-    private int calculateFlowCost(Block block, int distance, BlockFace prevFace) {
+    private int calculateFlowCost(LBlock block, int distance, BlockFace prevFace) {
         int cost = 1000;
 
         for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
             if (face != prevFace) {
-                Block sideBlock = block.getSide(face);
+                LBlock sideBlock = block.getSide(face);
                 if (sideBlock.getHandle().canBeFlowedInto() && (!(sideBlock.getHandle() instanceof LiquidBlock) || sideBlock.getData() > 0)) {
                     if (sideBlock.getSide(BlockFace.DOWN).getHandle().canBeFlowedInto())
                         return distance;
@@ -176,11 +180,11 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
         return cost;
     }
 
-    protected Set<BlockFace> getPossibleFlowDirections(Block block) {
+    protected Set<BlockFace> getPossibleFlowDirections(LBlock block) {
         int minCost = 1000;
         Set<BlockFace> set = EnumSet.noneOf(BlockFace.class);
         for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
-            Block sideBlock = block.getSide(face);
+            LBlock sideBlock = block.getSide(face);
             if (sideBlock.getHandle().canBeFlowedInto() && (!(sideBlock.getHandle() instanceof LiquidBlock) || sideBlock.getData() > 0)) {
                 int cost;
 
@@ -203,7 +207,7 @@ public abstract class LiquidDynamicBlock extends LiquidBlock {
         return set;
     }
 
-    private boolean canFlowInto(Block block) {
+    private boolean canFlowInto(LBlock block) {
         if (isWater(block.getType()) && getFlowingType() == Material.WATER)
             return false;
         return !isLava(block.getType()) && block.getHandle().canBeFlowedInto();

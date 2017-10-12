@@ -1,15 +1,16 @@
 package org.lunaris.entity.damage;
 
-import org.lunaris.entity.Entity;
-import org.lunaris.entity.LivingEntity;
-import org.lunaris.entity.Player;
-import org.lunaris.entity.misc.EntityType;
+import org.lunaris.api.entity.Entity;
+import org.lunaris.api.entity.LivingEntity;
+import org.lunaris.entity.LLivingEntity;
+import org.lunaris.entity.LPlayer;
+import org.lunaris.api.entity.EntityType;
 import org.lunaris.inventory.PlayerInventory;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.potion.PotionEffect;
 import org.lunaris.item.potion.PotionEffectType;
 import org.lunaris.material.Material;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -31,7 +32,7 @@ public class DamageCalculus {
         int knockbackLevel = 5;
         int sprinting = 0;
         if(damager.getEntityType() == EntityType.PLAYER) {
-            Player p = (Player) damager;
+            LPlayer p = (LPlayer) damager;
             ItemStack hand = p.getInventory().getItemInHand();
             if(hand != null && hand.getType() != Material.AIR) {
                 //check if hand has knockback enchantment
@@ -51,7 +52,7 @@ public class DamageCalculus {
             return damage;
         int armor = 0;
         if(victim.getEntityType() == EntityType.PLAYER) {
-            PlayerInventory inventory = ((Player) victim).getInventory();
+            PlayerInventory inventory = ((LPlayer) victim).getInventory();
             for(ItemStack is : inventory.getArmorContents()) {
                 if(is != null && is.isItem())
                     armor += is.getItemHandle().getArmorPoints();
@@ -60,9 +61,10 @@ public class DamageCalculus {
         return damage * (25F - armor) / 25F;
     }
 
-    private static double applyPotionModifiers(LivingEntity victim, DamageSource source, double damage) {
+    private static double applyPotionModifiers(LivingEntity v, DamageSource source, double damage) {
         if(source.isPure())
             return damage;
+        LLivingEntity victim = (LLivingEntity) v;
         PotionEffect effect = victim.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
         if (effect == null)
             return damage;
@@ -78,7 +80,7 @@ public class DamageCalculus {
 
     private static int getEnchantmentModifier(LivingEntity victim, DamageSource source) {
         if(victim.getEntityType() == EntityType.PLAYER)
-            return getEnchantmentModifier(((Player) victim).getInventory().getArmorContents(), source);
+            return getEnchantmentModifier(((LPlayer) victim).getInventory().getArmorContents(), source);
         return 0;
     }
 

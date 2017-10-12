@@ -1,6 +1,6 @@
 package org.lunaris.event.player;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 
@@ -9,14 +9,14 @@ import org.lunaris.event.Event;
  */
 public class PlayerDeathEvent extends Event implements Cancellable {
 
-    private final Player player;
+    private final LPlayer player;
     private boolean cancelled;
 
-    public PlayerDeathEvent(Player player) {
+    public PlayerDeathEvent(LPlayer player) {
         this.player = player;
     }
 
-    public Player getPlayer() {
+    public LPlayer getPlayer() {
         return player;
     }
 

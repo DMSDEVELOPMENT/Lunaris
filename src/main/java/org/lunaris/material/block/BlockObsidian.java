@@ -1,7 +1,7 @@
 package org.lunaris.material.block;
 
-import org.lunaris.block.Block;
-import org.lunaris.block.BlockFace;
+import org.lunaris.api.world.Block;
+import org.lunaris.api.world.BlockFace;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;
@@ -14,6 +14,7 @@ import java.util.List;
  * @author xtrafrancyz
  */
 public class BlockObsidian extends SolidBlock {
+
     protected BlockObsidian() {
         super(Material.OBSIDIAN, "Obsidian");
     }
@@ -47,4 +48,5 @@ public class BlockObsidian extends SolidBlock {
                 block.setType(Material.AIR);
         return super.onBreak(item, block);
     }
+
 }

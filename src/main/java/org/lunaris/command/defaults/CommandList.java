@@ -3,7 +3,7 @@ package org.lunaris.command.defaults;
 import org.lunaris.Lunaris;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandSender;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.entity.misc.LPermission;
 import org.lunaris.util.logger.ChatColor;
 
@@ -22,10 +22,10 @@ public class CommandList extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        Collection<Player> players = Lunaris.getInstance().getOnlinePlayers();
+        Collection<LPlayer> players = Lunaris.getInstance().getOnlinePlayers();
         sender.sendMessage("Players online: " + ChatColor.GREEN + "%d", players.size());
         if (!players.isEmpty())
-            sender.sendMessage(players.stream().map(Player::getName).collect(Collectors.joining(", ")));
+            sender.sendMessage(players.stream().map(LPlayer::getName).collect(Collectors.joining(", ")));
     }
 
 }

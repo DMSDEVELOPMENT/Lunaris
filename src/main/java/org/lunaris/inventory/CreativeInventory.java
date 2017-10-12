@@ -1,6 +1,6 @@
 package org.lunaris.inventory;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.transaction.InventorySection;
 import org.lunaris.item.ItemStack;
 import org.lunaris.material.Material;
@@ -126,7 +126,7 @@ public class CreativeInventory extends Inventory {
     }
 
     @Override
-    public void sendContents(Player player) {
+    public void sendContents(LPlayer player) {
         player.sendPacket(new Packet31InventoryContent(getReservedInventoryId(), this.items));
     }
 

@@ -1,6 +1,6 @@
 package org.lunaris.event.player;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 
@@ -9,11 +9,11 @@ import org.lunaris.event.Event;
  */
 public class PlayerChatAsyncEvent extends Event implements Cancellable {
 
-    private final Player player;
+    private final LPlayer player;
     private String message;
     private boolean cancelled;
 
-    public PlayerChatAsyncEvent(Player player, String message) {
+    public PlayerChatAsyncEvent(LPlayer player, String message) {
         this.player = player;
         this.message = message;
     }
@@ -28,7 +28,7 @@ public class PlayerChatAsyncEvent extends Event implements Cancellable {
         return this.cancelled;
     }
 
-    public Player getPlayer() {
+    public LPlayer getPlayer() {
         return this.player;
     }
 

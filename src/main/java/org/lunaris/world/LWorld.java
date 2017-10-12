@@ -3,12 +3,16 @@ package org.lunaris.world;
 import co.aikar.timings.Timings;
 
 import org.lunaris.Lunaris;
+import org.lunaris.api.entity.Entity;
+import org.lunaris.api.entity.Player;
+import org.lunaris.api.world.Chunk;
+import org.lunaris.api.world.Location;
+import org.lunaris.api.world.World;
 import org.lunaris.block.BUFlag;
-import org.lunaris.block.Block;
-import org.lunaris.block.BlockFace;
-import org.lunaris.entity.Entity;
-import org.lunaris.entity.Player;
-import org.lunaris.entity.misc.EntityType;
+import org.lunaris.block.LBlock;
+import org.lunaris.api.world.BlockFace;
+import org.lunaris.entity.LEntity;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.chunk.ChunkLoadedEvent;
 import org.lunaris.event.chunk.ChunkPreLoadEvent;
 import org.lunaris.event.chunk.ChunkUnloadedEvent;
@@ -17,7 +21,7 @@ import org.lunaris.material.Material;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.util.math.LMath;
 import org.lunaris.util.math.MathHelper;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.format.test.TestChunk;
 import org.lunaris.world.tracker.EntityTracker;
 import org.lunaris.world.util.BlockUpdateScheduler;
@@ -29,7 +33,6 @@ import org.lunaris.world.util.LongObjectHashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -37,7 +40,7 @@ import java.util.stream.Collectors;
 /**
  * Created by RINES on 13.09.17.
  */
-public class World {
+public class LWorld implements World {
 
     private final Lunaris server;
 
@@ -51,15 +54,15 @@ public class World {
 
     private int time;
 
-    private final LongObjectHashMap<Chunk> chunks = new LongObjectHashMap<>();
-    private final Set<Player> players = new HashSet<>();
-    private final LongObjectHashMap<Entity> entities = new LongObjectHashMap<>();
+    private final LongObjectHashMap<LChunk> chunks = new LongObjectHashMap<>();
+    private final Set<LPlayer> players = new HashSet<>();
+    private final LongObjectHashMap<LEntity> entities = new LongObjectHashMap<>();
 
     private final ChunksFollowerTask followerTask;
     private final BlockUpdateScheduler blockUpdateScheduler;
     private final EntityTracker entityTracker;
 
-    public World(Lunaris server, String name, Dimension dimension, Difficulty difficulty) {
+    public LWorld(Lunaris server, String name, Dimension dimension, Difficulty difficulty) {
         this.server = server;
         this.name = name;
         this.dimension = dimension;
@@ -71,7 +74,7 @@ public class World {
         this.followerTask = new ChunksFollowerTask(server, this);
     }
 
-    public void addPlayerToWorld(Player player) {
+    public void addPlayerToWorld(LPlayer player) {
         if (this.players.contains(player))
             return;
         this.players.add(player);
@@ -87,18 +90,18 @@ public class World {
                 .forEach(player::sendPacket);*/
     }
 
-    public void removePlayerFromWorld(Player player) {
+    public void removePlayerFromWorld(LPlayer player) {
         this.players.remove(player);
         removeEntityFromWorld(player);
     }
 
-    public void addEntityToWorld(Entity entity) {
+    public void addEntityToWorld(LEntity entity) {
         this.entities.put(entity.getEntityID(), entity);
         this.entityTracker.track(entity);
         //this.server.getNetworkManager().sendPacket(this.players, entity.createSpawnPacket());
     }
 
-    public void removeEntityFromWorld(Entity entity) {
+    public void removeEntityFromWorld(LEntity entity) {
         this.entities.remove(entity.getEntityID());
         this.entityTracker.untrack(entity);
         //this.server.getNetworkManager().sendPacket(this.players, new Packet0ERemoveEntity(entity.getEntityID()));
@@ -108,20 +111,20 @@ public class World {
         return this.chunks.containsKey(hash(x, z));
     }
 
-    public Block getBlockAt(Vector3d location) {
+    public LBlock getBlockAt(Vector3d location) {
         return getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
-    public Block getBlockAt(int x, int y, int z) {
-        Chunk chunk = loadChunk(x >> 4, z >> 4);
+    public LBlock getBlockAt(int x, int y, int z) {
+        LChunk chunk = loadChunk(x >> 4, z >> 4);
         if (chunk == null)
-            return new Block(new Location(this, x, y, z), Material.AIR, 0);
+            return new LBlock(new Location(this, x, y, z), Material.AIR, 0);
         return chunk.getBlock(x, y, z);
     }
 
-    public void updateBlock(Block block, BUFlag.Set flags) {
+    public void updateBlock(LBlock block, BUFlag.Set flags) {
         int x = block.getX(), y = block.getY(), z = block.getZ();
-        Chunk chunk = loadChunk(x >> 4, z >> 4);
+        LChunk chunk = loadChunk(x >> 4, z >> 4);
         if (chunk == null)
             return;
         int id = block.getTypeId();
@@ -132,19 +135,19 @@ public class World {
             updateNeighbor(block);
     }
 
-    public void updateNeighbor(Block block) {
+    public void updateNeighbor(LBlock block) {
         for (BlockFace face : BlockFace.values()) {
-            Block side = block.getSide(face);
+            LBlock side = block.getSide(face);
             side.getHandle().onNeighborBlockChange(side, block);
         }
     }
 
-    public Chunk getChunkAt(int x, int z) {
+    public LChunk getChunkAt(int x, int z) {
         return this.chunks.get(hash(x, z));
     }
 
-    public Chunk loadChunk(int x, int z) {
-        Chunk chunk = getChunkAt(x, z);
+    public LChunk loadChunk(int x, int z) {
+        LChunk chunk = getChunkAt(x, z);
         if (chunk != null)
             return chunk;
         ChunkPreLoadEvent preloadEvent = new ChunkPreLoadEvent(x, z);
@@ -178,7 +181,7 @@ public class World {
         if (++this.time >= 24000)
             this.time = 0;
         Timings.getChunksTickTimer().startTiming();
-        this.chunks.values().forEach(Chunk::tick);
+        this.chunks.values().forEach(LChunk::tick);
         this.blockUpdateScheduler.tick();
         Timings.getChunksTickTimer().stopTiming();
         this.followerTask.tick();
@@ -188,13 +191,13 @@ public class World {
 
     private void tickEntities(long current, float dT) {
         Timings.getEntitiesTickTimer().startTiming();
-        for(Entity entity : new ArrayList<>(this.entities.values()))
+        for(LEntity entity : new ArrayList<>(this.entities.values()))
             entity.tick(current, dT);
         entityTracker.tick();
         Timings.getEntitiesTickTimer().stopTiming();
     }
 
-    public void scheduleUpdate(Block block, int delay) {
+    public void scheduleUpdate(LBlock block, int delay) {
         blockUpdateScheduler.scheduleUpdate(block, delay);
     }
 
@@ -211,21 +214,23 @@ public class World {
         );
     }
 
-    public Entity getEntityById(long entityID) {
+    public LEntity getEntityById(long entityID) {
         return this.entities.get(entityID);
     }
 
-    public Collection<Entity> getEntities() {
+    public Collection<LEntity> getEntities() {
         return this.entities.values();
     }
 
-    public Collection<Entity> getNearbyEntities(Location location, double radius) {
+    @Override
+    public Collection<LEntity> getNearbyEntities(Vector3d location, double radius) {
         return this.entities.values().stream().filter(e -> e.getLocation().distance(location) <= radius).collect(Collectors.toSet());
     }
 
-    public <T extends Entity> Collection<T> getNearbyEntitiesByClass(Class<T> entityClass, Location location, double radius) {
+    @Override
+    public <T extends Entity> Collection<T> getNearbyEntitiesByClass(Class<T> entityClass, Vector3d location, double radius) {
         Set<T> result = new HashSet<>();
-        for(Entity entity : this.entities.values()) {
+        for(LEntity entity : this.entities.values()) {
             if(entityClass.isAssignableFrom(entity.getClass()) && entity.getLocation().distance(location) <= radius)
                 result.add((T) entity);
         }
@@ -235,7 +240,7 @@ public class World {
     public <T extends Entity> Collection<T> getNearbyEntitiesByClass(Class<T> entityClass, Location location, double radiusXZ, double radiusY) {
         Set<T> result = new HashSet<>();
         radiusXZ *= radiusXZ;
-        for(Entity entity : this.entities.values()) {
+        for(LEntity entity : this.entities.values()) {
             if(!entityClass.isAssignableFrom(entity.getClass()))
                 continue;
             Location loc = entity.getLocation();
@@ -245,18 +250,19 @@ public class World {
         return result;
     }
 
-    Collection<Player> getApplicablePlayers(Chunk chunk) {
-        Set<Player> players = new HashSet<>();
-        for (Player p : this.players)
+    Collection<LPlayer> getApplicablePlayers(LChunk chunk) {
+        Set<LPlayer> players = new HashSet<>();
+        for (LPlayer p : this.players)
             if (isInRangeOfView(p, chunk))
                 players.add(p);
         return players;
     }
 
-    public Collection<Player> getApplicablePlayers(Vector3d location) {
-        Set<Player> players = new HashSet<>();
+    @Override
+    public Collection<LPlayer> getWatcherPlayers(Vector3d location) {
+        Set<LPlayer> players = new HashSet<>();
         int x = location.getBlockX(), z = location.getBlockZ();
-        for (Player p : this.players)
+        for (LPlayer p : this.players)
             if (isInRangeOfView(p, x, z))
                 players.add(p);
         return players;
@@ -274,7 +280,7 @@ public class World {
         return isInRangeOfView(player.getLocation(), x, z, player.getChunksView());
     }
 
-    public boolean isInRangeOfView(Vector3d location, Chunk chunk) {
+    public boolean isInRangeOfView(Vector3d location, LChunk chunk) {
         return isInRangeOfView(location, chunk.getX(), chunk.getZ(), this.server.getServerSettings().getChunksView());
     }
 
@@ -308,18 +314,18 @@ public class World {
         return entityTracker;
     }
 
-    public Collection<Player> getPlayers() {
+    public Collection<LPlayer> getPlayers() {
         return this.players;
     }
 
-    public Collection<Player> getPlayersWithout(Player p) {
-        Set<Player> players = new HashSet<>();
+    public Collection<LPlayer> getPlayersWithout(LPlayer p) {
+        Set<LPlayer> players = new HashSet<>();
         players.addAll(this.players);
         players.remove(p);
         return players;
     }
 
-    public Collection<Chunk> getLoadedChunks() {
+    public Collection<LChunk> getLoadedChunks() {
         return this.chunks.values();
     }
 
@@ -328,7 +334,7 @@ public class World {
     }
 
     public void playSound(Sound sound, Location loc, float pitch) {
-        this.server.getNetworkManager().sendPacket(getApplicablePlayers(loc), new Packet18LevelSoundEvent(sound, loc, -1, (int) (pitch / 1000f), false, false));
+        this.server.getNetworkManager().sendPacket(getWatcherPlayers(loc), new Packet18LevelSoundEvent(sound, loc, -1, (int) (pitch / 1000f), false, false));
     }
 
     public void playSound(Sound sound) {
@@ -344,9 +350,9 @@ public class World {
     public boolean equals(Object o) {
         if(this == o)
             return true;
-        if(!(o instanceof World))
+        if(!(o instanceof LWorld))
             return false;
-        return this.name.equals(((World) o).name);
+        return this.name.equals(((LWorld) o).name);
     }
 
 }

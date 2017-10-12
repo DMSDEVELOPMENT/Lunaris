@@ -1,15 +1,15 @@
 package org.lunaris.world.format.test;
 
 import org.lunaris.material.Material;
-import org.lunaris.world.Chunk;
-import org.lunaris.world.World;
+import org.lunaris.world.LChunk;
+import org.lunaris.world.LWorld;
 
 /**
  * Created by RINES on 14.09.17.
  */
-public class TestChunk extends Chunk {
+public class TestChunk extends LChunk {
 
-    public TestChunk(World world, int x, int z) {
+    public TestChunk(LWorld world, int x, int z) {
         super(world, x, z);
     }
 

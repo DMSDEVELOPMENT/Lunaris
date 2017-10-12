@@ -1,6 +1,6 @@
 package org.lunaris.event.player;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 
@@ -9,10 +9,10 @@ import org.lunaris.event.Event;
  */
 public class PlayerPreLoginEvent extends Event implements Cancellable {
 
-    private final Player player;
+    private final LPlayer player;
     private boolean cancelled;
 
-    public PlayerPreLoginEvent(Player player) {
+    public PlayerPreLoginEvent(LPlayer player) {
         this.player = player;
     }
 
@@ -26,7 +26,7 @@ public class PlayerPreLoginEvent extends Event implements Cancellable {
         return this.cancelled;
     }
 
-    public Player getPlayer() {
+    public LPlayer getPlayer() {
         return player;
     }
 

@@ -1,6 +1,7 @@
 package org.lunaris.util.math;
 
-import org.lunaris.entity.Entity;
+import org.lunaris.api.util.math.Vector3d;
+import org.lunaris.entity.LEntity;
 
 /**
  * Created by RINES on 24.09.17.
@@ -23,7 +24,7 @@ public class MovingObjectPosition {
 
     public Vector3d hitVector;
 
-    public Entity entityHit;
+    public LEntity entityHit;
 
     public static MovingObjectPosition fromBlock(int x, int y, int z, int side, Vector3d hitVector) {
         MovingObjectPosition objectPosition = new MovingObjectPosition();
@@ -35,7 +36,7 @@ public class MovingObjectPosition {
         return objectPosition;
     }
 
-    public static MovingObjectPosition fromEntity(Entity entity) {
+    public static MovingObjectPosition fromEntity(LEntity entity) {
         MovingObjectPosition objectPosition = new MovingObjectPosition();
         objectPosition.typeOfHit = 1;
         objectPosition.entityHit = entity;

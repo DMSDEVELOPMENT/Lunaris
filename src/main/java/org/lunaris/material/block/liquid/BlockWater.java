@@ -1,13 +1,14 @@
 package org.lunaris.material.block.liquid;
 
-import org.lunaris.block.Block;
-import org.lunaris.entity.Entity;
+import org.lunaris.api.entity.Entity;
+import org.lunaris.api.world.Block;
 import org.lunaris.material.Material;
 
 /**
  * @author xtrafrancyz
  */
 public class BlockWater extends LiquidDynamicBlock {
+
     protected BlockWater() {
         super(Material.WATER, "Water");
     }
@@ -25,4 +26,5 @@ public class BlockWater extends LiquidDynamicBlock {
     public int tickRate(Block block) {
         return 5;
     }
+
 }

@@ -1,10 +1,10 @@
 package org.lunaris.world.util;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.server.IServer;
-import org.lunaris.world.Chunk;
-import org.lunaris.world.Location;
-import org.lunaris.world.World;
+import org.lunaris.world.LChunk;
+import org.lunaris.api.world.Location;
+import org.lunaris.world.LWorld;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,11 +18,11 @@ public class ChunkUnloaderTask implements Runnable {
 
     private final IServer server;
 
-    private final World world;
+    private final LWorld world;
 
-    private final LongObjectHashMap<Chunk> chunks;
+    private final LongObjectHashMap<LChunk> chunks;
 
-    public ChunkUnloaderTask(IServer server, World world, LongObjectHashMap<Chunk> chunks) {
+    public ChunkUnloaderTask(IServer server, LWorld world, LongObjectHashMap<LChunk> chunks) {
         this.server = server;
         this.world = world;
         this.chunks = chunks;
@@ -30,13 +30,13 @@ public class ChunkUnloaderTask implements Runnable {
 
     @Override
     public void run() {
-        Set<Chunk> chunks = new HashSet<>();
+        Set<LChunk> chunks = new HashSet<>();
         chunks.addAll(this.chunks.values());
         chunks.removeIf(c -> !c.isLoaded());
-        Set<Location> players = this.world.getPlayers().stream().map(Player::getLocation).collect(Collectors.toSet());
+        Set<Location> players = this.world.getPlayers().stream().map(LPlayer::getLocation).collect(Collectors.toSet());
         this.server.getScheduler().runAsync(() -> {
-            for (Iterator<Chunk> iterator = chunks.iterator(); iterator.hasNext(); ) {
-                Chunk chunk = iterator.next();
+            for (Iterator<LChunk> iterator = chunks.iterator(); iterator.hasNext(); ) {
+                LChunk chunk = iterator.next();
                 for (Location location : players)
                     if (this.world.isInRangeOfView(location, chunk)) {
                         iterator.remove();

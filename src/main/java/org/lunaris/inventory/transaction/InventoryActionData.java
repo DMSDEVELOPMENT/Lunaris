@@ -1,6 +1,6 @@
 package org.lunaris.inventory.transaction;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.Inventory;
 import org.lunaris.inventory.transaction.action.CreativeInventoryAction;
 import org.lunaris.inventory.transaction.action.DropItemAction;
@@ -67,7 +67,7 @@ public class InventoryActionData {
         buffer.writeItemStack(this.newItem);
     }
 
-    public InventoryAction toInventoryAction(Player player) {
+    public InventoryAction toInventoryAction(LPlayer player) {
         switch(this.source) {
             case CONTAINER: {
                 if(this.windowId == InventorySection.ARMOR.getId()) {

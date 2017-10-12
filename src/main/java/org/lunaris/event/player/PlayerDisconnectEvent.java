@@ -1,6 +1,6 @@
 package org.lunaris.event.player;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.Event;
 
 /**
@@ -8,13 +8,13 @@ import org.lunaris.event.Event;
  */
 public class PlayerDisconnectEvent extends Event {
 
-    private final Player player;
+    private final LPlayer player;
 
-    public PlayerDisconnectEvent(Player player) {
+    public PlayerDisconnectEvent(LPlayer player) {
         this.player = player;
     }
 
-    public Player getPlayer() {
+    public LPlayer getPlayer() {
         return player;
     }
 

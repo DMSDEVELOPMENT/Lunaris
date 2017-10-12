@@ -1,16 +1,18 @@
 package org.lunaris.material.block.liquid;
 
 import org.lunaris.Lunaris;
-import org.lunaris.block.Block;
-import org.lunaris.block.BlockFace;
-import org.lunaris.entity.Entity;
-import org.lunaris.entity.Player;
+import org.lunaris.api.entity.Entity;
+import org.lunaris.api.world.Block;
+import org.lunaris.block.LBlock;
+import org.lunaris.api.world.BlockFace;
+import org.lunaris.entity.LEntity;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.block.BlockFromToEvent;
 import org.lunaris.item.ItemStack;
 import org.lunaris.material.Material;
 import org.lunaris.material.block.TransparentBlock;
 import org.lunaris.util.math.AxisAlignedBB;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.Sound;
 import org.lunaris.world.particle.GenericParticle;
 import org.lunaris.world.particle.ParticleType;
@@ -96,7 +98,7 @@ public abstract class LiquidBlock extends TransparentBlock {
 
     @Override
     public void onEntityCollide(Block block, Entity entity) {
-        entity.setFallDistance(0);
+        ((LEntity) entity).setFallDistance(0);
     }
 
     protected boolean isLava(Material type) {
@@ -128,12 +130,13 @@ public abstract class LiquidBlock extends TransparentBlock {
         return decay;
     }
 
-    protected Vector3d getFlowVector(Block block) {
+    protected Vector3d getFlowVector(Block b) {
+        LBlock block = (LBlock) b;
         Vector3d vector = new Vector3d();
         int decay = this.getEffectiveFlowDecay(block);
 
         for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
-            Block sideBlock = block.getSide(face);
+            LBlock sideBlock = block.getSide(face);
             int blockDecay = this.getEffectiveFlowDecay(sideBlock);
 
             if (blockDecay < 0) {
@@ -203,7 +206,7 @@ public abstract class LiquidBlock extends TransparentBlock {
                 else
                     return false;
 
-                BlockFromToEvent event = new BlockFromToEvent(block, new Block(block.getLocation(), to));
+                BlockFromToEvent event = new BlockFromToEvent(block, new LBlock(block.getLocation(), to));
                 Lunaris.getInstance().getEventManager().call(event);
                 if (!event.isCancelled()) {
                     block.setType(to);
@@ -218,11 +221,12 @@ public abstract class LiquidBlock extends TransparentBlock {
     /**
      * Creates fizzing sound and smoke. Used when lava flows over block or mixes with water.
      */
-    protected void triggerLavaMixEffects(Block block) {
+    protected void triggerLavaMixEffects(Block b) {
+        LBlock block = (LBlock) b;
         float pitch = 2.6F + (ThreadLocalRandom.current().nextFloat() - ThreadLocalRandom.current().nextFloat()) * 0.8F;
         block.getWorld().playSound(Sound.FIZZ, block.getLocation().add(0.5, 0.5, 0.5), pitch);
 
-        Collection<Player> players = block.getWorld().getApplicablePlayers(block.getLocation());
+        Collection<LPlayer> players = block.getWorld().getWatcherPlayers(block.getLocation());
         for (int i = 0; i < 8; ++i)
             new GenericParticle(ParticleType.SMOKE, block.getLocation().add(Math.random(), 1.2, Math.random())).send(players);
     }

@@ -1,7 +1,6 @@
 package org.lunaris.inventory;
 
-import org.lunaris.entity.Player;
-import org.lunaris.inventory.transaction.InventorySection;
+import org.lunaris.entity.LPlayer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +14,7 @@ public class InventoryManager {
 
     private final static CreativeInventory creative = new CreativeInventory();
 
-    private final Player player;
+    private final LPlayer player;
     private final Map<Inventory, Integer> inventories = new HashMap<>();
     private final Map<Integer, Inventory> reverted = new HashMap<>();
     private final Set<Integer> permamentInventories = new HashSet<>();
@@ -26,7 +25,7 @@ public class InventoryManager {
     private final PlayerInventory playerInventory;
     private final CursorInventory cursorInventory;
 
-    public InventoryManager(Player player) {
+    public InventoryManager(LPlayer player) {
         this.player = player;
         addInventory(this.playerInventory = new PlayerInventory(player), true);
         addInventory(this.cursorInventory = new CursorInventory(player), true);

@@ -1,6 +1,9 @@
 package org.lunaris.entity;
 
 import org.lunaris.Lunaris;
+import org.lunaris.api.entity.EntityType;
+import org.lunaris.api.entity.Gamemode;
+import org.lunaris.api.entity.Player;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.data.*;
 import org.lunaris.entity.misc.*;
@@ -14,9 +17,9 @@ import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
-import org.lunaris.world.Location;
+import org.lunaris.api.world.Location;
 import org.lunaris.world.Sound;
-import org.lunaris.world.World;
+import org.lunaris.world.LWorld;
 import org.lunaris.world.util.LongHash;
 
 import java.util.Collection;
@@ -27,7 +30,7 @@ import java.util.UUID;
 /**
  * Created by RINES on 13.09.17.
  */
-public class Player extends LivingEntity implements CommandSender {
+public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
     private final String ip;
     private final RakNetClientSession session;
@@ -64,7 +67,7 @@ public class Player extends LivingEntity implements CommandSender {
     
     private long lastUseTime = -1;
 
-    Player(int entityID, RakNetClientSession session, Packet01Login packetLogin) {
+    LPlayer(int entityID, RakNetClientSession session, Packet01Login packetLogin) {
         super(entityID, EntityType.PLAYER);
         this.session = session;
         this.ip = session.getAddress().getAddress().getHostAddress();
@@ -154,11 +157,11 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
-    public UUID getClientUUID() {
-        return clientUUID;
+    public UUID getUUID() {
+        return this.clientUUID;
     }
 
     public String getXboxID() {
@@ -166,23 +169,23 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     public int getProtocolVersion() {
-        return protocolVersion;
+        return this.protocolVersion;
     }
 
     public Skin getSkin() {
-        return skin;
+        return this.skin;
     }
 
     public String getSkinGeometryName() {
-        return skinGeometryName;
+        return this.skinGeometryName;
     }
 
     public byte[] getSkinGeometry() {
-        return skinGeometry;
+        return this.skinGeometry;
     }
 
     public String getDisconnectingReason() {
-        return disconnectingReason;
+        return this.disconnectingReason;
     }
 
     public boolean tryDisconnectReason(String reason) {
@@ -198,7 +201,7 @@ public class Player extends LivingEntity implements CommandSender {
 
     @Override
     public void sendPacketToWatchersAndMe(MinePacket packet) {
-        Collection<Player> watchers = getWatchers();
+        Collection<LPlayer> watchers = getWatchers();
         watchers.add(this);
         Lunaris.getInstance().getNetworkManager().sendPacket(watchers, packet);
     }
@@ -241,7 +244,7 @@ public class Player extends LivingEntity implements CommandSender {
     @Override
     public void tick(long current, float dT) {
         super.tick(current, dT);
-        World world = getWorld();
+        LWorld world = getWorld();
         this.chunksSent.removeIf(chunk -> !world.isInRangeOfViewChunk(this, LongHash.msw(chunk), LongHash.lsw(chunk)));
         world.getNearbyEntitiesByClass(Item.class, getLocation().add(0, 1, 0), 1.5D, 1.5D).forEach(item -> {
             if (current < item.getPickupDelay())
@@ -267,11 +270,11 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     public RakNetClientSession getSession() {
-        return session;
+        return this.session;
     }
 
     public int getChunksView() {
-        return chunksView;
+        return this.chunksView;
     }
 
     public void setChunksView(int chunksView) {
@@ -279,7 +282,7 @@ public class Player extends LivingEntity implements CommandSender {
     }
 
     public LPermission getPermission() {
-        return permission;
+        return this.permission;
     }
 
     public void setPermission(LPermission permission) {
@@ -364,7 +367,7 @@ public class Player extends LivingEntity implements CommandSender {
             sendPacket(new Packet13MovePlayer(getEntityID(), getX() + 1000000, 4000, getZ() + 1000000, 0F, 0F, 0F).mode(Packet13MovePlayer.MODE_RESET));
             getWorld().removePlayerFromWorld(this);
             initWorld(location.getWorld());
-            location.getWorld().addPlayerToWorld(this);
+            ((LWorld) location.getWorld()).addPlayerToWorld(this);
         }
         setPositionAndRotation(location);
         sendPacket(new Packet13MovePlayer(this).mode(Packet13MovePlayer.MODE_RESET));

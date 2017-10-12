@@ -1,6 +1,6 @@
 package org.lunaris.material.block;
 
-import org.lunaris.block.Block;
+import org.lunaris.api.world.Block;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.material.Material;
 import org.lunaris.util.math.AxisAlignedBB;

@@ -1,8 +1,9 @@
 package org.lunaris.material.block;
 
-import org.lunaris.block.Block;
+import org.lunaris.api.entity.Entity;
+import org.lunaris.api.world.Block;
 import org.lunaris.block.BlockColor;
-import org.lunaris.entity.Entity;
+import org.lunaris.entity.LEntity;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.material.Material;
@@ -36,7 +37,7 @@ public class BlockCobweb extends FlowableBlock {
 
     @Override
     public void onEntityCollide(Block block, Entity entity) {
-        entity.setFallDistance(0);
+        ((LEntity) entity).setFallDistance(0);
     }
 
     @Override
@@ -55,4 +56,5 @@ public class BlockCobweb extends FlowableBlock {
     public boolean canHarvestWithHand() {
         return false;
     }
+
 }

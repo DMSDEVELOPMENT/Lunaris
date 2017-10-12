@@ -1,16 +1,18 @@
 package org.lunaris.block;
 
+import org.lunaris.api.world.Block;
+import org.lunaris.api.world.BlockFace;
 import org.lunaris.material.BlockHandle;
 import org.lunaris.material.Material;
 import org.lunaris.util.math.AxisAlignedBB;
-import org.lunaris.world.Chunk;
-import org.lunaris.world.Location;
-import org.lunaris.world.World;
+import org.lunaris.world.LChunk;
+import org.lunaris.api.world.Location;
+import org.lunaris.world.LWorld;
 
 /**
  * Created by RINES on 13.09.17.
  */
-public class Block {
+public class LBlock implements Block {
     public static final BUFlag.Set DEFAULT_FLAGS = BUFlag.set(BUFlag.UPDATE_NEIGHBORS, BUFlag.SEND_PACKET);
 
     private Material type;
@@ -20,11 +22,11 @@ public class Block {
 
     private AxisAlignedBB boundingBox;
 
-    public Block(Location location, Material type) {
+    public LBlock(Location location, Material type) {
         this(location, type, 0);
     }
 
-    public Block(Location location, Material type, int data) {
+    public LBlock(Location location, Material type, int data) {
         this.location = location;
         this.type = type;
         this.data = data;
@@ -89,8 +91,8 @@ public class Block {
         return this.location.clone();
     }
 
-    public World getWorld() {
-        return this.location.getWorld();
+    public LWorld getWorld() {
+        return (LWorld) this.location.getWorld();
     }
 
     public int getX() {
@@ -105,19 +107,19 @@ public class Block {
         return this.location.getBlockZ();
     }
 
-    public Chunk getChunk() {
+    public LChunk getChunk() {
         return getWorld().getChunkAt(getX() >> 4, getZ() >> 4);
     }
 
-    public Block getSide(BlockFace face) {
+    public LBlock getSide(BlockFace face) {
         return this.getSide(face, 1);
     }
 
-    public Block getSide(BlockFace face, int step) {
+    public LBlock getSide(BlockFace face, int step) {
         return getWorld().getBlockAt(this.location.getSide(face.getIndex(), step));
     }
 
-    public Block getRelative(int x, int y, int z) {
+    public LBlock getRelative(int x, int y, int z) {
         return getWorld().getBlockAt(getX() + x, getY() + y, getZ() + z);
     }
 

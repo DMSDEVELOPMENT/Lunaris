@@ -1,11 +1,11 @@
 package org.lunaris.world.tracker;
 
 import org.lunaris.Lunaris;
-import org.lunaris.entity.Entity;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LEntity;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet0ERemoveEntity;
-import org.lunaris.world.World;
+import org.lunaris.world.LWorld;
 import org.lunaris.world.util.LongObjectHashMap;
 
 import java.util.Set;
@@ -15,48 +15,48 @@ import java.util.Set;
  */
 public class EntityTracker {
     private final Lunaris server;
-    private final World world;
+    private final LWorld world;
     private LongObjectHashMap<TrackedEntity> entities;
 
-    public EntityTracker(Lunaris server, World world) {
+    public EntityTracker(Lunaris server, LWorld world) {
         this.server = server;
         this.world = world;
         this.entities = new LongObjectHashMap<>();
     }
 
-    public void track(Entity entity) {
-        if (entity instanceof Player) {
+    public void track(LEntity entity) {
+        if (entity instanceof LPlayer) {
             registerEntity(entity, entity.getTrackRange(), 2);
         } else {
             registerEntity(entity, entity.getTrackRange(), 3);
         }
     }
 
-    public void untrack(Entity entity) {
+    public void untrack(LEntity entity) {
         TrackedEntity tracked = entities.remove(entity.getEntityID());
         if (tracked != null)
             tracked.sendPacket(new Packet0ERemoveEntity(entity.getEntityID()));
     }
 
-    private void registerEntity(Entity entity, int viewDistance, int updateFrequency) {
+    private void registerEntity(LEntity entity, int viewDistance, int updateFrequency) {
         if (entities.containsKey(entity.getEntityID())) {
             server.getLogger().warn("Duplicate entity in tracker " + entity);
             return;
         }
-        if (entity instanceof Player) {
+        if (entity instanceof LPlayer) {
             for (TrackedEntity tracked : entities.values())
-                tracked.updatePlayer((Player) entity);
+                tracked.updatePlayer((LPlayer) entity);
         }
         TrackedEntity tracked = new TrackedEntity(entity, updateFrequency, viewDistance);
         entities.put(entity.getEntityID(), tracked);
         tracked.updatePlayers(world.getPlayers());
     }
 
-    public void sendPacketToWatchers(Entity entity, MinePacket packet) {
+    public void sendPacketToWatchers(LEntity entity, MinePacket packet) {
         entities.get(entity.getEntityID()).sendPacket(packet);
     }
 
-    public Set<Player> getWatchers(Entity entity) {
+    public Set<LPlayer> getWatchers(LEntity entity) {
         return entities.get(entity.getEntityID()).getTrackingPlayers();
     }
 

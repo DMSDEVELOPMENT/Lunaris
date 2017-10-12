@@ -1,11 +1,9 @@
 package org.lunaris.inventory;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.transaction.InventorySection;
 import org.lunaris.item.ItemStack;
-import org.lunaris.material.Material;
 import org.lunaris.network.protocol.packet.Packet1FMobEquipment;
-import org.lunaris.network.protocol.packet.Packet31InventoryContent;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,11 +13,11 @@ import java.util.Collections;
  */
 public class PlayerInventory extends Inventory {
 
-    private final Player holder;
+    private final LPlayer holder;
     private int itemInHandIndex;
     private int[] hotbar = new int[9];
 
-    public PlayerInventory(Player player) {
+    public PlayerInventory(LPlayer player) {
         super(InventoryType.PLAYER);
         this.holder = player;
         for(int i = 0; i < this.hotbar.length; ++i)
@@ -84,9 +82,9 @@ public class PlayerInventory extends Inventory {
         setItem(getSize() + 3, item);
     }
 
-    public void updateItemInHandFor(Player... players) {
+    public void updateItemInHandFor(LPlayer... players) {
         ItemStack item = getItemInHand();
-        for(Player player : players) {
+        for(LPlayer player : players) {
             if(player == this.holder) {
                 sendSlot(Collections.singleton(player), this.itemInHandIndex);
             }else {
@@ -95,8 +93,8 @@ public class PlayerInventory extends Inventory {
         }
     }
 
-    public void updateItemInHandFor(Collection<Player> players) {
-        updateItemInHandFor(players.toArray(new Player[players.size()]));
+    public void updateItemInHandFor(Collection<LPlayer> players) {
+        updateItemInHandFor(players.toArray(new LPlayer[players.size()]));
     }
 
     @Override

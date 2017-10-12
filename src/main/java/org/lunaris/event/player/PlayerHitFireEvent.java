@@ -1,7 +1,7 @@
 package org.lunaris.event.player;
 
-import org.lunaris.block.Block;
-import org.lunaris.entity.Player;
+import org.lunaris.block.LBlock;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 
@@ -10,26 +10,26 @@ import org.lunaris.event.Event;
  */
 public class PlayerHitFireEvent extends Event implements Cancellable {
 
-    private final Player player;
-    private final Block fire;
-    private final Block block;
+    private final LPlayer player;
+    private final LBlock fire;
+    private final LBlock block;
     private boolean cancelled;
 
-    public PlayerHitFireEvent(Player player, Block fire, Block block) {
+    public PlayerHitFireEvent(LPlayer player, LBlock fire, LBlock block) {
         this.player = player;
         this.fire = fire;
         this.block = block;
     }
 
-    public Player getPlayer() {
+    public LPlayer getPlayer() {
         return player;
     }
 
-    public Block getFire() {
+    public LBlock getFire() {
         return fire;
     }
 
-    public Block getBlock() {
+    public LBlock getBlock() {
         return block;
     }
 

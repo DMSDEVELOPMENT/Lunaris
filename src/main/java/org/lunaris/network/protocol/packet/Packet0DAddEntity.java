@@ -1,9 +1,9 @@
 package org.lunaris.network.protocol.packet;
 
-import org.lunaris.entity.Entity;
+import org.lunaris.entity.LEntity;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.EntityMetadata;
-import org.lunaris.entity.misc.EntityType;
+import org.lunaris.api.entity.EntityType;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 
@@ -24,7 +24,7 @@ public class Packet0DAddEntity extends MinePacket {
 
     public Packet0DAddEntity() {}
 
-    public Packet0DAddEntity(Entity entity) {
+    public Packet0DAddEntity(LEntity entity) {
         this.entityID = entity.getEntityID();
         this.type = entity.getEntityType();
         this.x = entity.getX();

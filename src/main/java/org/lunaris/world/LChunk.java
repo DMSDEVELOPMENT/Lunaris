@@ -1,14 +1,16 @@
 package org.lunaris.world;
 
 import org.lunaris.Lunaris;
-import org.lunaris.block.Block;
-import org.lunaris.entity.Player;
+import org.lunaris.api.entity.Player;
+import org.lunaris.api.world.Chunk;
+import org.lunaris.api.world.Location;
+import org.lunaris.block.LBlock;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.material.Material;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
-import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
 import org.lunaris.network.protocol.packet.Packet3AFullChunkData;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.util.LongHash;
 
 import java.nio.ByteBuffer;
@@ -17,12 +19,12 @@ import java.util.Collection;
 /**
  * Created by RINES on 13.09.17.
  */
-public abstract class Chunk {
+public abstract class LChunk implements Chunk {
     private static final int WORLD_LIMIT = 3_000_000;
 
     private final static byte[] ETERNAL8 = new byte[1 << 8];
 
-    private final World world;
+    private final LWorld world;
 
     protected final int x, z;
 
@@ -36,7 +38,7 @@ public abstract class Chunk {
     private boolean dirty = true;
     private boolean loaded = false;
 
-    protected Chunk(World world, int x, int z) {
+    protected LChunk(LWorld world, int x, int z) {
         this.world = world;
         this.x = x;
         this.z = z;
@@ -55,7 +57,7 @@ public abstract class Chunk {
         loaded = true;
         //System.out.println("Chunk " + getX() + " " + getZ() + " loaded");
         Lunaris.getInstance().getScheduler().run(() -> {
-            for (Player player : getApplicablePlayers())
+            for (LPlayer player : getWatcherPlayers())
                 sendTo(player);
         });
     }
@@ -66,7 +68,7 @@ public abstract class Chunk {
 
     }
 
-    public void sendTo(Player player) {
+    public void sendTo(LPlayer player) {
         if (!loaded)
             return;
         player.addChunkSent(this.x, this.z);
@@ -109,15 +111,15 @@ public abstract class Chunk {
         }
     }
 
-    public Block getBlock(Vector3d position) {
+    public LBlock getBlock(Vector3d position) {
         return getBlock(position.getBlockX(), position.getBlockY(), position.getBlockZ());
     }
 
-    public Block getBlock(int x, int y, int z) {
+    public LBlock getBlock(int x, int y, int z) {
         if (x >= WORLD_LIMIT || x < -WORLD_LIMIT || y < 0 || y > 255 || z >= WORLD_LIMIT || z < -WORLD_LIMIT)
-            return new Block(new Location(this.world, x, y, z), Material.AIR);
+            return new LBlock(new Location(this.world, x, y, z), Material.AIR);
         ChunkSection section = getSection(y);
-        return new Block(new Location(this.world, x, y, z), Material.getById(section.getId(x, y, z)), section.getData(x, y, z));
+        return new LBlock(new Location(this.world, x, y, z), Material.getById(section.getId(x, y, z)), section.getData(x, y, z));
     }
 
     protected void setBlock(int x, int y, int z, Material type) {
@@ -147,10 +149,10 @@ public abstract class Chunk {
      * Отсылает пакет всем игрокам, которые видят этот чанк (но могу ти не находиться в нем).
      */
     public void sendPacket(MinePacket packet) {
-        Lunaris.getInstance().getNetworkManager().sendPacket(getApplicablePlayers(), packet);
+        Lunaris.getInstance().getNetworkManager().sendPacket(getWatcherPlayers(), packet);
     }
 
-    public World getWorld() {
+    public LWorld getWorld() {
         return this.world;
     }
 
@@ -183,7 +185,7 @@ public abstract class Chunk {
     /**
      * Возвращает коллекцию игроков, которые видят этот чанк (но могут и не находиться в нем).
      */
-    public Collection<Player> getApplicablePlayers() {
+    public Collection<LPlayer> getWatcherPlayers() {
         return this.world.getApplicablePlayers(this);
     }
 
@@ -222,7 +224,17 @@ public abstract class Chunk {
     }
 
     public boolean isLoaded() {
-        return loaded;
+        return this.loaded;
+    }
+
+    @Override
+    public void unload() {
+        this.world.unloadChunk(this);
+    }
+
+    @Override
+    public boolean isInRangeOfViewFor(Player player) {
+        return this.world.isInRangeOfView(player, this);
     }
 
 }

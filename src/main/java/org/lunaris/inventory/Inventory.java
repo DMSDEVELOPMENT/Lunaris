@@ -1,7 +1,7 @@
 package org.lunaris.inventory;
 
 import org.lunaris.Lunaris;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.inventory.InventoryCloseEvent;
 import org.lunaris.event.inventory.InventoryOpenEvent;
 import org.lunaris.event.inventory.InventorySlotChangeEvent;
@@ -22,7 +22,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
     private final String title;
     private int maxStackSize = 64;
 
-    private final Set<Player> viewers = new HashSet<>();
+    private final Set<LPlayer> viewers = new HashSet<>();
 
     Inventory(InventoryType type) {
         this(type, null);
@@ -105,7 +105,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
         this.items[index] = item;
     }
 
-    public void sendContents(Player player) {
+    public void sendContents(LPlayer player) {
         int id = player.getInventoryManager().getInventoryId(this);
         if(id == -1) {
             close(player);
@@ -114,7 +114,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
         player.sendPacket(new Packet31InventoryContent(id, this.items));
     }
 
-    public void sendSlot(Collection<Player> players, int index) {
+    public void sendSlot(Collection<LPlayer> players, int index) {
         players.forEach(player -> {
             int id = player.getInventoryManager().getInventoryId(this);
             if(id == -1) {
@@ -334,11 +334,11 @@ public abstract class Inventory implements Iterable<ItemStack> {
             setItem(i, null);
     }
 
-    public Collection<Player> getViewers() {
+    public Collection<LPlayer> getViewers() {
         return this.viewers;
     }
 
-    boolean open(Player player) {
+    boolean open(LPlayer player) {
         InventoryOpenEvent event = new InventoryOpenEvent(this, player);
         Lunaris.getInstance().getEventManager().call(event);
         if(event.isCancelled())
@@ -347,7 +347,7 @@ public abstract class Inventory implements Iterable<ItemStack> {
         return true;
     }
 
-    void close(Player player) {
+    void close(LPlayer player) {
         InventoryCloseEvent event = new InventoryCloseEvent(this, player);
         Lunaris.getInstance().getEventManager().call(event);
         this.viewers.remove(player);

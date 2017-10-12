@@ -1,6 +1,6 @@
 package org.lunaris.event.entity;
 
-import org.lunaris.entity.Entity;
+import org.lunaris.api.entity.Entity;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 
@@ -19,11 +19,11 @@ public class EntityBurnEvent extends Event implements Cancellable {
     }
 
     public Entity getEntity() {
-        return entity;
+        return this.entity;
     }
 
     public int getFireTicks() {
-        return fireTicks;
+        return this.fireTicks;
     }
 
     public void setFireTicks(int fireTicks) {

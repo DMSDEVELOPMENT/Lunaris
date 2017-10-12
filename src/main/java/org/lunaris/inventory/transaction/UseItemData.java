@@ -1,9 +1,9 @@
 package org.lunaris.inventory.transaction;
 
-import org.lunaris.block.BlockFace;
+import org.lunaris.api.world.BlockFace;
 import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.packet.Packet1EInventoryTransaction;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.BlockVector;
 
 /**

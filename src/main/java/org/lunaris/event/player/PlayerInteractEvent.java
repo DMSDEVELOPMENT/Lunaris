@@ -1,7 +1,7 @@
 package org.lunaris.event.player;
 
-import org.lunaris.block.Block;
-import org.lunaris.entity.Player;
+import org.lunaris.block.LBlock;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 
@@ -10,19 +10,19 @@ import org.lunaris.event.Event;
  */
 public class PlayerInteractEvent extends Event implements Cancellable {
 
-    private final Player player;
+    private final LPlayer player;
     private final Action action;
-    private final Block clickedBlock;
+    private final LBlock clickedBlock;
 
     private boolean cancelled;
 
-    public PlayerInteractEvent(Player player, Action action, Block clickedBlock) {
+    public PlayerInteractEvent(LPlayer player, Action action, LBlock clickedBlock) {
         this.player = player;
         this.action = action;
         this.clickedBlock = clickedBlock;
     }
 
-    public Player getPlayer() {
+    public LPlayer getPlayer() {
         return player;
     }
 
@@ -30,7 +30,7 @@ public class PlayerInteractEvent extends Event implements Cancellable {
         return action;
     }
 
-    public Block getClickedBlock() {
+    public LBlock getClickedBlock() {
         return clickedBlock;
     }
 

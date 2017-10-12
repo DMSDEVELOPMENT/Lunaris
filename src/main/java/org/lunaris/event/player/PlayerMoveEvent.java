@@ -1,6 +1,6 @@
 package org.lunaris.event.player;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 
@@ -9,12 +9,12 @@ import org.lunaris.event.Event;
  */
 public class PlayerMoveEvent extends Event implements Cancellable {
 
-    private final Player player;
+    private final LPlayer player;
     private final double x, y, z;
     private final double yaw, pitch;
     private boolean cancelled;
 
-    public PlayerMoveEvent(Player player, double x, double y, double z, double yaw, double pitch) {
+    public PlayerMoveEvent(LPlayer player, double x, double y, double z, double yaw, double pitch) {
         this.player = player;
         this.x = x;
         this.y = y;
@@ -23,7 +23,7 @@ public class PlayerMoveEvent extends Event implements Cancellable {
         this.pitch = pitch;
     }
 
-    public Player getPlayer() {
+    public LPlayer getPlayer() {
         return player;
     }
 

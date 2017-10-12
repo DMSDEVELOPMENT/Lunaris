@@ -7,7 +7,7 @@ import io.netty.buffer.Unpooled;
 import org.lunaris.material.Material;
 import org.lunaris.entity.data.*;
 import org.lunaris.item.ItemStack;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.util.math.Vector3f;
 import org.lunaris.world.BlockVector;
 

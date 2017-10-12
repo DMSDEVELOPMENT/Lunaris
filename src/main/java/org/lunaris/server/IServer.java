@@ -2,11 +2,10 @@ package org.lunaris.server;
 
 import org.lunaris.command.CommandManager;
 import org.lunaris.entity.EntityProvider;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.EventManager;
 import org.lunaris.plugin.PluginManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
-import org.lunaris.util.configuration.ConfigurationManager;
 import org.lunaris.util.logger.FormatLogger;
 
 import java.util.Collection;
@@ -39,11 +38,11 @@ public interface IServer {
 
     PluginManager getPluginManager();
 
-    Collection<Player> getOnlinePlayers();
+    Collection<LPlayer> getOnlinePlayers();
 
-    Player getPlayer(String name);
+    LPlayer getPlayer(String name);
 
-    Player getPlayer(UUID uuid);
+    LPlayer getPlayer(UUID uuid);
 
     void broadcastMessage(String message);
 

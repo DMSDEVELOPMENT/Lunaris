@@ -1,6 +1,6 @@
 package org.lunaris.entity.data;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.network.protocol.packet.Packet28SetEntityMotion;
 
 /**
@@ -8,12 +8,12 @@ import org.lunaris.network.protocol.packet.Packet28SetEntityMotion;
  */
 public class PlayerMovementData extends MovementData {
 
-    private final Player player;
+    private final LPlayer player;
     private float prevX, prevY, prevZ;
     private float dX, dY, dZ;
     private float mx, my, mz;
 
-    public PlayerMovementData(Player player) {
+    public PlayerMovementData(LPlayer player) {
         super(player);
         this.player = player;
     }

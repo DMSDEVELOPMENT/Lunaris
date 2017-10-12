@@ -1,10 +1,9 @@
 package org.lunaris.entity;
 
-import org.lunaris.Lunaris;
 import org.lunaris.entity.data.*;
 import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.packet.Packet27SetEntityData;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 
 import java.util.Objects;
 
@@ -48,7 +47,7 @@ public abstract class Metadatable {
             this.getDataProperties().put(data);
             if(send) {
                 EntityMetadata metadata = new EntityMetadata().put(this.dataProperties.get(data.getId()));
-                ((Entity) this).sendPacketToWatchersAndMe(new Packet27SetEntityData(getEntityID(), metadata));
+                ((LEntity) this).sendPacketToWatchersAndMe(new Packet27SetEntityData(getEntityID(), metadata));
             }else
                 this.dirtyMetadata = true;
             return true;

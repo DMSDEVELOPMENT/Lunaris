@@ -1,6 +1,6 @@
 package org.lunaris.material.block;
 
-import org.lunaris.block.Block;
+import org.lunaris.api.world.Block;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemTier;
 import org.lunaris.item.ItemToolType;

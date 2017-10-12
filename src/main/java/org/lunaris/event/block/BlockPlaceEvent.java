@@ -1,7 +1,6 @@
 package org.lunaris.event.block;
 
-import org.lunaris.block.Block;
-import org.lunaris.entity.Player;
+import org.lunaris.api.entity.Player;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 import org.lunaris.item.ItemStack;

@@ -3,7 +3,7 @@ package org.lunaris.network;
 import co.aikar.timings.Timings;
 
 import org.lunaris.Lunaris;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
@@ -51,7 +51,7 @@ public class NetworkManager {
         this.rakNet.disable();
     }
 
-    public void sendPacket(Player player, MinePacket packet) {
+    public void sendPacket(LPlayer player, MinePacket packet) {
         PacketSendingAsyncEvent event = new PacketSendingAsyncEvent(player, packet);
         this.server.getEventManager().call(event);
         if (event.isCancelled())
@@ -59,13 +59,13 @@ public class NetworkManager {
         sendQueue.add(new QueuedPacket(Collections.singletonList(player.getSession()), serialize(packet)));
     }
 
-    public void sendPacket(Collection<Player> players, MinePacket packet) {
+    public void sendPacket(Collection<LPlayer> players, MinePacket packet) {
         players.removeIf(p -> {
             PacketSendingAsyncEvent event = new PacketSendingAsyncEvent(p, packet);
             this.server.getEventManager().call(event);
             return event.isCancelled();
         });
-        sendQueue.add(new QueuedPacket(players.stream().map(Player::getSession).collect(Collectors.toList()), serialize(packet)));
+        sendQueue.add(new QueuedPacket(players.stream().map(LPlayer::getSession).collect(Collectors.toList()), serialize(packet)));
     }
 
     public void broadcastPacket(MinePacket packet) {

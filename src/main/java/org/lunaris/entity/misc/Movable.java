@@ -1,9 +1,8 @@
 package org.lunaris.entity.misc;
 
-import org.lunaris.Lunaris;
-import org.lunaris.util.math.Vector3d;
-import org.lunaris.world.Location;
-import org.lunaris.world.World;
+import org.lunaris.api.util.math.Vector3d;
+import org.lunaris.api.world.Location;
+import org.lunaris.world.LWorld;
 
 /**
  * Created by RINES on 04.10.17.
@@ -28,7 +27,7 @@ public interface Movable {
 
     float getPitch();
 
-    Location getLocation(World world);
+    Location getLocation(LWorld world);
 
     void setPosition(float x, float y, float z);
 

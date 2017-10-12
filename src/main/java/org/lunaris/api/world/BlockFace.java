@@ -1,10 +1,10 @@
-package org.lunaris.block;
+package org.lunaris.api.world;
 
 import com.google.common.collect.Iterators;
 import org.lunaris.util.math.LMath;
 import org.lunaris.util.math.LRandom;
 import org.lunaris.util.math.MathHelper;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 
 import java.util.Iterator;
 import java.util.Random;

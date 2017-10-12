@@ -1,6 +1,6 @@
 package org.lunaris.event.entity;
 
-import org.lunaris.entity.LivingEntity;
+import org.lunaris.api.entity.LivingEntity;
 import org.lunaris.entity.damage.DamageCalculus;
 import org.lunaris.entity.damage.DamageSource;
 import org.lunaris.event.Cancellable;

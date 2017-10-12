@@ -1,10 +1,10 @@
 package org.lunaris.world.util;
 
-import org.lunaris.block.Block;
+import org.lunaris.block.LBlock;
 import org.lunaris.material.Material;
 import org.lunaris.world.BlockUpdateType;
 import org.lunaris.world.BlockVector;
-import org.lunaris.world.World;
+import org.lunaris.world.LWorld;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,11 +16,11 @@ import java.util.Set;
  * @author xtrafrancyz
  */
 public class BlockUpdateScheduler {
-    private final World world;
+    private final LWorld world;
     private final Set<ScheduledUpdate> updates = new HashSet<>();
     private final List<ScheduledUpdate> updatesThisTick = new LinkedList<>();
 
-    public BlockUpdateScheduler(World world) {
+    public BlockUpdateScheduler(LWorld world) {
         this.world = world;
     }
 
@@ -38,7 +38,7 @@ public class BlockUpdateScheduler {
             }
         }
         for (ScheduledUpdate update : updatesThisTick) {
-            Block block = world.getBlockAt(update.pos.x, update.pos.y, update.pos.z);
+            LBlock block = world.getBlockAt(update.pos.x, update.pos.y, update.pos.z);
             if (block.getType() != update.material)
                 continue;
             block.getHandle().onUpdate(block, BlockUpdateType.SCHEDULED);
@@ -46,7 +46,7 @@ public class BlockUpdateScheduler {
         updatesThisTick.clear();
     }
 
-    public void scheduleUpdate(Block block, int delayTicks) {
+    public void scheduleUpdate(LBlock block, int delayTicks) {
         updates.add(new ScheduledUpdate(block, delayTicks));
     }
 
@@ -55,7 +55,7 @@ public class BlockUpdateScheduler {
         public final Material material;
         public int delay;
 
-        public ScheduledUpdate(Block block, int delay) {
+        public ScheduledUpdate(LBlock block, int delay) {
             this.pos = new BlockVector(block.getX(), block.getY(), block.getZ());
             this.material = block.getType();
             this.delay = delay;

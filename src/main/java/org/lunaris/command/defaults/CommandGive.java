@@ -5,7 +5,7 @@ import org.lunaris.command.Command;
 import org.lunaris.command.CommandParameter;
 import org.lunaris.command.CommandParameterType;
 import org.lunaris.command.CommandSender;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.entity.misc.LPermission;
 import org.lunaris.item.ItemStack;
 import org.lunaris.material.Material;
@@ -33,7 +33,7 @@ public class CommandGive extends Command {
     public void execute(CommandSender sender, String[] args) {
         if (args.length < 2)
             return;
-        Player target = Lunaris.getInstance().getPlayer(args[0]);
+        LPlayer target = Lunaris.getInstance().getPlayer(args[0]);
         if (target == null) {
             sender.sendMessage("Target player is not online.");
             return;

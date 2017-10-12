@@ -1,29 +1,31 @@
 package org.lunaris.entity;
 
+import org.lunaris.api.entity.Entity;
+import org.lunaris.api.world.World;
 import org.lunaris.entity.damage.DamageSource;
 import org.lunaris.entity.data.*;
-import org.lunaris.entity.misc.EntityType;
+import org.lunaris.api.entity.EntityType;
 import org.lunaris.entity.misc.Movable;
 import org.lunaris.material.block.liquid.LiquidBlock;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.util.math.AxisAlignedBB;
-import org.lunaris.world.Chunk;
-import org.lunaris.world.Location;
-import org.lunaris.world.World;
+import org.lunaris.world.LChunk;
+import org.lunaris.api.world.Location;
+import org.lunaris.world.LWorld;
 
 import java.util.*;
 
 /**
  * Created by RINES on 13.09.17.
  */
-public abstract class Entity extends Metadatable implements Movable {
+public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     private final long entityID;
     private final EntityType entityType;
     private final MovementData movement;
     private final long creationTime = System.currentTimeMillis();
 
-    private World world;
+    private LWorld world;
 
     private final Map<Integer, Attribute> attributes = new HashMap<>();
 
@@ -38,7 +40,7 @@ public abstract class Entity extends Metadatable implements Movable {
 
     private int lastVoidDamage = 0;
 
-    protected Entity(long entityID, EntityType entityType) {
+    protected LEntity(long entityID, EntityType entityType) {
         this.entityID = entityID;
         this.entityType = entityType;
         this.movement = generateEntityMovement();
@@ -50,6 +52,7 @@ public abstract class Entity extends Metadatable implements Movable {
         return this.entityID;
     }
 
+    @Override
     public EntityType getEntityType() {
         return this.entityType;
     }
@@ -72,17 +75,20 @@ public abstract class Entity extends Metadatable implements Movable {
         a.setValue(value);
     }
 
+    @Override
     public void teleport(Location location) {
         if(this.world != location.getWorld())
             throw new IllegalArgumentException("Entities can not be teleported between worlds!");
         this.setPositionAndRotation(location);
     }
 
+    @Override
     public Location getLocation() {
         return this.movement.getLocation(this.world);
     }
 
-    public Chunk getChunk() {
+    @Override
+    public LChunk getChunk() {
         return this.world.getChunkAt(((int) getX()) >> 4, ((int) getZ()) >> 4);
     }
 
@@ -132,13 +138,23 @@ public abstract class Entity extends Metadatable implements Movable {
     }
 
     @Override
-    public Location getLocation(World world) {
+    public Location getLocation(LWorld world) {
         throw new IllegalStateException("Unsupported method");
+    }
+
+    @Override
+    public void setPosition(double x, double y, double z) {
+        setPosition((float) x, (float) y, (float) z);
     }
 
     @Override
     public void setPosition(float x, float y, float z) {
         this.movement.setPosition(x, y, z);
+    }
+
+    @Override
+    public void setRotation(double yaw, double headYaw, double pitch) {
+        setRotation((float) yaw, (float) headYaw, (float) pitch);
     }
 
     @Override
@@ -151,7 +167,7 @@ public abstract class Entity extends Metadatable implements Movable {
         this.movement.setMotion(x, y, z);
     }
 
-    public World getWorld() {
+    public LWorld getWorld() {
         return this.world;
     }
 
@@ -183,15 +199,15 @@ public abstract class Entity extends Metadatable implements Movable {
     public void tick(long current, float dT) {
         this.movement.tickMovement(current, dT);
         if(this.fireTicks > 0) {
-            if((this.fireTicks % 10 == 0 || this.fireTicks == 1) && this instanceof LivingEntity)
-                ((LivingEntity) this).damage(DamageSource.ON_FIRE, 1);
+            if((this.fireTicks % 10 == 0 || this.fireTicks == 1) && this instanceof LLivingEntity)
+                ((LLivingEntity) this).damage(DamageSource.ON_FIRE, 1);
             setDataFlag(false, EntityDataFlag.ON_FIRE, this.fireTicks --> 1, true);
         }
         if(getY() <= -16)
-            if(this instanceof LivingEntity) {
+            if(this instanceof LLivingEntity) {
                 if(++this.lastVoidDamage == 5) {
                     this.lastVoidDamage = 0;
-                    ((LivingEntity) this).damage(DamageSource.VOID, 4);
+                    ((LLivingEntity) this).damage(DamageSource.VOID, 4);
                 }
             }else
                 remove();
@@ -231,7 +247,7 @@ public abstract class Entity extends Metadatable implements Movable {
      * @param world мир
      */
     public void initWorld(World world) {
-        this.world = world;
+        this.world = (LWorld) world;
     }
 
     public void setOnFire(int ticks) {
@@ -300,7 +316,7 @@ public abstract class Entity extends Metadatable implements Movable {
         sendPacketToWatchers(packet);
     }
 
-    public Collection<Player> getWatchers() {
+    public Collection<LPlayer> getWatchers() {
         return this.world.getEntityTracker().getWatchers(this);
     }
 
@@ -355,9 +371,9 @@ public abstract class Entity extends Metadatable implements Movable {
     public boolean equals(Object o) {
         if(this == o)
             return true;
-        if(!(o instanceof Entity))
+        if(!(o instanceof LEntity))
             return false;
-        return this.entityID == ((Entity) o).entityID;
+        return this.entityID == ((LEntity) o).entityID;
     }
 
     @Override

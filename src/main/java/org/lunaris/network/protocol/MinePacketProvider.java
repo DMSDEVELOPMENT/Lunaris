@@ -1,6 +1,6 @@
 package org.lunaris.network.protocol;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.EventManager;
 import org.lunaris.event.network.PacketReceivedAsyncEvent;
 import org.lunaris.network.NetworkManager;
@@ -32,7 +32,7 @@ public class MinePacketProvider {
         generateLookups();
     }
 
-    public boolean handle(byte packetID, MineBuffer buffer, Player sender) {
+    public boolean handle(byte packetID, MineBuffer buffer, LPlayer sender) {
         try {
             PacketLookup lookup = this.lookups.get(packetID);
             if(lookup == null) {

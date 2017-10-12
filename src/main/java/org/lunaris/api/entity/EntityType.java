@@ -1,4 +1,4 @@
-package org.lunaris.entity.misc;
+package org.lunaris.api.entity;
 
 /**
  * Created by RINES on 04.10.17.

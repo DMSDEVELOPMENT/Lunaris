@@ -5,8 +5,8 @@ import org.lunaris.command.Command;
 import org.lunaris.command.CommandParameter;
 import org.lunaris.command.CommandParameterType;
 import org.lunaris.command.CommandSender;
-import org.lunaris.entity.Player;
-import org.lunaris.entity.misc.Gamemode;
+import org.lunaris.entity.LPlayer;
+import org.lunaris.api.entity.Gamemode;
 import org.lunaris.entity.misc.LPermission;
 
 /**
@@ -21,9 +21,9 @@ public class CommandTest extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        Player player;
-        if (sender instanceof Player) {
-            player = (Player)sender;
+        LPlayer player;
+        if (sender instanceof LPlayer) {
+            player = (LPlayer)sender;
         } else {
             if(args.length == 0) {
                 sender.sendMessage("Enter player name");

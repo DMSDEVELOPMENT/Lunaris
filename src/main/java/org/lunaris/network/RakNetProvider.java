@@ -3,26 +3,22 @@ package org.lunaris.network;
 import co.aikar.timings.Timings;
 import io.netty.buffer.Unpooled;
 import org.lunaris.Lunaris;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.player.PlayerConnectAsyncEvent;
 import org.lunaris.network.protocol.MineBuffer;
-import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet01Login;
 import org.lunaris.network.raknet.RakNet;
 import org.lunaris.network.raknet.RakNetLogger;
 import org.lunaris.network.raknet.RakNetPacket;
 import org.lunaris.network.raknet.identifier.MCPEIdentifier;
-import org.lunaris.network.raknet.protocol.Reliability;
 import org.lunaris.network.raknet.server.RakNetServer;
 import org.lunaris.network.raknet.server.RakNetServerListener;
 import org.lunaris.network.raknet.session.RakNetClientSession;
 import org.lunaris.network.raknet.stream.PacketDataInput;
-import org.lunaris.network.util.PacketsBush;
 import org.lunaris.network.util.ZLib;
 import org.lunaris.server.IServer;
 import org.lunaris.server.ServerSettings;
 
-import java.util.Collection;
 import java.util.Random;
 
 /**
@@ -71,7 +67,7 @@ public class RakNetProvider {
 
             @Override
             public void onClientDisconnect(RakNetClientSession session, String reason) {
-                Player player = server.getPlayerProvider().removePlayer(session);
+                LPlayer player = server.getPlayerProvider().removePlayer(session);
                 if(player != null)
                     player.tryDisconnectReason("Timed out");
             }

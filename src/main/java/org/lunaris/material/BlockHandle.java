@@ -1,14 +1,14 @@
 package org.lunaris.material;
 
-import org.lunaris.block.Block;
+import org.lunaris.api.entity.Entity;
+import org.lunaris.api.entity.Player;
+import org.lunaris.api.world.Block;
 import org.lunaris.block.BlockColor;
-import org.lunaris.block.BlockFace;
-import org.lunaris.entity.Entity;
-import org.lunaris.entity.Player;
+import org.lunaris.api.world.BlockFace;
 import org.lunaris.item.ItemStack;
 import org.lunaris.item.ItemToolType;
 import org.lunaris.util.math.AxisAlignedBB;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.BlockUpdateType;
 
 import java.util.Collections;

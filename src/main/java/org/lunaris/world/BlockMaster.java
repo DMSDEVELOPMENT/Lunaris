@@ -1,10 +1,10 @@
 package org.lunaris.world;
 
 import org.lunaris.Lunaris;
-import org.lunaris.block.Block;
-import org.lunaris.block.BlockFace;
-import org.lunaris.entity.Player;
-import org.lunaris.entity.misc.Gamemode;
+import org.lunaris.block.LBlock;
+import org.lunaris.api.world.BlockFace;
+import org.lunaris.entity.LPlayer;
+import org.lunaris.api.entity.Gamemode;
 import org.lunaris.event.block.BlockBreakEvent;
 import org.lunaris.event.block.BlockPlaceEvent;
 import org.lunaris.event.player.PlayerHitFireEvent;
@@ -19,7 +19,7 @@ import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
 import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
 import org.lunaris.network.protocol.packet.Packet19LevelEvent;
 import org.lunaris.network.protocol.packet.Packet24PlayerAction;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.particle.DestroyBlockParticle;
 import org.lunaris.world.particle.PunchBlockParticle;
 
@@ -37,11 +37,11 @@ public class BlockMaster {
         this.server = server;
     }
 
-    public void onRightClickBlock(Player player, BlockVector blockPosition, BlockFace blockFace, Vector3d clickPosition) {
+    public void onRightClickBlock(LPlayer player, BlockVector blockPosition, BlockFace blockFace, Vector3d clickPosition) {
         //check whether can interact at this position
         ItemStack hand = player.getInventory().getItemInHand();
-        Block target = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
-        Block sider = target.getSide(blockFace);
+        LBlock target = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
+        LBlock sider = target.getSide(blockFace);
         if(sider.getY() > 255 || sider.getY() < 0 || target.getType() == Material.AIR || player.getGamemode() == Gamemode.SPECTATOR)
             return;
         PlayerInteractEvent event = new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, target);
@@ -79,14 +79,14 @@ public class BlockMaster {
     }
 
     public void onBlockStartBreak(Packet24PlayerAction packet) {
-        Player player = packet.getPlayer();
+        LPlayer player = packet.getPlayer();
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         BlockFace face = BlockFace.fromIndex(packet.getFace());
-        World world = player.getWorld();
+        LWorld world = player.getWorld();
         if(player.getLocation().distanceSquared(position) > 100)
             return;
-        Block block = world.getBlockAt(position);
-        Block sider = block.getSide(face);
+        LBlock block = world.getBlockAt(position);
+        LBlock sider = block.getSide(face);
         PlayerInteractEvent interactEvent = new PlayerInteractEvent(player, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, block);
         this.server.getEventManager().call(interactEvent);
         if(interactEvent.isCancelled())
@@ -123,9 +123,9 @@ public class BlockMaster {
     }
 
     public void onBlockStopBreak(Packet24PlayerAction packet) {
-        Player player = packet.getPlayer();
+        LPlayer player = packet.getPlayer();
         if (packet.getX() != 0 || packet.getY() != 0 || packet.getZ() != 0) {
-            player.getLocation().getChunk().sendPacket(
+            ((LChunk) player.getLocation().getChunk()).sendPacket(
                 new Packet19LevelEvent(
                     Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
                     packet.getX(), packet.getY(), packet.getZ(),
@@ -137,11 +137,11 @@ public class BlockMaster {
     }
 
     public void onBlockContinueBreak(Packet24PlayerAction packet) {
-        Player player = packet.getPlayer();
+        LPlayer player = packet.getPlayer();
         if(!player.isBreakingBlock())
             return;
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
-        Block block = player.getWorld().getBlockAt(position);
+        LBlock block = player.getWorld().getBlockAt(position);
         long time = getExactBreakTimeInMillis(block, player);
         if(player.getBlockBreakingData().getBlockBreakingTime() != time) {
             player.getBlockBreakingData().updateBreak(time);
@@ -161,11 +161,11 @@ public class BlockMaster {
         new PunchBlockParticle(player.getWorld().getBlockAt(position), face).sendToNearbyPlayers();
     }
 
-    public void processBlockBreak(Player player, Block block) {
+    public void processBlockBreak(LPlayer player, LBlock block) {
         processBlockBreak(player, block, true);
     }
 
-    public void processBlockBreak(Player player, Block block, boolean withDrops) {
+    public void processBlockBreak(LPlayer player, LBlock block, boolean withDrops) {
         //check somewhere whether this block can be broken by players tool
         BlockBreakEvent event = new BlockBreakEvent(player, block);
         this.server.getEventManager().call(event);
@@ -185,21 +185,21 @@ public class BlockMaster {
         }
     }
 
-    private long getExactBreakTimeInMillis(Block block, Player player) {
+    private long getExactBreakTimeInMillis(LBlock block, LPlayer player) {
         if(player.getGamemode() == Gamemode.CREATIVE)
             return 150L;
         return getBreakTimeInMillis(block, player);
     }
 
-    private long getBreakTimeInMillis(Block block, Player player) {
+    private long getBreakTimeInMillis(LBlock block, LPlayer player) {
         return (long) (getBreakTime(block, player, player.getInventory().getItemInHand()) * 1000L);
     }
 
-    private double getBreakTimeInTicks(Block block, Player player) {
+    private double getBreakTimeInTicks(LBlock block, LPlayer player) {
         return getBreakTime(block, player, player.getInventory().getItemInHand()) * 20D;
     }
 
-    private double getBreakTime(Block block, Player player, ItemStack hand) {
+    private double getBreakTime(LBlock block, LPlayer player, ItemStack hand) {
         if(hand == null)
             hand = ItemStack.AIR;
         BlockHandle material = block.getHandle();

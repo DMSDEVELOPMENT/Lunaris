@@ -1,11 +1,11 @@
 package org.lunaris.event.entity;
 
-import org.lunaris.entity.Entity;
-import org.lunaris.entity.LivingEntity;
+import org.lunaris.api.entity.Entity;
+import org.lunaris.api.entity.LivingEntity;
 import org.lunaris.entity.damage.DamageCalculus;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 
 /**
  * Created by RINES on 24.09.17.

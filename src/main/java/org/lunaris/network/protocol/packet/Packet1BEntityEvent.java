@@ -1,6 +1,6 @@
 package org.lunaris.network.protocol.packet;
 
-import org.lunaris.entity.Entity;
+import org.lunaris.entity.LEntity;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 
@@ -21,7 +21,7 @@ public class Packet1BEntityEvent extends MinePacket {
         this.data = data;
     }
 
-    public Packet1BEntityEvent(Entity entity, EntityEvent event) {
+    public Packet1BEntityEvent(LEntity entity, EntityEvent event) {
         this.entityID = entity.getEntityID();
         this.event = event;
     }

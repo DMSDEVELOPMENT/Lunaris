@@ -1,6 +1,6 @@
 package org.lunaris.network.protocol.packet;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.entity.misc.Skin;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
@@ -79,8 +79,8 @@ public class Packet3FPlayerList extends MinePacket {
             this.xboxUserId = xboxID;
         }
 
-        public Entry(Player player) {
-            this(player.getClientUUID(), player.getEntityID(), player.getName(), player.getSkin(), player.getXboxID());
+        public Entry(LPlayer player) {
+            this(player.getUUID(), player.getEntityID(), player.getName(), player.getSkin(), player.getXboxID());
         }
 
     }

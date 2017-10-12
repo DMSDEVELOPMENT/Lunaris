@@ -3,7 +3,7 @@ package org.lunaris.network.protocol.packet;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.util.math.Vector3f;
-import org.lunaris.world.Location;
+import org.lunaris.api.world.Location;
 import org.lunaris.world.Sound;
 
 /**

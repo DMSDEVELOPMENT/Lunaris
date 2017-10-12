@@ -1,7 +1,7 @@
 package org.lunaris.server;
 
 import org.lunaris.Lunaris;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.entity.misc.LPermission;
@@ -10,7 +10,8 @@ import org.lunaris.event.player.PlayerJoinEvent;
 import org.lunaris.event.player.PlayerLoginEvent;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.network.raknet.session.RakNetClientSession;
-import org.lunaris.world.Location;
+import org.lunaris.api.world.Location;
+import org.lunaris.world.LWorld;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,9 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PlayerProvider {
 
-    private final Map<String, Player> playersByNames = new HashMap<>();
-    private final Map<UUID, Player> playersByUUIDs = new HashMap<>();
-    private final Map<RakNetClientSession, Player> playersBySessions = new ConcurrentHashMap<>();
+    private final Map<String, LPlayer> playersByNames = new HashMap<>();
+    private final Map<UUID, LPlayer> playersByUUIDs = new HashMap<>();
+    private final Map<RakNetClientSession, LPlayer> playersBySessions = new ConcurrentHashMap<>();
     private final Lunaris server;
     private final Scheduler scheduler;
 
@@ -31,21 +32,21 @@ public class PlayerProvider {
         this.scheduler = server.getScheduler();
     }
 
-    public Player createPlayer(Packet01Login packet, RakNetClientSession session) {
-        Player player = this.server.getEntityProvider().createPlayer(packet, session);
+    public LPlayer createPlayer(Packet01Login packet, RakNetClientSession session) {
+        LPlayer player = this.server.getEntityProvider().createPlayer(packet, session);
         player.setPermission(LPermission.OPERATOR);
         this.playersBySessions.put(session, player);
         this.server.getLogger().info("%s (%s) is logging in..", player.getName(), player.getAddress());
         return player;
     }
 
-    public void addPlayerToGame(Player player) {
-        Player another = getPlayer(player.getName());
+    public void addPlayerToGame(LPlayer player) {
+        LPlayer another = getPlayer(player.getName());
         if(another != null) {
             another.disconnect("You logged in from another location");
             return;
         }
-        another = getPlayer(player.getClientUUID());
+        another = getPlayer(player.getUUID());
         if(another != null) {
             another.disconnect("You logged in from another location");
             return;
@@ -58,9 +59,9 @@ public class PlayerProvider {
             player.disconnect();
             return;
         }
-        player.setIngameState(Player.IngameState.ONLINE);
+        player.setIngameState(LPlayer.IngameState.ONLINE);
         this.playersByNames.put(player.getName().toLowerCase(), player);
-        this.playersByUUIDs.put(player.getClientUUID(), player);
+        this.playersByUUIDs.put(player.getUUID(), player);
         Packet0BStartGame startGame = new Packet0BStartGame();
         startGame.entityUniqueId = startGame.entityRuntimeId = player.getEntityID();
         startGame.gamemode = startGame.playerGamemode = this.server.getServerSettings().getDefaultGamemode().ordinal();
@@ -71,7 +72,7 @@ public class PlayerProvider {
         startGame.pitch = (float) loc.getPitch();
         startGame.seed = -1;
         startGame.dimension = loc.getWorld().getDimension().getId();
-        startGame.difficulty = loc.getWorld().getDifficulty().getId();
+        startGame.difficulty = ((LWorld) loc.getWorld()).getDifficulty().getId();
         Location spawn = loc.getWorld().getSpawnLocation();
         startGame.spawnX = spawn.getBlockX();
         startGame.spawnY = spawn.getBlockY();
@@ -114,30 +115,30 @@ public class PlayerProvider {
         this.server.getEventManager().call(joinEvent);
     }
 
-    public Player getPlayer(String name) {
+    public LPlayer getPlayer(String name) {
         return this.playersByNames.get(name.toLowerCase());
     }
 
-    public Player getPlayer(UUID uuid) {
+    public LPlayer getPlayer(UUID uuid) {
         return this.playersByUUIDs.get(uuid);
     }
 
-    public Player getPlayer(RakNetClientSession session) {
+    public LPlayer getPlayer(RakNetClientSession session) {
         return this.playersBySessions.get(session);
     }
 
-    public Player removePlayer(RakNetClientSession session) {
-        Player player = this.playersBySessions.remove(session);
+    public LPlayer removePlayer(RakNetClientSession session) {
+        LPlayer player = this.playersBySessions.remove(session);
         if(player == null)
             return null;
         boolean wasOnline = player.isOnline();
-        player.setIngameState(Player.IngameState.DISCONNECTING);
+        player.setIngameState(LPlayer.IngameState.DISCONNECTING);
         this.scheduler.run(() -> {
             PlayerDisconnectEvent event = new PlayerDisconnectEvent(player);
             this.server.getEventManager().call(event);
             this.server.getPlayerList().removePlayer(player);
             this.playersByNames.remove(player.getName().toLowerCase());
-            this.playersByUUIDs.remove(player.getClientUUID());
+            this.playersByUUIDs.remove(player.getUUID());
             if(wasOnline) {
                 player.getWorld().removePlayerFromWorld(player);
             }
@@ -146,19 +147,19 @@ public class PlayerProvider {
         return player;
     }
 
-    public Collection<Player> getOnlinePlayers() {
+    public Collection<LPlayer> getOnlinePlayers() {
         return this.playersByUUIDs.values();
     }
 
-    public Collection<Player> getOnlinePlayersWithout(Player... without) {
-        Set<Player> players = new HashSet<>();
+    public Collection<LPlayer> getOnlinePlayersWithout(LPlayer... without) {
+        Set<LPlayer> players = new HashSet<>();
         players.addAll(getOnlinePlayers());
-        for(Player player : without)
+        for(LPlayer player : without)
             players.remove(player);
         return players;
     }
 
-    public Collection<Player> getAllPlayers() {
+    public Collection<LPlayer> getAllPlayers() {
         return this.playersBySessions.values();
     }
 

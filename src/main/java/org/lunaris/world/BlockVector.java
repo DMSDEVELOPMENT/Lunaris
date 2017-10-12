@@ -1,7 +1,7 @@
 package org.lunaris.world;
 
-import org.lunaris.block.BlockFace;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.world.BlockFace;
+import org.lunaris.api.util.math.Vector3d;
 
 /**
  * Created by RINES on 14.09.17.

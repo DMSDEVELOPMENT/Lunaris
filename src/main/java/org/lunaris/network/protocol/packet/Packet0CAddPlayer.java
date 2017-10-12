@@ -1,11 +1,10 @@
 package org.lunaris.network.protocol.packet;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.entity.data.EntityMetadata;
 import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
-import org.lunaris.world.Location;
 
 import java.util.UUID;
 
@@ -24,8 +23,8 @@ public class Packet0CAddPlayer extends MinePacket {
 
     public Packet0CAddPlayer() {}
 
-    public Packet0CAddPlayer(Player player) {
-        this.uuid = player.getClientUUID();
+    public Packet0CAddPlayer(LPlayer player) {
+        this.uuid = player.getUUID();
         this.name = player.getName();
         this.entityId = player.getEntityID();
         this.x = player.getX();

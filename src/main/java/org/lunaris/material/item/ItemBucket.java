@@ -1,10 +1,12 @@
 package org.lunaris.material.item;
 
 import org.lunaris.Lunaris;
-import org.lunaris.block.Block;
-import org.lunaris.block.BlockFace;
-import org.lunaris.entity.Player;
-import org.lunaris.entity.misc.Gamemode;
+import org.lunaris.api.entity.Player;
+import org.lunaris.api.world.Block;
+import org.lunaris.block.LBlock;
+import org.lunaris.api.world.BlockFace;
+import org.lunaris.entity.LPlayer;
+import org.lunaris.api.entity.Gamemode;
 import org.lunaris.event.player.PlayerBucketEmptyEvent;
 import org.lunaris.event.player.PlayerBucketFillEvent;
 import org.lunaris.item.ItemStack;
@@ -46,7 +48,8 @@ public class ItemBucket extends ItemHandle {
     }
 
     @Override
-    public boolean useOn(ItemStack item, Block block, BlockFace face, Player player) {
+    public boolean useOn(ItemStack item, Block block, BlockFace face, Player p) {
+        LPlayer player = (LPlayer) p;
         // Bucket is empty
         Material containingType = Material.getById(item.getData());
         if (containingType == Material.AIR) {
@@ -72,7 +75,7 @@ public class ItemBucket extends ItemHandle {
                 }
             }
         } else if (containingType.getHandle() instanceof LiquidBlock) {
-            Block target = block.getSide(face);
+            LBlock target = (LBlock) block.getSide(face);
             PlayerBucketEmptyEvent event = new PlayerBucketEmptyEvent(player, target);
             Lunaris.getInstance().getEventManager().call(event);
             if (!event.isCancelled()) {

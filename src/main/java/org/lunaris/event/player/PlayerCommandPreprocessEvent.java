@@ -1,6 +1,6 @@
 package org.lunaris.event.player;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.Cancellable;
 import org.lunaris.event.Event;
 
@@ -8,16 +8,16 @@ import org.lunaris.event.Event;
  * @author xtrafrancyz
  */
 public class PlayerCommandPreprocessEvent extends Event implements Cancellable {
-    private Player player;
+    private LPlayer player;
     private String command;
     private boolean cancelled;
 
-    public PlayerCommandPreprocessEvent(Player player, String command) {
+    public PlayerCommandPreprocessEvent(LPlayer player, String command) {
         this.player = player;
         this.command = command;
     }
 
-    public Player getPlayer() {
+    public LPlayer getPlayer() {
         return this.player;
     }
 

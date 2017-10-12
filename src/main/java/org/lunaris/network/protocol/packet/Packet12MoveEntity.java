@@ -1,11 +1,9 @@
 package org.lunaris.network.protocol.packet;
 
-import org.lunaris.entity.Entity;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LEntity;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.util.math.Vector3f;
-import org.lunaris.world.Location;
 
 /**
  * Created by RINES on 30.09.17.
@@ -19,7 +17,7 @@ public class Packet12MoveEntity extends MinePacket {
 
     public Packet12MoveEntity() {}
 
-    public Packet12MoveEntity(Entity entity) {
+    public Packet12MoveEntity(LEntity entity) {
         this.entityId = entity.getEntityID();
         this.x = entity.getX();
         this.y = entity.getY() + entity.getEyeHeight();

@@ -1,6 +1,6 @@
 package org.lunaris.event.entity;
 
-import org.lunaris.entity.LivingEntity;
+import org.lunaris.api.entity.LivingEntity;
 import org.lunaris.event.Event;
 
 /**
@@ -15,7 +15,7 @@ public class EntityDeathEvent extends Event {
     }
 
     public LivingEntity getEntity() {
-        return entity;
+        return this.entity;
     }
 
 }

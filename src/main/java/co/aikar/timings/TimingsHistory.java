@@ -27,7 +27,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.lunaris.Lunaris;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.util.JsonUtil;
 
 import java.lang.management.ManagementFactory;
@@ -210,9 +210,9 @@ public class TimingsHistory {
         final double avg;
 
         PingRecord() {
-            final Collection<Player> onlinePlayers = Lunaris.getInstance().getOnlinePlayers();
+            final Collection<LPlayer> onlinePlayers = Lunaris.getInstance().getOnlinePlayers();
             int totalPing = 0;
-            for (Player player : onlinePlayers) {
+            for (LPlayer player : onlinePlayers) {
 //                totalPing += player.getPing();
             }
 

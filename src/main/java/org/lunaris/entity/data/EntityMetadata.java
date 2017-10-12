@@ -2,7 +2,7 @@ package org.lunaris.entity.data;
 
 import org.lunaris.material.Material;
 import org.lunaris.item.ItemStack;
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 
 import java.util.HashMap;
 import java.util.Map;

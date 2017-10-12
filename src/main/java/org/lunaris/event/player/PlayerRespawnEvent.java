@@ -1,23 +1,23 @@
 package org.lunaris.event.player;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.Event;
-import org.lunaris.world.Location;
+import org.lunaris.api.world.Location;
 
 /**
  * Created by RINES on 30.09.17.
  */
 public class PlayerRespawnEvent extends Event {
 
-    private final Player player;
+    private final LPlayer player;
     private Location location;
 
-    public PlayerRespawnEvent(Player player, Location location) {
+    public PlayerRespawnEvent(LPlayer player, Location location) {
         this.player = player;
         this.location = location;
     }
 
-    public Player getPlayer() {
+    public LPlayer getPlayer() {
         return this.player;
     }
 

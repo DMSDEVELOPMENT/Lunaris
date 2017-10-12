@@ -1,17 +1,16 @@
 package org.lunaris.entity;
 
 import org.lunaris.entity.data.EntityDataFlag;
-import org.lunaris.entity.misc.EntityType;
+import org.lunaris.api.entity.EntityType;
 import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet0FAddItem;
 import org.lunaris.util.math.LMath;
-import org.lunaris.world.Location;
 
 /**
  * Created by RINES on 04.10.17.
  */
-public class Item extends Entity {
+public class Item extends LEntity {
 
     private final ItemStack itemStack;
     private long pickupDelay;

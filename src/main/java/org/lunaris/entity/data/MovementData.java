@@ -1,13 +1,13 @@
 package org.lunaris.entity.data;
 
-import org.lunaris.block.Block;
-import org.lunaris.entity.Entity;
-import org.lunaris.entity.misc.EntityType;
+import org.lunaris.block.LBlock;
+import org.lunaris.entity.LEntity;
+import org.lunaris.api.entity.EntityType;
 import org.lunaris.entity.misc.Movable;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.util.math.LMath;
-import org.lunaris.world.Location;
-import org.lunaris.world.World;
+import org.lunaris.api.world.Location;
+import org.lunaris.world.LWorld;
 
 import java.util.*;
 
@@ -19,7 +19,7 @@ public class MovementData implements Movable {
     protected final static float TICK_RATE = .05F;
     protected final static float GRAVITY = 0.04F;
 
-    private final Entity entity;
+    private final LEntity entity;
 
     protected float x, y, z;
     protected float motionX, motionY, motionZ;
@@ -30,7 +30,7 @@ public class MovementData implements Movable {
 
     protected float jumpingOffset;
 
-    public MovementData(Entity entity) {
+    public MovementData(LEntity entity) {
         this.entity = entity;
     }
 
@@ -80,7 +80,7 @@ public class MovementData implements Movable {
     }
 
     @Override
-    public Location getLocation(World world) {
+    public Location getLocation(LWorld world) {
         return new Location(world, this.x, this.y, this.z, this.yaw, this.headYaw, this.pitch);
     }
 
@@ -277,14 +277,14 @@ public class MovementData implements Movable {
         this.entity.setupFallDistance(dy);
     }
 
-    protected void checkWhetherInsideBlocks(World world) {
+    protected void checkWhetherInsideBlocks(LWorld world) {
         if(this.entity.getEntityType() == EntityType.PLAYER)
             return;
         AxisAlignedBB bb = this.entity.getBoundingBox();
         int bx = LMath.fastFloor(this.x);
         int by = LMath.fastFloor(this.y);
         int bz = LMath.fastFloor(this.z);
-        Block block;
+        LBlock block;
         if ((block = world.getBlockAt(bx, by, bz)).getHandle().isSolid() && block.getBoundingBox().intersectsWith(bb)) {
             float diffX = this.x - bx, diffY = this.y - by, diffZ = this.z - bz;
             boolean freeMinusX = !world.getBlockAt(bx - 1, by, bz).getHandle().isSolid();
@@ -329,8 +329,8 @@ public class MovementData implements Movable {
 
     }
 
-    protected static List<AxisAlignedBB> getCollisionCubes(Entity theEntity, AxisAlignedBB bb, boolean includeEntities) {
-        World world = theEntity.getWorld();
+    protected static List<AxisAlignedBB> getCollisionCubes(LEntity theEntity, AxisAlignedBB bb, boolean includeEntities) {
+        LWorld world = theEntity.getWorld();
         int minX = LMath.fastFloor(bb.getMinX());
         int minY = LMath.fastFloor(bb.getMinY());
         int minZ = LMath.fastFloor(bb.getMinZ());
@@ -343,7 +343,7 @@ public class MovementData implements Movable {
         for (int z = minZ; z < maxZ; ++z)
             for (int x = minX; x < maxX; ++x)
                 for (int y = minY; y < maxY; ++y) {
-                    Block block = world.getBlockAt(x, y, z);
+                    LBlock block = world.getBlockAt(x, y, z);
                     if (!block.getHandle().canPassThrough()) {
                         AxisAlignedBB blockBox = block.getBoundingBox();
                         if (blockBox.intersectsWith(bb)) {
@@ -354,9 +354,9 @@ public class MovementData implements Movable {
                     }
                 }
         if (includeEntities) {
-            Collection<Entity> entities = getNearbyEntities(theEntity, bb.grow(.25F, .25F, .25F));
+            Collection<LEntity> entities = getNearbyEntities(theEntity, bb.grow(.25F, .25F, .25F));
             if (entities != null)
-                for (Entity entity : entities) {
+                for (LEntity entity : entities) {
                     if (collisions == null)
                         collisions = new ArrayList<>();
                     collisions.add(entity.getBoundingBox());
@@ -365,10 +365,10 @@ public class MovementData implements Movable {
         return collisions;
     }
 
-    protected static Collection<Entity> getNearbyEntities(Entity theEntity, AxisAlignedBB bb) {
-        World world = theEntity.getWorld();
-        Set<Entity> result = null;
-        for (Entity entity : world.getEntities())
+    protected static Collection<LEntity> getNearbyEntities(LEntity theEntity, AxisAlignedBB bb) {
+        LWorld world = theEntity.getWorld();
+        Set<LEntity> result = null;
+        for (LEntity entity : world.getEntities())
             if (entity.getBoundingBox().intersectsWith(bb)) {
                 if (result == null)
                     result = new HashSet<>();

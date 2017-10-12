@@ -1,9 +1,11 @@
 package org.lunaris.entity;
 
+import org.lunaris.api.entity.Entity;
+import org.lunaris.api.entity.LivingEntity;
 import org.lunaris.entity.damage.DamageSource;
 import org.lunaris.entity.data.Attribute;
-import org.lunaris.entity.misc.EntityType;
-import org.lunaris.entity.misc.Gamemode;
+import org.lunaris.api.entity.EntityType;
+import org.lunaris.api.entity.Gamemode;
 import org.lunaris.event.entity.EntityDamageByEntityEvent;
 import org.lunaris.event.entity.EntityDamageEvent;
 import org.lunaris.event.entity.EntityDeathEvent;
@@ -14,7 +16,7 @@ import org.lunaris.network.protocol.MinePacket;
 import org.lunaris.network.protocol.packet.Packet0DAddEntity;
 import org.lunaris.network.protocol.packet.Packet1BEntityEvent;
 import org.lunaris.network.protocol.packet.Packet2DRespawn;
-import org.lunaris.world.Location;
+import org.lunaris.api.world.Location;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,29 +24,33 @@ import java.util.Collections;
 /**
  * Created by RINES on 14.09.17.
  */
-public abstract class LivingEntity extends Entity {
+public abstract class LLivingEntity extends LEntity implements LivingEntity {
 
     private boolean invulnerable = false;
 
-    protected LivingEntity(long entityID, EntityType entityType) {
+    protected LLivingEntity(long entityID, EntityType entityType) {
         super(entityID, entityType);
     }
 
-    public float getHealth() {
+    @Override
+    public double getHealth() {
         return getAttribute(Attribute.MAX_HEALTH).getValue();
     }
 
-    public float getMaxHealth() {
+    @Override
+    public double getMaxHealth() {
         return getAttribute(Attribute.MAX_HEALTH).getMaxValue();
     }
 
-    public void setHealth(float value) {
-        setAttribute(Attribute.MAX_HEALTH, value);
+    @Override
+    public void setHealth(double value) {
+        setAttribute(Attribute.MAX_HEALTH, (float) value);
     }
 
-    public void setMaxHealth(float value) {
+    @Override
+    public void setMaxHealth(double value) {
         Attribute a = getAttribute(Attribute.MAX_HEALTH);
-        a.setMaxValue(value);
+        a.setMaxValue((float) value);
         setHealth(a.getValue());
     }
 
@@ -64,7 +70,7 @@ public abstract class LivingEntity extends Entity {
         if(isInvulnerable())
             return;
         if(getEntityType() == EntityType.PLAYER) {
-            Player p = (Player) this;
+            LPlayer p = (LPlayer) this;
             if(p.getGamemode() == Gamemode.CREATIVE)
                 return;
         }
@@ -79,7 +85,7 @@ public abstract class LivingEntity extends Entity {
         if(isInvulnerable())
             return;
         if(getEntityType() == EntityType.PLAYER) {
-            Player p = (Player) this;
+            LPlayer p = (LPlayer) this;
             if(p.getGamemode() == Gamemode.CREATIVE)
                 return;
         }
@@ -92,9 +98,9 @@ public abstract class LivingEntity extends Entity {
         if(event2.isCancelled())
             return;
         if(damager.getEntityType() == EntityType.PLAYER)
-            ((Player) damager).getInventory().decreaseHandDurability();
+            ((LPlayer) damager).getInventory().decreaseHandDurability();
         if(getEntityType() == EntityType.PLAYER)
-            ((Player) this).getInventory().decreaseArmorDurability();
+            ((LPlayer) this).getInventory().decreaseArmorDurability();
         changeMotion(event2.getVictimVelocity());
         damage0(event2.getDamage());
     }
@@ -108,8 +114,8 @@ public abstract class LivingEntity extends Entity {
     public void tick(long current, float dT) {
         super.tick(current, dT);
         if(getHealth() < 1F) {
-            if(this instanceof Player) {
-                Player p = (Player) this;
+            if(this instanceof LPlayer) {
+                LPlayer p = (LPlayer) this;
                 PlayerDeathEvent event = new PlayerDeathEvent(p);
                 event.call();
                 if(event.isCancelled()) {

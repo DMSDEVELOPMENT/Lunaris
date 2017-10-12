@@ -1,6 +1,7 @@
 package org.lunaris.entity.misc;
 
-import org.lunaris.entity.Player;
+import org.lunaris.api.entity.Gamemode;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.network.protocol.packet.Packet37AdventureSettings;
 
 import java.util.EnumSet;
@@ -11,10 +12,10 @@ import java.util.Set;
  */
 public class AdventureSettings {
 
-    private final Player player;
+    private final LPlayer player;
     private final Set<Packet37AdventureSettings.Flag> flags = EnumSet.noneOf(Packet37AdventureSettings.Flag.class);
 
-    public AdventureSettings(Player player) {
+    public AdventureSettings(LPlayer player) {
         this.player = player;
         for(Packet37AdventureSettings.Flag flag : Packet37AdventureSettings.Flag.values())
             if(flag.hasDefaultValue())

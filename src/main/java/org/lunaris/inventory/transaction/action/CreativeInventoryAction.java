@@ -1,7 +1,7 @@
 package org.lunaris.inventory.transaction.action;
 
-import org.lunaris.entity.Player;
-import org.lunaris.entity.misc.Gamemode;
+import org.lunaris.entity.LPlayer;
+import org.lunaris.api.entity.Gamemode;
 import org.lunaris.inventory.transaction.InventoryAction;
 import org.lunaris.item.ItemStack;
 import org.lunaris.network.protocol.packet.Packet1EInventoryTransaction;
@@ -23,23 +23,23 @@ public class CreativeInventoryAction extends InventoryAction {
     }
 
     @Override
-    public boolean isValid(Player source) {
+    public boolean isValid(LPlayer source) {
         return source.getGamemode() == Gamemode.CREATIVE &&
                 (this.type == Packet1EInventoryTransaction.CreativeMagicActionType.DELETE_ITEM || getSourceItem().canBeFoundInCreative());
     }
 
     @Override
-    public boolean execute(Player source) {
+    public boolean execute(LPlayer source) {
         return true;
     }
 
     @Override
-    public void onExecuteSuccess(Player source) {
+    public void onExecuteSuccess(LPlayer source) {
 
     }
 
     @Override
-    public void onExecuteFail(Player source) {
+    public void onExecuteFail(LPlayer source) {
 
     }
 

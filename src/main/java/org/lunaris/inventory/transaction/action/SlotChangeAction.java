@@ -1,6 +1,6 @@
 package org.lunaris.inventory.transaction.action;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.Inventory;
 import org.lunaris.inventory.transaction.InventoryAction;
 import org.lunaris.item.ItemStack;
@@ -31,26 +31,26 @@ public class SlotChangeAction extends InventoryAction {
     }
 
     @Override
-    public boolean isValid(Player source) {
+    public boolean isValid(LPlayer source) {
 //        System.out.println(this.inventory.getClass().getSimpleName() + " " + this.inventory.getItem(this.slot) + " " + getSourceItem());
         return this.inventory.getItem(this.slot).equals(getSourceItem());
     }
 
     @Override
-    public boolean execute(Player source) {
+    public boolean execute(LPlayer source) {
         this.inventory.setItemWithoutUpdate(this.slot, getTargetItem());
         return true;
     }
 
     @Override
-    public void onExecuteSuccess(Player source) {
-        Set<Player> players = new HashSet<>(this.inventory.getViewers());
+    public void onExecuteSuccess(LPlayer source) {
+        Set<LPlayer> players = new HashSet<>(this.inventory.getViewers());
         players.remove(source);
         this.inventory.sendSlot(players, this.slot);
     }
 
     @Override
-    public void onExecuteFail(Player source) {
+    public void onExecuteFail(LPlayer source) {
         this.inventory.setItemWithoutUpdate(this.slot, getSourceItem());
     }
 

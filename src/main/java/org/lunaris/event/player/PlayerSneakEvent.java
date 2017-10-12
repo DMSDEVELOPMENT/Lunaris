@@ -1,6 +1,6 @@
 package org.lunaris.event.player;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.Event;
 
 /**
@@ -8,15 +8,15 @@ import org.lunaris.event.Event;
  */
 public class PlayerSneakEvent extends Event {
 
-    private final Player player;
+    private final LPlayer player;
     private final State state;
 
-    public PlayerSneakEvent(Player player, State state) {
+    public PlayerSneakEvent(LPlayer player, State state) {
         this.player = player;
         this.state = state;
     }
 
-    public Player getPlayer() {
+    public LPlayer getPlayer() {
         return player;
     }
 

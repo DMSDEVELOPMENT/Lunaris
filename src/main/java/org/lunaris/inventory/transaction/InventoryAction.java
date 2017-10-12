@@ -1,6 +1,6 @@
 package org.lunaris.inventory.transaction;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.item.ItemStack;
 
 /**
@@ -33,22 +33,22 @@ public abstract class InventoryAction {
     /**
      * Проверка на то, может ли игрок совершить это действие.
      */
-    abstract public boolean isValid(Player source);
+    abstract public boolean isValid(LPlayer source);
 
     /**
      * Вызывается, если транзакция, часть которой является, признана валидной. Выполняет все server-side действия,
      * реализующие действие. Возвращает true в случае успеха, false в случае отмены плагинами.
      */
-    abstract public boolean execute(Player source);
+    abstract public boolean execute(LPlayer source);
 
     /**
      * Метод, вызываемый после полного исполнения действия.
      */
-    abstract public void onExecuteSuccess(Player source);
+    abstract public void onExecuteSuccess(LPlayer source);
 
     /**
      * Метод, вызываемый в случае, если действие не смогло быть окончено.
      */
-    abstract public void onExecuteFail(Player source);
+    abstract public void onExecuteFail(LPlayer source);
 
 }

@@ -1,13 +1,14 @@
 package org.lunaris.network.protocol;
 
 import org.lunaris.Lunaris;
-import org.lunaris.block.Block;
-import org.lunaris.entity.Entity;
-import org.lunaris.entity.LivingEntity;
-import org.lunaris.entity.Player;
+import org.lunaris.api.world.Block;
+import org.lunaris.block.LBlock;
+import org.lunaris.entity.LEntity;
+import org.lunaris.entity.LLivingEntity;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.entity.data.BlockBreakingData;
 import org.lunaris.entity.data.EntityDataFlag;
-import org.lunaris.entity.misc.Gamemode;
+import org.lunaris.api.entity.Gamemode;
 import org.lunaris.event.player.*;
 import org.lunaris.inventory.transaction.*;
 import org.lunaris.item.ItemStack;
@@ -20,7 +21,7 @@ import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.network.protocol.packet.*;
 import org.lunaris.resourcepacks.ResourcePack;
 import org.lunaris.world.BlockVector;
-import org.lunaris.world.Location;
+import org.lunaris.api.world.Location;
 
 import java.util.*;
 
@@ -39,7 +40,7 @@ public class MinePacketHandler {
     }
 
     public void handle(Packet01Login packet) {
-        Player player = packet.getPlayer();
+        LPlayer player = packet.getPlayer();
         if(player.getProtocolVersion() != NetworkManager.SUPPORTED_CLIENT_PROTOCOL_VERSION) {
             if(player.getProtocolVersion() < NetworkManager.SUPPORTED_CLIENT_PROTOCOL_VERSION) {
 //                player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.LOGIN_FAILED_CLIENT));
@@ -108,7 +109,7 @@ public class MinePacketHandler {
     }
 
     public void handle(Packet04EncryptionResponse packet) {
-        Player player = packet.getPlayer();
+        LPlayer player = packet.getPlayer();
         player.getSession().setConnectionState(ConnectionState.LOGGED_IN);
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.LOGIN_SUCCESS));
         player.sendPacket(new Packet06ResourcePacksInfo());
@@ -119,7 +120,7 @@ public class MinePacketHandler {
     }
 
     public void handle(Packet08ResourcePackResponse packet) {
-        Player player = packet.getPlayer();
+        LPlayer player = packet.getPlayer();
         switch(packet.getResponseStatus()) {
             case Packet08ResourcePackResponse.STATUS_REFUSED: {
                 player.disconnect("Resources refused");
@@ -170,7 +171,7 @@ public class MinePacketHandler {
     }
 
     public void handle(Packet13MovePlayer packet) {
-        Player player = packet.getPlayer();
+        LPlayer player = packet.getPlayer();
         sync(() -> {
             Location from = player.getLocation(), to = player.getLocation();
             to.setComponents(packet.getX(), packet.getY() - player.getEyeHeight(), packet.getZ());
@@ -220,7 +221,7 @@ public class MinePacketHandler {
 
     public void handle(Packet1FMobEquipment packet) {
         sync(() -> {
-            Player p = packet.getPlayer();
+            LPlayer p = packet.getPlayer();
             ItemStack given = packet.getItem();
             ItemStack has = p.getInventory().getItem(packet.getHotbarSlot());
             if(!has.isSimilar(given)) {
@@ -230,14 +231,14 @@ public class MinePacketHandler {
             }
             p.setDataFlag(false, EntityDataFlag.ACTION, false, true);
             p.getInventory().equipItem0(packet.getHotbarSlot());
-            Set<Player> players = new HashSet<>(Lunaris.getInstance().getOnlinePlayers());
+            Set<LPlayer> players = new HashSet<>(Lunaris.getInstance().getOnlinePlayers());
             players.remove(packet.getPlayer());
             this.networkManager.sendPacket(players, packet);
         });
     }
 
     public void handle(Packet24PlayerAction packet) {
-        Player p = packet.getPlayer();
+        LPlayer p = packet.getPlayer();
         switch(packet.getAction()) {
             case START_SNEAK: {
                 sync(() -> {
@@ -324,7 +325,7 @@ public class MinePacketHandler {
     
     public void handle(Packet4DCommandRequest packet) {
         sync(() -> {
-            Player player = packet.getPlayer();
+            LPlayer player = packet.getPlayer();
             PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, packet.command);
             server.getEventManager().call(event);
             if (event.isCancelled())
@@ -335,7 +336,7 @@ public class MinePacketHandler {
 
     public void handle(Packet1EInventoryTransaction packet) {
         sync(() -> {
-            Player player = packet.getPlayer();
+            LPlayer player = packet.getPlayer();
             List<InventoryAction> actions = new ArrayList<>();
             for (InventoryActionData actionData : packet.getActions()) {
                 InventoryAction action = actionData.toInventoryAction(packet.getPlayer());
@@ -366,7 +367,7 @@ public class MinePacketHandler {
                             return;
                         }case BREAK_BLOCK: {
                             BlockVector vec = data.getBlockPosition();
-                            Block block = player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ());
+                            LBlock block = player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ());
                             if(player.getGamemode() == Gamemode.CREATIVE)
                                 this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, block, false);
                             else {
@@ -393,7 +394,7 @@ public class MinePacketHandler {
                 }
                 case USE_ITEM_ON_ENTITY: {
                     UseItemOnEntityData data = (UseItemOnEntityData) packet.getData();
-                    Entity entity = player.getWorld().getEntityById(data.getEntityID());
+                    LEntity entity = player.getWorld().getEntityById(data.getEntityID());
                     if(entity == null)
                         return;
                     if(!data.getItemInHand().equals(player.getInventory().getItemInHand())) {
@@ -425,12 +426,12 @@ public class MinePacketHandler {
                             }
                             break;
                         }case ATTACK: {
-                            if(!(entity instanceof LivingEntity))
+                            if(!(entity instanceof LLivingEntity))
                                 return;
                             double itemDamage = item.getHandle().getAttackDamage();
                             //check enchantments
                             //call events
-                            ((LivingEntity) entity).damage(player, itemDamage);
+                            ((LLivingEntity) entity).damage(player, itemDamage);
                             break;
                         }
                     }

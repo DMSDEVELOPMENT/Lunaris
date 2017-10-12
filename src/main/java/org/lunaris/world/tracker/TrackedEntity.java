@@ -1,8 +1,8 @@
 package org.lunaris.world.tracker;
 
 import org.lunaris.Lunaris;
-import org.lunaris.entity.Entity;
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LEntity;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.PlayerInventory;
 import org.lunaris.item.ItemStack;
 import org.lunaris.material.Material;
@@ -13,7 +13,7 @@ import org.lunaris.network.protocol.packet.Packet20MobArmorEquipment;
 import org.lunaris.network.protocol.packet.Packet27SetEntityData;
 import org.lunaris.network.protocol.packet.Packet28SetEntityMotion;
 import org.lunaris.util.math.MathHelper;
-import org.lunaris.world.Location;
+import org.lunaris.api.world.Location;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,14 +23,14 @@ import java.util.Set;
  * @author xtrafrancyz
  */
 public class TrackedEntity {
-    private final Entity entity;
+    private final LEntity entity;
     private final int updatePeriod;
     private final int viewDistanceSquared;
-    private final Set<Player> trackingPlayers;
+    private final Set<LPlayer> trackingPlayers;
     private Location sentLocation;
     private int tickCounter = 0;
 
-    public TrackedEntity(Entity entity, int updatePeriod, int viewDistance) {
+    public TrackedEntity(LEntity entity, int updatePeriod, int viewDistance) {
         this.entity = entity;
         this.updatePeriod = updatePeriod;
         this.viewDistanceSquared = viewDistance * viewDistance;
@@ -45,7 +45,7 @@ public class TrackedEntity {
         Lunaris.getInstance().getNetworkManager().sendPacket(trackingPlayers, packet);
     }
 
-    public void update(Collection<Player> players) {
+    public void update(Collection<LPlayer> players) {
         sendMetadata();
         if (entity.hasJustMoved()) {
             sendPacket(new Packet12MoveEntity(entity));
@@ -58,18 +58,18 @@ public class TrackedEntity {
         if (entity.isDirtyMetadata()) {
             entity.setDirtyMetadata(false);
             sendPacket(new Packet27SetEntityData(this.entity.getEntityID(), entity.getDataProperties()));
-            if (entity instanceof Player)
-                ((Player) entity).sendPacket(new Packet27SetEntityData(this.entity.getEntityID(), entity.getDataProperties()));
+            if (entity instanceof LPlayer)
+                ((LPlayer) entity).sendPacket(new Packet27SetEntityData(this.entity.getEntityID(), entity.getDataProperties()));
         }
     }
 
-    public void updatePlayers(Collection<Player> players) {
-        for (Player player : players) {
+    public void updatePlayers(Collection<LPlayer> players) {
+        for (LPlayer player : players) {
             updatePlayer(player);
         }
     }
 
-    public void updatePlayer(Player player) {
+    public void updatePlayer(LPlayer player) {
         if (player == entity)
             return;
         if (isInViewRange(player)) {
@@ -80,8 +80,8 @@ public class TrackedEntity {
                 if (entity.getMotionX() != 0 || entity.getMotionY() != 0 || entity.getMotionZ() != 0) {
                     player.sendPacket(new Packet28SetEntityMotion(entity));
                 }
-                if (entity instanceof Player) {
-                    PlayerInventory inv = ((Player) entity).getInventory();
+                if (entity instanceof LPlayer) {
+                    PlayerInventory inv = ((LPlayer) entity).getInventory();
                     boolean hasArmor = false;
                     ItemStack[] armor = new ItemStack[4];
                     for (int i = 0; i < 4; i++) {
@@ -101,11 +101,11 @@ public class TrackedEntity {
         }
     }
 
-    public boolean isInViewRange(Player player) {
+    public boolean isInViewRange(LPlayer player) {
         return MathHelper.pow2(entity.getX() - player.getX()) + MathHelper.pow2(entity.getZ() - player.getZ()) < viewDistanceSquared;
     }
 
-    public Set<Player> getTrackingPlayers() {
+    public Set<LPlayer> getTrackingPlayers() {
         return new HashSet<>(trackingPlayers);
     }
 }

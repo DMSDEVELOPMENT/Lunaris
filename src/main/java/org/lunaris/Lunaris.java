@@ -5,11 +5,9 @@ import jline.console.ConsoleReader;
 
 import org.lunaris.command.CommandManager;
 import org.lunaris.entity.EntityProvider;
-import org.lunaris.entity.Player;
-import org.lunaris.event.EventHandler;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.event.EventManager;
 import org.lunaris.event.Listener;
-import org.lunaris.event.block.BlockBreakEvent;
 import org.lunaris.jwt.EncryptionKeyFactory;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.network.protocol.packet.Packet09Text;
@@ -22,7 +20,6 @@ import org.lunaris.server.Scheduler;
 import org.lunaris.server.ServerSettings;
 import org.lunaris.server.WorldProvider;
 import org.lunaris.util.logger.FormatLogger;
-import org.lunaris.util.math.Vector3d;
 
 import java.lang.management.ManagementFactory;
 import java.util.Collection;
@@ -202,7 +199,7 @@ public class Lunaris implements IServer {
     }
 
     @Override
-    public Collection<Player> getOnlinePlayers() {
+    public Collection<LPlayer> getOnlinePlayers() {
         return this.playerProvider.getOnlinePlayers();
     }
 
@@ -211,12 +208,12 @@ public class Lunaris implements IServer {
     }
 
     @Override
-    public Player getPlayer(String name) {
+    public LPlayer getPlayer(String name) {
         return this.playerProvider.getPlayer(name);
     }
 
     @Override
-    public Player getPlayer(UUID uuid) {
+    public LPlayer getPlayer(UUID uuid) {
         return this.playerProvider.getPlayer(uuid);
     }
 

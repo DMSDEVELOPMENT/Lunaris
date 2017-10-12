@@ -1,6 +1,6 @@
 package org.lunaris.entity.data;
 
-import org.lunaris.util.math.Vector3d;
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.BlockVector;
 
 /**

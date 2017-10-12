@@ -1,6 +1,6 @@
 package org.lunaris.network.protocol.packet;
 
-import org.lunaris.block.Block;
+import org.lunaris.block.LBlock;
 import org.lunaris.network.protocol.MineBuffer;
 import org.lunaris.network.protocol.MinePacket;
 
@@ -12,7 +12,7 @@ public class Packet15UpdateBlock extends MinePacket {
     private int x, y, z;
     private int id, data;
 
-    public Packet15UpdateBlock(Block block) {
+    public Packet15UpdateBlock(LBlock block) {
         this.x = block.getX();
         this.y = block.getY();
         this.z = block.getZ();

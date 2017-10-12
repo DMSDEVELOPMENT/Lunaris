@@ -1,6 +1,6 @@
 package org.lunaris.inventory;
 
-import org.lunaris.entity.Player;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.transaction.InventorySection;
 
 /**
@@ -8,7 +8,7 @@ import org.lunaris.inventory.transaction.InventorySection;
  */
 public class CursorInventory extends Inventory {
 
-    public CursorInventory(Player player) {
+    public CursorInventory(LPlayer player) {
         super(InventoryType.CURSOR);
     }
 

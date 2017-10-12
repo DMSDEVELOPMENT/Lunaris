@@ -1,9 +1,7 @@
 package org.lunaris.material.block;
 
-import org.lunaris.block.Block;
 import org.lunaris.item.ItemStack;
 import org.lunaris.material.Material;
-import org.lunaris.util.math.AxisAlignedBB;
 
 /**
  * Created by RINES on 24.09.17.

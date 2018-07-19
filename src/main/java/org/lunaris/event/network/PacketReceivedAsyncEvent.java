@@ -2,18 +2,18 @@ package org.lunaris.event.network;
 
 import org.lunaris.api.event.Cancellable;
 import org.lunaris.api.event.Event;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
 
 /**
  * Created by RINES on 13.09.17.
  */
 public class PacketReceivedAsyncEvent extends Event implements Cancellable {
 
-    private final MinePacket packet;
+    private final Packet packet;
 
     private boolean cancelled;
 
-    public PacketReceivedAsyncEvent(MinePacket packet) {
+    public PacketReceivedAsyncEvent(Packet packet) {
         this.packet = packet;
     }
 
@@ -27,7 +27,7 @@ public class PacketReceivedAsyncEvent extends Event implements Cancellable {
         return this.cancelled;
     }
 
-    public MinePacket getPacket() {
+    public Packet getPacket() {
         return packet;
     }
 }

@@ -6,6 +6,7 @@ import io.gomint.jraknet.PacketBuffer;
 import io.gomint.jraknet.PacketReliability;
 import org.lunaris.LunarisServer;
 import org.lunaris.entity.LPlayer;
+import org.lunaris.event.network.PacketReceivedAsyncEvent;
 import org.lunaris.jwt.EncryptionHandler;
 import org.lunaris.network.executor.PostProcessExecutor;
 import org.lunaris.network.packet.PacketFEBatch;
@@ -200,6 +201,11 @@ public class PlayerConnection {
         Packet packet = this.networkManager.getPacketRegistry().constructPacket(packetID);
         packet.read(buffer);
         packet.setConnection(this);
+        PacketReceivedAsyncEvent event = new PacketReceivedAsyncEvent(packet);
+        LunarisServer.getInstance().getEventManager().call(event);
+        if (event.isCancelled()) {
+            return;
+        }
         this.packetHandler.handle(packet, currentMillis);
     }
 

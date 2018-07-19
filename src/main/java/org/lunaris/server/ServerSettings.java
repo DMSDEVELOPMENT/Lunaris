@@ -1,9 +1,9 @@
 package org.lunaris.server;
 
 import org.lunaris.api.entity.Gamemode;
-import org.lunaris.network.packet.Packet37AdventureSettings;
 import org.lunaris.api.util.configuration.FileConfiguration;
 import org.lunaris.api.util.configuration.yaml.YamlConfiguration;
+import org.lunaris.network.packet.Packet37AdventureSettings;
 
 import java.io.File;
 
@@ -17,7 +17,7 @@ public class ServerSettings {
 
     private final String serverName;
 
-    private final int supportedClientProtocol = 137;
+    private final int supportedClientProtocol = 274;
 
     private final String supportedClientVersion;
 

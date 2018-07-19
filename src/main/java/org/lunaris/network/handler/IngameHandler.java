@@ -16,10 +16,7 @@ import org.lunaris.inventory.transaction.*;
 import org.lunaris.material.LItemHandle;
 import org.lunaris.network.NetworkManager;
 import org.lunaris.network.PacketHandler;
-import org.lunaris.network.PlayerConnection;
 import org.lunaris.network.packet.*;
-import org.lunaris.resourcepacks.ResourcePack;
-import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.world.BlockVector;
 
 import java.util.ArrayList;

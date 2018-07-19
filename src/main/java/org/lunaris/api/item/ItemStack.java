@@ -2,8 +2,8 @@ package org.lunaris.api.item;
 
 import org.lunaris.api.material.BlockHandle;
 import org.lunaris.api.material.ItemHandle;
-import org.lunaris.api.material.MaterialHandle;
 import org.lunaris.api.material.Material;
+import org.lunaris.api.material.MaterialHandle;
 import org.lunaris.api.util.Internal;
 import org.lunaris.item.ItemList;
 import org.lunaris.nbt.NBTIO;

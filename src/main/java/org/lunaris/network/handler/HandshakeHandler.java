@@ -88,7 +88,7 @@ public class HandshakeHandler extends PacketHandler {
                     Packet03EncryptionRequest encryptionPacket = new Packet03EncryptionRequest(encryptionRequestJWT);
                     player.sendPacket(encryptionPacket);
                 }
-            }else {
+            } else {
                 connection.setConnectionState(PlayerConnectionState.RESOURCE_PACK);
                 connection.setPacketHandler(RESOURCES_HANDLER);
                 player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.LOGIN_SUCCESS));

@@ -1,7 +1,7 @@
 package org.lunaris.network.packet;
 
 import io.gomint.jraknet.PacketBuffer;
-import org.lunaris.entity.data.*;
+import org.lunaris.entity.data.EntityMetadata;
 import org.lunaris.network.Packet;
 import org.lunaris.network.util.SerializationUtil;
 

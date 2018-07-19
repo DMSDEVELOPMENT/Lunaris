@@ -1,7 +1,7 @@
 package org.lunaris.api.event.player;
 
-import org.lunaris.entity.LPlayer;
 import org.lunaris.api.event.Event;
+import org.lunaris.entity.LPlayer;
 
 /**
  * Created by RINES on 14.09.17.

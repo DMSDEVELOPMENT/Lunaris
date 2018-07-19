@@ -2,9 +2,9 @@ package org.lunaris.inventory;
 
 import org.lunaris.api.inventory.InventoryType;
 import org.lunaris.api.inventory.PlayerInventory;
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.transaction.InventorySection;
-import org.lunaris.api.item.ItemStack;
 import org.lunaris.network.packet.Packet1FMobEquipment;
 
 import java.util.Collection;

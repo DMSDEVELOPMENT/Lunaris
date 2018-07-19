@@ -1,7 +1,7 @@
 package org.lunaris.world.particle;
 
-import org.lunaris.network.packet.Packet19LevelEvent;
 import org.lunaris.api.world.Location;
+import org.lunaris.network.packet.Packet19LevelEvent;
 
 /**
  * Created by RINES on 28.09.17.

@@ -1,16 +1,10 @@
 package org.lunaris.api.server;
 
 import co.aikar.timings.Timings;
-
 import org.lunaris.LunarisServer;
 import org.lunaris.api.util.Internal;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.RunnableScheduledFuture;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -80,6 +74,10 @@ public class Scheduler {
         Task task = new Task(runnable);
         task.future = this.asyncExecutor.submit(task::run);
         return task;
+    }
+
+    public ScheduledExecutorService getAsyncExecutor() {
+        return this.asyncExecutor;
     }
 
     /**

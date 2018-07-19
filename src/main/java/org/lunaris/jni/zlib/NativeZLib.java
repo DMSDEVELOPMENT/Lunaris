@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import org.lunaris.network.util.ZLib;
 
-import java.util.zip.DataFormatException;
-
 /**
  * Created by k.shandurenko on 19.07.2018
  */

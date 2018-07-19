@@ -29,7 +29,7 @@ import java.util.function.LongConsumer;
  */
 public class NetworkManager {
 
-    public final static long NETWORK_TICK = Scheduler.ONE_TICK_IN_MILLIS >> 1;
+    public final static long NETWORK_TICK = Scheduler.ONE_TICK_IN_MILLIS / 5;
 
     private final LunarisServer server;
     private final ServerSocket serverSocket;

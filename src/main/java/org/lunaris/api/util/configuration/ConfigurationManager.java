@@ -1,7 +1,7 @@
 package org.lunaris.api.util.configuration;
 
-import org.lunaris.server.IServer;
 import org.lunaris.api.util.configuration.yaml.LuvasConfiguration;
+import org.lunaris.server.IServer;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,8 +1,8 @@
 package org.lunaris.material.block;
 
+import org.lunaris.api.material.Material;
 import org.lunaris.block.BlockColor;
 import org.lunaris.material.LBlockHandle;
-import org.lunaris.api.material.Material;
 
 /**
  * Created by RINES on 24.09.17.

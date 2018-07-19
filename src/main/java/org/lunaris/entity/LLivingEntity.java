@@ -1,22 +1,22 @@
 package org.lunaris.entity;
 
 import org.lunaris.api.entity.Entity;
-import org.lunaris.api.entity.LivingEntity;
-import org.lunaris.api.entity.damage.DamageSource;
-import org.lunaris.entity.data.Attribute;
 import org.lunaris.api.entity.EntityType;
 import org.lunaris.api.entity.Gamemode;
+import org.lunaris.api.entity.LivingEntity;
+import org.lunaris.api.entity.damage.DamageSource;
 import org.lunaris.api.event.entity.EntityDamageByEntityEvent;
 import org.lunaris.api.event.entity.EntityDamageEvent;
 import org.lunaris.api.event.entity.EntityDeathEvent;
 import org.lunaris.api.event.player.PlayerDeathEvent;
+import org.lunaris.api.world.Location;
+import org.lunaris.entity.data.Attribute;
 import org.lunaris.item.potion.PotionEffect;
 import org.lunaris.item.potion.PotionEffectType;
 import org.lunaris.network.Packet;
 import org.lunaris.network.packet.Packet0DAddEntity;
 import org.lunaris.network.packet.Packet1BEntityEvent;
 import org.lunaris.network.packet.Packet2DRespawn;
-import org.lunaris.api.world.Location;
 
 import java.util.Collection;
 import java.util.Collections;

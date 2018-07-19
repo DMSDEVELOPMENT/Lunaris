@@ -2,7 +2,6 @@ package co.aikar.timings;
 
 import org.lunaris.LunarisServer;
 import org.lunaris.api.event.Event;
-import org.lunaris.network_old.protocol.MinePacket;
 import org.lunaris.server.ServerSettings;
 import org.lunaris.world.LWorld;
 
@@ -76,15 +75,6 @@ public final class Timings {
 
     public static Timing getPacketsReceptionTimer() {
         return packetsReceptionTimer;
-    }
-
-    public static Timing getPacketsSerializationTimer(MinePacket packet) {
-        Timing t = packetsTimings.get(packet.getClass());
-        if (t == null) {
-            t = TimingsManager.getTiming(packetsSerializationTimer.name, packet.getClass().getSimpleName(), packetsSerializationTimer);
-            packetsTimings.put(packet.getClass(), t);
-        }
-        return t;
     }
 
     public static Timing getPacketsSendingTimer() {

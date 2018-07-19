@@ -11,23 +11,10 @@ import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.entity.misc.LPermission;
 import org.lunaris.network.PlayerConnection;
-import org.lunaris.network.packet.Packet01Login;
-import org.lunaris.network.packet.Packet02PlayStatus;
-import org.lunaris.network.packet.Packet0AWorldTime;
-import org.lunaris.network.packet.Packet0BStartGame;
-import org.lunaris.network.packet.Packet1DUpdateAttributes;
-import org.lunaris.network.packet.Packet27SetEntityData;
-import org.lunaris.network.packet.Packet28SetEntityMotion;
-import org.lunaris.network.packet.Packet2DRespawn;
-import org.lunaris.network.packet.Packet3BSetCommandsEnabled;
+import org.lunaris.network.packet.*;
 import org.lunaris.world.LWorld;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by RINES on 13.09.17.

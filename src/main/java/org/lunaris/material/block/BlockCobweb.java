@@ -1,12 +1,12 @@
 package org.lunaris.material.block;
 
 import org.lunaris.api.entity.Entity;
-import org.lunaris.api.world.Block;
-import org.lunaris.block.BlockColor;
-import org.lunaris.entity.LEntity;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.item.ItemToolType;
 import org.lunaris.api.material.Material;
+import org.lunaris.api.world.Block;
+import org.lunaris.block.BlockColor;
+import org.lunaris.entity.LEntity;
 import org.lunaris.material.block.liquid.FlowableBlock;
 
 import java.util.Collections;

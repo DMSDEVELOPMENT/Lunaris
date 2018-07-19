@@ -1,10 +1,10 @@
 package org.lunaris.inventory.transaction.action;
 
 import org.lunaris.api.entity.Player;
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.LInventory;
 import org.lunaris.inventory.transaction.InventoryAction;
-import org.lunaris.api.item.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;

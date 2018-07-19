@@ -11,6 +11,7 @@ import org.lunaris.entity.LPlayer;
 import org.lunaris.event.network.PacketReceivedAsyncEvent;
 import org.lunaris.jwt.EncryptionHandler;
 import org.lunaris.network.executor.PostProcessExecutor;
+import org.lunaris.network.packet.Packet05Disconnect;
 import org.lunaris.network.packet.PacketFEBatch;
 
 import java.io.ByteArrayInputStream;
@@ -122,7 +123,19 @@ public class PlayerConnection {
 
     public void disconnect(String reason) {
         if (reason != null && !reason.isEmpty()) {
-            //TODO
+            Packet05Disconnect packet = new Packet05Disconnect(reason);
+            sendPacketImmediately(packet);
+            LunarisServer.getInstance().getScheduler().runAsync(() -> {
+                for (int i = 0; i < 60; ++i) {
+                    try {
+                        Thread.sleep(50L);
+                    } catch (InterruptedException ex) {}
+                    if (!this.connection.isConnected()) {
+                        return;
+                    }
+                }
+                internalClose(reason);
+            });
         } else {
             internalClose(reason);
         }

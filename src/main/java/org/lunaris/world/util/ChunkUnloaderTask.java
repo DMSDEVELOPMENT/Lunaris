@@ -1,9 +1,9 @@
 package org.lunaris.world.util;
 
+import org.lunaris.api.world.Location;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.server.IServer;
 import org.lunaris.world.LChunk;
-import org.lunaris.api.world.Location;
 import org.lunaris.world.LWorld;
 
 import java.util.HashSet;

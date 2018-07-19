@@ -1,13 +1,13 @@
 package org.lunaris.block;
 
 import org.lunaris.api.item.ItemStack;
+import org.lunaris.api.material.Material;
 import org.lunaris.api.world.Block;
 import org.lunaris.api.world.BlockFace;
+import org.lunaris.api.world.Location;
 import org.lunaris.material.LBlockHandle;
-import org.lunaris.api.material.Material;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.LChunk;
-import org.lunaris.api.world.Location;
 import org.lunaris.world.LWorld;
 import org.lunaris.world.tileentity.LTileEntity;
 

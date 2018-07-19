@@ -1,12 +1,12 @@
 package org.lunaris.command.defaults;
 
 import org.lunaris.LunarisServer;
+import org.lunaris.api.entity.Gamemode;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandParameter;
 import org.lunaris.command.CommandParameterType;
 import org.lunaris.command.CommandSender;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.api.entity.Gamemode;
 import org.lunaris.entity.misc.LPermission;
 
 /**

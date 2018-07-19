@@ -1,8 +1,8 @@
 package org.lunaris.api.event.block;
 
-import org.lunaris.api.world.Block;
 import org.lunaris.api.event.Cancellable;
 import org.lunaris.api.event.Event;
+import org.lunaris.api.world.Block;
 
 /**
  * @author xtrafrancyz

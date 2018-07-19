@@ -7,7 +7,8 @@ import org.lunaris.material.block.liquid.BlockLava;
 import org.lunaris.material.block.liquid.BlockLavaStill;
 import org.lunaris.material.block.liquid.BlockWater;
 import org.lunaris.material.block.liquid.BlockWaterStill;
-import org.lunaris.material.item.*;
+import org.lunaris.material.item.ItemBucket;
+import org.lunaris.material.item.ItemString;
 import org.lunaris.material.item.tool.*;
 
 import java.lang.reflect.Constructor;

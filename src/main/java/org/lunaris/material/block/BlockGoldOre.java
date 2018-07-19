@@ -1,11 +1,11 @@
 package org.lunaris.material.block;
 
-import org.lunaris.api.world.Block;
-import org.lunaris.block.BlockColor;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.item.ItemTier;
 import org.lunaris.api.item.ItemToolType;
 import org.lunaris.api.material.Material;
+import org.lunaris.api.world.Block;
+import org.lunaris.block.BlockColor;
 
 import java.util.Collections;
 import java.util.List;

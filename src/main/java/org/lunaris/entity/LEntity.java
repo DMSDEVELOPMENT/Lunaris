@@ -1,20 +1,25 @@
 package org.lunaris.entity;
 
 import org.lunaris.api.entity.Entity;
-import org.lunaris.api.util.math.Vector3d;
-import org.lunaris.api.world.World;
-import org.lunaris.api.entity.damage.DamageSource;
-import org.lunaris.entity.data.*;
 import org.lunaris.api.entity.EntityType;
+import org.lunaris.api.entity.damage.DamageSource;
+import org.lunaris.api.util.math.Vector3d;
+import org.lunaris.api.world.Location;
+import org.lunaris.api.world.World;
+import org.lunaris.entity.data.Attribute;
+import org.lunaris.entity.data.EntityDataFlag;
+import org.lunaris.entity.data.EntityDataOption;
+import org.lunaris.entity.data.MovementData;
 import org.lunaris.entity.misc.Movable;
 import org.lunaris.material.block.liquid.LiquidBlock;
 import org.lunaris.network.Packet;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.LChunk;
-import org.lunaris.api.world.Location;
 import org.lunaris.world.LWorld;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by RINES on 13.09.17.

@@ -3,7 +3,6 @@ package org.lunaris.network.packet;
 import io.gomint.jraknet.PacketBuffer;
 import org.lunaris.network.Packet;
 import org.lunaris.network.util.SerializationUtil;
-import org.lunaris.network_old.protocol.MineBuffer;
 import org.lunaris.util.math.Vector3f;
 
 /**

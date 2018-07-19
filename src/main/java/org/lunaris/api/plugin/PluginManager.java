@@ -1,8 +1,8 @@
 package org.lunaris.api.plugin;
 
 import org.lunaris.api.util.Internal;
-import org.lunaris.server.IServer;
 import org.lunaris.api.util.configuration.yaml.YamlConfiguration;
+import org.lunaris.server.IServer;
 import org.lunaris.util.logger.OwnLogger;
 
 import java.io.File;

@@ -1,10 +1,10 @@
 package org.lunaris.inventory.transaction;
 
+import org.lunaris.api.item.ItemStack;
+import org.lunaris.api.material.Material;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.LInventory;
 import org.lunaris.inventory.transaction.action.SlotChangeAction;
-import org.lunaris.api.item.ItemStack;
-import org.lunaris.api.material.Material;
 
 import java.util.*;
 

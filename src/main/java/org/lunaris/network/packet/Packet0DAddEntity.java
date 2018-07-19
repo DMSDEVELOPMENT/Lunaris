@@ -1,7 +1,6 @@
 package org.lunaris.network.packet;
 
 import io.gomint.jraknet.PacketBuffer;
-
 import org.lunaris.api.entity.EntityType;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.data.Attribute;

@@ -1,9 +1,9 @@
 package org.lunaris.api.event.player;
 
 import org.lunaris.api.entity.Player;
-import org.lunaris.api.world.Block;
 import org.lunaris.api.event.Cancellable;
 import org.lunaris.api.event.Event;
+import org.lunaris.api.world.Block;
 
 /**
  * @author xtrafrancyz

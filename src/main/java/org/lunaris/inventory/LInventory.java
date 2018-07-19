@@ -2,14 +2,14 @@ package org.lunaris.inventory;
 
 import org.lunaris.LunarisServer;
 import org.lunaris.api.entity.Player;
-import org.lunaris.api.inventory.Inventory;
-import org.lunaris.api.inventory.InventoryType;
-import org.lunaris.entity.LPlayer;
 import org.lunaris.api.event.inventory.InventoryCloseEvent;
 import org.lunaris.api.event.inventory.InventoryOpenEvent;
 import org.lunaris.api.event.inventory.InventorySlotChangeEvent;
+import org.lunaris.api.inventory.Inventory;
+import org.lunaris.api.inventory.InventoryType;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.network.packet.Packet31InventoryContent;
 import org.lunaris.network.packet.Packet32InventorySlot;
 

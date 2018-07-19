@@ -1,7 +1,6 @@
 package org.lunaris.inventory.transaction;
 
 import io.gomint.jraknet.PacketBuffer;
-
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.LInventory;

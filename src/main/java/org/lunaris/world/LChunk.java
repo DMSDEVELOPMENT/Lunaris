@@ -1,20 +1,20 @@
 package org.lunaris.world;
 
+import io.gomint.jraknet.PacketBuffer;
 import org.lunaris.LunarisServer;
 import org.lunaris.api.entity.Player;
+import org.lunaris.api.material.Material;
+import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.api.world.Chunk;
 import org.lunaris.api.world.Location;
 import org.lunaris.block.LBlock;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.api.material.Material;
 import org.lunaris.network.Packet;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
 import org.lunaris.network.packet.Packet3AFullChunkData;
-import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.util.LongHash;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -81,7 +81,7 @@ public abstract class LChunk implements Chunk {
             return this.data;
         this.dirty = false;
         recalculateHeightmap();
-        MineBuffer buffer = new MineBuffer(1 << 6);
+        PacketBuffer buffer = new PacketBuffer(1 << 6);
         int sectionsHeight = 0;
         for (int i = this.sections.length - 1; i >= 0; --i)
             if (!this.sections[i].isEmpty()) {
@@ -102,14 +102,10 @@ public abstract class LChunk implements Chunk {
             //отправить дополнительный мегабайт
         } else {
             //оставить пакет весом 15кб
-            buffer.writeVarInt(0);
+            buffer.writeSignedVarInt(0);
         }
         buffer.writeBytes(new byte[0]); //block (tile) entities
-        try {
-            return this.data = buffer.readBytes(buffer.readableBytes());
-        } finally {
-            buffer.release();
-        }
+        return this.data = Arrays.copyOf(buffer.getBuffer(), buffer.getPosition());
     }
 
     public LBlock getBlock(Vector3d position) {

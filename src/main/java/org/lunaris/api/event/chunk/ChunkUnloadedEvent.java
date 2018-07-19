@@ -1,7 +1,7 @@
 package org.lunaris.api.event.chunk;
 
-import org.lunaris.api.world.Chunk;
 import org.lunaris.api.event.Event;
+import org.lunaris.api.world.Chunk;
 
 /**
  * Called after chunk has been unloaded.

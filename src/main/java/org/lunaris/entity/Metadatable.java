@@ -1,9 +1,9 @@
 package org.lunaris.entity;
 
-import org.lunaris.entity.data.*;
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network.packet.Packet27SetEntityData;
 import org.lunaris.api.util.math.Vector3d;
+import org.lunaris.entity.data.*;
+import org.lunaris.network.packet.Packet27SetEntityData;
 
 import java.util.Objects;
 

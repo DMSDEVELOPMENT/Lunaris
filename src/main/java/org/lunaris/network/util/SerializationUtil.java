@@ -1,7 +1,6 @@
 package org.lunaris.network.util;
 
 import io.gomint.jraknet.PacketBuffer;
-
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
 import org.lunaris.api.world.BlockFace;

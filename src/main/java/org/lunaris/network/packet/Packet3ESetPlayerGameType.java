@@ -1,7 +1,6 @@
 package org.lunaris.network.packet;
 
 import io.gomint.jraknet.PacketBuffer;
-
 import org.lunaris.api.entity.Gamemode;
 import org.lunaris.network.Packet;
 

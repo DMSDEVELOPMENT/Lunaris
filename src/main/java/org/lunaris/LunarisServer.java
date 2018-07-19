@@ -2,23 +2,22 @@ package org.lunaris;
 
 import co.aikar.timings.Timings;
 import jline.console.ConsoleReader;
-
+import org.lunaris.api.event.EventHandler;
+import org.lunaris.api.event.Listener;
+import org.lunaris.api.plugin.PluginManager;
+import org.lunaris.api.server.Scheduler;
 import org.lunaris.command.CommandManager;
 import org.lunaris.entity.EntityProvider;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.event.EventManager;
-import org.lunaris.api.event.Listener;
+import org.lunaris.event.network.PacketReceivedAsyncEvent;
+import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.jwt.EncryptionKeyFactory;
 import org.lunaris.network.NetworkManager;
+import org.lunaris.network.PlayerConnection;
 import org.lunaris.network.packet.Packet09Text;
-import org.lunaris.api.plugin.PluginManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
-import org.lunaris.server.IServer;
-import org.lunaris.server.PlayerList;
-import org.lunaris.server.PlayerProvider;
-import org.lunaris.api.server.Scheduler;
-import org.lunaris.server.ServerSettings;
-import org.lunaris.server.WorldProvider;
+import org.lunaris.server.*;
 import org.lunaris.util.logger.FormatLogger;
 
 import java.lang.management.ManagementFactory;
@@ -75,7 +74,7 @@ public class LunarisServer implements IServer {
         shuttingDown = true;
         this.pluginManager.disablePlugins();
         Timings.stopServer();
-        this.networkManager.disable();
+        this.networkManager.shutdown();
         try {
             Thread.sleep(2000L);
         } catch (InterruptedException ex) {
@@ -151,12 +150,17 @@ public class LunarisServer implements IServer {
 //                e.getPlayer().setVelocity(new Vector3d(0d, 1d, 0d));
 //            }
 
-            /*@EventHandler
+            @EventHandler
             public void onSending(PacketSendingAsyncEvent e) {
-                if(e.getPacket().getId() == 0x13)
-                    return;
                 logger.info("Sent packet %s to %s", e.getPacket().getClass().getSimpleName(), e.getPlayer().getName());
-            }*/
+            }
+
+            @EventHandler
+            public void onReceiving(PacketReceivedAsyncEvent e) {
+                PlayerConnection connection = e.getPacket().getConnection();
+                String name = connection.getPlayer() == null ? "---" : connection.getPlayer().getName();
+                logger.info("Received packet %s from %s", e.getPacket().getClass().getSimpleName(), name);
+            }
 
         });
     }
@@ -219,7 +223,7 @@ public class LunarisServer implements IServer {
 
     @Override
     public void broadcastMessage(String message) {
-        this.networkManager.sendPacket(getOnlinePlayers(), new Packet09Text(Packet09Text.MessageType.RAW, "", message));
+        this.networkManager.sendPacket(getOnlinePlayers(), new Packet09Text(Packet09Text.MessageType.CLIENT_MESSAGE, "", message));
         this.logger.info(message);
     }
 

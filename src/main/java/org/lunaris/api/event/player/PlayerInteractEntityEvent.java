@@ -1,11 +1,11 @@
 package org.lunaris.api.event.player;
 
-import org.lunaris.entity.LEntity;
-import org.lunaris.entity.LPlayer;
 import org.lunaris.api.event.Cancellable;
 import org.lunaris.api.event.Event;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
+import org.lunaris.entity.LEntity;
+import org.lunaris.entity.LPlayer;
 
 /**
  * Created by RINES on 05.10.17.

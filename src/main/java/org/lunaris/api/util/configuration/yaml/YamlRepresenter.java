@@ -1,13 +1,13 @@
 package org.lunaris.api.util.configuration.yaml;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.lunaris.api.util.configuration.ConfigurationSection;
 import org.lunaris.api.util.configuration.serialization.ConfigurationSerializable;
 import org.lunaris.api.util.configuration.serialization.ConfigurationSerialization;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.representer.Representer;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by RINES on 21.04.17.

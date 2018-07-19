@@ -2,8 +2,8 @@ package org.lunaris.api.event.inventory;
 
 import org.lunaris.api.event.Cancellable;
 import org.lunaris.api.event.Event;
-import org.lunaris.inventory.LInventory;
 import org.lunaris.api.item.ItemStack;
+import org.lunaris.inventory.LInventory;
 
 /**
  * Created by RINES on 01.10.17.

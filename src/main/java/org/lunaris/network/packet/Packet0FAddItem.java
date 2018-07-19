@@ -1,21 +1,24 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
+
+import org.lunaris.api.item.ItemStack;
 import org.lunaris.entity.Item;
 import org.lunaris.entity.data.EntityMetadata;
-import org.lunaris.api.item.ItemStack;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 
 /**
  * Created by RINES on 04.10.17.
  */
-public class Packet0FAddItem extends MinePacket {
+public class Packet0FAddItem extends Packet {
 
     private long entityID;
     private ItemStack itemStack;
     private float x, y, z;
     private float motionX, motionY, motionZ;
     private EntityMetadata metadata;
+    private boolean isFromFishing = false;
 
     public Packet0FAddItem() {}
 
@@ -32,23 +35,28 @@ public class Packet0FAddItem extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x0f;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeEntityUniqueId(this.entityID);
-        buffer.writeEntityRuntimeId(this.entityID);
-        buffer.writeItemStack(this.itemStack);
-        buffer.writeVector3f(this.x, this.y, this.z);
-        buffer.writeVector3f(this.motionX, this.motionY, this.motionZ);
-        buffer.writeMetadata(this.metadata);
+    public void write(PacketBuffer buffer) {
+        buffer.writeSignedVarLong(this.entityID);
+        buffer.writeUnsignedVarLong(this.entityID);
+        SerializationUtil.writeItemStack(this.itemStack, buffer);
+        buffer.writeLFloat(this.x);
+        buffer.writeLFloat(this.y);
+        buffer.writeLFloat(this.z);
+        buffer.writeLFloat(this.motionX);
+        buffer.writeLFloat(this.motionY);
+        buffer.writeLFloat(this.motionZ);
+        SerializationUtil.writeMetadata(this.metadata, buffer);
+        buffer.writeBoolean(this.isFromFishing);
     }
 
 }

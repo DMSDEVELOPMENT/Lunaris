@@ -2,7 +2,7 @@ package org.lunaris.inventory.transaction;
 
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.network.packet.Packet1EInventoryTransaction;
-import org.lunaris.api.util.math.Vector3d;
+import org.lunaris.util.math.Vector3f;
 
 /**
  * Created by RINES on 01.10.17.
@@ -13,12 +13,12 @@ public class UseItemOnEntityData implements TransactionData {
     private long entityID;
     private int hotbarSlot;
     private ItemStack itemInHand;
-    private Vector3d vector1, vector2;
+    private Vector3f vector1, vector2;
 
     public UseItemOnEntityData() {}
 
     public UseItemOnEntityData(Packet1EInventoryTransaction.UseItemOnEntityActionType type, long entityID,
-                               int hotbarSlot, ItemStack itemInHand, Vector3d vector1, Vector3d vector2) {
+                               int hotbarSlot, ItemStack itemInHand, Vector3f vector1, Vector3f vector2) {
         this.type = type;
         this.entityID = entityID;
         this.hotbarSlot = hotbarSlot;
@@ -59,19 +59,19 @@ public class UseItemOnEntityData implements TransactionData {
         this.itemInHand = itemInHand;
     }
 
-    public Vector3d getVector1() {
+    public Vector3f getVector1() {
         return this.vector1;
     }
 
-    public void setVector1(Vector3d vector1) {
+    public void setVector1(Vector3f vector1) {
         this.vector1 = vector1;
     }
 
-    public Vector3d getVector2() {
+    public Vector3f getVector2() {
         return this.vector2;
     }
 
-    public void setVector2(Vector3d vector2) {
+    public void setVector2(Vector3f vector2) {
         this.vector2 = vector2;
     }
 

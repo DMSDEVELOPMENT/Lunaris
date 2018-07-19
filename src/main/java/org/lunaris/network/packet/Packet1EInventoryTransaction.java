@@ -1,31 +1,37 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.api.world.BlockFace;
-import org.lunaris.inventory.transaction.*;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+
+import org.lunaris.inventory.transaction.InventoryActionData;
+import org.lunaris.inventory.transaction.ReleaseItemData;
+import org.lunaris.inventory.transaction.TransactionData;
+import org.lunaris.inventory.transaction.UseItemData;
+import org.lunaris.inventory.transaction.UseItemOnEntityData;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 
 /**
  * Created by RINES on 01.10.17.
  */
-public class Packet1EInventoryTransaction extends MinePacket {
+public class Packet1EInventoryTransaction extends Packet {
 
     private TransactionType type;
     private InventoryActionData[] actions;
     private TransactionData data;
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x1e;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
         this.type = TransactionType.values()[buffer.readUnsignedVarInt()];
         this.actions = new InventoryActionData[buffer.readUnsignedVarInt()];
-        for(int i = 0; i < this.actions.length; ++i)
+        for (int i = 0; i < this.actions.length; ++i)
             this.actions[i] = new InventoryActionData(buffer);
-        switch(this.type) {
+
+        switch (this.type) {
             case NORMAL:
             case MISMATCH:
                 //Хз че это значит
@@ -33,32 +39,34 @@ public class Packet1EInventoryTransaction extends MinePacket {
                 break;
             case USE_ITEM: {
                 this.data = new UseItemData(
-                        UseItemActionType.values()[buffer.readUnsignedVarInt()],
-                        buffer.readBlockVector(),
-                        BlockFace.fromIndex(buffer.readVarInt()),
-                        buffer.readVarInt(),
-                        buffer.readItemStack(),
-                        buffer.readVector3d(),
-                        buffer.readVector3d()
+                    UseItemActionType.values()[buffer.readUnsignedVarInt()],
+                    SerializationUtil.readBlockVector(buffer),
+                    SerializationUtil.readBlockFace(buffer),
+                    buffer.readSignedVarInt(),
+                    SerializationUtil.readItemStack(buffer),
+                    SerializationUtil.readVector3f(buffer),
+                    SerializationUtil.readVector3f(buffer)
                 );
                 break;
-            }case USE_ITEM_ON_ENTITY: {
-                long entityID = buffer.readEntityRuntimeId();
+            }
+            case USE_ITEM_ON_ENTITY: {
+                long entityID = buffer.readUnsignedVarLong();
                 this.data = new UseItemOnEntityData(
-                        UseItemOnEntityActionType.values()[buffer.readUnsignedVarInt()],
-                        entityID,
-                        buffer.readVarInt(),
-                        buffer.readItemStack(),
-                        buffer.readVector3d(),
-                        buffer.readVector3d()
+                    UseItemOnEntityActionType.values()[buffer.readUnsignedVarInt()],
+                    entityID,
+                    buffer.readSignedVarInt(),
+                    SerializationUtil.readItemStack(buffer),
+                    SerializationUtil.readVector3f(buffer),
+                    SerializationUtil.readVector3f(buffer)
                 );
                 break;
-            }case RELEASE_ITEM: {
+            }
+            case RELEASE_ITEM: {
                 this.data = new ReleaseItemData(
-                        ReleaseItemActionType.values()[buffer.readUnsignedVarInt()],
-                        buffer.readVarInt(),
-                        buffer.readItemStack(),
-                        buffer.readVector3d()
+                    ReleaseItemActionType.values()[buffer.readUnsignedVarInt()],
+                    buffer.readSignedVarInt(),
+                    SerializationUtil.readItemStack(buffer),
+                    SerializationUtil.readVector3f(buffer)
                 );
                 break;
             }
@@ -66,40 +74,42 @@ public class Packet1EInventoryTransaction extends MinePacket {
     }
 
     @Override
-    public void write(MineBuffer buffer) {
+    public void write(PacketBuffer buffer) {
         buffer.writeUnsignedVarInt(this.type.ordinal());
         buffer.writeUnsignedVarInt(this.actions.length);
-        for(InventoryActionData data : this.actions)
+        for (InventoryActionData data : this.actions)
             data.write(buffer);
-        switch(this.type) {
+        switch (this.type) {
             case NORMAL:
             case MISMATCH:
                 break;
             case USE_ITEM: {
                 UseItemData data = (UseItemData) this.data;
                 buffer.writeUnsignedVarInt(data.getType().ordinal());
-                buffer.writeBlockVector(data.getBlockPosition());
-                buffer.writeVarInt(data.getBlockFace().getIndex());
-                buffer.writeVarInt(data.getHotbarSlot());
-                buffer.writeItemStack(data.getItemInHand());
-                buffer.writeVector3d(data.getPlayerPosition());
-                buffer.writeVector3d(data.getClickPosition());
+                SerializationUtil.writeBlockVector(data.getBlockPosition(), buffer);
+                buffer.writeSignedVarInt(data.getBlockFace().getIndex());
+                buffer.writeSignedVarInt(data.getHotbarSlot());
+                SerializationUtil.writeItemStack(data.getItemInHand(), buffer);
+                SerializationUtil.writeVector3f(data.getPlayerPosition(), buffer);
+                SerializationUtil.writeVector3f(data.getClickPosition(), buffer);
                 break;
-            }case USE_ITEM_ON_ENTITY: {
+            }
+            case USE_ITEM_ON_ENTITY: {
                 UseItemOnEntityData data = (UseItemOnEntityData) this.data;
-                buffer.writeEntityRuntimeId(data.getEntityID());
+                buffer.writeUnsignedVarLong(data.getEntityID());
                 buffer.writeUnsignedVarInt(data.getType().ordinal());
-                buffer.writeVarInt(data.getHotbarSlot());
-                buffer.writeItemStack(data.getItemInHand());
-                buffer.writeVector3d(data.getVector1());
-                buffer.writeVector3d(data.getVector2());
+                buffer.writeSignedVarInt(data.getHotbarSlot());
+                SerializationUtil.writeItemStack(data.getItemInHand(), buffer);
+                SerializationUtil.writeVector3f(data.getVector1(), buffer);
+                SerializationUtil.writeVector3f(data.getVector2(), buffer);
                 break;
-            }case RELEASE_ITEM: {
+            }
+            case RELEASE_ITEM: {
                 ReleaseItemData data = (ReleaseItemData) this.data;
                 buffer.writeUnsignedVarInt(data.getType().ordinal());
-                buffer.writeVarInt(data.getHotbarSlot());
-                buffer.writeItemStack(data.getItemInHand());
-                buffer.writeVector3d(data.getHeadRotation());
+                buffer.writeSignedVarInt(data.getHotbarSlot());
+                SerializationUtil.writeItemStack(data.getItemInHand(), buffer);
+                SerializationUtil.writeVector3f(data.getPlayerPosition(), buffer);
                 break;
             }
         }

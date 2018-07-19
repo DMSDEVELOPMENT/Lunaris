@@ -1,12 +1,13 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+
+import org.lunaris.network.Packet;
 
 /**
  * Created by RINES on 14.09.17.
  */
-public class Packet3AFullChunkData extends MinePacket {
+public class Packet3AFullChunkData extends Packet {
 
     private int x, z;
     private byte[] data;
@@ -20,20 +21,21 @@ public class Packet3AFullChunkData extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x3a;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeVarInt(this.x);
-        buffer.writeVarInt(this.z);
-        buffer.writeByteArray(this.data);
+    public void write(PacketBuffer buffer) {
+        buffer.writeSignedVarInt(this.x);
+        buffer.writeSignedVarInt(this.z);
+        buffer.writeUnsignedVarInt(this.data.length);
+        buffer.writeBytes(this.data);
     }
 
     public int getX() {

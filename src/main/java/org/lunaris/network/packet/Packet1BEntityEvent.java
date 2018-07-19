@@ -1,13 +1,14 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
+
 import org.lunaris.entity.LEntity;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
 
 /**
  * Created by RINES on 05.10.17.
  */
-public class Packet1BEntityEvent extends MinePacket {
+public class Packet1BEntityEvent extends Packet {
 
     private long entityID;
     private EntityEvent event;
@@ -27,27 +28,27 @@ public class Packet1BEntityEvent extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x1b;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
-        this.entityID = buffer.readEntityRuntimeId();
+    public void read(PacketBuffer buffer) {
+        this.entityID = buffer.readUnsignedVarInt();
         byte eventID = buffer.readByte();
-        for(EntityEvent event : EntityEvent.values())
-            if(event.id == eventID) {
+        for (EntityEvent event : EntityEvent.values())
+            if (event.id == eventID) {
                 this.event = event;
                 break;
             }
-        this.data = buffer.readVarInt();
+        this.data = buffer.readSignedVarInt();
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeEntityRuntimeId(this.entityID);
+    public void write(PacketBuffer buffer) {
+        buffer.writeUnsignedVarLong(this.entityID);
         buffer.writeByte(this.event.id);
-        buffer.writeVarInt(this.data);
+        buffer.writeSignedVarInt(this.data);
     }
 
     public enum EntityEvent {

@@ -21,6 +21,7 @@ import org.lunaris.network.packet.Packet18LevelSoundEvent;
 import org.lunaris.network.packet.Packet19LevelEvent;
 import org.lunaris.network.packet.Packet24PlayerAction;
 import org.lunaris.api.util.math.Vector3d;
+import org.lunaris.util.math.Vector3f;
 import org.lunaris.world.particle.DestroyBlockParticle;
 import org.lunaris.world.particle.PunchBlockParticle;
 
@@ -38,7 +39,7 @@ public class BlockMaster {
         this.server = server;
     }
 
-    public void onRightClickBlock(LPlayer player, BlockVector blockPosition, BlockFace blockFace, Vector3d clickPosition) {
+    public void onRightClickBlock(LPlayer player, BlockVector blockPosition, BlockFace blockFace, Vector3f clickPosition) {
         //check whether can interact at this position
         ItemStack hand = player.getInventory().getItemInHand();
         LBlock target = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
@@ -80,7 +81,7 @@ public class BlockMaster {
     }
 
     public void onBlockStartBreak(Packet24PlayerAction packet) {
-        LPlayer player = packet.getPlayer();
+        LPlayer player = packet.getConnection().getPlayer();
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         BlockFace face = BlockFace.fromIndex(packet.getFace());
         LWorld world = player.getWorld();
@@ -124,7 +125,7 @@ public class BlockMaster {
     }
 
     public void onBlockStopBreak(Packet24PlayerAction packet) {
-        LPlayer player = packet.getPlayer();
+        LPlayer player = packet.getConnection().getPlayer();
         if (packet.getX() != 0 || packet.getY() != 0 || packet.getZ() != 0) {
             ((LChunk) player.getLocation().getChunk()).sendPacket(
                 new Packet19LevelEvent(
@@ -138,7 +139,7 @@ public class BlockMaster {
     }
 
     public void onBlockContinueBreak(Packet24PlayerAction packet) {
-        LPlayer player = packet.getPlayer();
+        LPlayer player = packet.getConnection().getPlayer();
         if(!player.isBreakingBlock())
             return;
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());

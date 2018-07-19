@@ -7,6 +7,7 @@ import org.lunaris.api.world.Location;
 import org.lunaris.block.LBlock;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.api.material.Material;
+import org.lunaris.network.Packet;
 import org.lunaris.network_old.protocol.MineBuffer;
 import org.lunaris.network_old.protocol.MinePacket;
 import org.lunaris.network.packet.Packet3AFullChunkData;
@@ -148,7 +149,7 @@ public abstract class LChunk implements Chunk {
     /**
      * Отсылает пакет всем игрокам, которые видят этот чанк (но могу ти не находиться в нем).
      */
-    public void sendPacket(MinePacket packet) {
+    public void sendPacket(Packet packet) {
         LunarisServer.getInstance().getNetworkManager().sendPacket(getWatcherPlayers(), packet);
     }
 

@@ -17,6 +17,7 @@ import org.lunaris.server.ServerSettings;
 
 import java.net.SocketException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.LongConsumer;
@@ -84,6 +85,10 @@ public class NetworkManager {
             }
             player.getConnection().sendPacket(packet);
         });
+    }
+
+    public void broadcastPacket(Packet packet) {
+        sendPacket(new HashSet<>(this.server.getOnlinePlayers()), packet);
     }
 
     public void tick(long currentMillis, long deltaFromLastTickTime) {

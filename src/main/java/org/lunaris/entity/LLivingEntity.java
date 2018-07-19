@@ -13,9 +13,9 @@ import org.lunaris.api.event.player.PlayerDeathEvent;
 import org.lunaris.item.potion.PotionEffect;
 import org.lunaris.item.potion.PotionEffectType;
 import org.lunaris.network_old.protocol.MinePacket;
-import org.lunaris.network_old.protocol.packet.Packet0DAddEntity;
-import org.lunaris.network_old.protocol.packet.Packet1BEntityEvent;
-import org.lunaris.network_old.protocol.packet.Packet2DRespawn;
+import org.lunaris.network.packet.Packet0DAddEntity;
+import org.lunaris.network.packet.Packet1BEntityEvent;
+import org.lunaris.network.packet.Packet2DRespawn;
 import org.lunaris.api.world.Location;
 
 import java.util.Collection;

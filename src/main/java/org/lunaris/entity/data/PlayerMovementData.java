@@ -1,7 +1,7 @@
 package org.lunaris.entity.data;
 
 import org.lunaris.entity.LPlayer;
-import org.lunaris.network_old.protocol.packet.Packet28SetEntityMotion;
+import org.lunaris.network.packet.Packet28SetEntityMotion;
 
 /**
  * Created by RINES on 11.10.17.

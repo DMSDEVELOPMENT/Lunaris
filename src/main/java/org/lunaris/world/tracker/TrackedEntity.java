@@ -7,11 +7,11 @@ import org.lunaris.inventory.LPlayerInventory;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
 import org.lunaris.network_old.protocol.MinePacket;
-import org.lunaris.network_old.protocol.packet.Packet0ERemoveEntity;
-import org.lunaris.network_old.protocol.packet.Packet12MoveEntity;
-import org.lunaris.network_old.protocol.packet.Packet20MobArmorEquipment;
-import org.lunaris.network_old.protocol.packet.Packet27SetEntityData;
-import org.lunaris.network_old.protocol.packet.Packet28SetEntityMotion;
+import org.lunaris.network.packet.Packet0ERemoveEntity;
+import org.lunaris.network.packet.Packet12MoveEntity;
+import org.lunaris.network.packet.Packet20MobArmorEquipment;
+import org.lunaris.network.packet.Packet27SetEntityData;
+import org.lunaris.network.packet.Packet28SetEntityMotion;
 import org.lunaris.util.math.MathHelper;
 import org.lunaris.api.world.Location;
 

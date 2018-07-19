@@ -1,7 +1,7 @@
 package org.lunaris.server;
 
 import org.lunaris.api.entity.Gamemode;
-import org.lunaris.network_old.protocol.packet.Packet37AdventureSettings;
+import org.lunaris.network.packet.Packet37AdventureSettings;
 import org.lunaris.api.util.configuration.FileConfiguration;
 import org.lunaris.api.util.configuration.yaml.YamlConfiguration;
 

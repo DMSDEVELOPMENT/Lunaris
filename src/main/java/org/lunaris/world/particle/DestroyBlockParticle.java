@@ -1,7 +1,7 @@
 package org.lunaris.world.particle;
 
 import org.lunaris.block.LBlock;
-import org.lunaris.network_old.protocol.packet.Packet19LevelEvent;
+import org.lunaris.network.packet.Packet19LevelEvent;
 
 /**
  * Created by RINES on 28.09.17.

@@ -10,13 +10,18 @@ import org.lunaris.api.event.player.PlayerDisconnectEvent;
 import org.lunaris.api.event.player.PlayerJoinEvent;
 import org.lunaris.api.event.player.PlayerLoginEvent;
 import org.lunaris.network.PlayerConnection;
+import org.lunaris.network.packet.Packet0AWorldTime;
+import org.lunaris.network.packet.Packet0BStartGame;
+import org.lunaris.network.packet.Packet1DUpdateAttributes;
+import org.lunaris.network.packet.Packet27SetEntityData;
+import org.lunaris.network.packet.Packet28SetEntityMotion;
+import org.lunaris.network.packet.Packet2DRespawn;
+import org.lunaris.network.packet.Packet3BSetCommandsEnabled;
 import org.lunaris.network_old.protocol.packet.*;
-import org.lunaris.network_old.raknet.session.RakNetClientSession;
 import org.lunaris.api.world.Location;
 import org.lunaris.world.LWorld;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by RINES on 13.09.17.
@@ -95,7 +100,7 @@ public class PlayerProvider {
         player.setDirtyMetadata(false);
         player.sendPacket(startGame);
         player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
-        player.sendPacket(new Packet0ASetTime(player.getWorld().getTime()));
+        player.sendPacket(new Packet0AWorldTime(player.getWorld().getTime()));
         player.sendPacket(new Packet3BSetCommandsEnabled(true));
         this.server.getPlayerList().addPlayer(player);
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.PLAYER_RESPAWN));

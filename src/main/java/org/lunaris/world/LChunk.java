@@ -7,9 +7,9 @@ import org.lunaris.api.world.Location;
 import org.lunaris.block.LBlock;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.api.material.Material;
-import org.lunaris.network.protocol.MineBuffer;
-import org.lunaris.network.protocol.MinePacket;
-import org.lunaris.network.protocol.packet.Packet3AFullChunkData;
+import org.lunaris.network_old.protocol.MineBuffer;
+import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network_old.protocol.packet.Packet3AFullChunkData;
 import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.util.LongHash;
 

@@ -2,7 +2,7 @@ package co.aikar.timings;
 
 import org.lunaris.LunarisServer;
 import org.lunaris.api.event.Event;
-import org.lunaris.network.protocol.MinePacket;
+import org.lunaris.network_old.protocol.MinePacket;
 import org.lunaris.server.ServerSettings;
 import org.lunaris.world.LWorld;
 

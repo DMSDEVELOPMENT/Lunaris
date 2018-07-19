@@ -2,7 +2,7 @@ package org.lunaris.entity.misc;
 
 import org.lunaris.api.entity.Gamemode;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.network.protocol.packet.Packet37AdventureSettings;
+import org.lunaris.network_old.protocol.packet.Packet37AdventureSettings;
 
 import java.util.EnumSet;
 import java.util.Set;

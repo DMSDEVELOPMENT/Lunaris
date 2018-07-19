@@ -15,7 +15,7 @@ import org.lunaris.api.event.chunk.ChunkPreLoadEvent;
 import org.lunaris.api.event.chunk.ChunkUnloadedEvent;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
-import org.lunaris.network.protocol.packet.*;
+import org.lunaris.network_old.protocol.packet.*;
 import org.lunaris.util.math.LMath;
 import org.lunaris.util.math.MathHelper;
 import org.lunaris.api.util.math.Vector3d;
@@ -81,12 +81,12 @@ public class LWorld implements World {
         this.entityTracker.track(player);
         this.followerTask.updatePlayer(player);
         /*Collection<Player> without = getPlayersWithout(player);
-        this.server.getNetworkManager().sendPacket(without, player.createSpawnPacket());
-        without.stream().map(Player::createSpawnPacket).forEach(player::sendPacket);
+        this.server.getNetworkManager().sendPacketImmediately(without, player.createSpawnPacket());
+        without.stream().map(Player::createSpawnPacket).forEach(player::sendPacketImmediately);
         this.entities.values().stream()
                 .filter(e -> e.getEntityType() != EntityType.PLAYER)
                 .map(Entity::createSpawnPacket)
-                .forEach(player::sendPacket);*/
+                .forEach(player::sendPacketImmediately);*/
     }
 
     public void removePlayerFromWorld(LPlayer player) {
@@ -97,13 +97,13 @@ public class LWorld implements World {
     public void addEntityToWorld(LEntity entity) {
         this.entities.put(entity.getEntityID(), entity);
         this.entityTracker.track(entity);
-        //this.server.getNetworkManager().sendPacket(this.players, entity.createSpawnPacket());
+        //this.server.getNetworkManager().sendPacketImmediately(this.players, entity.createSpawnPacket());
     }
 
     public void removeEntityFromWorld(LEntity entity) {
         this.entities.remove(entity.getEntityID());
         this.entityTracker.untrack(entity);
-        //this.server.getNetworkManager().sendPacket(this.players, new Packet0ERemoveEntity(entity.getEntityID()));
+        //this.server.getNetworkManager().sendPacketImmediately(this.players, new Packet0ERemoveEntity(entity.getEntityID()));
     }
 
     public void registerTileEntity(LTileEntity tileEntity) {

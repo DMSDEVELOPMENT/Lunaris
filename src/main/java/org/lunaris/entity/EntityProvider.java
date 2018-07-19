@@ -1,8 +1,8 @@
 package org.lunaris.entity;
 
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network.protocol.packet.Packet01Login;
-import org.lunaris.network.raknet.session.RakNetClientSession;
+import org.lunaris.network_old.protocol.packet.Packet01Login;
+import org.lunaris.network_old.raknet.session.RakNetClientSession;
 import org.lunaris.api.world.Location;
 
 import java.util.function.Function;

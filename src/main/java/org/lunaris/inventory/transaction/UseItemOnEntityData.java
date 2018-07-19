@@ -1,7 +1,7 @@
 package org.lunaris.inventory.transaction;
 
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network.protocol.packet.Packet1EInventoryTransaction;
+import org.lunaris.network_old.protocol.packet.Packet1EInventoryTransaction;
 import org.lunaris.api.util.math.Vector3d;
 
 /**

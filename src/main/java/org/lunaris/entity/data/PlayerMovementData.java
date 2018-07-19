@@ -1,7 +1,7 @@
 package org.lunaris.entity.data;
 
 import org.lunaris.entity.LPlayer;
-import org.lunaris.network.protocol.packet.Packet28SetEntityMotion;
+import org.lunaris.network_old.protocol.packet.Packet28SetEntityMotion;
 
 /**
  * Created by RINES on 11.10.17.
@@ -45,7 +45,7 @@ public class PlayerMovementData extends MovementData {
 //            setMotion(this.motionX, this.motionY, this.motionZ);
         double x = super.x, y = super.y, z = super.z;
 //        if(LMath.pow2(px - x) + LMath.pow2(py - y) + LMath.pow2(pz - z) >= 1)
-//            this.player.sendPacket(new Packet13MovePlayer(this.player).mode(Packet13MovePlayer.MODE_RESET)); //teleporting when lagging
+//            this.player.sendPacketImmediately(new Packet13MovePlayer(this.player).mode(Packet13MovePlayer.MODE_RESET)); //teleporting when lagging
         if(this.mx != 0F || this.my != 0F || this.mz != 0F) {
             this.player.sendPacket(new Packet28SetEntityMotion(this.player.getEntityID(), this.mx, this.my, this.mz));
             this.mx = this.my = this.mz = 0F;

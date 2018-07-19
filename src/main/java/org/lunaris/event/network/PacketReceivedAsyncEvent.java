@@ -2,7 +2,7 @@ package org.lunaris.event.network;
 
 import org.lunaris.api.event.Cancellable;
 import org.lunaris.api.event.Event;
-import org.lunaris.network.protocol.MinePacket;
+import org.lunaris.network_old.protocol.MinePacket;
 
 /**
  * Created by RINES on 13.09.17.

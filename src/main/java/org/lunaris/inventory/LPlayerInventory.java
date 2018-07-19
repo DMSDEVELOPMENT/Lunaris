@@ -5,7 +5,7 @@ import org.lunaris.api.inventory.PlayerInventory;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.transaction.InventorySection;
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network.protocol.packet.Packet1FMobEquipment;
+import org.lunaris.network_old.protocol.packet.Packet1FMobEquipment;
 
 import java.util.Collection;
 import java.util.Collections;

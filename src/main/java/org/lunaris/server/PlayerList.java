@@ -2,7 +2,7 @@ package org.lunaris.server;
 
 import org.lunaris.LunarisServer;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.network.protocol.packet.Packet3FPlayerList;
+import org.lunaris.network_old.protocol.packet.Packet3FPlayerList;
 
 import java.util.Collection;
 import java.util.Iterator;

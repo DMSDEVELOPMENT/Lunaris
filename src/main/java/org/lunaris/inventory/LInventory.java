@@ -10,8 +10,8 @@ import org.lunaris.api.event.inventory.InventoryOpenEvent;
 import org.lunaris.api.event.inventory.InventorySlotChangeEvent;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
-import org.lunaris.network.protocol.packet.Packet31InventoryContent;
-import org.lunaris.network.protocol.packet.Packet32InventorySlot;
+import org.lunaris.network_old.protocol.packet.Packet31InventoryContent;
+import org.lunaris.network_old.protocol.packet.Packet32InventorySlot;
 
 import java.util.*;
 

@@ -61,7 +61,7 @@ public class EncryptionHandler {
     }
 
     /**
-     * Sets up everything required to begin encrypting network data sent to or received from the client.
+     * Sets up everything required to begin encrypting network_old data sent to or received from the client.
      *
      * @return Whether or not the setup completed successfully
      */

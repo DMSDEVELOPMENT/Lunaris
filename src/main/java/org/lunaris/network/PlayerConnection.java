@@ -1,0 +1,221 @@
+package org.lunaris.network;
+
+import io.gomint.jraknet.Connection;
+import io.gomint.jraknet.EncapsulatedPacket;
+import io.gomint.jraknet.PacketBuffer;
+import io.gomint.jraknet.PacketReliability;
+import org.lunaris.LunarisServer;
+import org.lunaris.jwt.EncryptionHandler;
+import org.lunaris.network.executor.PostProcessExecutor;
+import org.lunaris.network.packet.PacketFEBatch;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.InflaterInputStream;
+
+/**
+ * Created by k.shandurenko on 19.07.2018
+ */
+public class PlayerConnection {
+
+    private final static byte PACKET_BATCH = -2;
+    public static final float CLIENT_TICK_RATE = TimeUnit.MILLISECONDS.toNanos( 50 ) / (float) TimeUnit.SECONDS.toNanos( 1 );
+
+    private final NetworkManager networkManager;
+    private final Connection connection;
+    private PlayerConnectionState connectionState;
+    private PostProcessExecutor postProcessExecutor;
+    private BlockingQueue<Packet> sendingQueue = new LinkedBlockingQueue<>();
+
+    private PacketHandler packetHandler;
+    private EncryptionHandler encryptionHandler;
+
+    private int protocolVersion;
+    private long lastUpdateDt;
+
+    PlayerConnection(NetworkManager networkManager, Connection connection, PlayerConnectionState connectionState) {
+        this.networkManager = networkManager;
+        this.connection = connection;
+        this.connectionState = connectionState;
+        this.postProcessExecutor = this.networkManager.getPostProcessExecutorService().getExecutor();
+        this.connection.addDataProcessor(packetData -> {
+            PacketBuffer buffer = new PacketBuffer(packetData.getPacketData(), 0);
+            if (buffer.getRemaining() <= 0) {
+                return packetData;
+            }
+            byte packetID = buffer.readByte();
+            if (packetID == PACKET_BATCH) {
+                byte[] pureData = readBatchPacket(buffer);
+                EncapsulatedPacket newPacket = new EncapsulatedPacket();
+                newPacket.setPacketData(pureData);
+                return newPacket;
+            }
+            return packetData;
+        });
+    }
+
+    void close() {
+        //player quit event
+        if (this.postProcessExecutor != null) {
+            this.networkManager.getPostProcessExecutorService().releaseExecutor(this.postProcessExecutor);
+        }
+    }
+
+    public long getGuid() {
+        return this.connection.getGuid();
+    }
+
+    public PacketHandler getPacketHandler() {
+        return this.packetHandler;
+    }
+
+    public void setPacketHandler(PacketHandler packetHandler) {
+        this.packetHandler = packetHandler;
+    }
+
+    public int getProtocolVersion() {
+        return this.protocolVersion;
+    }
+
+    public void setProtocolVersion(int protocolVersion) {
+        this.protocolVersion = protocolVersion;
+    }
+
+    public Connection getConnection() {
+        return this.connection;
+    }
+
+    public EncryptionHandler getEncryptionHandler() {
+        return this.encryptionHandler;
+    }
+
+    public PlayerConnectionState getConnectionState() {
+        return this.connectionState;
+    }
+
+    public void setConnectionState(PlayerConnectionState connectionState) {
+        this.connectionState = connectionState;
+    }
+
+    public void setEncryptionHandler(EncryptionHandler encryptionHandler) {
+        this.encryptionHandler = encryptionHandler;
+    }
+
+    public void disconnect(String reason) {
+        //kick event
+        if (reason != null && !reason.isEmpty()) {
+            //TODO
+        } else {
+            internalClose(reason);
+        }
+    }
+
+    public void sendPacket(Packet packet) {
+        this.sendingQueue.offer(packet);
+    }
+
+    public void sendPacketImmediately(Packet packet) {
+        if (packet.getClass() != PacketFEBatch.class) {
+            this.postProcessExecutor.addWork(this, packet);
+        } else {
+            PacketBuffer buffer = new PacketBuffer(64);
+            buffer.writeByte(packet.getID());
+            packet.write(buffer);
+            this.connection.send(PacketReliability.RELIABLE_ORDERED, 0, buffer.getBuffer(), 0, buffer.getPosition());
+        }
+    }
+
+    private void releaseSendingQueue() {
+        if (this.sendingQueue.isEmpty()) {
+            return;
+        }
+        List<Packet> drainedQueue = new ArrayList<>(this.sendingQueue.size());
+        this.sendingQueue.drainTo(drainedQueue);
+        this.postProcessExecutor.addWork(this, drainedQueue);
+    }
+
+    void tick(long currentMillis, long dT) {
+        List<PacketBuffer> buffers = null;
+        EncapsulatedPacket packetData;
+        while ((packetData = this.connection.receive()) != null) {
+            if (buffers == null) {
+                buffers = new ArrayList<>();
+            }
+            buffers.add(new PacketBuffer(packetData.getPacketData(), 0));
+        }
+        if (buffers != null) {
+            buffers.forEach(buffer -> prepareAndHandlePacket(currentMillis, buffer));
+        }
+        this.lastUpdateDt += dT;
+        if (this.lastUpdateDt >= CLIENT_TICK_RATE) {
+            releaseSendingQueue();
+            this.lastUpdateDt = 0L;
+        }
+    }
+
+    private void prepareAndHandlePacket(long currentMillis, PacketBuffer buffer) {
+        if (buffer.getRemaining() <= 0) {
+            return;
+        }
+        while (buffer.getRemaining() > 0) {
+            int packetLength = buffer.readUnsignedVarInt();
+            byte[] data = new byte[packetLength];
+            buffer.readBytes(data);
+            PacketBuffer emptyBuffer = new PacketBuffer(data, 0);
+            handlePacket(currentMillis, emptyBuffer);
+            if (emptyBuffer.getRemaining() > 0) {
+                LunarisServer.getInstance().getLogger().warn("Could not read packet 0x%s: remaining %d bytes", Integer.toHexString(data[0]), emptyBuffer.getRemaining());
+            }
+        }
+    }
+
+    private void handlePacket(long currentMillis, PacketBuffer buffer) {
+        byte packetID = buffer.readByte();
+        if (packetID == -2) {
+            LunarisServer.getInstance().getLogger().warn("Malformed batch packet");
+        }
+        buffer.readShort(); //???
+        Packet packet = this.networkManager.getPacketRegistry().constructPacket(packetID);
+        packet.read(buffer);
+        packet.setConnection(this);
+        this.packetHandler.handle(packet, currentMillis);
+    }
+
+    private void internalClose(String reason) {
+        if (this.connection.isConnected() && !this.connection.isDisconnecting()) {
+            this.connection.disconnect(reason);
+        }
+    }
+
+    private byte[] readBatchPacket(PacketBuffer buffer) {
+        byte[] input = new byte[buffer.getRemaining()];
+        System.arraycopy(buffer.getBuffer(), buffer.getPosition(), input, 0, input.length);
+        if (this.encryptionHandler != null) {
+            input = this.encryptionHandler.decryptInputFromClient(input);
+            if (input == null) {
+                disconnect("Wrong checksum of encrypted packet");
+                return null;
+            }
+        }
+        InflaterInputStream inflater = new InflaterInputStream(new ByteArrayInputStream(input));
+        ByteArrayOutputStream bout = new ByteArrayOutputStream(buffer.getRemaining());
+        byte[] slice = new byte[256];
+        try {
+            int read;
+            while ((read = inflater.read(slice)) > -1) {
+                bout.write(slice, 0, read);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return bout.toByteArray();
+    }
+
+}

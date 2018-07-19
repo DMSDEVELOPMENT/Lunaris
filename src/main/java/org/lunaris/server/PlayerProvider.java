@@ -9,8 +9,8 @@ import org.lunaris.entity.misc.LPermission;
 import org.lunaris.api.event.player.PlayerDisconnectEvent;
 import org.lunaris.api.event.player.PlayerJoinEvent;
 import org.lunaris.api.event.player.PlayerLoginEvent;
-import org.lunaris.network.protocol.packet.*;
-import org.lunaris.network.raknet.session.RakNetClientSession;
+import org.lunaris.network_old.protocol.packet.*;
+import org.lunaris.network_old.raknet.session.RakNetClientSession;
 import org.lunaris.api.world.Location;
 import org.lunaris.world.LWorld;
 

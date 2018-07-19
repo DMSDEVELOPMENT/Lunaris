@@ -16,10 +16,10 @@ import org.lunaris.api.item.ItemToolType;
 import org.lunaris.material.LBlockHandle;
 import org.lunaris.material.LItemHandle;
 import org.lunaris.api.material.Material;
-import org.lunaris.network.protocol.packet.Packet15UpdateBlock;
-import org.lunaris.network.protocol.packet.Packet18LevelSoundEvent;
-import org.lunaris.network.protocol.packet.Packet19LevelEvent;
-import org.lunaris.network.protocol.packet.Packet24PlayerAction;
+import org.lunaris.network_old.protocol.packet.Packet15UpdateBlock;
+import org.lunaris.network_old.protocol.packet.Packet18LevelSoundEvent;
+import org.lunaris.network_old.protocol.packet.Packet19LevelEvent;
+import org.lunaris.network_old.protocol.packet.Packet24PlayerAction;
 import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.world.particle.DestroyBlockParticle;
 import org.lunaris.world.particle.PunchBlockParticle;
@@ -147,12 +147,12 @@ public class BlockMaster {
         if(player.getBlockBreakingData().getBlockBreakingTime() != time) {
             player.getBlockBreakingData().updateBreak(time);
 //            double breakTime = getBreakTimeInTicks(block, player) - player.getBlockBreakingData().getOvertime() / 50;
-//            block.getChunk().sendPacket(new Packet19LevelEvent(
+//            block.getChunk().sendPacketImmediately(new Packet19LevelEvent(
 //                    Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
 //                    (float) position.x, (float) position.y, (float) position.z,
 //                    0
 //            ));
-//            block.getChunk().sendPacket(new Packet19LevelEvent(
+//            block.getChunk().sendPacketImmediately(new Packet19LevelEvent(
 //                    Packet19LevelEvent.EVENT_BLOCK_START_BREAK,
 //                    (float) position.x, (float) position.y, (float) position.z,
 //                    (int) (65535 / breakTime)

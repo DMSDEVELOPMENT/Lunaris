@@ -5,7 +5,7 @@ import org.lunaris.api.inventory.ContainerInventory;
 import org.lunaris.api.inventory.InventoryType;
 import org.lunaris.api.world.Location;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.network.protocol.packet.Packet2EContainerOpen;
+import org.lunaris.network_old.protocol.packet.Packet2EContainerOpen;
 import org.lunaris.world.BlockVector;
 import org.lunaris.world.tileentity.LContainerTileEntity;
 

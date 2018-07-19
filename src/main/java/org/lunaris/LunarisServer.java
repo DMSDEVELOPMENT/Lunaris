@@ -9,8 +9,8 @@ import org.lunaris.entity.LPlayer;
 import org.lunaris.event.EventManager;
 import org.lunaris.api.event.Listener;
 import org.lunaris.jwt.EncryptionKeyFactory;
-import org.lunaris.network.NetworkManager;
-import org.lunaris.network.protocol.packet.Packet09Text;
+import org.lunaris.network_old.NetworkManager;
+import org.lunaris.network_old.protocol.packet.Packet09Text;
 import org.lunaris.api.plugin.PluginManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
 import org.lunaris.server.IServer;
@@ -120,7 +120,7 @@ public class LunarisServer implements IServer {
 
     @Override
     public String getSupportedClientVersion() {
-        return "1.2.2";
+        return "1.5.0";
     }
 
     private void loadConfigurations() {

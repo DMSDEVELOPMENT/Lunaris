@@ -13,9 +13,10 @@ import org.lunaris.inventory.LInventory;
 import org.lunaris.inventory.InventoryManager;
 import org.lunaris.inventory.LPlayerInventory;
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network.protocol.MinePacket;
-import org.lunaris.network.protocol.packet.*;
-import org.lunaris.network.raknet.session.RakNetClientSession;
+import org.lunaris.network.PlayerConnection;
+import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network_old.protocol.packet.*;
+import org.lunaris.network_old.raknet.session.RakNetClientSession;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.api.world.Location;
 import org.lunaris.api.world.Sound;
@@ -33,7 +34,7 @@ import java.util.UUID;
 public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
     private final String ip;
-    private final RakNetClientSession session;
+    private final PlayerConnection connection;
 
     private final String username;
     private final UUID clientUUID;
@@ -67,10 +68,10 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     
     private long lastUseTime = -1;
 
-    LPlayer(int entityID, RakNetClientSession session, Packet01Login packetLogin) {
+    LPlayer(int entityID, PlayerConnection connection, Packet01Login packetLogin) {
         super(entityID, EntityType.PLAYER);
-        this.session = session;
-        this.ip = session.getAddress().getAddress().getHostAddress();
+        this.connection = connection;
+        this.ip = connection.getConnection().getAddress().getAddress().getHostAddress();
         this.username = ChatColor.stripColor(packetLogin.getUsername());
         this.clientUUID = packetLogin.getClientUuid();
         this.xboxID = packetLogin.getXboxID();
@@ -269,8 +270,8 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
         });
     }
 
-    public RakNetClientSession getSession() {
-        return this.session;
+    public PlayerConnection getConnection() {
+        return this.connection;
     }
 
     public int getChunksView() {

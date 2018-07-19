@@ -3,8 +3,8 @@ package org.lunaris.world.tracker;
 import org.lunaris.LunarisServer;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.network.protocol.MinePacket;
-import org.lunaris.network.protocol.packet.Packet0ERemoveEntity;
+import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network_old.protocol.packet.Packet0ERemoveEntity;
 import org.lunaris.world.LWorld;
 import org.lunaris.world.util.LongObjectHashMap;
 

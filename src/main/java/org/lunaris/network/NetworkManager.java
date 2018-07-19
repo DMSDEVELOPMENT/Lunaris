@@ -1,126 +1,132 @@
 package org.lunaris.network;
 
-import co.aikar.timings.Timing;
-import co.aikar.timings.Timings;
-
+import io.gomint.jraknet.EventLoops;
+import io.gomint.jraknet.ServerSocket;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import org.lunaris.LunarisServer;
-import org.lunaris.entity.LPlayer;
-import org.lunaris.event.network.PacketSendingAsyncEvent;
-import org.lunaris.network.protocol.MineBuffer;
-import org.lunaris.network.protocol.MinePacket;
-import org.lunaris.network.protocol.MinePacketProvider;
-import org.lunaris.network.raknet.RakNetPacket;
-import org.lunaris.network.raknet.protocol.Reliability;
-import org.lunaris.network.raknet.session.RakNetClientSession;
-import org.lunaris.api.server.Scheduler;
+import org.lunaris.api.event.network.PingAsyncEvent;
+import org.lunaris.api.event.player.PlayerConnectAsyncEvent;
+import org.lunaris.network.executor.PostProcessExecutorService;
+import org.lunaris.network.handler.HandshakeHandler;
+import org.lunaris.server.ServerSettings;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import java.net.SocketException;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.function.LongConsumer;
 
 /**
- * Created by RINES on 13.09.17.
+ * Created by k.shandurenko on 19.07.2018
  */
 public class NetworkManager {
 
-    public final static int SUPPORTED_CLIENT_PROTOCOL_VERSION = 137;
-    public final static long NETWORK_TICK = Scheduler.ONE_TICK_IN_MILLIS >> 1;
-
     private final LunarisServer server;
+    private final ServerSocket serverSocket;
 
-    private final RakNetProvider rakNet;
+    private final LongSet closedConnections = new LongOpenHashSet();
+    private final Queue<PlayerConnection> incomingConnections = new ConcurrentLinkedQueue<>();
+    private final Long2ObjectMap<PlayerConnection> playersByGuid = new Long2ObjectOpenHashMap<>();
+    private final PostProcessExecutorService postProcessExecutorService = new PostProcessExecutorService();
 
-    final MinePacketProvider mineProvider;
-
-    private final ScheduledExecutorService executor = Scheduler.createScheduledExecutor("Packet Compiler", 1);
-    private final Queue<QueuedPacket> sendQueue = new ConcurrentLinkedQueue<>();
+    private final PacketRegistry packetRegistry = new PacketRegistry();
+    private final PacketHandler handshakeHandler = new HandshakeHandler();
 
     public NetworkManager(LunarisServer server) {
+        System.setProperty( "java.net.preferIPv4Stack", "true" );               // We currently don't use ipv6
+        System.setProperty( "io.netty.selectorAutoRebuildThreshold", "0" );     // Never rebuild selectors
         this.server = server;
-        this.rakNet = new RakNetProvider(this, server);
-        this.mineProvider = new MinePacketProvider(server, this);
-        this.executor.scheduleAtFixedRate(this::tick, 0L, NETWORK_TICK, TimeUnit.MILLISECONDS);
+        this.serverSocket = new ServerSocket(200);
+        initServerSocket();
     }
 
-    public void disable() {
-        this.rakNet.disable();
-    }
-
-    public void sendPacket(LPlayer player, MinePacket packet) {
-        PacketSendingAsyncEvent event = new PacketSendingAsyncEvent(player, packet);
-        this.server.getEventManager().call(event);
-        if (event.isCancelled())
+    public void shutdown() {
+        if (this.serverSocket == null) {
             return;
-        sendQueue.add(new QueuedPacket(Collections.singletonList(player.getSession()), serialize(packet)));
-    }
-
-    public void sendPacket(Collection<LPlayer> players, MinePacket packet) {
-        players.removeIf(p -> {
-            PacketSendingAsyncEvent event = new PacketSendingAsyncEvent(p, packet);
-            this.server.getEventManager().call(event);
-            return event.isCancelled();
-        });
-        sendQueue.add(new QueuedPacket(players.stream().map(LPlayer::getSession).collect(Collectors.toList()), serialize(packet)));
-    }
-
-    public void broadcastPacket(MinePacket packet) {
-        sendPacket(new HashSet<>(this.server.getOnlinePlayers()), packet);
-    }
-
-    public void tick() {
-        Timings.getPacketsSendingTimer().startTiming();
-        Set<RakNetClientSession> receivers = new HashSet<>();
-        for (QueuedPacket packet = sendQueue.poll(); packet != null; packet = sendQueue.poll()) {
-            for (RakNetClientSession session : packet.receivers) {
-                session.getPacketsBush().collect(packet.packet);
-                if (session.getPacketsBush().isFull())
-                    session.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(session.getPacketsBush().blossom()));
-            }
-            receivers.addAll(packet.receivers);
         }
-        receivers.forEach(session ->
-            session.sendMessage(Reliability.RELIABLE_ORDERED, new RakNetPacket(session.getPacketsBush().blossom()))
-        );
-        Timings.getPacketsSendingTimer().stopTiming();
-    }
-
-    private byte[] serialize(MinePacket packet) {
-        Timing timing = Timings.getPacketsSerializationTimer(packet);
-        timing.startTiming();
+        this.serverSocket.close();
+        this.playersByGuid.values().forEach(PlayerConnection::close);
         try {
-            MineBuffer buffer = new MineBuffer(1 << 4);
-            packet.write(buffer);
-            byte[] bytes = buffer.readBytes(buffer.readableBytes());
-            buffer.release();
-            buffer = new MineBuffer(bytes.length + 3 + 4 /*varint*/);
-            buffer.writeUnsignedVarInt(bytes.length + 3); //byte id + short (2 bytes)
-            buffer.writeByte(packet.getByteId());
-            buffer.writeUnsignedShort((short) 0);
-            buffer.writeBytes(bytes);
-            bytes = buffer.readBytes(buffer.remaining());
-            buffer.release();
-            return bytes;
-        } catch (Exception ex) {
-            new Exception("Can not serialize packet", ex).printStackTrace();
-            return null;
-        } finally {
-            timing.stopTiming();
+            EventLoops.LOOP_GROUP.shutdownGracefully().await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
-    private static class QueuedPacket {
-        public Collection<RakNetClientSession> receivers;
-        public byte[] packet;
+    public PostProcessExecutorService getPostProcessExecutorService() {
+        return this.postProcessExecutorService;
+    }
 
-        public QueuedPacket(Collection<RakNetClientSession> receivers, byte[] packet) {
-            this.receivers = receivers;
-            this.packet = packet;
+    public PacketRegistry getPacketRegistry() {
+        return this.packetRegistry;
+    }
+
+    public void tick(long currentMillis, long deltaFromLastTickTime) {
+        while (!this.incomingConnections.isEmpty()) {
+            PlayerConnection connection = this.incomingConnections.poll();
+            this.playersByGuid.put(connection.getGuid(), connection);
+        }
+        synchronized (this.closedConnections) {
+            if (!this.closedConnections.isEmpty()) {
+                this.closedConnections.forEach((LongConsumer) guid -> {
+                    PlayerConnection connection = this.playersByGuid.remove(guid);
+                    if (connection != null) {
+                        connection.close();
+                    }
+                });
+                this.closedConnections.clear();
+            }
+        }
+        this.playersByGuid.values().forEach(connection -> connection.tick(currentMillis, deltaFromLastTickTime));
+    }
+
+    private void initServerSocket() {
+        this.serverSocket.setMojangModificationEnabled(true);
+        ServerSettings settings = this.server.getServerSettings();
+        this.serverSocket.setEventHandler((socket, socketEvent) -> {
+            switch (socketEvent.getType()) {
+                case NEW_INCOMING_CONNECTION: {
+                    PlayerConnectAsyncEvent event = new PlayerConnectAsyncEvent(socketEvent.getConnection().getAddress());
+                    this.server.getEventManager().call(event);
+                    if (event.isCancelled()) {
+                        socketEvent.getConnection().disconnect(null);
+                    }
+                    PlayerConnection connection = new PlayerConnection(this, socketEvent.getConnection(), PlayerConnectionState.HANDSHAKE);
+                    connection.setPacketHandler(this.handshakeHandler);
+                    this.incomingConnections.offer(connection);
+                    break;
+                }
+                case CONNECTION_CLOSED:
+                case CONNECTION_DISCONNECTED: {
+                    synchronized (this.closedConnections) {
+                        this.closedConnections.add(socketEvent.getConnection().getGuid());
+                    }
+                    break;
+                }
+                case UNCONNECTED_PING: {
+                    PingAsyncEvent event = new PingAsyncEvent(
+                            settings.getServerName(),
+                            this.server.getOnlinePlayers().size(),
+                            settings.getMaxPlayersOnServer()
+                    );
+                    this.server.getEventManager().call(event);
+                    socketEvent.getPingPongInfo().setMotd(
+                            "MCPE;" + event.getMotd() + ";" + settings.getSupportedClientProtocol() + ";" +
+                                    settings.getSupportedClientVersion() + ";" + event.getAmountOfPlayers() + ";" +
+                                    event.getMaxPlayers()
+                    );
+                    break;
+                }
+                default:
+                    break;
+            }
+        });
+        try {
+            this.serverSocket.bind(settings.getHost(), settings.getPort());
+        } catch (SocketException e) {
+            e.printStackTrace();
         }
     }
 

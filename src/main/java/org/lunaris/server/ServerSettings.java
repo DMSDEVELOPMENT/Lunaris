@@ -1,7 +1,7 @@
 package org.lunaris.server;
 
 import org.lunaris.api.entity.Gamemode;
-import org.lunaris.network.protocol.packet.Packet37AdventureSettings;
+import org.lunaris.network_old.protocol.packet.Packet37AdventureSettings;
 import org.lunaris.api.util.configuration.FileConfiguration;
 import org.lunaris.api.util.configuration.yaml.YamlConfiguration;
 
@@ -58,8 +58,8 @@ public class ServerSettings {
             this.serverName = config.getOrSetString("server-name", "Lunaris Test Server");
             this.supportedClientVersion = server.getSupportedClientVersion();
             this.maxPlayersOnServer = config.getOrSetInt("max-players", 20);
-            this.networkCompressionLevel = config.getOrSetInt("network.compression-level", 1);
-            this.mtuScaleFactor = (float) config.getOrSetDouble("network.mtu-scale-factor", 2F / 3F);
+            this.networkCompressionLevel = config.getOrSetInt("network_old.compression-level", 1);
+            this.mtuScaleFactor = (float) config.getOrSetDouble("network_old.mtu-scale-factor", 2F / 3F);
             this.defaultGamemode = Gamemode.values()[config.getOrSetInt("default-gamemode", 0)];
             this.chunksView = config.getOrSetInt("chunks-view", 6);
             this.unloadChunks = config.getOrSetBoolean("unload-chunks", true);

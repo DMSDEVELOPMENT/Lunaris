@@ -5,6 +5,7 @@ import io.gomint.jraknet.EncapsulatedPacket;
 import io.gomint.jraknet.PacketBuffer;
 import io.gomint.jraknet.PacketReliability;
 import org.lunaris.LunarisServer;
+import org.lunaris.api.event.player.PlayerDisconnectEvent;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.event.network.PacketReceivedAsyncEvent;
 import org.lunaris.jwt.EncryptionHandler;
@@ -66,9 +67,9 @@ public class PlayerConnection {
     }
 
     void close() {
-        //player quit event
         LPlayer player = getPlayer();
         if (player != null) {
+            new PlayerDisconnectEvent(player).call();
             LunarisServer.getInstance().getPlayerProvider().removePlayer(player);
         }
         if (this.postProcessExecutor != null) {
@@ -78,10 +79,6 @@ public class PlayerConnection {
 
     public long getGuid() {
         return this.connection.getGuid();
-    }
-
-    public PacketHandler getPacketHandler() {
-        return this.packetHandler;
     }
 
     public void setPacketHandler(PacketHandler packetHandler) {
@@ -125,7 +122,6 @@ public class PlayerConnection {
     }
 
     public void disconnect(String reason) {
-        //kick event
         if (reason != null && !reason.isEmpty()) {
             //TODO
         } else {

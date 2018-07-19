@@ -12,8 +12,6 @@ import org.lunaris.network.PlayerConnectionState;
 import org.lunaris.network.packet.Packet01Login;
 import org.lunaris.network.packet.Packet02PlayStatus;
 import org.lunaris.network.packet.Packet03EncryptionRequest;
-import org.lunaris.network.packet.Packet06ResourcePacksInfo;
-import org.lunaris.network_old.util.ConnectionState;
 
 /**
  * Created by k.shandurenko on 19.07.2018
@@ -83,7 +81,7 @@ public class HandshakeHandler extends PacketHandler {
                 encryptor.supplyClientKey(packet.getClientPublicKey());
                 if(encryptor.beginClientsideEncryption()) {
                     connection.setConnectionState(PlayerConnectionState.ENCRPYTION_INIT);
-                    connection.setPacketHandler(new org.lunaris.network.handler.EncryptionHandler());
+                    connection.setPacketHandler(ENCRYPTION_HANDLER);
                     connection.setEncryptionHandler(encryptor);
                     EncryptionRequestForger forger = new EncryptionRequestForger();
                     String encryptionRequestJWT = forger.forge(encryptor.getServerPublic(), encryptor.getServerPrivate(), encryptor.getClientSalt());
@@ -91,10 +89,10 @@ public class HandshakeHandler extends PacketHandler {
                     player.sendPacket(encryptionPacket);
                 }
             }else {
-                connection.setConnectionState(PlayerConnectionState.LOGIN);
-                //setup login handler
+                connection.setConnectionState(PlayerConnectionState.RESOURCE_PACK);
+                connection.setPacketHandler(RESOURCES_HANDLER);
                 player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.LOGIN_SUCCESS));
-                player.sendPacket(new Packet06ResourcePacksInfo());
+
             }
         });
     }

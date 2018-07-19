@@ -1,6 +1,9 @@
 package org.lunaris.network;
 
 import org.lunaris.LunarisServer;
+import org.lunaris.network.handler.EncryptionHandler;
+import org.lunaris.network.handler.HandshakeHandler;
+import org.lunaris.network.handler.ResourcesHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +14,10 @@ import java.util.Map;
  * Created by k.shandurenko on 19.07.2018
  */
 public abstract class PacketHandler {
+
+    public final static PacketHandler HANDSHAKE_HANDLER = new HandshakeHandler();
+    public final static PacketHandler ENCRYPTION_HANDLER = new EncryptionHandler();
+    public final static PacketHandler RESOURCES_HANDLER = new ResourcesHandler();
 
     private final Map<Class<? extends Packet>, List<Handler<Packet>>> handlers = new HashMap<>();
 

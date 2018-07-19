@@ -13,7 +13,6 @@ import org.lunaris.api.server.Scheduler;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.network.executor.PostProcessExecutorService;
-import org.lunaris.network.handler.HandshakeHandler;
 import org.lunaris.server.ServerSettings;
 
 import java.net.SocketException;
@@ -42,7 +41,6 @@ public class NetworkManager {
     private final PostProcessExecutorService postProcessExecutorService = new PostProcessExecutorService();
 
     private final PacketRegistry packetRegistry = new PacketRegistry();
-    private final PacketHandler handshakeHandler = new HandshakeHandler();
 
     private long previousTickTime;
 
@@ -155,7 +153,7 @@ public class NetworkManager {
                         socketEvent.getConnection().disconnect(null);
                     }
                     PlayerConnection connection = new PlayerConnection(this, socketEvent.getConnection(), PlayerConnectionState.HANDSHAKE);
-                    connection.setPacketHandler(this.handshakeHandler);
+                    connection.setPacketHandler(PacketHandler.HANDSHAKE_HANDLER);
                     this.incomingConnections.offer(connection);
                     break;
                 }

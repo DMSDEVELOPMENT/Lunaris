@@ -19,8 +19,8 @@ public class EncryptionHandler extends PacketHandler {
 
     private void handle(Packet04EncryptionResponse packet, long time) {
         LPlayer player = packet.getConnection().getPlayer();
-        player.getConnection().setConnectionState(PlayerConnectionState.LOGIN);
-        //setup handler
+        player.getConnection().setConnectionState(PlayerConnectionState.RESOURCE_PACK);
+        player.getConnection().setPacketHandler(RESOURCES_HANDLER);
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.LOGIN_SUCCESS));
         player.sendPacket(new Packet06ResourcePacksInfo());
     }

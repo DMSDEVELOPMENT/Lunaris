@@ -5,6 +5,7 @@ import io.gomint.jraknet.EncapsulatedPacket;
 import io.gomint.jraknet.PacketBuffer;
 import io.gomint.jraknet.PacketReliability;
 import org.lunaris.LunarisServer;
+import org.lunaris.entity.LPlayer;
 import org.lunaris.jwt.EncryptionHandler;
 import org.lunaris.network.executor.PostProcessExecutor;
 import org.lunaris.network.packet.PacketFEBatch;
@@ -12,6 +13,7 @@ import org.lunaris.network.packet.PacketFEBatch;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -39,6 +41,8 @@ public class PlayerConnection {
     private int protocolVersion;
     private long lastUpdateDt;
 
+    private WeakReference<LPlayer> playerWeakReference;
+
     PlayerConnection(NetworkManager networkManager, Connection connection, PlayerConnectionState connectionState) {
         this.networkManager = networkManager;
         this.connection = connection;
@@ -62,6 +66,10 @@ public class PlayerConnection {
 
     void close() {
         //player quit event
+        LPlayer player = getPlayer();
+        if (player != null) {
+            LunarisServer.getInstance().getPlayerProvider().removePlayer(player);
+        }
         if (this.postProcessExecutor != null) {
             this.networkManager.getPostProcessExecutorService().releaseExecutor(this.postProcessExecutor);
         }
@@ -105,6 +113,14 @@ public class PlayerConnection {
 
     public void setEncryptionHandler(EncryptionHandler encryptionHandler) {
         this.encryptionHandler = encryptionHandler;
+    }
+
+    public void setPlayer(LPlayer player) {
+        this.playerWeakReference = new WeakReference<>(player);
+    }
+
+    public LPlayer getPlayer() {
+        return this.playerWeakReference == null ? null : this.playerWeakReference.get();
     }
 
     public void disconnect(String reason) {

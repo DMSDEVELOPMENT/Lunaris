@@ -9,6 +9,7 @@ import org.lunaris.entity.misc.LPermission;
 import org.lunaris.api.event.player.PlayerDisconnectEvent;
 import org.lunaris.api.event.player.PlayerJoinEvent;
 import org.lunaris.api.event.player.PlayerLoginEvent;
+import org.lunaris.network.PlayerConnection;
 import org.lunaris.network_old.protocol.packet.*;
 import org.lunaris.network_old.raknet.session.RakNetClientSession;
 import org.lunaris.api.world.Location;
@@ -24,7 +25,6 @@ public class PlayerProvider {
 
     private final Map<String, LPlayer> playersByNames = new HashMap<>();
     private final Map<UUID, LPlayer> playersByUUIDs = new HashMap<>();
-    private final Map<RakNetClientSession, LPlayer> playersBySessions = new ConcurrentHashMap<>();
     private final LunarisServer server;
     private final Scheduler scheduler;
 
@@ -33,10 +33,10 @@ public class PlayerProvider {
         this.scheduler = server.getScheduler();
     }
 
-    public LPlayer createPlayer(Packet01Login packet, RakNetClientSession session) {
-        LPlayer player = this.server.getEntityProvider().createPlayer(packet, session);
+    public LPlayer createPlayer(Packet01Login packet, PlayerConnection connection) {
+        LPlayer player = this.server.getEntityProvider().createPlayer(packet, connection);
+        connection.setPlayer(player);
         player.setPermission(LPermission.OPERATOR);
-        this.playersBySessions.put(session, player);
         this.server.getLogger().info("%s (%s) is logging in..", player.getName(), player.getAddress());
         return player;
     }
@@ -124,14 +124,7 @@ public class PlayerProvider {
         return this.playersByUUIDs.get(uuid);
     }
 
-    public LPlayer getPlayer(RakNetClientSession session) {
-        return this.playersBySessions.get(session);
-    }
-
-    public LPlayer removePlayer(RakNetClientSession session) {
-        LPlayer player = this.playersBySessions.remove(session);
-        if(player == null)
-            return null;
+    public LPlayer removePlayer(LPlayer player) {
         boolean wasOnline = player.isOnline();
         player.setIngameState(LPlayer.IngameState.DISCONNECTING);
         this.scheduler.run(() -> {
@@ -161,7 +154,7 @@ public class PlayerProvider {
     }
 
     public Collection<LPlayer> getAllPlayers() {
-        return this.playersBySessions.values();
+        return this.playersByUUIDs.values();
     }
 
 }

@@ -215,7 +215,6 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
         if(this.ingameState == IngameState.DISCONNECTING)
             throw new IllegalStateException("Disconnected player can't be disconnected");
         sendPacket(new Packet05Disconnect(reason));
-        LunarisServer.getInstance().getScheduler().run(() -> this.session.getServer().removeSession(this.session));
         if(reason == null)
             reason = "Unknown reason";
         this.disconnectingReason = reason.replace("\n", "\\n");

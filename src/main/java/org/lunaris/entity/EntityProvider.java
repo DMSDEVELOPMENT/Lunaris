@@ -1,6 +1,7 @@
 package org.lunaris.entity;
 
 import org.lunaris.api.item.ItemStack;
+import org.lunaris.network.PlayerConnection;
 import org.lunaris.network_old.protocol.packet.Packet01Login;
 import org.lunaris.network_old.raknet.session.RakNetClientSession;
 import org.lunaris.api.world.Location;
@@ -14,8 +15,8 @@ public class EntityProvider {
 
     private volatile int entityIDincrementor;
 
-    public LPlayer createPlayer(Packet01Login packet, RakNetClientSession session) {
-        return new LPlayer(nextEntityID(), session, packet);
+    public LPlayer createPlayer(Packet01Login packet, PlayerConnection connection) {
+        return new LPlayer(nextEntityID(), connection, packet);
     }
 
     public Item spawnItem(Location location, ItemStack itemStack) {

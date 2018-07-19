@@ -38,9 +38,10 @@ public class Packet52ResourcePackDataInfo extends Packet {
     @Override
     public void write(PacketBuffer buffer) {
         buffer.writeString(this.packID);
-        buffer.writeUnsignedInt(this.maxChunkSize);
-        buffer.writeUnsignedInt(this.chunksAmount);
-        buffer.writeUnsignedLong(this.compressedChunkSize);
-        buffer.writeByteArray(this.sha256);
+        buffer.writeLInt(this.maxChunkSize);
+        buffer.writeLInt(this.chunksAmount);
+        buffer.writeLLong(this.compressedChunkSize);
+        buffer.writeUnsignedVarInt(this.sha256.length);
+        buffer.writeBytes(this.sha256);
     }
 }

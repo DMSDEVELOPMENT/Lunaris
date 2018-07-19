@@ -9,7 +9,7 @@ import org.lunaris.entity.LPlayer;
 import org.lunaris.event.EventManager;
 import org.lunaris.api.event.Listener;
 import org.lunaris.jwt.EncryptionKeyFactory;
-import org.lunaris.network_old.NetworkManager;
+import org.lunaris.network.NetworkManager;
 import org.lunaris.network_old.protocol.packet.Packet09Text;
 import org.lunaris.api.plugin.PluginManager;
 import org.lunaris.resourcepacks.ResourcePackManager;
@@ -75,7 +75,7 @@ public class LunarisServer implements IServer {
         shuttingDown = true;
         this.pluginManager.disablePlugins();
         Timings.stopServer();
-        this.networkManager.disable();
+        this.networkManager.shutdown();
         try {
             Thread.sleep(2000L);
         } catch (InterruptedException ex) {

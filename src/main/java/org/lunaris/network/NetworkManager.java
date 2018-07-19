@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import org.lunaris.LunarisServer;
 import org.lunaris.api.event.network.PingAsyncEvent;
 import org.lunaris.api.event.player.PlayerConnectAsyncEvent;
+import org.lunaris.api.server.Scheduler;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.network.executor.PostProcessExecutorService;
@@ -20,6 +21,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.LongConsumer;
 
 /**
@@ -27,8 +30,11 @@ import java.util.function.LongConsumer;
  */
 public class NetworkManager {
 
+    public final static long NETWORK_TICK = Scheduler.ONE_TICK_IN_MILLIS >> 1;
+
     private final LunarisServer server;
     private final ServerSocket serverSocket;
+    private final ScheduledExecutorService executor = Scheduler.createScheduledExecutor("Network Ticker", 1);
 
     private final LongSet closedConnections = new LongOpenHashSet();
     private final Queue<PlayerConnection> incomingConnections = new ConcurrentLinkedQueue<>();
@@ -38,12 +44,19 @@ public class NetworkManager {
     private final PacketRegistry packetRegistry = new PacketRegistry();
     private final PacketHandler handshakeHandler = new HandshakeHandler();
 
+    private long previousTickTime;
+
     public NetworkManager(LunarisServer server) {
         System.setProperty( "java.net.preferIPv4Stack", "true" );               // We currently don't use ipv6
         System.setProperty( "io.netty.selectorAutoRebuildThreshold", "0" );     // Never rebuild selectors
         this.server = server;
         this.serverSocket = new ServerSocket(200);
         initServerSocket();
+        this.executor.scheduleAtFixedRate(() -> {
+            long current = System.currentTimeMillis();
+            tick(current, current - this.previousTickTime);
+            this.previousTickTime = current;
+        }, 0L, NETWORK_TICK, TimeUnit.MILLISECONDS);
     }
 
     public void shutdown() {

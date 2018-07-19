@@ -6,6 +6,7 @@ import io.gomint.jraknet.PacketBuffer;
 import io.gomint.jraknet.PacketReliability;
 import org.lunaris.LunarisServer;
 import org.lunaris.api.event.player.PlayerDisconnectEvent;
+import org.lunaris.api.server.Scheduler;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.event.network.PacketReceivedAsyncEvent;
 import org.lunaris.jwt.EncryptionHandler;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.InflaterInputStream;
 
 /**
@@ -29,7 +29,6 @@ import java.util.zip.InflaterInputStream;
 public class PlayerConnection {
 
     private final static byte PACKET_BATCH = -2;
-    public static final float CLIENT_TICK_RATE = TimeUnit.MILLISECONDS.toNanos( 50 ) / (float) TimeUnit.SECONDS.toNanos( 1 );
 
     private final NetworkManager networkManager;
     private final Connection connection;
@@ -166,7 +165,7 @@ public class PlayerConnection {
             buffers.forEach(buffer -> prepareAndHandlePacket(currentMillis, buffer));
         }
         this.lastUpdateDt += dT;
-        if (this.lastUpdateDt >= CLIENT_TICK_RATE) {
+        if (this.lastUpdateDt >= Scheduler.ONE_TICK_IN_MILLIS) {
             releaseSendingQueue();
             this.lastUpdateDt = 0L;
         }

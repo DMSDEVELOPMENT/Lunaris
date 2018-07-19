@@ -95,9 +95,9 @@ public class PostProcessWorker implements Runnable {
 
     private void writeToBuffer(ByteBuf inBuf, Packet packet) {
         PacketBuffer buffer = new PacketBuffer(64);
-        buffer.writeByte(this.singlePacket.getID());
+        buffer.writeByte(packet.getID());
         buffer.writeShort((short) 0);
-        this.singlePacket.write(buffer);
+        packet.write(buffer);
         writeVarInt(buffer.getPosition(), inBuf);
         inBuf.writeBytes(buffer.getBuffer(), buffer.getBufferOffset(), buffer.getPosition() - buffer.getBufferOffset());
     }

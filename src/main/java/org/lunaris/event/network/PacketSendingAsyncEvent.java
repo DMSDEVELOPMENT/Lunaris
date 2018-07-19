@@ -3,7 +3,7 @@ package org.lunaris.event.network;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.api.event.Cancellable;
 import org.lunaris.api.event.Event;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
 
 /**
  * Created by RINES on 13.09.17.
@@ -11,10 +11,10 @@ import org.lunaris.network_old.protocol.MinePacket;
 public class PacketSendingAsyncEvent extends Event implements Cancellable {
 
     private final LPlayer player;
-    private final MinePacket packet;
+    private final Packet packet;
     private boolean cancelled;
 
-    public PacketSendingAsyncEvent(LPlayer player, MinePacket packet) {
+    public PacketSendingAsyncEvent(LPlayer player, Packet packet) {
         this.player = player;
         this.packet = packet;
     }
@@ -33,7 +33,7 @@ public class PacketSendingAsyncEvent extends Event implements Cancellable {
         return player;
     }
 
-    public MinePacket getPacket() {
+    public Packet getPacket() {
         return packet;
     }
 }

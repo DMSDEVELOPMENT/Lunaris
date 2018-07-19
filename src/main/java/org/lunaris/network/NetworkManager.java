@@ -9,11 +9,14 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import org.lunaris.LunarisServer;
 import org.lunaris.api.event.network.PingAsyncEvent;
 import org.lunaris.api.event.player.PlayerConnectAsyncEvent;
+import org.lunaris.entity.LPlayer;
+import org.lunaris.event.network.PacketSendingAsyncEvent;
 import org.lunaris.network.executor.PostProcessExecutorService;
 import org.lunaris.network.handler.HandshakeHandler;
 import org.lunaris.server.ServerSettings;
 
 import java.net.SocketException;
+import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.LongConsumer;
@@ -61,6 +64,26 @@ public class NetworkManager {
 
     public PacketRegistry getPacketRegistry() {
         return this.packetRegistry;
+    }
+
+    public void sendPacket(LPlayer player, Packet packet) {
+        PacketSendingAsyncEvent event = new PacketSendingAsyncEvent(player, packet);
+        this.server.getEventManager().call(event);
+        if (event.isCancelled()) {
+            return;
+        }
+        player.getConnection().sendPacket(packet);
+    }
+
+    public void sendPacket(Collection<LPlayer> players, Packet packet) {
+        players.forEach(player -> {
+            PacketSendingAsyncEvent event = new PacketSendingAsyncEvent(player, packet);
+            this.server.getEventManager().call(event);
+            if (event.isCancelled()) {
+                return;
+            }
+            player.getConnection().sendPacket(packet);
+        });
     }
 
     public void tick(long currentMillis, long deltaFromLastTickTime) {

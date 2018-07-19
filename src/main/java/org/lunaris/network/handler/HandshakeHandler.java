@@ -1,9 +1,19 @@
 package org.lunaris.network.handler;
 
 import org.lunaris.LunarisServer;
+import org.lunaris.api.event.player.PlayerKickEvent;
+import org.lunaris.api.event.player.PlayerPreLoginEvent;
+import org.lunaris.entity.LPlayer;
+import org.lunaris.jwt.EncryptionHandler;
+import org.lunaris.jwt.EncryptionRequestForger;
 import org.lunaris.network.PacketHandler;
 import org.lunaris.network.PlayerConnection;
+import org.lunaris.network.PlayerConnectionState;
 import org.lunaris.network.packet.Packet01Login;
+import org.lunaris.network.packet.Packet02PlayStatus;
+import org.lunaris.network.packet.Packet03EncryptionRequest;
+import org.lunaris.network.packet.Packet06ResourcePacksInfo;
+import org.lunaris.network_old.util.ConnectionState;
 
 /**
  * Created by k.shandurenko on 19.07.2018
@@ -51,7 +61,41 @@ public class HandshakeHandler extends PacketHandler {
             return;
         }
         sync(() -> {
-
+            LunarisServer server = getServer();
+            LPlayer player = server.getPlayerProvider().createPlayer(packet, connection);
+            if(server.getOnlinePlayers().size() >= server.getServerSettings().getMaxPlayersOnServer()) {
+                PlayerKickEvent event = new PlayerKickEvent(player, "The server is full");
+                event.setReasonType(PlayerKickEvent.ReasonType.SERVER_IS_FULL);
+                server.getEventManager().call(event);
+                if(!event.isCancelled()) {
+                    player.disconnect(event.getReason());
+                    return;
+                }
+            }
+            PlayerPreLoginEvent event = new PlayerPreLoginEvent(player);
+            server.getEventManager().call(event);
+            if(event.isCancelled()) {
+                player.disconnect();
+                return;
+            }
+            if(LunarisServer.getInstance().getServerSettings().isUsingEncryptedConnection()) {
+                EncryptionHandler encryptor = new EncryptionHandler(LunarisServer.getInstance().getEncryptionKeyFactory());
+                encryptor.supplyClientKey(packet.getClientPublicKey());
+                if(encryptor.beginClientsideEncryption()) {
+                    connection.setConnectionState(PlayerConnectionState.ENCRPYTION_INIT);
+                    connection.setPacketHandler(new org.lunaris.network.handler.EncryptionHandler());
+                    connection.setEncryptionHandler(encryptor);
+                    EncryptionRequestForger forger = new EncryptionRequestForger();
+                    String encryptionRequestJWT = forger.forge(encryptor.getServerPublic(), encryptor.getServerPrivate(), encryptor.getClientSalt());
+                    Packet03EncryptionRequest encryptionPacket = new Packet03EncryptionRequest(encryptionRequestJWT);
+                    player.sendPacket(encryptionPacket);
+                }
+            }else {
+                connection.setConnectionState(PlayerConnectionState.LOGIN);
+                //setup login handler
+                player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.LOGIN_SUCCESS));
+                player.sendPacket(new Packet06ResourcePacksInfo());
+            }
         });
     }
 

@@ -37,6 +37,10 @@ public abstract class PacketHandler {
         LunarisServer.getInstance().getScheduler().run(run);
     }
 
+    protected LunarisServer getServer() {
+        return LunarisServer.getInstance();
+    }
+
     public interface Handler<T extends Packet> {
 
         void accept(T packet, long currentMillis);

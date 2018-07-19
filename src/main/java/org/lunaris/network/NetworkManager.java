@@ -104,6 +104,26 @@ public class NetworkManager {
         sendPacket(new HashSet<>(this.server.getOnlinePlayers()), packet);
     }
 
+    public void sendPacketImmediately(LPlayer player, Packet packet) {
+        PacketSendingAsyncEvent event = new PacketSendingAsyncEvent(player, packet);
+        this.server.getEventManager().call(event);
+        if (event.isCancelled()) {
+            return;
+        }
+        player.getConnection().sendPacketImmediately(packet);
+    }
+
+    public void sendPacketImmediately(Collection<LPlayer> players, Packet packet) {
+        players.forEach(player -> {
+            PacketSendingAsyncEvent event = new PacketSendingAsyncEvent(player, packet);
+            this.server.getEventManager().call(event);
+            if (event.isCancelled()) {
+                return;
+            }
+            player.getConnection().sendPacketImmediately(packet);
+        });
+    }
+
     public void tick(long currentMillis, long deltaFromLastTickTime) {
         while (!this.incomingConnections.isEmpty()) {
             PlayerConnection connection = this.incomingConnections.poll();

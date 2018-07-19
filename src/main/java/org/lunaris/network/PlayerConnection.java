@@ -132,7 +132,7 @@ public class PlayerConnection {
         this.sendingQueue.offer(packet);
     }
 
-    void sendPacketImmediately(Packet packet) {
+    public void sendPacketImmediately(Packet packet) {
         if (packet.getClass() != PacketFEBatch.class) {
             this.postProcessExecutor.addWork(this, packet);
         } else {

@@ -1,13 +1,15 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
 import org.lunaris.util.math.Vector3f;
 
 /**
  * Created by RINES on 24.09.17.
  */
-public class Packet19LevelEvent extends MinePacket {
+public class Packet19LevelEvent extends Packet {
 
     public static final int EVENT_SOUND_CLICK = 1000;
     public static final int EVENT_SOUND_CLICK_FAIL = 1001;
@@ -100,25 +102,25 @@ public class Packet19LevelEvent extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x19;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
-        this.eventId = buffer.readVarInt();
-        Vector3f vec = buffer.readVector3f();
+    public void read(PacketBuffer buffer) {
+        this.eventId = buffer.readSignedVarInt();
+        Vector3f vec = SerializationUtil.readVector3f(buffer);
         this.x = vec.x;
         this.y = vec.y;
         this.z = vec.z;
-        this.data = buffer.readVarInt();
+        this.data = buffer.readSignedVarInt();
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeVarInt(this.eventId);
-        buffer.writeVector3f(this.x, this.y, this.z);
-        buffer.writeVarInt(this.data);
+    public void write(PacketBuffer buffer) {
+        buffer.writeSignedVarInt(this.eventId);
+        SerializationUtil.writeVector3f(new Vector3f(this.x, this.y, this.z), buffer);
+        buffer.writeSignedVarInt(this.data);
     }
 
 }

@@ -27,6 +27,16 @@ public class SerializationUtil {
         buffer.writeUnsignedVarLong(vector.getY());
         buffer.writeSignedVarInt(vector.getZ());
     }
+
+    public static Vector3f readVector3f(PacketBuffer buffer) {
+        return new Vector3f(buffer.readLFloat(), buffer.readLFloat(), buffer.readLFloat());
+    }
+
+    public static void writeVector3f(Vector3f vector, PacketBuffer buffer) {
+        buffer.writeLFloat(vector.getX());
+        buffer.writeLFloat(vector.getY());
+        buffer.writeLFloat(vector.getZ());
+    }
     
     /**
      * Read a item stack from the packet buffer

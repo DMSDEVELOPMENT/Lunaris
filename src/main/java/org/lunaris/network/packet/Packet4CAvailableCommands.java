@@ -59,6 +59,8 @@ public class Packet4CAvailableCommands extends Packet {
     private Map<String, Integer> enumIndexes = new HashMap<>();
     private List<Command> commands;
 
+    public Packet4CAvailableCommands() {}
+
     public Packet4CAvailableCommands(List<Command> commands) {
         this.commands = commands;
         

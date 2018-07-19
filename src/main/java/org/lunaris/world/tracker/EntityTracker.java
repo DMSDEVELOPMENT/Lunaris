@@ -3,7 +3,7 @@ package org.lunaris.world.tracker;
 import org.lunaris.LunarisServer;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
 import org.lunaris.network.packet.Packet0ERemoveEntity;
 import org.lunaris.world.LWorld;
 import org.lunaris.world.util.LongObjectHashMap;
@@ -52,7 +52,7 @@ public class EntityTracker {
         tracked.updatePlayers(world.getPlayers());
     }
 
-    public void sendPacketToWatchers(LEntity entity, MinePacket packet) {
+    public void sendPacketToWatchers(LEntity entity, Packet packet) {
         entities.get(entity.getEntityID()).sendPacket(packet);
     }
 

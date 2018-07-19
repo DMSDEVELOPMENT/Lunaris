@@ -1,9 +1,9 @@
 package org.lunaris.entity;
 
-import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.api.entity.EntityType;
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.entity.data.EntityDataFlag;
+import org.lunaris.network.Packet;
 import org.lunaris.network.packet.Packet0FAddItem;
 import org.lunaris.util.math.LMath;
 
@@ -51,10 +51,10 @@ public class Item extends LEntity {
     public void tick(long current, float dT) {
         super.tick(current, dT);
         this.lastUpdateDt += dT;
-        if(this.lastUpdateDt >= .05F) {
+        if (this.lastUpdateDt >= .05F) {
             final float defaultFriction = 1F - .02F; //.02F = DRAG constant
             float friction = defaultFriction;
-            if(isOnGround() && (Math.abs(getMotionX()) > LMath.EPSILON || Math.abs(getMotionZ()) > LMath.EPSILON))
+            if (isOnGround() && (Math.abs(getMotionX()) > LMath.EPSILON || Math.abs(getMotionZ()) > LMath.EPSILON))
                 friction *= getLocation().add(0D, -1D, 0D).getBlock().getHandle().getFrictionFactor();
             setMotion(getMotionX() * friction, getMotionY() * defaultFriction * (isOnGround() ? -.5F : 1F), getMotionZ() * friction);
             this.lastUpdateDt = 0F;
@@ -67,7 +67,7 @@ public class Item extends LEntity {
     }
 
     @Override
-    public MinePacket createSpawnPacket() {
+    public Packet createSpawnPacket() {
         return new Packet0FAddItem(this);
     }
 

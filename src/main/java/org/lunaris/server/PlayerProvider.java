@@ -1,15 +1,18 @@
 package org.lunaris.server;
 
 import org.lunaris.LunarisServer;
+import org.lunaris.api.event.player.PlayerDisconnectEvent;
+import org.lunaris.api.event.player.PlayerJoinEvent;
+import org.lunaris.api.event.player.PlayerLoginEvent;
 import org.lunaris.api.server.Scheduler;
+import org.lunaris.api.world.Location;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.entity.data.Attribute;
 import org.lunaris.entity.data.EntityDataFlag;
 import org.lunaris.entity.misc.LPermission;
-import org.lunaris.api.event.player.PlayerDisconnectEvent;
-import org.lunaris.api.event.player.PlayerJoinEvent;
-import org.lunaris.api.event.player.PlayerLoginEvent;
 import org.lunaris.network.PlayerConnection;
+import org.lunaris.network.packet.Packet01Login;
+import org.lunaris.network.packet.Packet02PlayStatus;
 import org.lunaris.network.packet.Packet0AWorldTime;
 import org.lunaris.network.packet.Packet0BStartGame;
 import org.lunaris.network.packet.Packet1DUpdateAttributes;
@@ -17,11 +20,14 @@ import org.lunaris.network.packet.Packet27SetEntityData;
 import org.lunaris.network.packet.Packet28SetEntityMotion;
 import org.lunaris.network.packet.Packet2DRespawn;
 import org.lunaris.network.packet.Packet3BSetCommandsEnabled;
-import org.lunaris.network_old.protocol.packet.*;
-import org.lunaris.api.world.Location;
 import org.lunaris.world.LWorld;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by RINES on 13.09.17.
@@ -48,12 +54,12 @@ public class PlayerProvider {
 
     public void addPlayerToGame(LPlayer player) {
         LPlayer another = getPlayer(player.getName());
-        if(another != null) {
+        if (another != null) {
             another.disconnect("You logged in from another location");
             return;
         }
         another = getPlayer(player.getUUID());
-        if(another != null) {
+        if (another != null) {
             another.disconnect("You logged in from another location");
             return;
         }
@@ -61,7 +67,7 @@ public class PlayerProvider {
         player.teleport(loc);
         PlayerLoginEvent event = new PlayerLoginEvent(player);
         this.server.getEventManager().call(event);
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             player.disconnect();
             return;
         }
@@ -69,20 +75,16 @@ public class PlayerProvider {
         this.playersByNames.put(player.getName().toLowerCase(), player);
         this.playersByUUIDs.put(player.getUUID(), player);
         Packet0BStartGame startGame = new Packet0BStartGame();
-        startGame.entityUniqueId = startGame.entityRuntimeId = player.getEntityID();
-        startGame.gamemode = startGame.playerGamemode = this.server.getServerSettings().getDefaultGamemode().ordinal();
-        startGame.x = (float) loc.getX();
-        startGame.y = (float) loc.getY();
-        startGame.z = (float) loc.getZ();
-        startGame.yaw = (float) loc.getYaw();
-        startGame.pitch = (float) loc.getPitch();
+        startGame.entityId = startGame.runtimeEntityId = player.getEntityID();
+        startGame.gamemode = startGame.worldGamemode = this.server.getServerSettings().getDefaultGamemode().ordinal();
+        startGame.spawn = loc;
         startGame.seed = -1;
         startGame.dimension = loc.getWorld().getDimension().getId();
         startGame.difficulty = ((LWorld) loc.getWorld()).getDifficulty().getId();
         Location spawn = loc.getWorld().getSpawnLocation();
-        startGame.spawnX = spawn.getBlockX();
-        startGame.spawnY = spawn.getBlockY();
-        startGame.spawnZ = spawn.getBlockZ();
+        startGame.worldSpawnX = spawn.getBlockX();
+        startGame.worldSpawnY = spawn.getBlockY();
+        startGame.worldSpawnZ = spawn.getBlockZ();
         startGame.hasAchievementsDisabled = true;
         startGame.dayCycleStopTime = -1;
         startGame.eduMode = false;
@@ -103,15 +105,15 @@ public class PlayerProvider {
         player.sendPacket(new Packet0AWorldTime(player.getWorld().getTime()));
         player.sendPacket(new Packet3BSetCommandsEnabled(true));
         this.server.getPlayerList().addPlayer(player);
-        player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.PLAYER_RESPAWN));
+        player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.RESPAWN));
         player.sendPacket(new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
         player.sendPacket(new Packet1DUpdateAttributes(
-                player.getEntityID(),
-                player.getAttribute(Attribute.MAX_HEALTH),
-                player.getAttribute(Attribute.MAX_HUNGER),
-                player.getAttribute(Attribute.MOVEMENT_SPEED),
-                player.getAttribute(Attribute.EXPERIENCE_LEVEL),
-                player.getAttribute(Attribute.EXPERIENCE)
+            player.getEntityID(),
+            player.getAttribute(Attribute.MAX_HEALTH),
+            player.getAttribute(Attribute.MAX_HUNGER),
+            player.getAttribute(Attribute.MOVEMENT_SPEED),
+            player.getAttribute(Attribute.EXPERIENCE_LEVEL),
+            player.getAttribute(Attribute.EXPERIENCE)
         ));
         player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
         player.getAdventureSettings().update();
@@ -138,7 +140,7 @@ public class PlayerProvider {
             this.server.getPlayerList().removePlayer(player);
             this.playersByNames.remove(player.getName().toLowerCase());
             this.playersByUUIDs.remove(player.getUUID());
-            if(wasOnline) {
+            if (wasOnline) {
                 player.getWorld().removePlayerFromWorld(player);
             }
             this.server.getLogger().info("%s disconnected: %s", player.getName(), player.getDisconnectingReason());
@@ -151,9 +153,8 @@ public class PlayerProvider {
     }
 
     public Collection<LPlayer> getOnlinePlayersWithout(LPlayer... without) {
-        Set<LPlayer> players = new HashSet<>();
-        players.addAll(getOnlinePlayers());
-        for(LPlayer player : without)
+        Set<LPlayer> players = new HashSet<>(getOnlinePlayers());
+        for (LPlayer player : without)
             players.remove(player);
         return players;
     }

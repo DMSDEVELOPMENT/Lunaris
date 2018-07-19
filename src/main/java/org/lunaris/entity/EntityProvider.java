@@ -1,10 +1,9 @@
 package org.lunaris.entity;
 
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network.PlayerConnection;
-import org.lunaris.network_old.protocol.packet.Packet01Login;
-import org.lunaris.network_old.raknet.session.RakNetClientSession;
 import org.lunaris.api.world.Location;
+import org.lunaris.network.PlayerConnection;
+import org.lunaris.network.packet.Packet01Login;
 
 import java.util.function.Function;
 
@@ -36,14 +35,14 @@ public class EntityProvider {
         entity.setPositionAndRotation(location);
         float hwidth = entity.getWidth() / 2;
         entity.getBoundingBox().setBounds(
-                entity.getX() - hwidth,
-                entity.getY(),
-                entity.getZ() - hwidth,
-                entity.getX() + hwidth,
-                entity.getY() + entity.getHeight(),
-                entity.getZ() + hwidth
+            entity.getX() - hwidth,
+            entity.getY(),
+            entity.getZ() - hwidth,
+            entity.getX() + hwidth,
+            entity.getY() + entity.getHeight(),
+            entity.getZ() + hwidth
         );
-        if(spawnController != null && !spawnController.apply(entity))
+        if (spawnController != null && !spawnController.apply(entity))
             return null;
         entity.getWorld().addEntityToWorld(entity);
         return entity;

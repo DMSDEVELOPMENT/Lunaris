@@ -13,10 +13,9 @@ import org.lunaris.inventory.LInventory;
 import org.lunaris.inventory.InventoryManager;
 import org.lunaris.inventory.LPlayerInventory;
 import org.lunaris.api.item.ItemStack;
+import org.lunaris.network.Packet;
 import org.lunaris.network.PlayerConnection;
 import org.lunaris.network.packet.*;
-import org.lunaris.network_old.protocol.MinePacket;
-import org.lunaris.network_old.protocol.packet.Packet01Login;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.api.world.Location;
 import org.lunaris.api.world.Sound;
@@ -124,7 +123,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
     @Override
     public void sendMessage(String message) {
-        sendPacket(new Packet09Text(Packet09Text.MessageType.RAW, "", message));
+        sendPacket(new Packet09Text(Packet09Text.MessageType.CLIENT_MESSAGE, "", message));
     }
 
     @Override
@@ -196,12 +195,12 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
         return true;
     }
 
-    public void sendPacket(MinePacket packet) {
+    public void sendPacket(Packet packet) {
         LunarisServer.getInstance().getNetworkManager().sendPacket(this, packet);
     }
 
     @Override
-    public void sendPacketToWatchersAndMe(MinePacket packet) {
+    public void sendPacketToWatchersAndMe(Packet packet) {
         Collection<LPlayer> watchers = getWatchers();
         watchers.add(this);
         LunarisServer.getInstance().getNetworkManager().sendPacket(watchers, packet);
@@ -435,7 +434,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     }
 
     @Override
-    public MinePacket createSpawnPacket() {
+    public Packet createSpawnPacket() {
         return new Packet0CAddPlayer(this);
     }
 

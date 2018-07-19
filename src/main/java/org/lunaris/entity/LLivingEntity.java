@@ -12,7 +12,7 @@ import org.lunaris.api.event.entity.EntityDeathEvent;
 import org.lunaris.api.event.player.PlayerDeathEvent;
 import org.lunaris.item.potion.PotionEffect;
 import org.lunaris.item.potion.PotionEffectType;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
 import org.lunaris.network.packet.Packet0DAddEntity;
 import org.lunaris.network.packet.Packet1BEntityEvent;
 import org.lunaris.network.packet.Packet2DRespawn;
@@ -141,7 +141,7 @@ public abstract class LLivingEntity extends LEntity implements LivingEntity {
     }
 
     @Override
-    public MinePacket createSpawnPacket() {
+    public Packet createSpawnPacket() {
         return new Packet0DAddEntity(this);
     }
 

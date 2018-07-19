@@ -15,49 +15,49 @@ import java.util.Map;
 public class Packet0BStartGame extends Packet {
 
     // Entity data
-    private long entityId;
-    private long runtimeEntityId;
-    private int gamemode;
-    private Location spawn;
+    public long entityId;
+    public long runtimeEntityId;
+    public int gamemode;
+    public Location spawn;
 
     // Level data
-    private int seed;
-    private int dimension;
-    private int generator = 1;
-    private int worldGamemode;
-    private int difficulty;
-    private int x;
-    private int y;
-    private int z;
-    private boolean hasAchievementsDisabled = true;
-    private int dayCycleStopTime = -1; //-1 = not stopped, any positive value = stopped at that time
-    private boolean eduMode;
-    private float rainLevel;
-    private float lightningLevel;
-    private boolean isMultiplayerGame = true;
-    private boolean hasLANBroadcast = true;
-    private boolean hasXboxLiveBroadcast = false;
-    private boolean commandsEnabled;
-    private boolean isTexturePacksRequired;
+    public int seed;
+    public int dimension;
+    public int generator = 1;
+    public int worldGamemode;
+    public int difficulty;
+    public int worldSpawnX;
+    public int worldSpawnY;
+    public int worldSpawnZ;
+    public boolean hasAchievementsDisabled = true;
+    public int dayCycleStopTime = -1; //-1 = not stopped, any positive value = stopped at that time
+    public boolean eduMode;
+    public float rainLevel;
+    public float lightningLevel;
+    public boolean isMultiplayerGame = true;
+    public boolean hasLANBroadcast = true;
+    public boolean hasXboxLiveBroadcast = false;
+    public boolean commandsEnabled;
+    public boolean isTexturePacksRequired;
 
     // Gamerule data
-    private Map<Gamerule, Object> gamerules;
-    private boolean hasBonusChestEnabled;
-    private boolean hasStartWithMapEnabled;
-    private boolean hasTrustPlayersEnabled;
-    private int defaultPlayerPermission = 1;
-    private int xboxLiveBroadcastMode = 0;
-    private boolean hasPlatformBroadcast = false;
-    private int platformBroadcastMode = 0;
-    private boolean xboxLiveBroadcastIntent = false;
+    public Map<Gamerule, Object> gamerules;
+    public boolean hasBonusChestEnabled;
+    public boolean hasStartWithMapEnabled;
+    public boolean hasTrustPlayersEnabled;
+    public int defaultPlayerPermission = 1;
+    public int xboxLiveBroadcastMode = 0;
+    public boolean hasPlatformBroadcast = false;
+    public int platformBroadcastMode = 0;
+    public boolean xboxLiveBroadcastIntent = false;
 
     // World data
-    private String levelId; //base64 string, usually the same as world folder name in vanilla
-    private String worldName;
-    private String templateName;
-    private boolean unknown1 = true;
-    private long currentTick;
-    private int enchantmentSeed;
+    public String levelId; //base64 string, usually the same as world folder name in vanilla
+    public String worldName;
+    public String templateName;
+    public boolean unknown1 = true;
+    public long currentTick;
+    public int enchantmentSeed;
 
     @Override
     public byte getID() {

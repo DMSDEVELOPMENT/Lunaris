@@ -6,6 +6,7 @@ import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.LPlayerInventory;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.api.material.Material;
+import org.lunaris.network.Packet;
 import org.lunaris.network_old.protocol.MinePacket;
 import org.lunaris.network.packet.Packet0ERemoveEntity;
 import org.lunaris.network.packet.Packet12MoveEntity;
@@ -41,7 +42,7 @@ public class TrackedEntity {
     /**
      * Отпраляет пакет всем игрокам, смотрящим за этим ентити
      */
-    public void sendPacket(MinePacket packet) {
+    public void sendPacket(Packet packet) {
         LunarisServer.getInstance().getNetworkManager().sendPacket(trackingPlayers, packet);
     }
 

@@ -8,7 +8,7 @@ import org.lunaris.entity.data.*;
 import org.lunaris.api.entity.EntityType;
 import org.lunaris.entity.misc.Movable;
 import org.lunaris.material.block.liquid.LiquidBlock;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.world.LChunk;
 import org.lunaris.api.world.Location;
@@ -307,13 +307,13 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
      */
     public abstract void fall();
 
-    public abstract MinePacket createSpawnPacket();
+    public abstract Packet createSpawnPacket();
 
-    public void sendPacketToWatchers(MinePacket packet) {
+    public void sendPacketToWatchers(Packet packet) {
         this.world.getEntityTracker().sendPacketToWatchers(this, packet);
     }
 
-    public void sendPacketToWatchersAndMe(MinePacket packet) {
+    public void sendPacketToWatchersAndMe(Packet packet) {
         sendPacketToWatchers(packet);
     }
 

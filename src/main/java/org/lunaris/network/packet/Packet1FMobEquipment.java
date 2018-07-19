@@ -1,13 +1,15 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
+
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 
 /**
  * Created by RINES on 01.10.17.
  */
-public class Packet1FMobEquipment extends MinePacket {
+public class Packet1FMobEquipment extends Packet {
 
     private long entityID;
     private ItemStack item;
@@ -24,23 +26,23 @@ public class Packet1FMobEquipment extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x1f;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
-        this.entityID = buffer.readEntityRuntimeId();
-        this.item = buffer.readItemStack();
+    public void read(PacketBuffer buffer) {
+        this.entityID = buffer.readUnsignedVarLong();
+        this.item = SerializationUtil.readItemStack(buffer);
         this.inventorySlot = buffer.readByte();
         this.hotbarSlot = buffer.readByte();
         this.inventoryId = buffer.readByte();
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeEntityRuntimeId(this.entityID);
-        buffer.writeItemStack(this.item);
+    public void write(PacketBuffer buffer) {
+        buffer.writeUnsignedVarLong(this.entityID);
+        SerializationUtil.writeItemStack(this.item, buffer);
         buffer.writeByte((byte) this.inventorySlot);
         buffer.writeByte((byte) this.hotbarSlot);
         buffer.writeByte((byte) this.inventoryId);

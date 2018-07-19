@@ -4,6 +4,7 @@ import org.lunaris.api.world.BlockFace;
 import org.lunaris.api.item.ItemStack;
 import org.lunaris.network.packet.Packet1EInventoryTransaction;
 import org.lunaris.api.util.math.Vector3d;
+import org.lunaris.util.math.Vector3f;
 import org.lunaris.world.BlockVector;
 
 /**
@@ -16,13 +17,13 @@ public class UseItemData implements TransactionData {
     private BlockFace blockFace;
     private int hotbarSlot;
     private ItemStack itemInHand;
-    private Vector3d playerPosition;
-    private Vector3d clickPosition;
+    private Vector3f playerPosition;
+    private Vector3f clickPosition;
 
     public UseItemData() {}
 
     public UseItemData(Packet1EInventoryTransaction.UseItemActionType type, BlockVector blockPosition,
-                       BlockFace blockFace, int hotbarSlot, ItemStack itemInHand, Vector3d playerPosition, Vector3d clickPosition) {
+                       BlockFace blockFace, int hotbarSlot, ItemStack itemInHand, Vector3f playerPosition, Vector3f clickPosition) {
         this.type = type;
         this.blockPosition = blockPosition;
         this.blockFace = blockFace;
@@ -72,19 +73,19 @@ public class UseItemData implements TransactionData {
         this.itemInHand = itemInHand;
     }
 
-    public Vector3d getPlayerPosition() {
+    public Vector3f getPlayerPosition() {
         return this.playerPosition;
     }
 
-    public void setPlayerPosition(Vector3d playerPosition) {
+    public void setPlayerPosition(Vector3f playerPosition) {
         this.playerPosition = playerPosition;
     }
 
-    public Vector3d getClickPosition() {
+    public Vector3f getClickPosition() {
         return this.clickPosition;
     }
 
-    public void setClickPosition(Vector3d clickPosition) {
+    public void setClickPosition(Vector3f clickPosition) {
         this.clickPosition = clickPosition;
     }
 }

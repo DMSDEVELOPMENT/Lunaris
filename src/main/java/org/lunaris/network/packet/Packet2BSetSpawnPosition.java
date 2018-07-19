@@ -1,12 +1,14 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 
 /**
  * Created by RINES on 14.09.17.
  */
-public class Packet2BSetSpawnPosition extends MinePacket {
+public class Packet2BSetSpawnPosition extends Packet {
 
     private SpawnType spawnType;
     private int x, y, z;
@@ -23,19 +25,19 @@ public class Packet2BSetSpawnPosition extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x2b;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeVarInt(this.spawnType.ordinal());
-        buffer.writeBlockVector(this.x, this.y, this.z);
+    public void write(PacketBuffer buffer) {
+        buffer.writeSignedVarInt(this.spawnType.ordinal());
+        SerializationUtil.writeBlockVector(this.x, this.y, this.z, buffer);
         buffer.writeBoolean(this.spawnForced);
     }
 

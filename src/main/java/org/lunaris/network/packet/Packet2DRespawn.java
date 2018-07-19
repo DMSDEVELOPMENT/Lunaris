@@ -1,12 +1,13 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+
+import org.lunaris.network.Packet;
 
 /**
  * Created by RINES on 14.09.17.
  */
-public class Packet2DRespawn extends MinePacket {
+public class Packet2DRespawn extends Packet {
 
     private float x, y, z;
 
@@ -19,18 +20,20 @@ public class Packet2DRespawn extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x2d;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeVector3f(this.x, this.y, this.z);
+    public void write(PacketBuffer buffer) {
+        buffer.writeLFloat(this.x);
+        buffer.writeLFloat(this.y);
+        buffer.writeLFloat(this.z);
     }
 
 }

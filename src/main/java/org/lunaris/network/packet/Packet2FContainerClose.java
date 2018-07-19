@@ -1,12 +1,13 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+
+import org.lunaris.network.Packet;
 
 /**
  * Created by RINES on 12.10.17.
  */
-public class Packet2FContainerClose extends MinePacket {
+public class Packet2FContainerClose extends Packet {
 
     private byte inventoryID;
 
@@ -21,17 +22,17 @@ public class Packet2FContainerClose extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x2f;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
         this.inventoryID = buffer.readByte();
     }
 
     @Override
-    public void write(MineBuffer buffer) {
+    public void write(PacketBuffer buffer) {
         buffer.writeByte(this.inventoryID);
     }
 

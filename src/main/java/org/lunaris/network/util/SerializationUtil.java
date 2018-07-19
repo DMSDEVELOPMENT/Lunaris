@@ -23,9 +23,13 @@ public class SerializationUtil {
     }
 
     public static void writeBlockVector(BlockVector vector, PacketBuffer buffer) {
-        buffer.writeSignedVarInt(vector.getX());
-        buffer.writeUnsignedVarLong(vector.getY());
-        buffer.writeSignedVarInt(vector.getZ());
+        writeBlockVector(vector.x, vector.y, vector.z, buffer);
+    }
+
+    public static void writeBlockVector(int x, int y, int z, PacketBuffer buffer) {
+        buffer.writeSignedVarInt(x);
+        buffer.writeUnsignedVarLong(y);
+        buffer.writeSignedVarInt(z);
     }
 
     public static Vector3f readVector3f(PacketBuffer buffer) {
@@ -37,7 +41,7 @@ public class SerializationUtil {
         buffer.writeLFloat(vector.getY());
         buffer.writeLFloat(vector.getZ());
     }
-    
+
     /**
      * Read a item stack from the packet buffer
      *
@@ -171,14 +175,14 @@ public class SerializationUtil {
             }
         });
     }
-    
+
     public static void writeMetadata(EntityMetadata metadata, PacketBuffer buffer) {
         Map<Integer, EntityData> map = metadata.getMap();
         buffer.writeUnsignedVarInt(map.size());
         map.forEach((id, data) -> {
             buffer.writeUnsignedVarInt(id);
             buffer.writeUnsignedVarInt(data.getTypeId());
-            switch(data.getType()) {
+            switch (data.getType()) {
                 case BYTE:
                     buffer.writeByte(((ByteEntityData) data).getData().byteValue());
                     break;
@@ -229,5 +233,11 @@ public class SerializationUtil {
 
     public static float readByteRotation(PacketBuffer buffer) {
         return buffer.readByte() * BYTE_ROTATION_DIVIDOR;
+    }
+
+    public static void writeByteArray(byte[] array, PacketBuffer buffer) {
+        buffer.writeUnsignedVarInt(array.length);
+        if (array.length > 0)
+            buffer.writeBytes(array);
     }
 }

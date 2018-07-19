@@ -1,14 +1,15 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
 import org.lunaris.entity.LPlayer;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 import org.lunaris.util.math.Vector3f;
 
 /**
  * Created by RINES on 14.09.17.
  */
-public class Packet13MovePlayer extends MinePacket {
+public class Packet13MovePlayer extends Packet {
 
     public static final int MODE_NORMAL = 0;
     public static final int MODE_RESET = 1;
@@ -47,42 +48,41 @@ public class Packet13MovePlayer extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x13;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
-        this.entityId = buffer.readEntityRuntimeId();
-        Vector3f position = buffer.readVector3f();
+    public void read(PacketBuffer buffer) {
+        this.entityId = buffer.readUnsignedVarLong();
+        Vector3f position = SerializationUtil.readVector3f(buffer);
         this.x = position.x;
         this.y = position.y;
         this.z = position.z;
-        this.pitch = buffer.readFloat();
-        this.headYaw = buffer.readFloat();
-        this.yaw = buffer.readFloat();
+        position = SerializationUtil.readVector3f(buffer);
+        this.pitch = position.x;
+        this.headYaw = position.y;
+        this.yaw = position.z;
         this.mode = buffer.readByte();
         this.onGround = buffer.readBoolean();
-        this.ridingEntityId = buffer.readVarLong();
-        if(this.mode == MODE_TELEPORT) {
-            this.unknown1 = buffer.readUnsignedInt();
-            this.unknown2 = buffer.readUnsignedInt();
+        this.ridingEntityId = buffer.readUnsignedVarLong();
+        if (this.mode == MODE_TELEPORT) {
+            this.unknown1 = buffer.readLInt();
+            this.unknown2 = buffer.readLInt();
         }
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeEntityRuntimeId(this.entityId);
-        buffer.writeVector3f(this.x, this.y, this.z);
-        buffer.writeFloat(this.pitch);
-        buffer.writeFloat(this.headYaw);
-        buffer.writeFloat(this.yaw);
+    public void write(PacketBuffer buffer) {
+        buffer.writeUnsignedVarLong(this.entityId);
+        SerializationUtil.writeVector3f(new Vector3f(this.x, this.y, this.z), buffer);
+        SerializationUtil.writeVector3f(new Vector3f(this.pitch, this.headYaw, this.yaw), buffer);
         buffer.writeByte((byte) this.mode);
         buffer.writeBoolean(this.onGround);
-        buffer.writeVarLong(this.ridingEntityId);
-        if(this.mode == MODE_TELEPORT) {
-            buffer.writeUnsignedInt(this.unknown1);
-            buffer.writeUnsignedInt(this.unknown2);
+        buffer.writeUnsignedVarLong(this.ridingEntityId);
+        if (this.mode == MODE_TELEPORT) {
+            buffer.writeLInt(this.unknown1);
+            buffer.writeLInt(this.unknown2);
         }
     }
 

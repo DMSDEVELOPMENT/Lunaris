@@ -24,6 +24,8 @@ public class Packet37AdventureSettings extends Packet {
         this.entityID = entityID;
     }
 
+    public Packet37AdventureSettings() {}
+
     @Override
     public byte getID() {
         return 0x37;

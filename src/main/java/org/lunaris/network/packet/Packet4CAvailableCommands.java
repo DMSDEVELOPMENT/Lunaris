@@ -1,9 +1,9 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
 import org.lunaris.command.Command;
 import org.lunaris.command.CommandParameter;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * @author xtrafrancyz
  */
-public class Packet4CAvailableCommands extends MinePacket {
+public class Packet4CAvailableCommands extends Packet {
     /**
      * This flag is set on all types EXCEPT the TEMPLATE type. Not completely sure what this is for, but it is required
      * for the argtype to work correctly. VALID seems as good a name as any.
@@ -88,22 +88,23 @@ public class Packet4CAvailableCommands extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x4c;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(MineBuffer buffer) {
+    public void write(PacketBuffer buffer) {
         // enum values
         buffer.writeUnsignedVarInt(enumValues.size());
         for (String value : enumValues)
             buffer.writeString(value);
 
+        //TODO: с мяты спиздить
         // postfix data # unknown
         buffer.writeUnsignedVarInt(0);
 
@@ -123,21 +124,22 @@ public class Packet4CAvailableCommands extends MinePacket {
             buffer.writeString(command.getName());
             buffer.writeString(command.getDescription());
 
+            //TODO: с мяты
             // Flags
             buffer.writeByte((byte) 0);
             buffer.writeByte((byte) CommandPermission.NORMAL.ordinal());
 
             if (command.getAliases().isEmpty())
-                buffer.writeUnsignedInt(-1);
+                buffer.writeLInt(-1);
             else
-                buffer.writeUnsignedInt(this.enumIndexes.get(command.getName() + "@alias"));
+                buffer.writeLInt(this.enumIndexes.get(command.getName() + "@alias"));
 
             buffer.writeUnsignedVarInt(command.getParametersVariants().size());
             for (CommandParameter[] parameters : command.getParametersVariants()) {
                 buffer.writeUnsignedVarInt(parameters.length);
                 for (CommandParameter parameter : parameters) {
                     buffer.writeString(parameter.name);
-                    buffer.writeUnsignedInt(getFlag(command, parameter));
+                    buffer.writeLInt(getFlag(command, parameter));
                     buffer.writeBoolean(parameter.optional);
                 }
             }
@@ -159,13 +161,13 @@ public class Packet4CAvailableCommands extends MinePacket {
         return enums.size() - 1;
     }
 
-    private void writeEnumIndex(int enumValueIndex, MineBuffer buffer) {
+    private void writeEnumIndex(int enumValueIndex, PacketBuffer buffer) {
         if (this.enumValues.size() < 256)
             buffer.writeByte((byte) enumValueIndex);
         else if (this.enumValues.size() < 65536)
-            buffer.writeUnsignedShort((short) enumValueIndex);
+            buffer.writeLShort((short) enumValueIndex);
         else
-            buffer.writeUnsignedInt(enumValueIndex);
+            buffer.writeLInt(enumValueIndex);
     }
 
     private int getFlag(Command command, CommandParameter parameter) {

@@ -1,13 +1,13 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+import org.lunaris.network.Packet;
 import org.lunaris.resourcepacks.ResourcePack;
 
 /**
  * Created by RINES on 13.09.17.
  */
-public class Packet07ResourcePackStack extends MinePacket {
+public class Packet07ResourcePackStack extends Packet {
 
     private boolean forced;
     private ResourcePack[] behaviourPackStack = new ResourcePack[0];
@@ -21,27 +21,29 @@ public class Packet07ResourcePackStack extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x07;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(MineBuffer buffer) {
+    public void write(PacketBuffer buffer) {
         buffer.writeBoolean(this.forced);
-        buffer.writeUnsignedShort((short) this.behaviourPackStack.length);
+        buffer.writeUnsignedVarInt(this.behaviourPackStack.length);
         for(ResourcePack pack : this.behaviourPackStack) {
             buffer.writeString(pack.getPackId());
             buffer.writeString(pack.getPackVersion());
+            buffer.writeString(""); //???
         }
-        buffer.writeUnsignedShort((short) this.resourcePackStack.length);
+        buffer.writeUnsignedVarInt(this.resourcePackStack.length);
         for(ResourcePack pack : this.resourcePackStack) {
             buffer.writeString(pack.getPackId());
             buffer.writeString(pack.getPackVersion());
+            buffer.writeString(""); //???
         }
     }
 

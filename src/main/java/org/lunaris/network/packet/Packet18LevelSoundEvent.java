@@ -1,7 +1,8 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 import org.lunaris.util.math.Vector3f;
 import org.lunaris.api.world.Location;
 import org.lunaris.api.world.Sound;
@@ -9,7 +10,7 @@ import org.lunaris.api.world.Sound;
 /**
  * Created by RINES on 28.09.17.
  */
-public class Packet18LevelSoundEvent extends MinePacket {
+public class Packet18LevelSoundEvent extends Packet {
 
     private Sound sound;
     private float x, y, z;
@@ -30,29 +31,29 @@ public class Packet18LevelSoundEvent extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x18;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
         this.sound = Sound.values()[buffer.readByte()];
-        Vector3f v = buffer.readVector3f();
+        Vector3f v = SerializationUtil.readVector3f(buffer);
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        this.extraData = buffer.readVarInt();
-        this.pitch = buffer.readVarInt();
+        this.extraData = buffer.readSignedVarInt();
+        this.pitch = buffer.readSignedVarInt();
         this.isBabyMob = buffer.readBoolean();
         this.isGlobal = buffer.readBoolean();
     }
 
     @Override
-    public void write(MineBuffer buffer) {
+    public void write(PacketBuffer buffer) {
         buffer.writeByte((byte) this.sound.ordinal());
-        buffer.writeVector3f(this.x, this.y, this.z);
-        buffer.writeVarInt(this.extraData);
-        buffer.writeVarInt(this.pitch);
+        SerializationUtil.writeVector3f(new Vector3f(this.x, this.y, this.z), buffer);
+        buffer.writeSignedVarInt(this.extraData);
+        buffer.writeSignedVarInt(this.pitch);
         buffer.writeBoolean(this.isBabyMob);
         buffer.writeBoolean(this.isGlobal);
     }

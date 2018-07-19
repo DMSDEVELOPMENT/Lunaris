@@ -1,25 +1,25 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+import org.lunaris.network.Packet;
 
 /**
  * Created by RINES on 05.10.17.
  */
-public class Packet04EncryptionResponse extends MinePacket {
+public class Packet04EncryptionResponse extends Packet {
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x04;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(MineBuffer buffer) {
+    public void write(PacketBuffer buffer) {
 
     }
 

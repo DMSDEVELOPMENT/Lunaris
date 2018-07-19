@@ -1,14 +1,14 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+import org.lunaris.network.Packet;
 
 /**
  * Created by RINES on 13.09.17.
  */
-public class Packet05Disconnect extends MinePacket {
+public class Packet05Disconnect extends Packet {
 
-    private boolean hideReason;
+    private boolean hideDisconnectionScreen;
     private String reason;
 
     public Packet05Disconnect() {
@@ -16,26 +16,27 @@ public class Packet05Disconnect extends MinePacket {
     }
 
     public Packet05Disconnect(String reason) {
-        if(reason == null || reason.isEmpty())
-            this.hideReason = true;
+        if (reason == null || reason.isEmpty()) {
+            this.hideDisconnectionScreen = false;
+            reason = "Good bye";
+        }
         this.reason = reason;
     }
 
     @Override
-    public int getId() {
-        return 5;
+    public byte getID() {
+        return 0x05;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeBoolean(this.hideReason);
-        if(!this.hideReason)
-            buffer.writeString(this.reason);
+    public void write(PacketBuffer buffer) {
+        buffer.writeBoolean(this.hideDisconnectionScreen);
+        buffer.writeString(this.reason);
     }
 
 }

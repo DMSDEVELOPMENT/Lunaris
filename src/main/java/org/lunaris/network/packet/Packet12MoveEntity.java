@@ -1,19 +1,23 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
 import org.lunaris.entity.LEntity;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 import org.lunaris.util.math.Vector3f;
 
 /**
  * Created by RINES on 30.09.17.
  */
-public class Packet12MoveEntity extends MinePacket {
+public class Packet12MoveEntity extends Packet {
+
+    private static final byte FLAG_ON_GROUND = 0x1;
+    private static final byte FLAG_TELEPORTED = 0x2;
 
     private long entityId;
     private float x, y, z;
     private float yaw, headYaw, pitch;
-    private boolean onGround, teleport;
+    private boolean onGround, teleported;
 
     public Packet12MoveEntity() {}
 
@@ -29,69 +33,63 @@ public class Packet12MoveEntity extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x12;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
-        this.entityId = buffer.readEntityRuntimeId();
-        Vector3f position = buffer.readVector3f();
-        this.x = position.x;
-        this.y = position.y;
-        this.z = position.z;
-        this.pitch = (float) (buffer.readByte() * (360d / 256d));
-        this.headYaw = (float) (buffer.readByte() * (360d / 256d));
-        this.yaw = (float) (buffer.readByte() * (360d / 256d));
-        this.onGround = buffer.readBoolean();
-        this.teleport = buffer.readBoolean();
+    public void read(PacketBuffer buffer) {
+
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeEntityRuntimeId(this.entityId);
-        buffer.writeVector3f(this.x, this.y, this.z);
-        buffer.writeByte((byte) (this.pitch / (360d / 256d)));
-        buffer.writeByte((byte) (this.headYaw / (360d / 256d)));
-        buffer.writeByte((byte) (this.yaw / (360d / 256d)));
-        buffer.writeBoolean(this.onGround);
-        buffer.writeBoolean(this.teleport);
+    public void write(PacketBuffer buffer) {
+        buffer.writeUnsignedVarLong(this.entityId);
+        byte flags = this.onGround ? FLAG_ON_GROUND : 0;
+        if (this.teleported) {
+            flags |= FLAG_TELEPORTED;
+        }
+        buffer.writeByte(flags);
+        SerializationUtil.writeVector3f(new Vector3f(this.x, this.y, this.z), buffer);
+        SerializationUtil.writeByteRotation(this.pitch, buffer);
+        SerializationUtil.writeByteRotation(this.headYaw, buffer);
+        SerializationUtil.writeByteRotation(this.yaw, buffer);
     }
 
     public long getEntityId() {
-        return entityId;
+        return this.entityId;
     }
 
     public float getX() {
-        return x;
+        return this.x;
     }
 
     public float getY() {
-        return y;
+        return this.y;
     }
 
     public float getZ() {
-        return z;
+        return this.z;
     }
 
     public float getYaw() {
-        return yaw;
+        return this.yaw;
     }
 
     public float getHeadYaw() {
-        return headYaw;
+        return this.headYaw;
     }
 
     public float getPitch() {
-        return pitch;
+        return this.pitch;
     }
 
     public boolean isOnGround() {
-        return onGround;
+        return this.onGround;
     }
 
     public boolean isTeleport() {
-        return teleport;
+        return this.teleported;
     }
 
 }

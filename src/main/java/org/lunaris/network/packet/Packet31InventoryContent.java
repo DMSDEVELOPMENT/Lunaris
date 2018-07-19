@@ -1,13 +1,14 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 
 /**
  * Created by RINES on 01.10.17.
  */
-public class Packet31InventoryContent extends MinePacket {
+public class Packet31InventoryContent extends Packet {
 
     private int inventoryId;
     private ItemStack[] items;
@@ -20,24 +21,20 @@ public class Packet31InventoryContent extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x31;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
         this.inventoryId = buffer.readUnsignedVarInt();
-        this.items = new ItemStack[buffer.readUnsignedVarInt()];
-        for(int i = 0; i < this.items.length; ++i)
-            this.items[i] = buffer.readItemStack();
+        this.items = SerializationUtil.readItemStacks(buffer);
     }
 
     @Override
-    public void write(MineBuffer buffer) {
+    public void write(PacketBuffer buffer) {
         buffer.writeUnsignedVarInt(this.inventoryId);
-        buffer.writeUnsignedVarInt(this.items.length);
-        for(ItemStack item : this.items)
-            buffer.writeItemStack(item);
+        SerializationUtil.writeItemStacks(this.items, buffer);
     }
 
     public enum InventoryContentType {

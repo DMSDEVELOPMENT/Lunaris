@@ -1,40 +1,41 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 import org.lunaris.world.BlockVector;
 
 /**
  * Created by RINES on 14.09.17.
  */
-public class Packet24PlayerAction extends MinePacket {
+public class Packet24PlayerAction extends Packet {
 
     private long entityId;
     private Action action;
     private int x, y, z, face;
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x24;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
-        this.entityId = buffer.readEntityRuntimeId();
-        this.action = Action.values()[buffer.readVarInt()];
-        BlockVector v = buffer.readBlockVector();
+    public void read(PacketBuffer buffer) {
+        this.entityId = buffer.readUnsignedVarLong();
+        this.action = Action.values()[buffer.readSignedVarInt()];
+        BlockVector v = SerializationUtil.readBlockVector(buffer);
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        this.face = buffer.readVarInt();
+        this.face = buffer.readSignedVarInt();
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeEntityRuntimeId(this.entityId);
-        buffer.writeVarInt(this.action.ordinal());
-        buffer.writeBlockVector(this.x, this.y, this.z);
-        buffer.writeVarInt(this.face);
+    public void write(PacketBuffer buffer) {
+        buffer.writeUnsignedVarLong(this.entityId);
+        buffer.writeSignedVarInt(this.action.ordinal());
+        SerializationUtil.writeBlockVector(new BlockVector(this.x, this.y, this.z), buffer);
+        buffer.writeSignedVarInt(this.face);
     }
 
     public long getEntityId() {

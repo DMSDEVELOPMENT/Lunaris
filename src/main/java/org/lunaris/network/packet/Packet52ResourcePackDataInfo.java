@@ -1,12 +1,13 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
+import org.lunaris.network.Packet;
 import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
 
 /**
  * Created by RINES on 13.09.17.
  */
-public class Packet52ResourcePackDataInfo extends MinePacket {
+public class Packet52ResourcePackDataInfo extends Packet {
 
     private String packID;
     private int maxChunkSize;
@@ -25,17 +26,17 @@ public class Packet52ResourcePackDataInfo extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x52;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(MineBuffer buffer) {
+    public void write(PacketBuffer buffer) {
         buffer.writeString(this.packID);
         buffer.writeUnsignedInt(this.maxChunkSize);
         buffer.writeUnsignedInt(this.chunksAmount);

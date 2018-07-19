@@ -1,13 +1,14 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 
 /**
  * Created by RINES on 01.10.17.
  */
-public class Packet32InventorySlot extends MinePacket {
+public class Packet32InventorySlot extends Packet {
 
     private int inventoryId;
     private int slot;
@@ -22,22 +23,22 @@ public class Packet32InventorySlot extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x32;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
         this.inventoryId = buffer.readUnsignedVarInt();
         this.slot = buffer.readUnsignedVarInt();
-        this.item = buffer.readItemStack();
+        this.item = SerializationUtil.readItemStack(buffer);
     }
 
     @Override
-    public void write(MineBuffer buffer) {
+    public void write(PacketBuffer buffer) {
         buffer.writeUnsignedVarInt(this.inventoryId);
         buffer.writeUnsignedVarInt(this.slot);
-        buffer.writeItemStack(this.item);
+        SerializationUtil.writeItemStack(this.item, buffer);
     }
 
 }

@@ -1,28 +1,28 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+import org.lunaris.network.Packet;
 
 /**
  * Created by RINES on 14.09.17.
  */
-public class Packet45RequestChunkRadius extends MinePacket {
+public class Packet45RequestChunkRadius extends Packet {
 
     private int radius;
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x45;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
-        this.radius = buffer.readVarInt();
+    public void read(PacketBuffer buffer) {
+        this.radius = buffer.readSignedVarInt();
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-
+    public void write(PacketBuffer buffer) {
+        buffer.writeSignedVarInt(this.radius);
     }
 
     public int getRadius() {

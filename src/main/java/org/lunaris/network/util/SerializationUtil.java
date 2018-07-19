@@ -8,6 +8,7 @@ import org.lunaris.api.world.BlockFace;
 import org.lunaris.api.world.Gamerule;
 import org.lunaris.entity.data.*;
 import org.lunaris.util.math.Vector3f;
+import org.lunaris.world.BlockVector;
 
 import java.util.Map;
 
@@ -16,6 +17,16 @@ import java.util.Map;
  */
 public class SerializationUtil {
     private static final float BYTE_ROTATION_DIVIDOR = 360f / 256f;
+
+    public static BlockVector readBlockVector(PacketBuffer buffer) {
+        return new BlockVector(buffer.readSignedVarInt(), buffer.readUnsignedVarInt(), buffer.readSignedVarInt());
+    }
+
+    public static void writeBlockVector(BlockVector vector, PacketBuffer buffer) {
+        buffer.writeSignedVarInt(vector.getX());
+        buffer.writeUnsignedVarLong(vector.getY());
+        buffer.writeSignedVarInt(vector.getZ());
+    }
     
     /**
      * Read a item stack from the packet buffer

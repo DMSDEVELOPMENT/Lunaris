@@ -1,13 +1,13 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
 import org.lunaris.entity.LEntity;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
 
 /**
  * Created by RINES on 14.09.17.
  */
-public class Packet28SetEntityMotion extends MinePacket {
+public class Packet28SetEntityMotion extends Packet {
 
     private long entityId;
     private float motionX;
@@ -28,19 +28,21 @@ public class Packet28SetEntityMotion extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x28;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeVarLong(this.entityId);
-        buffer.writeVector3f(this.motionX, this.motionY, this.motionZ);
+    public void write(PacketBuffer buffer) {
+        buffer.writeUnsignedVarLong(this.entityId);
+        buffer.writeLFloat(this.motionX);
+        buffer.writeLFloat(this.motionY);
+        buffer.writeLFloat(this.motionZ);
     }
 
 }

@@ -1,14 +1,14 @@
 package org.lunaris.network.packet;
 
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import io.gomint.jraknet.PacketBuffer;
+import org.lunaris.network.Packet;
 
 import java.util.Set;
 
 /**
  * Created by RINES on 14.09.17.
  */
-public class Packet37AdventureSettings extends MinePacket {
+public class Packet37AdventureSettings extends Packet {
 
     public static final int BITFLAG_SECOND_SET = 1 << 16;
 
@@ -25,28 +25,28 @@ public class Packet37AdventureSettings extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x37;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
+    public void read(PacketBuffer buffer) {
         this.flags = buffer.readUnsignedVarLong();
         this.commandPermissions = Packet4CAvailableCommands.CommandPermission.values()[(int) buffer.readUnsignedVarLong()];
         this.flags2 = buffer.readUnsignedVarLong();
         this.playerPermission = buffer.readUnsignedVarLong();
         this.customFlags = buffer.readUnsignedVarLong();
-        this.entityID = buffer.readUnsignedLong();
+        this.entityID = buffer.readLLong();
     }
 
     @Override
-    public void write(MineBuffer buffer) {
+    public void write(PacketBuffer buffer) {
         buffer.writeUnsignedVarLong(this.flags);
         buffer.writeUnsignedVarLong(this.commandPermissions.ordinal());
         buffer.writeUnsignedVarLong(this.flags2);
         buffer.writeUnsignedVarLong(this.playerPermission);
         buffer.writeUnsignedVarLong(this.customFlags);
-        buffer.writeUnsignedLong(this.entityID);
+        buffer.writeLLong(this.entityID);
     }
 
     public Packet37AdventureSettings flag(Flag flag, boolean setOrUnset) {

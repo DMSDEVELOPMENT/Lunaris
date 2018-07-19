@@ -1,13 +1,14 @@
 package org.lunaris.network.packet;
 
+import io.gomint.jraknet.PacketBuffer;
 import org.lunaris.api.item.ItemStack;
-import org.lunaris.network_old.protocol.MineBuffer;
-import org.lunaris.network_old.protocol.MinePacket;
+import org.lunaris.network.Packet;
+import org.lunaris.network.util.SerializationUtil;
 
 /**
  * Created by RINES on 01.10.17.
  */
-public class Packet20MobArmorEquipment extends MinePacket {
+public class Packet20MobArmorEquipment extends Packet {
 
     private long entityID;
     private ItemStack[] armor = new ItemStack[4];
@@ -20,22 +21,22 @@ public class Packet20MobArmorEquipment extends MinePacket {
     }
 
     @Override
-    public int getId() {
+    public byte getID() {
         return 0x20;
     }
 
     @Override
-    public void read(MineBuffer buffer) {
-        this.entityID = buffer.readEntityRuntimeId();
+    public void read(PacketBuffer buffer) {
+        this.entityID = buffer.readUnsignedVarLong();
         for(int i = 0; i < this.armor.length; ++i)
-            this.armor[i] = buffer.readItemStack();
+            this.armor[i] = SerializationUtil.readItemStack(buffer);
     }
 
     @Override
-    public void write(MineBuffer buffer) {
-        buffer.writeEntityRuntimeId(this.entityID);
+    public void write(PacketBuffer buffer) {
+        buffer.writeUnsignedVarLong(this.entityID);
         for(ItemStack is : this.armor)
-            buffer.writeItemStack(is);
+            SerializationUtil.writeItemStack(is, buffer);
     }
 
 }

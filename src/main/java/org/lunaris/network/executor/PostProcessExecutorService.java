@@ -1,5 +1,7 @@
 package org.lunaris.network.executor;
 
+import org.lunaris.LunarisServer;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,7 +19,7 @@ public class PostProcessExecutorService {
 
     public PostProcessExecutor getExecutor() {
         for (PostProcessExecutor executor : this.executors) {
-            if (executor.getConnectionsInUse().get() < 100) {
+            if (executor.getConnectionsInUse().get() < LunarisServer.getInstance().getServerSettings().getPlayersPerPacketsSendingThread()) {
                 executor.getConnectionsInUse().incrementAndGet();
                 return executor;
             }

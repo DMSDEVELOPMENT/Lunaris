@@ -29,8 +29,6 @@ import java.util.function.LongConsumer;
  */
 public class NetworkManager {
 
-    public final static long NETWORK_TICK = Scheduler.ONE_TICK_IN_MILLIS / 5;
-
     private final LunarisServer server;
     private final ServerSocket serverSocket;
     private final ScheduledExecutorService executor = Scheduler.createScheduledExecutor("Network Ticker", 1);
@@ -58,7 +56,7 @@ public class NetworkManager {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }, 0L, NETWORK_TICK, TimeUnit.MILLISECONDS);
+        }, 0L, server.getServerSettings().getNetworkThreadTickRate(), TimeUnit.MILLISECONDS);
     }
 
     public void shutdown() {

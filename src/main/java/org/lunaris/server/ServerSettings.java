@@ -39,7 +39,9 @@ public class ServerSettings {
 
     private final int timingsHistoryLength;
 
-    private final float mtuScaleFactor;
+    private final int playersPerPacketsSendingThread;
+
+    private final int networkThreadTickRate;
 
     private final IngameSettings ingameSettings;
 
@@ -58,8 +60,9 @@ public class ServerSettings {
             this.serverName = config.getOrSetString("server-name", "Lunaris Test Server");
             this.supportedClientVersion = server.getSupportedClientVersion();
             this.maxPlayersOnServer = config.getOrSetInt("max-players", 20);
-            this.networkCompressionLevel = config.getOrSetInt("network_old.compression-level", 1);
-            this.mtuScaleFactor = (float) config.getOrSetDouble("network_old.mtu-scale-factor", 2F / 3F);
+            this.networkCompressionLevel = config.getOrSetInt("network.compression-level", 1);
+            this.playersPerPacketsSendingThread = config.getOrSetInt("network.players-per-packets-sending-thread", 25);
+            this.networkThreadTickRate = config.getOrSetInt("network.thread-tick-rate-in-millis", 10);
             this.defaultGamemode = Gamemode.values()[config.getOrSetInt("default-gamemode", 0)];
             this.chunksView = config.getOrSetInt("chunks-view", 6);
             this.unloadChunks = config.getOrSetBoolean("unload-chunks", true);
@@ -147,8 +150,12 @@ public class ServerSettings {
         return this.timingsHistoryLength;
     }
 
-    public float getMtuScaleFactor() {
-        return this.mtuScaleFactor;
+    public int getPlayersPerPacketsSendingThread() {
+        return this.playersPerPacketsSendingThread;
+    }
+
+    public int getNetworkThreadTickRate() {
+        return this.networkThreadTickRate;
     }
 
     public IngameSettings getIngameSettings() {

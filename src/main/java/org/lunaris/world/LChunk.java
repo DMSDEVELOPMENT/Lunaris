@@ -143,10 +143,14 @@ public abstract class LChunk implements Chunk {
     }
 
     /**
-     * Отсылает пакет всем игрокам, которые видят этот чанк (но могу ти не находиться в нем).
+     * Отсылает пакет всем игрокам, которые видят этот чанк (но могут и не находиться в нем).
      */
     public void sendPacket(Packet packet) {
         LunarisServer.getInstance().getNetworkManager().sendPacket(getWatcherPlayers(), packet);
+    }
+
+    public void sendPacketImmediately(Packet packet) {
+        LunarisServer.getInstance().getNetworkManager().sendPacketImmediately(getWatcherPlayers(), packet);
     }
 
     public LWorld getWorld() {

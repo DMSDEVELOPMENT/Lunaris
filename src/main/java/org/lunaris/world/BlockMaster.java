@@ -127,7 +127,7 @@ public class BlockMaster {
     public void onBlockStopBreak(Packet24PlayerAction packet) {
         LPlayer player = packet.getConnection().getPlayer();
         if (packet.getX() != 0 || packet.getY() != 0 || packet.getZ() != 0) {
-            ((LChunk) player.getLocation().getChunk()).sendPacket(
+            ((LChunk) player.getLocation().getChunk()).sendPacketImmediately(
                 new Packet19LevelEvent(
                     Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
                     packet.getX(), packet.getY(), packet.getZ(),

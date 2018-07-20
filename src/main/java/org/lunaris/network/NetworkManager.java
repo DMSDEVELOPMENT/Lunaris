@@ -51,9 +51,13 @@ public class NetworkManager {
         this.serverSocket = new ServerSocket(200);
         initServerSocket();
         this.executor.scheduleAtFixedRate(() -> {
-            long current = System.currentTimeMillis();
-            tick(current, current - this.previousTickTime);
-            this.previousTickTime = current;
+            try {
+                long current = System.currentTimeMillis();
+                tick(current, current - this.previousTickTime);
+                this.previousTickTime = current;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }, 0L, NETWORK_TICK, TimeUnit.MILLISECONDS);
     }
 

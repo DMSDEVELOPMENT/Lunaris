@@ -207,6 +207,10 @@ public class PlayerConnection {
         }
         buffer.readShort(); //???
         Packet packet = this.networkManager.getPacketRegistry().constructPacket(packetID);
+        if (packet == null) {
+            LunarisServer.getInstance().getLogger().info("Received packet of unknown id: 0x" + Integer.toHexString(packetID));
+            return;
+        }
         packet.read(buffer);
         packet.setConnection(this);
         PacketReceivedAsyncEvent event = new PacketReceivedAsyncEvent(packet);

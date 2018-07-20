@@ -93,7 +93,7 @@ public class PlayerProvider {
         player.sendPacket(new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
         player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
         player.sendPacket(new Packet0AWorldTime(player.getWorld().getTime()));
-//        player.sendPacket(new Packet3CSetDifficulty(((LWorld) loc.getWorld()).getDifficulty()));
+        player.sendPacket(new Packet3CSetDifficulty(((LWorld) loc.getWorld()).getDifficulty()));
         player.sendPacket(new Packet3BSetCommandsEnabled(true));
         player.sendPacket(new Packet37AdventureSettings());
         player.getAdventureSettings().update();

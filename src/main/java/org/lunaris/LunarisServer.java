@@ -157,6 +157,9 @@ public class LunarisServer implements IServer {
 
             @EventHandler
             public void onReceiving(PacketReceivedAsyncEvent e) {
+                if (e.getPacket().getID() == 0x13) {
+                    return;
+                }
                 PlayerConnection connection = e.getPacket().getConnection();
                 String name = connection.getPlayer() == null ? "---" : connection.getPlayer().getName();
                 logger.info("Received packet %s from %s", e.getPacket().getClass().getSimpleName(), name);

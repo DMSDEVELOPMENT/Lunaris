@@ -8,6 +8,7 @@ import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.LPlayerInventory;
 import org.lunaris.network.Packet;
+import org.lunaris.network.PlayerConnectionState;
 import org.lunaris.network.packet.*;
 import org.lunaris.util.math.MathHelper;
 
@@ -41,7 +42,7 @@ public class TrackedEntity {
         LunarisServer.getInstance().getNetworkManager().sendPacket(trackingPlayers, packet);
     }
 
-    public void update(Collection<LPlayer> players) {
+    public void update() {
         sendMetadata();
         if (entity.hasJustMoved()) {
             sendPacket(new Packet12MoveEntity(entity));

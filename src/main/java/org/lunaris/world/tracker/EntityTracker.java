@@ -1,12 +1,13 @@
 package org.lunaris.world.tracker;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.lunaris.LunarisServer;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.network.Packet;
 import org.lunaris.network.packet.Packet0ERemoveEntity;
 import org.lunaris.world.LWorld;
-import org.lunaris.world.util.LongObjectHashMap;
 
 import java.util.Set;
 
@@ -16,12 +17,12 @@ import java.util.Set;
 public class EntityTracker {
     private final LunarisServer server;
     private final LWorld world;
-    private LongObjectHashMap<TrackedEntity> entities;
+    private Long2ObjectMap<TrackedEntity> entities;
 
     public EntityTracker(LunarisServer server, LWorld world) {
         this.server = server;
         this.world = world;
-        this.entities = new LongObjectHashMap<>();
+        this.entities = new Long2ObjectOpenHashMap<>();
     }
 
     public void track(LEntity entity) {
@@ -62,7 +63,7 @@ public class EntityTracker {
 
     public void tick() {
         for (TrackedEntity entity : entities.values()) {
-            entity.update(world.getPlayers());
+            entity.update();
         }
     }
 }

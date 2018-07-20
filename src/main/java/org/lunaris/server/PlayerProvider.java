@@ -125,8 +125,7 @@ public class PlayerProvider {
         boolean wasOnline = player.isOnline();
         player.setIngameState(LPlayer.IngameState.DISCONNECTING);
         this.scheduler.run(() -> {
-            PlayerDisconnectEvent event = new PlayerDisconnectEvent(player);
-            this.server.getEventManager().call(event);
+            new PlayerDisconnectEvent(player).call();
             this.server.getPlayerList().removePlayer(player);
             this.playersByNames.remove(player.getName().toLowerCase());
             this.playersByUUIDs.remove(player.getUUID());

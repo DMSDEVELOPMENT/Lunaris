@@ -69,12 +69,12 @@ public class PlayerConnection {
     void close() {
         LPlayer player = getPlayer();
         if (player != null) {
-            new PlayerDisconnectEvent(player).call();
             LunarisServer.getInstance().getPlayerProvider().removePlayer(player);
         }
         if (this.postProcessExecutor != null) {
             this.networkManager.getPostProcessExecutorService().releaseExecutor(this.postProcessExecutor);
         }
+        disconnect(null);
     }
 
     public long getGuid() {
@@ -224,6 +224,7 @@ public class PlayerConnection {
     private void internalClose(String reason) {
         if (this.connection.isConnected() && !this.connection.isDisconnecting()) {
             this.connection.disconnect(reason);
+            this.connectionState = PlayerConnectionState.DISCONNECTED;
         }
     }
 

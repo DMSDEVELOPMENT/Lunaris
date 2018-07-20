@@ -1,5 +1,6 @@
 package org.lunaris.world.util;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import org.lunaris.api.world.Location;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.server.IServer;
@@ -20,9 +21,9 @@ public class ChunkUnloaderTask implements Runnable {
 
     private final LWorld world;
 
-    private final LongObjectHashMap<LChunk> chunks;
+    private final Long2ObjectMap<LChunk> chunks;
 
-    public ChunkUnloaderTask(IServer server, LWorld world, LongObjectHashMap<LChunk> chunks) {
+    public ChunkUnloaderTask(IServer server, LWorld world, Long2ObjectMap<LChunk> chunks) {
         this.server = server;
         this.world = world;
         this.chunks = chunks;

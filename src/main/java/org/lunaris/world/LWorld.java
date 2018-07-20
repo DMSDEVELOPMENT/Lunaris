@@ -1,6 +1,8 @@
 package org.lunaris.world;
 
 import co.aikar.timings.Timings;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.lunaris.LunarisServer;
 import org.lunaris.api.entity.Entity;
 import org.lunaris.api.entity.Player;
@@ -48,10 +50,10 @@ public class LWorld implements World {
 
     private int time;
 
-    private final LongObjectHashMap<LChunk> chunks = new LongObjectHashMap<>();
+    private final Long2ObjectMap<LChunk> chunks = new Long2ObjectOpenHashMap<>();
     private final Set<LPlayer> players = new HashSet<>();
-    private final LongObjectHashMap<LEntity> entities = new LongObjectHashMap<>();
-    private final LongObjectHashMap<LTileEntity> tileEntities = new LongObjectHashMap<>();
+    private final Long2ObjectMap<LEntity> entities = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<LTileEntity> tileEntities = new Long2ObjectOpenHashMap<>();
 
     private final ChunksFollowerTask followerTask;
     private final BlockUpdateScheduler blockUpdateScheduler;

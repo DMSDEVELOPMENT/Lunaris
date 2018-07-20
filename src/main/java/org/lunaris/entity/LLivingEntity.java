@@ -27,6 +27,7 @@ import java.util.Collections;
 public abstract class LLivingEntity extends LEntity implements LivingEntity {
 
     private boolean invulnerable = false;
+    private boolean respawnSent;
 
     protected LLivingEntity(long entityID, EntityType entityType) {
         super(entityID, entityType);
@@ -115,6 +116,10 @@ public abstract class LLivingEntity extends LEntity implements LivingEntity {
         super.tick(current, dT);
         if (getHealth() < 1F) {
             if (this instanceof LPlayer) {
+                if (this.respawnSent) {
+                    return;
+                }
+                this.respawnSent = true;
                 LPlayer p = (LPlayer) this;
                 PlayerDeathEvent event = new PlayerDeathEvent(p);
                 event.call();
@@ -129,6 +134,8 @@ public abstract class LLivingEntity extends LEntity implements LivingEntity {
                 event.call();
                 remove();
             }
+        } else {
+            this.respawnSent = false;
         }
     }
 

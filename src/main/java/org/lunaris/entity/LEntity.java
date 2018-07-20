@@ -379,7 +379,7 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     @Override
     public int hashCode() {
-        return (int) this.entityID;
+        return Long.hashCode(this.entityID);
     }
 
     @Override

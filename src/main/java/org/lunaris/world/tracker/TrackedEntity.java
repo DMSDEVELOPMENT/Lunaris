@@ -14,6 +14,7 @@ import org.lunaris.util.math.MathHelper;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -101,6 +102,12 @@ public class TrackedEntity {
         }
     }
 
+    public void removePlayer(LPlayer player) {
+        if (this.trackingPlayers.remove(player)) {
+            this.tracker.trackedEntityLinks.get(player).remove(this);
+        }
+    }
+
     public boolean isInViewRange(LPlayer player) {
         return MathHelper.pow2(entity.getX() - player.getX()) + MathHelper.pow2(entity.getZ() - player.getZ()) < viewDistanceSquared;
     }
@@ -108,4 +115,18 @@ public class TrackedEntity {
     public Set<LPlayer> getTrackingPlayers() {
         return new HashSet<>(trackingPlayers);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TrackedEntity that = (TrackedEntity) o;
+        return Objects.equals(entity, that.entity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(entity);
+    }
+
 }

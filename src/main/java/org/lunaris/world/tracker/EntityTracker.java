@@ -52,7 +52,7 @@ public class EntityTracker {
             LPlayer casted = (LPlayer) entity;
             Set<TrackedEntity> trackedEntities = this.trackedEntityLinks.remove(casted);
             if (trackedEntities != null) {
-                trackedEntities.forEach(trackedEntity -> trackedEntity.updatePlayer(casted));
+                trackedEntities.forEach(trackedEntity -> trackedEntity.removePlayer(casted));
             }
         }
     }

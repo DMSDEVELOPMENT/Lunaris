@@ -59,15 +59,17 @@ public class Packet37AdventureSettings extends Packet {
     public void setFlag(Flag theFlag, boolean setOrUnset) {
         int flag = theFlag.mask;
         boolean flags = (flag & BITFLAG_SECOND_SET) != 0;
-        if(setOrUnset)
-            if(flags)
+        if (setOrUnset) {
+            if (flags) {
                 this.flags2 |= flag;
-            else
+            } else {
                 this.flags |= flag;
-        else if(flags)
+            }
+        } else if (flags) {
             this.flags2 &= ~flag;
-        else
+        } else {
             this.flags &= ~flag;
+        }
     }
 
     public enum Flag {

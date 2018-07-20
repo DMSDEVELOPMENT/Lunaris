@@ -50,7 +50,7 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
         this.entityID = entityID;
         this.entityType = entityType;
         this.movement = generateEntityMovement();
-        this.setDataFlag(false, EntityDataFlag.GRAVITY, true, false);
+        this.setDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY, true, false);
     }
 
     @Override
@@ -207,16 +207,18 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
         if(this.fireTicks > 0) {
             if((this.fireTicks % 10 == 0 || this.fireTicks == 1) && this instanceof LLivingEntity)
                 ((LLivingEntity) this).damage(DamageSource.ON_FIRE, 1);
-            setDataFlag(false, EntityDataFlag.ON_FIRE, this.fireTicks --> 1, true);
+            setDataFlag(false, EntityDataFlag.ONFIRE, this.fireTicks --> 1, true);
         }
-        if(getY() <= -16)
-            if(this instanceof LLivingEntity) {
-                if(++this.lastVoidDamage == 5) {
+        if(getY() <= -16) {
+            if (this instanceof LLivingEntity) {
+                if (++this.lastVoidDamage == 5) {
                     this.lastVoidDamage = 0;
                     ((LLivingEntity) this).damage(DamageSource.VOID, 4);
                 }
-            }else
+            } else {
                 remove();
+            }
+        }
     }
 
     /**

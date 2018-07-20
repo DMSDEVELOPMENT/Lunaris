@@ -74,7 +74,7 @@ public class PacketRegistry {
                 //Packet39
                 Packet3AFullChunkData::new,
                 Packet3BSetCommandsEnabled::new,
-                //Packet3C
+                Packet3CSetDifficulty::new,
                 //Packet3D
                 Packet3ESetPlayerGameType::new,
                 Packet3FPlayerList::new,

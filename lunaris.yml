@@ -1,0 +1,33 @@
+bind-address: 0.0.0.0:19132
+server-name: Lunaris Test Server
+max-players: 20
+network_old:
+  compression-level: 1
+  mtu-scale-factor: 0.6666666865348816
+default-gamemode: 0
+chunks-view: 6
+unload-chunks: true
+ingame:
+  world-immutable: false
+  no-pvp: false
+  auto-jump: false
+  allow-flight: false
+  everybody-flying: false
+  no-clip: false
+  world-builder: true
+  everybody-muted: false
+  access:
+    build-and-mine: true
+    use-doors-and-switches: true
+    open-containers: true
+    attack-players: true
+    attack-mobs: true
+    teleport: false
+  everybody-operator: false
+timings:
+  enabled-by-default: false
+  verbose: false
+  history-interval: 6000
+  history-length: 72000
+use-encrypted-connection: false
+online-mode: true

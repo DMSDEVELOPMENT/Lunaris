@@ -25,18 +25,18 @@ public abstract class Metadatable {
     public abstract long getEntityID();
 
     public boolean getDataFlag(boolean playerFlags, EntityDataFlag flag) {
-        return ((playerFlags ? getDataPropertyByte(27) & 0xff : getDataPropertyLong(EntityDataOption.FLAGS)) & (1L << flag.ordinal())) > 0;
+        return ((playerFlags ? getDataPropertyByte(27) & 0xff : getDataPropertyLong(EntityDataOption.FLAGS)) & (1L << flag.getID())) > 0;
     }
 
     public void setDataFlag(boolean playerFlags, EntityDataFlag flag, boolean value, boolean send) {
         if(getDataFlag(playerFlags, flag) != value) {
             if(playerFlags) {
                 byte flags = (byte) getDataPropertyByte(27);
-                flags ^= 1 << flag.ordinal();
+                flags ^= 1 << flag.getID();
                 setDataProperty(new ByteEntityData(27, flags), send);
             }else {
                 long flags = getDataPropertyLong(EntityDataOption.FLAGS);
-                flags ^= 1L << flag.ordinal();
+                flags ^= 1L << flag.getID();
                 setDataProperty(new LongEntityData(0, flags), send);
             }
         }

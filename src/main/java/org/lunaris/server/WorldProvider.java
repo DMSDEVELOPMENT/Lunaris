@@ -2,9 +2,9 @@ package org.lunaris.server;
 
 import org.lunaris.LunarisServer;
 import org.lunaris.api.server.Scheduler;
+import org.lunaris.api.world.Difficulty;
 import org.lunaris.api.world.Dimension;
 import org.lunaris.world.BlockMaster;
-import org.lunaris.world.Difficulty;
 import org.lunaris.world.LWorld;
 
 import java.util.ArrayList;

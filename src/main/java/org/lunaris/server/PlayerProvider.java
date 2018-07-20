@@ -67,7 +67,7 @@ public class PlayerProvider {
         startGame.spawn = loc;
         startGame.seed = -1;
         startGame.dimension = loc.getWorld().getDimension().getId();
-        startGame.difficulty = ((LWorld) loc.getWorld()).getDifficulty().getId();
+        startGame.difficulty = ((LWorld) loc.getWorld()).getDifficulty().ordinal();
         Location spawn = loc.getWorld().getSpawnLocation();
         startGame.worldSpawnX = spawn.getBlockX();
         startGame.worldSpawnY = spawn.getBlockY();
@@ -85,15 +85,19 @@ public class PlayerProvider {
         player.setDisplayName(player.getName());
         player.setDataFlag(false, EntityDataFlag.CAN_CLIMB, true, false);
         player.setDataFlag(false, EntityDataFlag.BREATHING, true, false);
-        player.setDataFlag(false, EntityDataFlag.GRAVITY, true, false);
+        player.setDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY, true, false);
+        player.setDataFlag(false, EntityDataFlag.HAS_COLLISION, true, false);
         player.setDirtyMetadata(false);
         player.sendPacket(startGame);
-        player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
-        player.sendPacket(new Packet0AWorldTime(player.getWorld().getTime()));
-        player.sendPacket(new Packet3BSetCommandsEnabled(true));
-        this.server.getPlayerList().addPlayer(player);
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.RESPAWN));
         player.sendPacket(new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
+        player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
+        player.sendPacket(new Packet0AWorldTime(player.getWorld().getTime()));
+//        player.sendPacket(new Packet3CSetDifficulty(((LWorld) loc.getWorld()).getDifficulty()));
+        player.sendPacket(new Packet3BSetCommandsEnabled(true));
+        player.sendPacket(new Packet37AdventureSettings());
+        player.getAdventureSettings().update();
+        player.sendAvailableCommands();
         player.sendPacket(new Packet1DUpdateAttributes(
             player.getEntityID(),
             player.getAttribute(Attribute.MAX_HEALTH),
@@ -102,10 +106,9 @@ public class PlayerProvider {
             player.getAttribute(Attribute.EXPERIENCE_LEVEL),
             player.getAttribute(Attribute.EXPERIENCE)
         ));
+        this.server.getPlayerList().addPlayer(player);
         player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
-        player.getAdventureSettings().update();
         player.getWorld().addPlayerToWorld(player);
-        player.sendAvailableCommands();
         PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
         this.server.getEventManager().call(joinEvent);
     }

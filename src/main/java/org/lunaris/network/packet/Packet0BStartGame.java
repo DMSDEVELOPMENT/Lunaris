@@ -53,7 +53,7 @@ public class Packet0BStartGame extends Packet {
     // World data
     public String levelId; //base64 string, usually the same as world folder name in vanilla
     public String worldName;
-    public String templateName;
+    public String templateName = "";
     public boolean unknown1 = true;
     public long currentTick;
     public int enchantmentSeed;

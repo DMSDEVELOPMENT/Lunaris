@@ -146,7 +146,7 @@ public class PlayerConnection {
     }
 
     public void sendPacketImmediately(Packet packet) {
-        if (packet.getClass() != PacketFEBatch.class) {
+        if (packet.getID() != PACKET_BATCH) {
             this.postProcessExecutor.addWork(this, packet);
         } else {
             PacketBuffer buffer = new PacketBuffer(64);
@@ -202,7 +202,7 @@ public class PlayerConnection {
 
     private void handlePacket(long currentMillis, PacketBuffer buffer) {
         byte packetID = buffer.readByte();
-        if (packetID == -2) {
+        if (packetID == PACKET_BATCH) {
             LunarisServer.getInstance().getLogger().warn("Malformed batch packet");
         }
         buffer.readShort(); //???

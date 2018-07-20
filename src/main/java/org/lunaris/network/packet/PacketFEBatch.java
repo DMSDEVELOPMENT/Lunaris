@@ -25,13 +25,12 @@ public class PacketFEBatch extends Packet {
 
     @Override
     public void read(PacketBuffer buffer) {
-        this.payload = new byte[buffer.readUnsignedVarInt()];
+        this.payload = new byte[buffer.getRemaining()];
         buffer.readBytes(this.payload);
     }
 
     @Override
     public void write(PacketBuffer buffer) {
-        buffer.writeUnsignedVarInt(this.payload.length);
         buffer.writeBytes(this.payload);
     }
 

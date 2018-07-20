@@ -12,6 +12,7 @@ import org.lunaris.network.PlayerConnectionState;
 import org.lunaris.network.packet.Packet01Login;
 import org.lunaris.network.packet.Packet02PlayStatus;
 import org.lunaris.network.packet.Packet03EncryptionRequest;
+import org.lunaris.network.packet.Packet06ResourcePacksInfo;
 
 /**
  * Created by k.shandurenko on 19.07.2018
@@ -92,7 +93,7 @@ public class HandshakeHandler extends PacketHandler {
                 connection.setConnectionState(PlayerConnectionState.RESOURCE_PACK);
                 connection.setPacketHandler(RESOURCES_HANDLER);
                 player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.LOGIN_SUCCESS));
-
+                player.sendPacket(new Packet06ResourcePacksInfo());
             }
         });
     }

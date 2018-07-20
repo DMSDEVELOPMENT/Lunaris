@@ -24,7 +24,7 @@ public class PlayerCommandPreprocessEvent extends Event implements Cancellable {
     public String getCommand() {
         return this.command;
     }
-    
+
     public void setCommand(String command) {
         this.command = command;
     }

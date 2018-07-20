@@ -64,7 +64,7 @@ public abstract class LInventory implements Inventory {
     }
 
     public int getMaxStackSize(ItemStack is) {
-        if(is == null)
+        if (is == null)
             return 0;
         return Math.min(getMaxStackSize(), is.getMaxStackSize());
     }
@@ -83,16 +83,16 @@ public abstract class LInventory implements Inventory {
     }
 
     public void setContents(ItemStack[] items) {
-        if(items.length > this.items.length)
+        if (items.length > this.items.length)
             throw new IllegalArgumentException("Inventory size < given items array size");
-        for(int i = 0; i < items.length; ++i)
+        for (int i = 0; i < items.length; ++i)
             setItem(i, items[i]);
-        for(int i = items.length; i < this.items.length; ++i)
+        for (int i = items.length; i < this.items.length; ++i)
             setItem(i, null);
     }
 
     public void setItem(int index, ItemStack item) {
-        if(item != null && (item.getType() == Material.AIR || item.getAmount() <= 0))
+        if (item != null && (item.getType() == Material.AIR || item.getAmount() <= 0))
             item = null;
         setItemWithoutUpdate(index, item);
         sendSlot(this.viewers, index);
@@ -102,7 +102,7 @@ public abstract class LInventory implements Inventory {
         ItemStack previous = getItem(index);
         InventorySlotChangeEvent event = new InventorySlotChangeEvent(this, index, previous, item);
         LunarisServer.getInstance().getEventManager().call(event);
-        if(event.isCancelled())
+        if (event.isCancelled())
             return;
         item = event.getNewItem();
         this.items[index] = item;
@@ -110,7 +110,7 @@ public abstract class LInventory implements Inventory {
 
     public void sendContents(LPlayer player) {
         int id = player.getInventoryManager().getInventoryId(this);
-        if(id == -1) {
+        if (id == -1) {
             close(player);
             return;
         }
@@ -121,7 +121,7 @@ public abstract class LInventory implements Inventory {
         players.forEach(p -> {
             LPlayer player = (LPlayer) p;
             int id = player.getInventoryManager().getInventoryId(this);
-            if(id == -1) {
+            if (id == -1) {
                 close(player);
                 return;
             }
@@ -131,111 +131,111 @@ public abstract class LInventory implements Inventory {
 
     public void decreaseDurability(int slot) {
         ItemStack item = getItem(slot);
-        if(item == null || item.getHandle().isBlock())
+        if (item == null || item.getHandle().isBlock())
             return;
         int maxDurability = item.getItemHandle().getMaxDurability();
-        if(maxDurability == -1)
+        if (maxDurability == -1)
             return;
         item.setData(item.getData() + 1);
         setItem(slot, item.getData() >= maxDurability ? null : item);
     }
 
     public boolean contains(int id) {
-        for(ItemStack is : this.items)
-            if(is == null && id == 0 || is != null && is.getType().getId() == id)
+        for (ItemStack is : this.items)
+            if (is == null && id == 0 || is != null && is.getType().getId() == id)
                 return true;
         return false;
     }
 
     public boolean contains(Material type) {
-        for(ItemStack is : this.items)
-            if(type == Material.AIR && is == null || is != null && is.getType() == type)
+        for (ItemStack is : this.items)
+            if (type == Material.AIR && is == null || is != null && is.getType() == type)
                 return true;
         return false;
     }
 
     public boolean contains(ItemStack item) {
-        for(ItemStack is : this.items)
-            if(is == null && (item == null || item.getType() == Material.AIR) || is != null && is.equals(item))
+        for (ItemStack is : this.items)
+            if (is == null && (item == null || item.getType() == Material.AIR) || is != null && is.equals(item))
                 return true;
         return false;
     }
 
     public boolean contains(int id, int amount) {
-        if(amount <= 0)
+        if (amount <= 0)
             return true;
         int stored = 0;
-        for(ItemStack is : this.items)
-            if(is != null && is.getType().getId() == id)
-                if((stored += is.getAmount()) >= amount)
+        for (ItemStack is : this.items)
+            if (is != null && is.getType().getId() == id)
+                if ((stored += is.getAmount()) >= amount)
                     return true;
         return false;
     }
 
     public boolean contains(Material type, int amount) {
-        if(amount <= 0)
+        if (amount <= 0)
             return true;
         int stored = 0;
-        for(ItemStack is : this.items)
-            if(is != null && is.getType() == type)
-                if((stored += is.getAmount()) >= amount)
+        for (ItemStack is : this.items)
+            if (is != null && is.getType() == type)
+                if ((stored += is.getAmount()) >= amount)
                     return true;
         return false;
     }
 
     public boolean contains(ItemStack item, int amount) {
-        if(amount <= 0)
+        if (amount <= 0)
             return true;
         int stored = 0;
-        for(ItemStack is : this.items)
-            if(item.equals(is))
-                if((stored += is.getAmount()) >= amount)
+        for (ItemStack is : this.items)
+            if (item.equals(is))
+                if ((stored += is.getAmount()) >= amount)
                     return true;
         return false;
     }
 
     public int firstEmpty() {
-        for(int i = 0; i < this.items.length; ++i)
-            if(this.items[i] == null || this.items[i].getType() == Material.AIR)
+        for (int i = 0; i < this.items.length; ++i)
+            if (this.items[i] == null || this.items[i].getType() == Material.AIR)
                 return i;
         return -1;
     }
 
     public int firstPartial(Material type) {
-        if(type == Material.AIR)
+        if (type == Material.AIR)
             return -1;
-        for(int i = 0; i < this.items.length; ++i) {
+        for (int i = 0; i < this.items.length; ++i) {
             ItemStack is = this.items[i];
-            if(is != null && is.getType() == type && is.getAmount() < is.getMaxStackSize())
+            if (is != null && is.getType() == type && is.getAmount() < is.getMaxStackSize())
                 return i;
         }
         return -1;
     }
 
     private int firstPartial(ItemStack item) {
-        if(item == null || item.getType() == Material.AIR)
+        if (item == null || item.getType() == Material.AIR)
             return -1;
-        for(int i = 0; i < this.items.length; ++i) {
+        for (int i = 0; i < this.items.length; ++i) {
             ItemStack is = this.items[i];
-            if(is != null && is.getAmount() < is.getMaxStackSize() && is.isSimilar(item))
+            if (is != null && is.getAmount() < is.getMaxStackSize() && is.isSimilar(item))
                 return i;
         }
         return -1;
     }
 
     public int first(int id) {
-        for(int i = 0; i < this.items.length; ++i) {
+        for (int i = 0; i < this.items.length; ++i) {
             ItemStack is = this.items[i];
-            if(is == null && id == 0 || is != null && is.getType().getId() == id)
+            if (is == null && id == 0 || is != null && is.getType().getId() == id)
                 return i;
         }
         return -1;
     }
 
     public int first(Material type) {
-        for(int i = 0; i < this.items.length; ++i) {
+        for (int i = 0; i < this.items.length; ++i) {
             ItemStack is = this.items[i];
-            if(is == null && type == Material.AIR || is != null && is.getType() == type)
+            if (is == null && type == Material.AIR || is != null && is.getType() == type)
                 return i;
         }
         return -1;
@@ -246,48 +246,48 @@ public abstract class LInventory implements Inventory {
     }
 
     public int first(ItemStack item, boolean withAmount) {
-        for(int i = 0; i < this.items.length; ++i) {
+        for (int i = 0; i < this.items.length; ++i) {
             ItemStack is = this.items[i];
-            if(is == null) {
-                if(item == null || item.getType() == Material.AIR)
+            if (is == null) {
+                if (item == null || item.getType() == Material.AIR)
                     return i;
                 continue;
             }
-            if(withAmount ? is.equals(item) : is.isSimilar(item))
+            if (withAmount ? is.equals(item) : is.isSimilar(item))
                 return i;
         }
         return -1;
     }
 
     public Map<Integer, ItemStack> addItem(ItemStack... items) {
-        for(ItemStack is : items)
-            if(is == null || is.getType() == Material.AIR)
+        for (ItemStack is : items)
+            if (is == null || is.getType() == Material.AIR)
                 throw new IllegalArgumentException("Can not add air to the inventory");
         Map<Integer, ItemStack> leftover = new HashMap<>();
-        for(int i = 0; i < items.length; ++i) {
+        for (int i = 0; i < items.length; ++i) {
             ItemStack item = items[i].clone();
             int max = getMaxStackSize(item);
-            while(true) {
+            while (true) {
                 int firstPartial = firstPartial(item);
-                if(firstPartial == -1) {
+                if (firstPartial == -1) {
                     int firstFree = firstEmpty();
-                    if(firstFree == -1) {
+                    if (firstFree == -1) {
                         leftover.put(i, item);
                         break;
                     }
-                    if(item.getAmount() > max) {
+                    if (item.getAmount() > max) {
                         ItemStack clone = item.clone();
                         clone.setAmount(max);
                         item.setAmount(item.getAmount() - max);
                         setItem(firstFree, clone);
-                    }else {
+                    } else {
                         setItem(firstFree, item);
                         break;
                     }
-                }else {
+                } else {
                     ItemStack partial = getItem(firstPartial);
                     int pamount = partial.getAmount();
-                    if(pamount + item.getAmount() <= max) {
+                    if (pamount + item.getAmount() <= max) {
                         partial.setAmount(pamount + item.getAmount());
                         setItem(firstPartial, partial);
                         break;
@@ -302,31 +302,31 @@ public abstract class LInventory implements Inventory {
     }
 
     public Map<Integer, ItemStack> removeItem(ItemStack... items) {
-        for(ItemStack is : items)
-            if(is == null || is.getType() == Material.AIR)
+        for (ItemStack is : items)
+            if (is == null || is.getType() == Material.AIR)
                 throw new IllegalArgumentException("Can not remove air from the inventory");
         Map<Integer, ItemStack> leftover = new HashMap<>();
-        for(int i = 0; i < items.length; ++i) {
+        for (int i = 0; i < items.length; ++i) {
             ItemStack item = items[i].clone();
             int deletable = item.getAmount();
-            while(true) {
+            while (true) {
                 int first = first(item, false);
-                if(first == -1) {
+                if (first == -1) {
                     item.setAmount(deletable);
                     leftover.put(i, item);
                     break;
-                }else {
+                } else {
                     ItemStack stack = getItem(first);
-                    if(stack.getAmount() <= deletable) {
+                    if (stack.getAmount() <= deletable) {
                         setItem(first, null);
                         deletable -= stack.getAmount();
-                    }else {
+                    } else {
                         stack.setAmount(stack.getAmount() - deletable);
                         setItem(first, stack);
                         deletable = 0;
                     }
                 }
-                if(deletable <= 0)
+                if (deletable <= 0)
                     break;
             }
         }
@@ -334,7 +334,7 @@ public abstract class LInventory implements Inventory {
     }
 
     public void clear() {
-        for(int i = 0; i < this.items.length; ++i)
+        for (int i = 0; i < this.items.length; ++i)
             setItem(i, null);
     }
 
@@ -345,7 +345,7 @@ public abstract class LInventory implements Inventory {
     boolean open(Player player) {
         InventoryOpenEvent event = new InventoryOpenEvent(this, player);
         LunarisServer.getInstance().getEventManager().call(event);
-        if(event.isCancelled())
+        if (event.isCancelled())
             return false;
         this.viewers.add(player);
         return true;

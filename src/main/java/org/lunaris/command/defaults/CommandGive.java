@@ -20,13 +20,13 @@ public class CommandGive extends Command {
         super("give", LPermission.ADMINISTRATIVE);
         setDescription("Give item to player");
         addParametersVariant(
-            new CommandParameter("player", CommandParameterType.PLAYER),
-            new CommandParameter("item info"),
-            new CommandParameter("amount", CommandParameterType.INT).optional());
+                new CommandParameter("player", CommandParameterType.PLAYER),
+                new CommandParameter("item info"),
+                new CommandParameter("amount", CommandParameterType.INT).optional());
         addParametersVariant(
-            new CommandParameter("player", CommandParameterType.PLAYER),
-            new CommandParameter("item info", CommandParameterType.INT),
-            new CommandParameter("amount", CommandParameterType.INT).optional());
+                new CommandParameter("player", CommandParameterType.PLAYER),
+                new CommandParameter("item info", CommandParameterType.INT),
+                new CommandParameter("amount", CommandParameterType.INT).optional());
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CommandGive extends Command {
             sender.sendMessage(ChatColor.RED + "Illegal item data.");
             return;
         }
-        
+
         int amount = 1;
         if (args.length == 3) {
             try {

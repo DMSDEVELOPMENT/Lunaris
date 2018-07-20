@@ -4,7 +4,7 @@ package org.lunaris.api.util.configuration;
  * Created by RINES on 21.04.17.
  */
 public class FileConfigurationOptions extends ConfigurationOptions {
-    
+
     private String header;
     private boolean copyHeader = true;
 

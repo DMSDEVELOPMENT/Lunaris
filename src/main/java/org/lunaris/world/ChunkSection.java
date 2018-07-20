@@ -35,7 +35,7 @@ public class ChunkSection {
     }
 
     void set(int x, int y, int z, short id, byte data) {
-        if(id > 0)
+        if (id > 0)
             this.empty = false;
         int i = i(x, y, z);
         this.ids[i << 1] = (byte) (id & 0xff);
@@ -67,9 +67,10 @@ public class ChunkSection {
     }
 
     byte[] getColumn(int x, int z) {
-        x &= 15; z &= 15;
+        x &= 15;
+        z &= 15;
         byte[] column = new byte[1 << 5];
-        for(int y = 0; y < 16; ++y) {
+        for (int y = 0; y < 16; ++y) {
             int i = y << 8 | z << 4 | x;
             column[y << 1] = this.ids[i << 1];
             column[(y << 1) + 1] = this.ids[(i << 1) + 1];
@@ -78,7 +79,9 @@ public class ChunkSection {
     }
 
     private int i(int x, int y, int z) {
-        x &= 0xf; y &= 0xf; z &= 0xf;
+        x &= 0xf;
+        y &= 0xf;
+        z &= 0xf;
         return (y << 8) | (z << 4) | x;
     }
 

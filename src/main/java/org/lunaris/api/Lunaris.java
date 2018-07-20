@@ -18,6 +18,7 @@ public class Lunaris {
 
     /**
      * Get this server core version.
+     *
      * @return this server core version.
      */
     public static String getServerVersion() {
@@ -26,6 +27,7 @@ public class Lunaris {
 
     /**
      * Get supported client version.
+     *
      * @return supported client version.
      */
     public static String getSupportedClientVersion() {
@@ -34,6 +36,7 @@ public class Lunaris {
 
     /**
      * Get player with given name.
+     *
      * @param name nickname of the player.
      * @return null, whether there is no player of given nickname; player instance otherwise.
      */
@@ -44,6 +47,7 @@ public class Lunaris {
     /**
      * Get player, whose nickname starts with given prefix.
      * This method ignores nicknames cases.
+     *
      * @param name prefix of player's nickname.
      * @return null, whether there are none players with nicknames, containing given prefix; random one satisfying player instance otherwise.
      */
@@ -54,6 +58,7 @@ public class Lunaris {
 
     /**
      * Get all online players.
+     *
      * @return collection of all online players.
      */
     public static Collection<? extends Player> getOnlinePlayers() {
@@ -62,6 +67,7 @@ public class Lunaris {
 
     /**
      * Get player with given UUID.
+     *
      * @param uuid the uuid of a player.
      * @return null, whether there is no player with given uuid; player instance otherwise.
      */
@@ -71,6 +77,7 @@ public class Lunaris {
 
     /**
      * Register new event listener.
+     *
      * @param listener the listener to register.
      */
     public static void registerEventListener(Listener listener) {
@@ -79,6 +86,7 @@ public class Lunaris {
 
     /**
      * Fire event (pass it through all the listeners).
+     *
      * @param event the event to fire.
      */
     public static void callEvent(Event event) {
@@ -87,6 +95,7 @@ public class Lunaris {
 
     /**
      * Get all worlds of this server.
+     *
      * @return list of all worlds of this server.
      */
     public static List<? extends World> getWorlds() {
@@ -95,6 +104,7 @@ public class Lunaris {
 
     /**
      * Get world by it's ordinal number on this server.
+     *
      * @param index ordinal number of the world on this server.
      * @return null, whether ordinal number is over maximal index of this server's world; world instance otherwise.
      */
@@ -104,6 +114,7 @@ public class Lunaris {
 
     /**
      * Get world by given world name.
+     *
      * @param name the name of the world.
      * @return null, whether there is no world of given name; world instance otherwise.
      */
@@ -113,6 +124,7 @@ public class Lunaris {
 
     /**
      * Get scheduler.
+     *
      * @return the scheduler.
      */
     public static Scheduler getScheduler() {
@@ -121,6 +133,7 @@ public class Lunaris {
 
     /**
      * Broadcast given message to all the players currently online at the server.
+     *
      * @param message the message to be broadcasted
      */
     public static void broadcastMessage(String message) {

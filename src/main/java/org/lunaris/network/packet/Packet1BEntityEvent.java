@@ -13,7 +13,8 @@ public class Packet1BEntityEvent extends Packet {
     private EntityEvent event;
     private int data;
 
-    public Packet1BEntityEvent() {}
+    public Packet1BEntityEvent() {
+    }
 
     public Packet1BEntityEvent(long entityID, EntityEvent event, int data) {
         this.entityID = entityID;

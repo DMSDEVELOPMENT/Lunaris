@@ -8,8 +8,7 @@ public class NativeZLibImpl {
     int consumed;
     boolean finished;
 
-    static
-    {
+    static {
         initFields();
     }
 

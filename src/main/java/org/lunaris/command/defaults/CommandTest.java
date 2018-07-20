@@ -23,9 +23,9 @@ public class CommandTest extends Command {
     public void execute(CommandSender sender, String[] args) {
         LPlayer player;
         if (sender instanceof LPlayer) {
-            player = (LPlayer)sender;
+            player = (LPlayer) sender;
         } else {
-            if(args.length == 0) {
+            if (args.length == 0) {
                 sender.sendMessage("Enter player name");
                 return;
             }

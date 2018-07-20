@@ -24,7 +24,8 @@ public class Packet13MovePlayer extends Packet {
     private long ridingEntityId;
     private int unknown1, unknown2;
 
-    public Packet13MovePlayer() {}
+    public Packet13MovePlayer() {
+    }
 
     public Packet13MovePlayer(LPlayer player) {
         this.entityId = player.getEntityID();

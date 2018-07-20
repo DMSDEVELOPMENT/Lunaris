@@ -49,7 +49,7 @@ public class NBTIO {
 
         ItemStack item;
         try {
-            item = new ItemStack(Material.getById(tag.getShort("id")),tag.getByte("Count"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"));
+            item = new ItemStack(Material.getById(tag.getShort("id")), tag.getByte("Count"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"));
         } catch (Exception e) {
             item = new ItemStack(tag.getString("id"));
             item.setData(!tag.contains("Damage") ? 0 : tag.getShort("Damage"));

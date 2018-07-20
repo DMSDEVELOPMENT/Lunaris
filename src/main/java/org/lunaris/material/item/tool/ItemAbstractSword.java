@@ -23,6 +23,6 @@ public abstract class ItemAbstractSword extends LItemHandle {
     public abstract ItemTier getTier();
 
     @Override
-    public abstract  int getAttackDamage();
+    public abstract int getAttackDamage();
 
 }

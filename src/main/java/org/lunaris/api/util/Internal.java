@@ -8,4 +8,5 @@ import java.lang.annotation.RetentionPolicy;
  * They are designed for internal usage only.
  */
 @Retention(RetentionPolicy.SOURCE)
-public @interface Internal {}
+public @interface Internal {
+}

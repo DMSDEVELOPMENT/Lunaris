@@ -19,7 +19,8 @@ public class Packet12MoveEntity extends Packet {
     private float yaw, headYaw, pitch;
     private boolean onGround, teleported;
 
-    public Packet12MoveEntity() {}
+    public Packet12MoveEntity() {
+    }
 
     public Packet12MoveEntity(LEntity entity) {
         this.entityId = entity.getEntityID();

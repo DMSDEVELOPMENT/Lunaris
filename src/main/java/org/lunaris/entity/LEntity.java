@@ -37,7 +37,7 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     private int fireTicks;
 
-    private AxisAlignedBB boundingBox = new AxisAlignedBB( 0, 0, 0, 0, 0, 0 );
+    private AxisAlignedBB boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
     private boolean collidedVertically;
     private boolean collidedHorizontally;
@@ -69,7 +69,7 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     public Attribute getAttribute(int id) {
         Attribute a = this.attributes.get(id);
-        if(a != null)
+        if (a != null)
             return a;
         a = Attribute.getAttribute(id);
         this.attributes.put(id, a);
@@ -83,7 +83,7 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     @Override
     public void teleport(Location location) {
-        if(this.world != location.getWorld())
+        if (this.world != location.getWorld())
             throw new IllegalArgumentException("Entities can not be teleported between worlds!");
         this.setPositionAndRotation(location);
     }
@@ -204,12 +204,12 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     public void tick(long current, float dT) {
         this.movement.tickMovement(current, dT);
-        if(this.fireTicks > 0) {
-            if((this.fireTicks % 10 == 0 || this.fireTicks == 1) && this instanceof LLivingEntity)
+        if (this.fireTicks > 0) {
+            if ((this.fireTicks % 10 == 0 || this.fireTicks == 1) && this instanceof LLivingEntity)
                 ((LLivingEntity) this).damage(DamageSource.ON_FIRE, 1);
-            setDataFlag(false, EntityDataFlag.ONFIRE, this.fireTicks --> 1, true);
+            setDataFlag(false, EntityDataFlag.ONFIRE, this.fireTicks-- > 1, true);
         }
-        if(getY() <= -16) {
+        if (getY() <= -16) {
             if (this instanceof LLivingEntity) {
                 if (++this.lastVoidDamage == 5) {
                     this.lastVoidDamage = 0;
@@ -223,12 +223,13 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     /**
      * Внутренний метод для расчета коллизий сущности после последнего перемещения
+     *
      * @param motionX движение по x
      * @param motionY движение по y
      * @param motionZ движение по z
-     * @param dx разница перемещения по x
-     * @param dy разница перемещения по y
-     * @param dz разница перемещения по z
+     * @param dx      разница перемещения по x
+     * @param dy      разница перемещения по y
+     * @param dz      разница перемещения по z
      */
     public void setupCollisionFlags(float motionX, float motionY, float motionZ, float dx, float dy, float dz) {
         this.collidedVertically = motionY != dy;
@@ -238,20 +239,22 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     /**
      * Внутренний метод для расчета дистанции падения сущности после последнего перемещения
+     *
      * @param dy разница перемещения по y
      */
     public void setupFallDistance(float dy) {
-        if(this.onGround) {
-            if(this.fallDistance > 0F)
+        if (this.onGround) {
+            if (this.fallDistance > 0F)
                 fall();
             this.fallDistance = 0;
-        }else if(dy < 0F) {
+        } else if (dy < 0F) {
             this.fallDistance -= dy;
         }
     }
 
     /**
      * Внутренний метод для установки мира сущности после ее создания
+     *
      * @param world мир
      */
     public void initWorld(World world) {
@@ -268,6 +271,7 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     /**
      * Сколько тиков осталось гореть этой сущности
+     *
      * @return сколько тиков осталось гореть этой сущности
      */
     public int getFireTicks() {
@@ -276,6 +280,7 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     /**
      * Высота глаз сущности
+     *
      * @return высоту глаз сущности
      */
     public float getEyeHeight() {
@@ -284,18 +289,21 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     /**
      * Высота сущности
+     *
      * @return высоту сущности
      */
     public abstract float getHeight();
 
     /**
      * Ширина сущности
+     *
      * @return ширину сущности
      */
     public abstract float getWidth();
 
     /**
      * Получение максимальной высоты, на которую может подняться сущность за одно перемещение
+     *
      * @return максимальную высоту, на которую может подняться сущность за одно перемещение
      */
     public abstract float getStepHeight();
@@ -384,9 +392,9 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o)
+        if (this == o)
             return true;
-        if(!(o instanceof LEntity))
+        if (!(o instanceof LEntity))
             return false;
         return this.entityID == ((LEntity) o).entityID;
     }

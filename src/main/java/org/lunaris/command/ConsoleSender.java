@@ -9,7 +9,8 @@ import org.lunaris.util.logger.ChatColor;
  */
 public class ConsoleSender implements CommandSender {
 
-    ConsoleSender() {}
+    ConsoleSender() {
+    }
 
     @Override
     public String getName() {

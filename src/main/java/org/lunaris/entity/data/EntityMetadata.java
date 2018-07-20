@@ -113,5 +113,5 @@ public class EntityMetadata {
     public Map<Integer, EntityData> getMap() {
         return new HashMap<>(map);
     }
-    
+
 }

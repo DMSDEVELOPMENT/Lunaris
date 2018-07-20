@@ -90,7 +90,8 @@ public class Packet19LevelEvent extends Packet {
     private float x, y, z;
     private int data;
 
-    public Packet19LevelEvent() {}
+    public Packet19LevelEvent() {
+    }
 
     public Packet19LevelEvent(int eventId, float x, float y, float z, int data) {
         this.eventId = eventId;

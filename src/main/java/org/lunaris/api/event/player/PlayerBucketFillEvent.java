@@ -18,7 +18,7 @@ public class PlayerBucketFillEvent extends Event implements Cancellable {
         this.player = player;
         this.target = target;
     }
-    
+
     public Player getPlayer() {
         return this.player;
     }

@@ -17,35 +17,35 @@ import java.util.Map;
  */
 public class JwtToken {
 
-    @SuppressWarnings( "unchecked" )
-    public static JwtToken parse( String s ) {
-        String[] split = s.split( "\\." );
-        if ( split.length != 3 ) {
-            throw new IllegalArgumentException( "Invalid JWT Token: Expecting exactly three parts delimited by dots '.'" );
+    @SuppressWarnings("unchecked")
+    public static JwtToken parse(String s) {
+        String[] split = s.split("\\.");
+        if (split.length != 3) {
+            throw new IllegalArgumentException("Invalid JWT Token: Expecting exactly three parts delimited by dots '.'");
         }
 
-        String jwtHeaderJson = new String( Base64.getDecoder().decode( split[0] ), StandardCharsets.UTF_8 );
-        String jwtClaimsJson = new String( Base64.getDecoder().decode( split[1] ), StandardCharsets.UTF_8 );
+        String jwtHeaderJson = new String(Base64.getDecoder().decode(split[0]), StandardCharsets.UTF_8);
+        String jwtClaimsJson = new String(Base64.getDecoder().decode(split[1]), StandardCharsets.UTF_8);
 
         JSONParser parser = new JSONParser();
         Object jwtHeaderRaw;
         Object jwtClaimsRaw;
         try {
-            jwtHeaderRaw = parser.parse( jwtHeaderJson );
-            jwtClaimsRaw = parser.parse( jwtClaimsJson );
+            jwtHeaderRaw = parser.parse(jwtHeaderJson);
+            jwtClaimsRaw = parser.parse(jwtClaimsJson);
 
-            if ( !( jwtHeaderRaw instanceof JSONObject ) || !( jwtClaimsRaw instanceof JSONObject ) ) {
-                throw new ParseException( ParseException.ERROR_UNEXPECTED_TOKEN );
+            if (!(jwtHeaderRaw instanceof JSONObject) || !(jwtClaimsRaw instanceof JSONObject)) {
+                throw new ParseException(ParseException.ERROR_UNEXPECTED_TOKEN);
             }
-        } catch ( ParseException e ) {
-            throw new IllegalArgumentException( "Invalid JWT Token: Expected Base-64 encoded JSON data" );
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid JWT Token: Expected Base-64 encoded JSON data");
         }
 
         JwtToken token = new JwtToken();
-        token.header = new JwtHeader( (JSONObject) jwtHeaderRaw );
+        token.header = new JwtHeader((JSONObject) jwtHeaderRaw);
         token.claims = (JSONObject) jwtClaimsRaw;
-        token.signatureBytes = ( split[0] + '.' + split[1] ).getBytes( StandardCharsets.US_ASCII );
-        token.signatureDigest = Base64.getUrlDecoder().decode( split[2] );
+        token.signatureBytes = (split[0] + '.' + split[1]).getBytes(StandardCharsets.US_ASCII);
+        token.signatureDigest = Base64.getUrlDecoder().decode(split[2]);
 
         return token;
     }
@@ -84,8 +84,8 @@ public class JwtToken {
      * @param key The name of the property to get
      * @return The property if found or null otherwise
      */
-    public <T> T getClaim( String key ) {
-        return (T) this.claims.get( key );
+    public <T> T getClaim(String key) {
+        return (T) this.claims.get(key);
     }
 
     /**
@@ -96,12 +96,12 @@ public class JwtToken {
      * @param <T>   The generic type matching the {@code clazz} parameter
      * @return The property if found or null otherwise
      */
-    public <T> T getClaim( Class<T> clazz, String key ) {
-        Object value = this.claims.get( key );
-        if ( value == null || !clazz.isAssignableFrom( value.getClass() ) ) {
+    public <T> T getClaim(Class<T> clazz, String key) {
+        Object value = this.claims.get(key);
+        if (value == null || !clazz.isAssignableFrom(value.getClass())) {
             return null;
         }
-        return clazz.cast( value );
+        return clazz.cast(value);
     }
 
     /**
@@ -114,9 +114,9 @@ public class JwtToken {
      * @return Whether or not this token could be verified using the given secret
      * @throws JwtSignatureException Thrown in case the signature could not be validated at all
      */
-    public boolean validateSignature( Key key ) throws JwtSignatureException {
+    public boolean validateSignature(Key key) throws JwtSignatureException {
         JwtAlgorithm algorithm = this.header.getAlgorithm();
-        return ( algorithm != null && this.validateSignature( algorithm, key ) );
+        return (algorithm != null && this.validateSignature(algorithm, key));
     }
 
     /**
@@ -130,9 +130,9 @@ public class JwtToken {
      * @return Whether or not this token could be verified using the given secret
      * @throws JwtSignatureException Thrown in case the signature could not be validated at all
      */
-    public boolean validateSignature( JwtAlgorithm algorithm, Key key ) throws JwtSignatureException {
+    public boolean validateSignature(JwtAlgorithm algorithm, Key key) throws JwtSignatureException {
         JwtSignature validator = algorithm.getSignature();
-        return validator.validate( key, this.signatureBytes, this.signatureDigest );
+        return validator.validate(key, this.signatureBytes, this.signatureDigest);
     }
 
 }

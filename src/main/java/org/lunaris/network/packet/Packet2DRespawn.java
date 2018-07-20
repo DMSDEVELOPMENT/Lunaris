@@ -10,7 +10,8 @@ public class Packet2DRespawn extends Packet {
 
     private float x, y, z;
 
-    public Packet2DRespawn() {}
+    public Packet2DRespawn() {
+    }
 
     public Packet2DRespawn(float x, float y, float z) {
         this.x = x;

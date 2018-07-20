@@ -44,33 +44,33 @@ public class BlockMaster {
         ItemStack hand = player.getInventory().getItemInHand();
         LBlock target = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
         LBlock sider = target.getSide(blockFace);
-        if(sider.getY() > 255 || sider.getY() < 0 || target.getType() == Material.AIR || player.getGamemode() == Gamemode.SPECTATOR)
+        if (sider.getY() > 255 || sider.getY() < 0 || target.getType() == Material.AIR || player.getGamemode() == Gamemode.SPECTATOR)
             return;
         PlayerInteractEvent event = new PlayerInteractEvent(player, PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, target);
         this.server.getEventManager().call(event);
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             //cancel things
             return;
         }
         LBlockHandle targetMaterial = target.getHandle();
-        if(!player.isSneaking() && targetMaterial.canBeActivated() && targetMaterial.onActivate(target, hand, player))
+        if (!player.isSneaking() && targetMaterial.canBeActivated() && targetMaterial.onActivate(target, hand, player))
             return;
-        if(hand != null && hand.getType() != Material.AIR) {
-            if(hand.isItem()) {
+        if (hand != null && hand.getType() != Material.AIR) {
+            if (hand.isItem()) {
                 LItemHandle itemHandle = (LItemHandle) hand.getItemHandle();
-                if(itemHandle.canBeUsed() && itemHandle.useOn(hand, target, blockFace, player))
+                if (itemHandle.canBeUsed() && itemHandle.useOn(hand, target, blockFace, player))
                     return;
-            }else {
+            } else {
                 LBlockHandle blockHandle = (LBlockHandle) hand.getBlockHandle();
-                if(sider.getHandle().canBeReplaced() && blockHandle.canBePlaced()) {
+                if (sider.getHandle().canBeReplaced() && blockHandle.canBePlaced()) {
                     BlockPlaceEvent placeEvent = new BlockPlaceEvent(player, hand, new BlockVector(sider.getX(), sider.getY(), sider.getZ()));
                     this.server.getEventManager().call(placeEvent);
-                    if(placeEvent.isCancelled()) {
+                    if (placeEvent.isCancelled()) {
                         return;
                     }
-                    if(blockHandle.place(hand, sider, target, blockFace, clickPosition.getX(), clickPosition.getY(), clickPosition.getZ(), player)) {
+                    if (blockHandle.place(hand, sider, target, blockFace, clickPosition.getX(), clickPosition.getY(), clickPosition.getZ(), player)) {
                         sider.getChunk().sendPacket(new Packet18LevelSoundEvent(Sound.PLACE, sider.getLocation(), hand.getType().getId(), 1, false, false));
-                        if(player.getGamemode() != Gamemode.CREATIVE) {
+                        if (player.getGamemode() != Gamemode.CREATIVE) {
                             hand.setAmount(hand.getAmount() - 1);
                             player.getInventory().setItemInHand(hand.getAmount() <= 0 ? null : hand);
                         }
@@ -85,23 +85,23 @@ public class BlockMaster {
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         BlockFace face = BlockFace.fromIndex(packet.getFace());
         LWorld world = player.getWorld();
-        if(player.getLocation().distanceSquared(position) > 100)
+        if (player.getLocation().distanceSquared(position) > 100)
             return;
         LBlock block = world.getBlockAt(position);
         LBlock sider = block.getSide(face);
         PlayerInteractEvent interactEvent = new PlayerInteractEvent(player, PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, block);
         this.server.getEventManager().call(interactEvent);
-        if(interactEvent.isCancelled())
+        if (interactEvent.isCancelled())
             return;
-        if(sider.getType() == Material.FIRE) {
+        if (sider.getType() == Material.FIRE) {
             PlayerHitFireEvent hitFireEvent = new PlayerHitFireEvent(player, block, sider);
             this.server.getEventManager().call(hitFireEvent);
-            if(hitFireEvent.isCancelled())
+            if (hitFireEvent.isCancelled())
                 return;
             sider.setType(Material.AIR);
             return;
         }
-        switch(player.getGamemode()) {
+        switch (player.getGamemode()) {
             case SURVIVAL: {
                 double breakTime = getBreakTimeInTicks(block, player);
                 block.getChunk().sendPacket(new Packet19LevelEvent(
@@ -110,10 +110,12 @@ public class BlockMaster {
                         (int) (65535 / breakTime)
                 ));
                 player.getBlockBreakingData().startBreak(getExactBreakTimeInMillis(block, player));
-            }case CREATIVE: {
+            }
+            case CREATIVE: {
                 //not there
                 break;
-            }default: {
+            }
+            default: {
                 //shall not happen
                 break;
             }
@@ -128,11 +130,11 @@ public class BlockMaster {
         LPlayer player = packet.getConnection().getPlayer();
         if (packet.getX() != 0 || packet.getY() != 0 || packet.getZ() != 0) {
             ((LChunk) player.getLocation().getChunk()).sendPacketImmediately(
-                new Packet19LevelEvent(
-                    Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
-                    packet.getX(), packet.getY(), packet.getZ(),
-                    0
-                )
+                    new Packet19LevelEvent(
+                            Packet19LevelEvent.EVENT_BLOCK_STOP_BREAK,
+                            packet.getX(), packet.getY(), packet.getZ(),
+                            0
+                    )
             );
         }
         //clear breaking block data?
@@ -140,12 +142,12 @@ public class BlockMaster {
 
     public void onBlockContinueBreak(Packet24PlayerAction packet) {
         LPlayer player = packet.getConnection().getPlayer();
-        if(!player.isBreakingBlock())
+        if (!player.isBreakingBlock())
             return;
         Vector3d position = new Vector3d(packet.getX(), packet.getY(), packet.getZ());
         LBlock block = player.getWorld().getBlockAt(position);
         long time = getExactBreakTimeInMillis(block, player);
-        if(player.getBlockBreakingData().getBlockBreakingTime() != time) {
+        if (player.getBlockBreakingData().getBlockBreakingTime() != time) {
             player.getBlockBreakingData().updateBreak(time);
 //            double breakTime = getBreakTimeInTicks(block, player) - player.getBlockBreakingData().getOvertime() / 50;
 //            block.getChunk().sendPacketImmediately(new Packet19LevelEvent(
@@ -171,7 +173,7 @@ public class BlockMaster {
         //check somewhere whether this block can be broken by players tool
         BlockBreakEvent event = new BlockBreakEvent(player, block);
         this.server.getEventManager().call(event);
-        if(event.isCancelled()) {
+        if (event.isCancelled()) {
             player.sendPacket(new Packet15UpdateBlock(block)); //restore block to players
             return;
         }
@@ -179,16 +181,16 @@ public class BlockMaster {
         List<ItemStack> drops = withDrops ? block.getHandle().getDrops(block, hand) : Collections.emptyList();
         new DestroyBlockParticle(block).sendToNearbyPlayers();
         block.setType(Material.AIR);
-        if(drops != null)
+        if (drops != null)
             drops.forEach(drop -> block.getWorld().dropItem(drop.clone(), block.getLocation().add(.5D, .5D, .5D)));
-        if(!hand.getHandle().isBlock() && hand.getItemHandle().getToolType() != ItemToolType.NONE) {
+        if (!hand.getHandle().isBlock() && hand.getItemHandle().getToolType() != ItemToolType.NONE) {
             hand.setData(hand.getData() + 1);
             player.getInventory().setItemInHand(hand.getData() == hand.getItemHandle().getMaxDurability() ? null : hand);
         }
     }
 
     private long getExactBreakTimeInMillis(LBlock block, LPlayer player) {
-        if(player.getGamemode() == Gamemode.CREATIVE)
+        if (player.getGamemode() == Gamemode.CREATIVE)
             return 150L;
         return getBreakTimeInMillis(block, player);
     }
@@ -202,7 +204,7 @@ public class BlockMaster {
     }
 
     private double getBreakTime(LBlock block, LPlayer player, ItemStack hand) {
-        if(hand == null)
+        if (hand == null)
             hand = ItemStack.AIR;
         LBlockHandle material = block.getHandle();
         double hardness = material.getHardness();
@@ -223,17 +225,17 @@ public class BlockMaster {
         double baseTime = ((correctTool || canHarvestWithHand) ? 1.5D : 5D) * hardness;
         double speed = 1D / baseTime;
         boolean isWoolBlock = blockType == Material.WOOL, isCobweb = blockType == Material.COBWEB;
-        if(correctTool)
+        if (correctTool)
             speed *= getToolBreakTimeBonus(toolType, tier, isWoolBlock, isCobweb);
         speed += getSpeedBonusByEfficiencyLore(efficiencyLoreLevel);
         speed *= getSpeedRateByHasteLore(hasteEffectLevel);
-        if(insideOfWaterWithoutAquaAffinity || !onGround)
+        if (insideOfWaterWithoutAquaAffinity || !onGround)
             speed *= .2D;
         return 1D / speed;
     }
 
     private int getToolBreakTimeBonus(ItemToolType toolType, ItemTier tier, boolean wool, boolean cobweb) {
-        switch(toolType) {
+        switch (toolType) {
             case SWORD:
                 return cobweb ? 15 : 1;
             case SHEARS:
@@ -241,7 +243,7 @@ public class BlockMaster {
             case NONE:
                 return 1;
             default:
-                switch(tier) {
+                switch (tier) {
                     case WOODEN:
                         return 2;
                     case STONE:
@@ -259,7 +261,7 @@ public class BlockMaster {
     }
 
     private double getSpeedBonusByEfficiencyLore(int efficiencyLoreLevel) {
-        if(efficiencyLoreLevel == 0)
+        if (efficiencyLoreLevel == 0)
             return 0;
         return efficiencyLoreLevel * efficiencyLoreLevel + 1;
     }

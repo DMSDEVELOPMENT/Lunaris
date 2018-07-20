@@ -156,7 +156,7 @@ public class NBTInputStream implements DataInput, AutoCloseable {
         return decodeZigZag32(readUnsignedVarInt(stream));
     }
 
-    private int readUnsignedVarInt(InputStream stream)  throws IOException {
+    private int readUnsignedVarInt(InputStream stream) throws IOException {
         long value = 0;
         int size = 0;
         int b;
@@ -184,7 +184,7 @@ public class NBTInputStream implements DataInput, AutoCloseable {
     }
 
     private int decodeZigZag32(int v) {
-        return (v >> 1) ^ - (v & 1);
+        return (v >> 1) ^ -(v & 1);
     }
 
     private long decodeZigZag64(long v) {

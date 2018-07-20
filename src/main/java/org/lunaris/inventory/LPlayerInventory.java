@@ -22,7 +22,7 @@ public class LPlayerInventory extends LInventory implements PlayerInventory {
     public LPlayerInventory(LPlayer player) {
         super(InventoryType.PLAYER);
         this.holder = player;
-        for(int i = 0; i < this.hotbar.length; ++i)
+        for (int i = 0; i < this.hotbar.length; ++i)
             this.hotbar[i] = i;
     }
 
@@ -87,10 +87,10 @@ public class LPlayerInventory extends LInventory implements PlayerInventory {
 
     public void updateItemInHandFor(LPlayer... players) {
         ItemStack item = getItemInHand();
-        for(LPlayer player : players) {
-            if(player == this.holder) {
+        for (LPlayer player : players) {
+            if (player == this.holder) {
                 sendSlot(Collections.singleton(player), this.itemInHandIndex);
-            }else {
+            } else {
                 player.sendPacket(new Packet1FMobEquipment(this.holder.getEntityID(), item, this.itemInHandIndex, this.itemInHandIndex, 0));
             }
         }
@@ -102,25 +102,25 @@ public class LPlayerInventory extends LInventory implements PlayerInventory {
 
     @Override
     public void setItem(int index, ItemStack item) {
-        if(index >= getSize()) {
+        if (index >= getSize()) {
             super.setItemWithoutUpdate(index, item);
             sendArmorSlot(index, item);
-        }else
+        } else
             super.setItem(index, item);
     }
 
     @Override
     public void setItemWithoutUpdate(int index, ItemStack item) {
-        if(index >= getSize()) {
+        if (index >= getSize()) {
             super.setItemWithoutUpdate(index, item);
             sendArmorSlot(index, item);
-        }else
+        } else
             super.setItemWithoutUpdate(index, item);
     }
 
     public ItemStack[] getArmorContents() {
         ItemStack[] armor = new ItemStack[4];
-        for(int i = 0; i < armor.length; ++i)
+        for (int i = 0; i < armor.length; ++i)
             armor[i] = getItem(getSize() + i);
         return armor;
     }
@@ -130,12 +130,12 @@ public class LPlayerInventory extends LInventory implements PlayerInventory {
     }
 
     public void decreaseArmorDurability() {
-        for(int i = getSize(); i < getSize() + 4; ++i)
+        for (int i = getSize(); i < getSize() + 4; ++i)
             decreaseDurability(i);
     }
 
     public void equipItem0(int slot) {
-        if(!isHotbarSlot(slot)) {
+        if (!isHotbarSlot(slot)) {
             sendContents(this.holder);
             return;
         }

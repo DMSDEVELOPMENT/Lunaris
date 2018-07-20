@@ -42,45 +42,45 @@ public class HandshakeHandler extends PacketHandler {
         }
         boolean valid = true;
         String name = packet.getUsername();
-        if(name.length() < 3 || name.length() > 16)
+        if (name.length() < 3 || name.length() > 16)
             valid = false;
         else {
-            if(name.contains(" ")) {
+            if (name.contains(" ")) {
                 connection.disconnect("We don't allow spaces in names, sorreh");
                 return;
             }
-            for(char c : name.toLowerCase().toCharArray())
-                if(!(c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || c == '-' || c == '_')) {
+            for (char c : name.toLowerCase().toCharArray())
+                if (!(c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || c == '-' || c == '_')) {
                     valid = false;
                     break;
                 }
         }
-        if(!valid) {
+        if (!valid) {
             connection.disconnect("Your nickname is invalid");
             return;
         }
         sync(() -> {
             LunarisServer server = getServer();
             LPlayer player = server.getPlayerProvider().createPlayer(packet, connection);
-            if(server.getOnlinePlayers().size() >= server.getServerSettings().getMaxPlayersOnServer()) {
+            if (server.getOnlinePlayers().size() >= server.getServerSettings().getMaxPlayersOnServer()) {
                 PlayerKickEvent event = new PlayerKickEvent(player, "The server is full");
                 event.setReasonType(PlayerKickEvent.ReasonType.SERVER_IS_FULL);
                 server.getEventManager().call(event);
-                if(!event.isCancelled()) {
+                if (!event.isCancelled()) {
                     player.disconnect(event.getReason());
                     return;
                 }
             }
             PlayerPreLoginEvent event = new PlayerPreLoginEvent(player);
             server.getEventManager().call(event);
-            if(event.isCancelled()) {
+            if (event.isCancelled()) {
                 player.disconnect();
                 return;
             }
-            if(LunarisServer.getInstance().getServerSettings().isUsingEncryptedConnection()) {
+            if (LunarisServer.getInstance().getServerSettings().isUsingEncryptedConnection()) {
                 EncryptionHandler encryptor = new EncryptionHandler(LunarisServer.getInstance().getEncryptionKeyFactory());
                 encryptor.supplyClientKey(packet.getClientPublicKey());
-                if(encryptor.beginClientsideEncryption()) {
+                if (encryptor.beginClientsideEncryption()) {
                     connection.setConnectionState(PlayerConnectionState.ENCRPYTION_INIT);
                     connection.setPacketHandler(ENCRYPTION_HANDLER);
                     connection.setEncryptionHandler(encryptor);

@@ -23,7 +23,8 @@ public class Packet0DAddEntity extends Packet {
     private Attribute[] attributes;
     private EntityMetadata metadata;
 
-    public Packet0DAddEntity() {}
+    public Packet0DAddEntity() {
+    }
 
     public Packet0DAddEntity(LEntity entity) {
         this.entityID = entity.getEntityID();

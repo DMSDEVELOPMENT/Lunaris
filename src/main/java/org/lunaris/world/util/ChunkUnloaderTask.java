@@ -45,7 +45,7 @@ public class ChunkUnloaderTask implements Runnable {
                     }
             }
             this.server.getScheduler().run(() ->
-                chunks.forEach(this.world::unloadChunk)
+                    chunks.forEach(this.world::unloadChunk)
             );
         });
     }

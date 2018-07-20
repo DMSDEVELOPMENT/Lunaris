@@ -19,12 +19,12 @@ public class JavaZLib implements ZLib {
     private Inflater inflater;
 
     @Override
-    public void init( boolean compress, int level ) {
+    public void init(boolean compress, int level) {
         this.compress = compress;
         free();
 
-        if ( compress ) {
-            deflater = new Deflater( level );
+        if (compress) {
+            deflater = new Deflater(level);
         } else {
             inflater = new Inflater();
         }
@@ -32,39 +32,39 @@ public class JavaZLib implements ZLib {
 
     @Override
     public void free() {
-        if ( deflater != null ) {
+        if (deflater != null) {
             deflater.end();
         }
 
-        if ( inflater != null ) {
+        if (inflater != null) {
             inflater.end();
         }
     }
 
     @Override
-    public void process(ByteBuf in, ByteBuf out ) {
+    public void process(ByteBuf in, ByteBuf out) {
         byte[] inData = new byte[in.readableBytes()];
-        in.readBytes( inData );
+        in.readBytes(inData);
 
-        if ( compress ) {
+        if (compress) {
             try {
-                deflater.setInput( inData );
+                deflater.setInput(inData);
                 deflater.finish();
 
-                while ( !deflater.finished() ) {
-                    int count = deflater.deflate( buffer );
-                    out.writeBytes( buffer, 0, count );
+                while (!deflater.finished()) {
+                    int count = deflater.deflate(buffer);
+                    out.writeBytes(buffer, 0, count);
                 }
             } finally {
                 deflater.reset();
             }
         } else {
             try {
-                inflater.setInput( inData );
+                inflater.setInput(inData);
 
-                while ( !inflater.finished() && inflater.getTotalIn() < inData.length ) {
-                    int count = inflater.inflate( buffer );
-                    out.writeBytes( buffer, 0, count );
+                while (!inflater.finished() && inflater.getTotalIn() < inData.length) {
+                    int count = inflater.inflate(buffer);
+                    out.writeBytes(buffer, 0, count);
                 }
             } catch (DataFormatException e) {
                 e.printStackTrace();

@@ -75,7 +75,7 @@ public class BlockChest extends TransparentBlock {
     @Override
     public boolean onBreak(ItemStack item, Block block) {
         LTileEntity tileEntity = ((LBlock) block).getTileEntity();
-        if(tileEntity == null)
+        if (tileEntity == null)
             return true;
         ((LWorld) block.getWorld()).unregisterTileEntity(tileEntity);
         return true;
@@ -84,7 +84,7 @@ public class BlockChest extends TransparentBlock {
     @Override
     public boolean onActivate(Block block, ItemStack item, Player player) {
         ChestTileEntity tileEntity = (ChestTileEntity) ((LBlock) block).getTileEntity();
-        if(tileEntity == null) {
+        if (tileEntity == null) {
             tileEntity = new ChestTileEntity(block.getLocation());
             ((LWorld) block.getWorld()).registerTileEntity(tileEntity);
         }
@@ -97,10 +97,10 @@ public class BlockChest extends TransparentBlock {
         List<ItemStack> items = new ArrayList<>();
         items.add(new ItemStack(Material.CHEST));
         ChestTileEntity tileEntity = (ChestTileEntity) ((LBlock) block).getTileEntity();
-        if(tileEntity == null)
+        if (tileEntity == null)
             return items;
-        for(ItemStack is : tileEntity.getInventory())
-            if(is != null && is.getType() != Material.AIR)
+        for (ItemStack is : tileEntity.getInventory())
+            if (is != null && is.getType() != Material.AIR)
                 items.add(is);
         return items;
     }

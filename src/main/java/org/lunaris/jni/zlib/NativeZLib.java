@@ -15,17 +15,17 @@ public class NativeZLib implements ZLib {
     private long ctx;
 
     @Override
-    public void init( boolean compress, int level ) {
+    public void init(boolean compress, int level) {
         free();
 
         this.compress = compress;
-        this.ctx = nativeCompress.init( compress, level );
+        this.ctx = nativeCompress.init(compress, level);
     }
 
     @Override
     public void free() {
-        if ( ctx != 0 ) {
-            nativeCompress.end( ctx, compress );
+        if (ctx != 0) {
+            nativeCompress.end(ctx, compress);
             ctx = 0;
         }
 
@@ -34,23 +34,23 @@ public class NativeZLib implements ZLib {
     }
 
     @Override
-    public void process(ByteBuf in, ByteBuf out ) {
+    public void process(ByteBuf in, ByteBuf out) {
         // Smoke tests
         in.memoryAddress();
         out.memoryAddress();
-        Preconditions.checkState( ctx != 0, "Invalid pointer to compress!" );
+        Preconditions.checkState(ctx != 0, "Invalid pointer to compress!");
 
         try {
-            while ( !nativeCompress.finished && ( compress || in.isReadable() ) ) {
-                out.ensureWritable( 8192 );
+            while (!nativeCompress.finished && (compress || in.isReadable())) {
+                out.ensureWritable(8192);
 
-                int processed = nativeCompress.process( ctx, in.memoryAddress() + in.readerIndex(), in.readableBytes(), out.memoryAddress() + out.writerIndex(), out.writableBytes(), compress );
+                int processed = nativeCompress.process(ctx, in.memoryAddress() + in.readerIndex(), in.readableBytes(), out.memoryAddress() + out.writerIndex(), out.writableBytes(), compress);
 
-                in.readerIndex( in.readerIndex() + nativeCompress.consumed );
-                out.writerIndex( out.writerIndex() + processed );
+                in.readerIndex(in.readerIndex() + nativeCompress.consumed);
+                out.writerIndex(out.writerIndex() + processed);
             }
         } finally {
-            nativeCompress.reset( ctx, compress );
+            nativeCompress.reset(ctx, compress);
             nativeCompress.consumed = 0;
             nativeCompress.finished = false;
         }

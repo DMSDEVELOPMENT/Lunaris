@@ -35,12 +35,12 @@ public class EntityProvider {
         entity.setPositionAndRotation(location);
         float hwidth = entity.getWidth() / 2;
         entity.getBoundingBox().setBounds(
-            entity.getX() - hwidth,
-            entity.getY(),
-            entity.getZ() - hwidth,
-            entity.getX() + hwidth,
-            entity.getY() + entity.getHeight(),
-            entity.getZ() + hwidth
+                entity.getX() - hwidth,
+                entity.getY(),
+                entity.getZ() - hwidth,
+                entity.getX() + hwidth,
+                entity.getY() + entity.getHeight(),
+                entity.getZ() + hwidth
         );
         if (spawnController != null && !spawnController.apply(entity))
             return null;

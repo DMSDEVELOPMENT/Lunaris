@@ -140,10 +140,10 @@ public final class Timings {
         int frames = (getHistoryLength() / getHistoryInterval());
         if (length > maxLength) {
             LunarisServer.getInstance().getLogger().warning(
-                "Timings Length too high. Requested " + length + ", max is " + maxLength
-                    + ". To get longer history, you must increase your interval. Set Interval to "
-                    + Math.ceil(length / MAX_HISTORY_FRAMES)
-                    + " to achieve this length.");
+                    "Timings Length too high. Requested " + length + ", max is " + maxLength
+                            + ". To get longer history, you must increase your interval. Set Interval to "
+                            + Math.ceil(length / MAX_HISTORY_FRAMES)
+                            + " to achieve this length.");
         }
 
         TimingsManager.HISTORY = new TimingsManager.BoundedQueue<>(frames);

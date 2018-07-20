@@ -7,7 +7,7 @@ import org.lunaris.api.util.configuration.FileConfigurationOptions;
  * Created by RINES on 21.04.17.
  */
 public class YamlConfigurationOptions extends FileConfigurationOptions {
-    
+
     private int indent = 2;
 
     public YamlConfigurationOptions(Configuration configuration) {

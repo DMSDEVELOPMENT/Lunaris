@@ -19,7 +19,8 @@ public class Packet0FAddItem extends Packet {
     private EntityMetadata metadata;
     private boolean isFromFishing = false;
 
-    public Packet0FAddItem() {}
+    public Packet0FAddItem() {
+    }
 
     public Packet0FAddItem(Item item) {
         this.entityID = item.getEntityID();

@@ -199,8 +199,8 @@ public class BlockVector implements Cloneable {
         if (!(ob instanceof BlockVector)) return false;
 
         return this.x == ((BlockVector) ob).x &&
-                        this.y == ((BlockVector) ob).y &&
-                        this.z == ((BlockVector) ob).z;
+                this.y == ((BlockVector) ob).y &&
+                this.z == ((BlockVector) ob).z;
     }
 
     @Override

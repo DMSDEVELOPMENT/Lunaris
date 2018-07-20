@@ -65,7 +65,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     private final BlockBreakingData blockBreakingData = new BlockBreakingData();
 
     private final AdventureSettings adventureSettings;
-    
+
     private long lastUseTime = -1;
 
     LPlayer(int entityID, PlayerConnection connection, Packet01Login packetLogin) {
@@ -86,6 +86,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
     /**
      * Установить скорость.
+     *
      * @param speed: 1.0 - обычная скорость.
      */
     public void setSpeed(float speed) {
@@ -139,7 +140,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     public void sendPopup(String message, String subtitle) {
         sendPacket(new Packet09Text(Packet09Text.MessageType.POPUP, message, subtitle));
     }
-    
+
     public void sendAvailableCommands() {
         sendPacket(new Packet4CAvailableCommands(LunarisServer.getInstance().getCommandManager().getAvailableCommands(this)));
     }
@@ -182,7 +183,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     }
 
     public boolean tryDisconnectReason(String reason) {
-        if(reason == null || !this.disconnectingReason.equals("Just disconnected"))
+        if (reason == null || !this.disconnectingReason.equals("Just disconnected"))
             return false;
         this.disconnectingReason = reason;
         return true;
@@ -217,7 +218,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     public void kick(String reason) {
         PlayerKickEvent event = new PlayerKickEvent(this, reason);
         LunarisServer.getInstance().getEventManager().call(event);
-        if(event.isCancelled())
+        if (event.isCancelled())
             return;
         disconnect(reason);
     }
@@ -288,7 +289,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
     public void setState(Packet24PlayerAction packet) {
         Packet24PlayerAction.Action action = packet.getAction();
-        switch(action) {
+        switch (action) {
             case START_SPRINT:
                 this.sprinting = true;
                 break;
@@ -347,9 +348,9 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
     @Override
     public void teleport(Location location) {
-        if(getWorld() == null)
+        if (getWorld() == null)
             initWorld(location.getWorld());
-        if(getWorld() != location.getWorld()) {
+        if (getWorld() != location.getWorld()) {
             sendPacket(new Packet13MovePlayer(getEntityID(), getX() + 1000000, 4000, getZ() + 1000000, 0F, 0F, 0F).mode(Packet13MovePlayer.MODE_RESET));
             getWorld().removePlayerFromWorld(this);
             initWorld(location.getWorld());
@@ -364,20 +365,20 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     }
 
     public void setGamemode(Gamemode gamemode) {
-        if(this.gamemode == gamemode)
+        if (this.gamemode == gamemode)
             return;
         this.gamemode = gamemode;
         sendPacket(new Packet3ESetPlayerGameType(gamemode));
         this.adventureSettings.update(gamemode);
-        if(gamemode == Gamemode.SPECTATOR) {
+        if (gamemode == Gamemode.SPECTATOR) {
             //...
-        }else {
+        } else {
 
 
         }
         LPlayerInventory inventory = getInventory();
         inventory.sendContents(this);
-        if(gamemode == Gamemode.CREATIVE)
+        if (gamemode == Gamemode.CREATIVE)
             this.inventoryManager.getCreativeInventory().sendContents(this);
     }
 
@@ -400,7 +401,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     public long getLastUseTime() {
         return lastUseTime;
     }
-    
+
     public void setLastUseTime(long time) {
         this.lastUseTime = time;
     }

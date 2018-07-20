@@ -10,7 +10,8 @@ public class Packet0AWorldTime extends Packet {
 
     private int time;
 
-    public Packet0AWorldTime() {}
+    public Packet0AWorldTime() {
+    }
 
     public Packet0AWorldTime(int time) {
         this.time = time;

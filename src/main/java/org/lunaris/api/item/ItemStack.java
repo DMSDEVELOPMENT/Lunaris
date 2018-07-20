@@ -28,6 +28,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Create new itemstack of given type, amount = 1 and data = 0.
+     *
      * @param type the material of itemstack.
      */
     public ItemStack(Material type) {
@@ -36,7 +37,8 @@ public class ItemStack implements Cloneable {
 
     /**
      * Create new itemstack of given type and amount; data = 0.
-     * @param type the material of itemstack.
+     *
+     * @param type   the material of itemstack.
      * @param amount amount of itemstack.
      */
     public ItemStack(Material type, int amount) {
@@ -45,9 +47,10 @@ public class ItemStack implements Cloneable {
 
     /**
      * Create new itemstack of given type, amount and data.
-     * @param type the material of itemstack.
+     *
+     * @param type   the material of itemstack.
      * @param amount amount of itemstack.
-     * @param data data of itemstack.
+     * @param data   data of itemstack.
      */
     public ItemStack(Material type, int amount, int data) {
         this.type = type;
@@ -57,9 +60,10 @@ public class ItemStack implements Cloneable {
 
     /**
      * Create new itemstack of given type id, amount and data.
-     * @param id identifier of material of itemstack.
+     *
+     * @param id     identifier of material of itemstack.
      * @param amount amount of itemstack.
-     * @param data data of itemstack.
+     * @param data   data of itemstack.
      */
     public ItemStack(int id, int amount, int data) {
         this(Material.getById(id), amount, data);
@@ -67,6 +71,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Create new itemstack from minecraftish material string.
+     *
      * @param stringData minecrafting material string.
      */
     @Internal
@@ -81,7 +86,8 @@ public class ItemStack implements Cloneable {
         else
             try {
                 id = ItemList.class.getField(b[0].toUpperCase()).getInt(null);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         id &= 0xffff;
         if (b.length != 1)
             data = Integer.parseInt(b[1]) & 0xffff;
@@ -92,6 +98,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get this item's material.
+     *
      * @return this item's material.
      */
     public Material getType() {
@@ -100,6 +107,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get this item's data.
+     *
      * @return this item's data.
      */
     public int getData() {
@@ -108,6 +116,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Set this item's data.
+     *
      * @param data new item's data.
      */
     public void setData(int data) {
@@ -116,6 +125,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get this item's amount.
+     *
      * @return this item's amount.
      */
     public int getAmount() {
@@ -124,6 +134,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Set this item's amount.
+     *
      * @param amount new item's amount.
      */
     public void setAmount(int amount) {
@@ -132,8 +143,9 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get this item's max stack size.
-     * @see MaterialHandle#getMaxStackSize(int)
+     *
      * @return this item's max stack size.
+     * @see MaterialHandle#getMaxStackSize(int)
      */
     public int getMaxStackSize() {
         return getHandle().getMaxStackSize(this.data);
@@ -141,8 +153,9 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get this item's tool type.
-     * @see ItemHandle#getToolType()
+     *
      * @return this item's tool type.
+     * @see ItemHandle#getToolType()
      */
     public ItemToolType getToolType() {
         return isBlock() ? ItemToolType.NONE : getItemHandle().getToolType();
@@ -150,6 +163,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Check whether this item is of given tool type.
+     *
      * @param toolType the tool type to check for.
      * @return if this item is of given tool type.
      */
@@ -159,8 +173,9 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get this item's tier.
-     * @see ItemHandle#getTier()
+     *
      * @return this item's tier.
+     * @see ItemHandle#getTier()
      */
     public ItemTier getTier() {
         return isBlock() ? ItemTier.NONE : getItemHandle().getTier();
@@ -168,6 +183,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Check whether this item is of given tier or higher.
+     *
      * @param tier the tier to check for.
      * @return if this item is of given tier or higher.
      */
@@ -177,11 +193,12 @@ public class ItemStack implements Cloneable {
 
     /**
      * Check whether this item is of given tool type and of given tier or higher.
+     *
+     * @param toolType the tool type to check for.
+     * @param tier     the tier to check for.
+     * @return if this item is of given tool type and of given tier or higher.
      * @see ItemStack#isOfToolType(ItemToolType)
      * @see ItemStack#isOfTier(ItemTier)
-     * @param toolType the tool type to check for.
-     * @param tier the tier to check for.
-     * @return if this item is of given tool type and of given tier or higher.
      */
     public boolean isOfToolTier(ItemToolType toolType, ItemTier tier) {
         return isOfToolType(toolType) && isOfTier(tier);
@@ -189,6 +206,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Check whether this itemstack represents an item and not a block.
+     *
      * @return if this itemstack represents an item and not a block.
      */
     public boolean isItem() {
@@ -197,6 +215,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Check whether this itemstack represents a block and not an item.
+     *
      * @return if this itemstack represents a block and not an item.
      */
     public boolean isBlock() {
@@ -205,6 +224,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get block handle of this itemstack.
+     *
      * @return block handle of this itemstack. null for items.
      */
     public BlockHandle getBlockHandle() {
@@ -213,6 +233,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get item handle of this itemstack.
+     *
      * @return item handle of this itemstack. null for blocks.
      */
     public ItemHandle getItemHandle() {
@@ -221,6 +242,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get material handle of this itemstack.
+     *
      * @return material handle of this itemstack.
      */
     public MaterialHandle getHandle() {
@@ -229,6 +251,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Check whether this itemstack contains any compound data.
+     *
      * @return if this itemstack contains any compound data.
      */
     public boolean hasCompoundTag() {
@@ -237,6 +260,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get this itemstack compound data in serialized format.
+     *
      * @return this itemstack compound data in serialized (byte array) format.
      */
     @Internal
@@ -246,6 +270,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Set this itemstack compound data in serialized format.
+     *
      * @param data the data in byte array format itself.
      */
     @Internal
@@ -256,6 +281,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Set new compound tag to this itemstack.
+     *
      * @param tag new compound tag.
      */
     @Internal
@@ -271,6 +297,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Get itemstack current compound tag.
+     *
      * @return itemstack current compound tag.
      */
     public CompoundTag getCompoundTag() {
@@ -302,6 +329,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Check whether this itemstack is available in creative.
+     *
      * @return if this itemstack can be obtained from creative inventory.
      */
     public boolean canBeFoundInCreative() {
@@ -316,7 +344,7 @@ public class ItemStack implements Cloneable {
             return false;
         ItemStack item = (ItemStack) o;
         if (getType() != item.getType() || getData() != item.getData() || getAmount() != item.getAmount()
-            || this.nbtData.length != item.nbtData.length)
+                || this.nbtData.length != item.nbtData.length)
             return false;
         for (int i = 0; i < this.nbtData.length; ++i)
             if (this.nbtData[i] != item.nbtData[i])
@@ -326,6 +354,7 @@ public class ItemStack implements Cloneable {
 
     /**
      * Check whether this itemstack equals to another one without checking amount.
+     *
      * @param item another itemstack to compare to.
      * @return if this itemstack equals to another one without checking amount.
      */
@@ -344,7 +373,8 @@ public class ItemStack implements Cloneable {
     public ItemStack clone() {
         try {
             return (ItemStack) super.clone();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return null;
     }
 

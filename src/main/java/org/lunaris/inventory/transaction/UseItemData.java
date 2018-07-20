@@ -19,7 +19,8 @@ public class UseItemData implements TransactionData {
     private Vector3f playerPosition;
     private Vector3f clickPosition;
 
-    public UseItemData() {}
+    public UseItemData() {
+    }
 
     public UseItemData(Packet1EInventoryTransaction.UseItemActionType type, BlockVector blockPosition,
                        BlockFace blockFace, int hotbarSlot, ItemStack itemInHand, Vector3f playerPosition, Vector3f clickPosition) {

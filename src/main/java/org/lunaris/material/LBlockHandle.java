@@ -63,7 +63,7 @@ public class LBlockHandle extends LMaterialHandle implements BlockHandle {
     }
 
     public void onUpdate(Block block, BlockUpdateType type) {
-        
+
     }
 
     public boolean onActivate(Block block, ItemStack item) {
@@ -125,12 +125,12 @@ public class LBlockHandle extends LMaterialHandle implements BlockHandle {
 
     public AxisAlignedBB recalculateBoundingBox(Block block) {
         return new AxisAlignedBB(
-            block.getX(),
-            block.getY(),
-            block.getZ(),
-            block.getX() + 1,
-            block.getY() + 1,
-            block.getZ() + 1
+                block.getX(),
+                block.getY(),
+                block.getZ(),
+                block.getX() + 1,
+                block.getY() + 1,
+                block.getZ() + 1
         );
     }
 
@@ -168,7 +168,8 @@ public class LBlockHandle extends LMaterialHandle implements BlockHandle {
 
     /**
      * Когда сущность заходит на блок
-     * @param block блок
+     *
+     * @param block  блок
      * @param entity сущность
      */
     public void onStepOn(Block block, Entity entity) {
@@ -177,7 +178,8 @@ public class LBlockHandle extends LMaterialHandle implements BlockHandle {
 
     /**
      * Когда сущность сходит с блока
-     * @param block блок
+     *
+     * @param block  блок
      * @param entity сущность
      */
     public void onStepOff(Block block, Entity entity) {

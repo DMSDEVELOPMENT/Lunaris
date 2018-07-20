@@ -62,55 +62,55 @@ public class Packet01Login extends Packet {
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         byte[] stringBuffer = new byte[buffer.getInt()];
         buffer.get(stringBuffer);
-        String jwt = new String( stringBuffer );
+        String jwt = new String(stringBuffer);
         JSONObject json;
         try {
-            json = this.parseJwtString( jwt );
-        } catch ( ParseException e ) {
+            json = this.parseJwtString(jwt);
+        } catch (ParseException e) {
             e.printStackTrace();
             return;
         }
 
-        Object jsonChainRaw = json.get( "chain" );
-        if ( jsonChainRaw == null || !( jsonChainRaw instanceof JSONArray) ) {
+        Object jsonChainRaw = json.get("chain");
+        if (jsonChainRaw == null || !(jsonChainRaw instanceof JSONArray)) {
             return;
         }
 
         MojangChainValidator chainValidator = new MojangChainValidator(LunarisServer.getInstance().getEncryptionKeyFactory());
         JSONArray jsonChain = (JSONArray) jsonChainRaw;
-        for ( Object jsonTokenRaw : jsonChain ) {
-            if ( jsonTokenRaw instanceof String ) {
+        for (Object jsonTokenRaw : jsonChain) {
+            if (jsonTokenRaw instanceof String) {
                 try {
-                    JwtToken token = JwtToken.parse( (String) jsonTokenRaw );
-                    chainValidator.addToken( token );
-                } catch ( IllegalArgumentException e ) {
+                    JwtToken token = JwtToken.parse((String) jsonTokenRaw);
+                    chainValidator.addToken(token);
+                } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        if(validate == null)
+        if (validate == null)
             validate = LunarisServer.getInstance().getServerSettings().isInOnlineMode();
         if (validate && !chainValidator.validate()) {
             this.disconnectReason = "You can login only using XBOX account.";
             return;
         }
         byte[] skin = new byte[buffer.getInt()];
-        buffer.get( skin );
+        buffer.get(skin);
 
-        JwtToken skinToken = JwtToken.parse( new String( skin ) );
+        JwtToken skinToken = JwtToken.parse(new String(skin));
 
         try {
-            skinToken.validateSignature( JwtAlgorithm.ES384, chainValidator.getTrustedKeys().get( skinToken.getHeader().getProperty( "x5u" ) ) );
-        } catch ( JwtSignatureException e ) {
-            if(validate) {
+            skinToken.validateSignature(JwtAlgorithm.ES384, chainValidator.getTrustedKeys().get(skinToken.getHeader().getProperty("x5u")));
+        } catch (JwtSignatureException e) {
+            if (validate) {
                 this.disconnectReason = "Your skin is invalid or corrupted.";
                 return;
             }
         }
-        String capeData = skinToken.getClaim( "CapeData" );
+        String capeData = skinToken.getClaim("CapeData");
         this.skin = new Skin((String) skinToken.getClaim("SkinData"), skinToken.getClaim("SkinId"));
-        if(!capeData.isEmpty())
+        if (!capeData.isEmpty())
             this.skin.setCape(this.skin.new Cape(Base64.getDecoder().decode(capeData)));
         this.skinGeometryName = skinToken.getClaim("SkinGeometryName");
         this.skinGeometry = Base64.getDecoder().decode((String) skinToken.getClaim("SkinGeometry"));
@@ -121,12 +121,12 @@ public class Packet01Login extends Packet {
         this.clientPublicKey = chainValidator.getClientPublicKey();
     }
 
-    private JSONObject parseJwtString( String jwt ) throws ParseException {
-        Object jsonParsed = new JSONParser().parse( jwt );
-        if ( jsonParsed instanceof JSONObject ) {
+    private JSONObject parseJwtString(String jwt) throws ParseException {
+        Object jsonParsed = new JSONParser().parse(jwt);
+        if (jsonParsed instanceof JSONObject) {
             return (JSONObject) jsonParsed;
         } else {
-            throw new ParseException( ParseException.ERROR_UNEXPECTED_TOKEN );
+            throw new ParseException(ParseException.ERROR_UNEXPECTED_TOKEN);
         }
     }
 

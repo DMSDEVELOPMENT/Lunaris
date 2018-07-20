@@ -57,8 +57,8 @@ public class EventManager {
             Class<?> param = m.getParameterTypes()[0];
             if (!event.isAssignableFrom(param))
                 continue;
-            Set<Handler> handlers = HANDLERS.computeIfAbsent((Class<Event>) param, c -> 
-                new ConcurrentSkipListSet<>(Comparator.comparingInt(Handler::priority))
+            Set<Handler> handlers = HANDLERS.computeIfAbsent((Class<Event>) param, c ->
+                    new ConcurrentSkipListSet<>(Comparator.comparingInt(Handler::priority))
             );
             EventHandler annotation = m.getAnnotation(EventHandler.class);
             handlers.add(new Handler(annotation.priority(), annotation.ignoreCancelled(), constructConsumer(listener, m)));
@@ -69,12 +69,12 @@ public class EventManager {
         try {
             MethodHandles.Lookup lookup = constructLookup(listener.getClass());
             return (Consumer<Event>) LambdaMetafactory.metafactory(
-                lookup,
-                "accept",
-                MethodType.methodType(Consumer.class, listener.getClass()),
-                MethodType.methodType(void.class, Object.class),
-                lookup.unreflect(method),
-                MethodType.methodType(void.class, method.getParameterTypes()[0])
+                    lookup,
+                    "accept",
+                    MethodType.methodType(Consumer.class, listener.getClass()),
+                    MethodType.methodType(void.class, Object.class),
+                    lookup.unreflect(method),
+                    MethodType.methodType(void.class, method.getParameterTypes()[0])
             ).getTarget().invoke(listener);
         } catch (Throwable t) {
             this.server.getLogger().error(t, "Can not construct event handler consumer");

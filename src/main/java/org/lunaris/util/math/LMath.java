@@ -34,11 +34,11 @@ public class LMath {
     }
 
     public static int fastFloor(float x) {
-        return (int) ( x + BIG_ENOUGH_FLOOR ) - BIG_ENOUGH_INT;
+        return (int) (x + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
     }
 
     public static int fastCeil(float x) {
-        return BIG_ENOUGH_INT - (int) ( BIG_ENOUGH_FLOOR - x );
+        return BIG_ENOUGH_INT - (int) (BIG_ENOUGH_FLOOR - x);
     }
 
     public static int ceilFloat(float n) {

@@ -27,9 +27,11 @@ public class Plugin {
     PluginClassLoader classLoader;
     Logger logger;
 
-    protected void onEnable() { }
+    protected void onEnable() {
+    }
 
-    protected void onDisable() { }
+    protected void onDisable() {
+    }
 
     public String getName() {
         return this.name;

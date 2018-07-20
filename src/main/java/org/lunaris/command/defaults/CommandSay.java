@@ -21,10 +21,10 @@ public class CommandSay extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(args.length == 0)
+        if (args.length == 0)
             return;
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < args.length; ++i)
+        for (int i = 0; i < args.length; ++i)
             sb.append(args[i]).append(" ");
         LunarisServer.getInstance().broadcastMessage(ChatColor.colored("&d[Server]&r ") + sb.toString().trim());
     }

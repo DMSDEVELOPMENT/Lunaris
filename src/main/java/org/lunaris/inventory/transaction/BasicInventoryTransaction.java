@@ -42,9 +42,9 @@ public class BasicInventoryTransaction implements InventoryTransaction {
 
     @Override
     public void addAction(InventoryAction action) {
-        if(this.actions.contains(action))
+        if (this.actions.contains(action))
             return;
-        if(action instanceof SlotChangeAction)
+        if (action instanceof SlotChangeAction)
             this.inventories.add(((SlotChangeAction) action).getInventory());
         this.actions.add(action);
     }
@@ -52,25 +52,25 @@ public class BasicInventoryTransaction implements InventoryTransaction {
     protected boolean matchItems(List<ItemStack> needItems, List<ItemStack> haveItems) {
         for (InventoryAction action : this.actions) {
             ItemStack target = action.getTargetItem();
-            if(target != null && target.getType() != Material.AIR)
+            if (target != null && target.getType() != Material.AIR)
                 needItems.add(target);
-            if(!action.isValid(this.player)) {
+            if (!action.isValid(this.player)) {
                 System.out.println(this.player.getName() + " performed non valid transaction!");
                 return false;
             }
             target = action.getSourceItem();
-            if(target != null && target.getType() != Material.AIR)
+            if (target != null && target.getType() != Material.AIR)
                 haveItems.add(target);
         }
-        for(ItemStack needItem : new ArrayList<>(needItems)) {
+        for (ItemStack needItem : new ArrayList<>(needItems)) {
             int left = needItem.getAmount();
-            for(ItemStack haveItem : new ArrayList<>(haveItems)) {
-                if(needItem.isSimilar(haveItem)) {
+            for (ItemStack haveItem : new ArrayList<>(haveItems)) {
+                if (needItem.isSimilar(haveItem)) {
                     int min = Math.min(haveItem.getAmount(), left);
                     haveItem.setAmount(haveItem.getAmount() - min);
-                    if(haveItem.getAmount() == 0)
+                    if (haveItem.getAmount() == 0)
                         haveItems.remove(haveItem);
-                    if((left -= min) == 0) {
+                    if ((left -= min) == 0) {
                         needItems.remove(needItem);
                         break;
                     }
@@ -155,16 +155,15 @@ public class BasicInventoryTransaction implements InventoryTransaction {
                         lastTargetItem = action.getTargetItem();
                         list.remove(i);
                         sortedThisLoop++;
-                    }
-                    else if (actionSource.isSimilar(lastTargetItem)) {
+                    } else if (actionSource.isSimilar(lastTargetItem)) {
                         lastTargetItem.setAmount(lastTargetItem.getAmount() - actionSource.getAmount());
                         list.remove(i);
-                        if(lastTargetItem.getAmount() == 0)
+                        if (lastTargetItem.getAmount() == 0)
                             ++sortedThisLoop;
                     }
                 }
             } while (sortedThisLoop > 0);
-            if(!list.isEmpty())
+            if (!list.isEmpty())
                 return false;
             originalList.forEach(this.actions::remove);
             this.addAction(new SlotChangeAction(originalAction.getInventory(), originalAction.getSlot(), originalAction.getSourceItem(), lastTargetItem));
@@ -181,10 +180,10 @@ public class BasicInventoryTransaction implements InventoryTransaction {
 
     @Override
     public boolean execute() {
-        if(hasExecuted() || !canExecute())
+        if (hasExecuted() || !canExecute())
             return false;
-        for(InventoryAction action : this.actions) {
-            if(action.execute(this.player))
+        for (InventoryAction action : this.actions) {
+            if (action.execute(this.player))
                 action.onExecuteSuccess(this.player);
             else
                 action.onExecuteFail(this.player);

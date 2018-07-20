@@ -27,7 +27,7 @@ public class DropItemAction extends InventoryAction {
             item.setPickupDelay(2000L);
             PlayerDropItemEvent event = new PlayerDropItemEvent(source, item);
             event.call();
-            if(event.isCancelled()) {
+            if (event.isCancelled()) {
                 source.getInventory().sendContents(source);
                 return false;
             }

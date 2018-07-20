@@ -143,10 +143,10 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
         writeUnsignedVarInt(stream, encodeZigZag32(v));
     }
 
-    private void writeVarLong(OutputStream stream, long value)  throws IOException {
+    private void writeVarLong(OutputStream stream, long value) throws IOException {
         value = encodeZigZag64(value);
         do {
-            byte temp = (byte)(value & 0b01111111);
+            byte temp = (byte) (value & 0b01111111);
             // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
             value >>>= 7;
             if (value != 0) {
@@ -156,8 +156,8 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
         } while (value != 0);
     }
 
-    private void writeUnsignedVarInt(OutputStream stream, int value)  throws IOException {
-        while((value & -128) != 0) {
+    private void writeUnsignedVarInt(OutputStream stream, int value) throws IOException {
+        while ((value & -128) != 0) {
             stream.write((byte) (value & 127 | 128));
             value >>>= 7;
         }

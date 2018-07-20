@@ -29,7 +29,7 @@ public class PlayerList {
         Collection<LPlayer> players = this.server.getOnlinePlayers();
         Packet3FPlayerList.Entry[] entries = new Packet3FPlayerList.Entry[players.size()];
         int index = 0;
-        for(Iterator<LPlayer> iterator = players.iterator(); iterator.hasNext();)
+        for (Iterator<LPlayer> iterator = players.iterator(); iterator.hasNext(); )
             entries[index++] = new Packet3FPlayerList.Entry(iterator.next());
         player.sendPacket(new Packet3FPlayerList(Packet3FPlayerList.Type.ADD, entries));
     }

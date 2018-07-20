@@ -17,18 +17,18 @@ public class AdventureSettings {
 
     public AdventureSettings(LPlayer player) {
         this.player = player;
-        for(Packet37AdventureSettings.Flag flag : Packet37AdventureSettings.Flag.values())
-            if(flag.hasDefaultValue())
+        for (Packet37AdventureSettings.Flag flag : Packet37AdventureSettings.Flag.values())
+            if (flag.hasDefaultValue())
                 this.flags.add(flag);
     }
 
     public void update() {
         Packet37AdventureSettings packet = new Packet37AdventureSettings(this.player.getEntityID(), this.flags);
-        if(this.player.getGamemode() != Gamemode.CREATIVE && this.player.getGamemode() != Gamemode.SURVIVAL)
+        if (this.player.getGamemode() != Gamemode.CREATIVE && this.player.getGamemode() != Gamemode.SURVIVAL)
             packet
-                .flag(Packet37AdventureSettings.Flag.WORLD_IMMUTABLE, true)
-                .flag(Packet37AdventureSettings.Flag.WORLD_BUILDER, false)
-                .flag(Packet37AdventureSettings.Flag.BUILD_AND_MINE, false);
+                    .flag(Packet37AdventureSettings.Flag.WORLD_IMMUTABLE, true)
+                    .flag(Packet37AdventureSettings.Flag.WORLD_BUILDER, false)
+                    .flag(Packet37AdventureSettings.Flag.BUILD_AND_MINE, false);
         this.player.sendPacket(packet);
     }
 
@@ -40,8 +40,8 @@ public class AdventureSettings {
     }
 
     private void flag(Packet37AdventureSettings.Flag flag, Gamemode given, Gamemode... allowed) {
-        for(Gamemode gamemode : allowed)
-            if(gamemode == given) {
+        for (Gamemode gamemode : allowed)
+            if (gamemode == given) {
                 setFlag(flag, true);
                 return;
             }
@@ -49,7 +49,7 @@ public class AdventureSettings {
     }
 
     public void setFlag(Packet37AdventureSettings.Flag flag, boolean value) {
-        if(value)
+        if (value)
             this.flags.add(flag);
         else
             this.flags.remove(flag);
@@ -61,7 +61,7 @@ public class AdventureSettings {
     }
 
     public void setFlagAndUpdate(Packet37AdventureSettings.Flag flag, boolean value) {
-        if(value && this.flags.add(flag) || !value && this.flags.remove(flag))
+        if (value && this.flags.add(flag) || !value && this.flags.remove(flag))
             update();
     }
 

@@ -32,7 +32,7 @@ public class LContainerInventory extends LInventory implements ContainerInventor
 
     @Override
     boolean open(Player player) {
-        if(!super.open(player))
+        if (!super.open(player))
             return false;
         LPlayer lp = (LPlayer) player;
         Location loc = this.holder.getLocation();

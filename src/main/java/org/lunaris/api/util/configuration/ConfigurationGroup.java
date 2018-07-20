@@ -14,7 +14,7 @@ public class ConfigurationGroup {
         this.manager = manager;
         this.ancestor = ancestor.isEmpty() ? "" : ancestor + '/';
         File ancestorDirectory = new File(ancestor);
-        if(!ancestorDirectory.exists())
+        if (!ancestorDirectory.exists())
             ancestorDirectory.mkdirs();
     }
 

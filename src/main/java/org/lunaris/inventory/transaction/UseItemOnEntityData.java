@@ -15,7 +15,8 @@ public class UseItemOnEntityData implements TransactionData {
     private ItemStack itemInHand;
     private Vector3f vector1, vector2;
 
-    public UseItemOnEntityData() {}
+    public UseItemOnEntityData() {
+    }
 
     public UseItemOnEntityData(Packet1EInventoryTransaction.UseItemOnEntityActionType type, long entityID,
                                int hotbarSlot, ItemStack itemInHand, Vector3f vector1, Vector3f vector2) {

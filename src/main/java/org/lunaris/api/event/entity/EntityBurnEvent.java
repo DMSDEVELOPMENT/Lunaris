@@ -39,5 +39,5 @@ public class EntityBurnEvent extends Event implements Cancellable {
     public boolean isCancelled() {
         return this.cancelled;
     }
-    
+
 }

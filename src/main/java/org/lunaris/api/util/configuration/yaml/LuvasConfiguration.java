@@ -26,17 +26,17 @@ public class LuvasConfiguration {
     }
 
     public FileConfiguration get() {
-        if(config == null)
+        if (config == null)
             this.reload();
         return config;
     }
 
     public void save() {
-        if(file == null || config == null)
+        if (file == null || config == null)
             return;
         try {
             get().save(file);
-        }catch (IOException ex) {
+        } catch (IOException ex) {
             LunarisServer.getInstance().getLogger().warn(ex, "Can not save configuration %s", getName());
         }
     }

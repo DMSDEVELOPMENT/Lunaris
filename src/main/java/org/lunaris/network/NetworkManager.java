@@ -45,8 +45,8 @@ public class NetworkManager {
     private long previousTickTime;
 
     public NetworkManager(LunarisServer server) {
-        System.setProperty( "java.net.preferIPv4Stack", "true" );               // We currently don't use ipv6
-        System.setProperty( "io.netty.selectorAutoRebuildThreshold", "0" );     // Never rebuild selectors
+        System.setProperty("java.net.preferIPv4Stack", "true");               // We currently don't use ipv6
+        System.setProperty("io.netty.selectorAutoRebuildThreshold", "0");     // Never rebuild selectors
         this.server = server;
         this.serverSocket = new ServerSocket(200);
         initServerSocket();

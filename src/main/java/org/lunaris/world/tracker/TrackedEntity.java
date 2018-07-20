@@ -8,7 +8,6 @@ import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.inventory.LPlayerInventory;
 import org.lunaris.network.Packet;
-import org.lunaris.network.PlayerConnectionState;
 import org.lunaris.network.packet.*;
 import org.lunaris.util.math.MathHelper;
 
@@ -102,10 +101,8 @@ public class TrackedEntity {
         }
     }
 
-    public void removePlayer(LPlayer player) {
-        if (this.trackingPlayers.remove(player)) {
-            this.tracker.trackedEntityLinks.get(player).remove(this);
-        }
+    void removePlayer(LPlayer player) {
+        this.trackingPlayers.remove(player);
     }
 
     public boolean isInViewRange(LPlayer player) {

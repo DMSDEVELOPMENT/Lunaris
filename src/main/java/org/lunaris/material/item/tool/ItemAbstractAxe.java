@@ -8,7 +8,7 @@ import org.lunaris.material.LItemHandle;
 /**
  * Created by RINES on 06.10.17.
  */
-public abstract  class ItemAbstractAxe extends LItemHandle {
+public abstract class ItemAbstractAxe extends LItemHandle {
 
     ItemAbstractAxe(Material type, String name) {
         super(type, name);
@@ -23,6 +23,6 @@ public abstract  class ItemAbstractAxe extends LItemHandle {
     public abstract ItemTier getTier();
 
     @Override
-    public abstract  int getAttackDamage();
+    public abstract int getAttackDamage();
 
 }

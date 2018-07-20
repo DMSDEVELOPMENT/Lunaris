@@ -104,11 +104,11 @@ public abstract class LiquidBlock extends TransparentBlock {
     protected boolean isLava(Material type) {
         return type == Material.LAVA || type == Material.LAVA_STILL;
     }
-    
+
     protected boolean isWater(Material type) {
         return type == Material.WATER || type == Material.WATER_STILL;
     }
-    
+
     public float getFluidHeightPercent(Block block) {
         float d = (float) block.getData();
         if (d >= 8)

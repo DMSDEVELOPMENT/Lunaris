@@ -21,7 +21,8 @@ public class InventoryActionData {
     private int inventorySlot;
     private ItemStack oldItem, newItem;
 
-    public InventoryActionData() {}
+    public InventoryActionData() {
+    }
 
     public InventoryActionData(PacketBuffer buffer) {
         int id = buffer.readUnsignedVarInt();

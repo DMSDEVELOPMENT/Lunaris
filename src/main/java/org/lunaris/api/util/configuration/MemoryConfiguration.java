@@ -8,26 +8,26 @@ import java.util.Map;
  * Created by RINES on 21.04.17.
  */
 public class MemoryConfiguration extends MemorySection implements Configuration {
-    
+
     protected Configuration defaults;
     protected ConfigurationOptions options;
 
     public MemoryConfiguration() {
 
     }
-    
+
     public MemoryConfiguration(Configuration defaults) {
         this.defaults = defaults;
     }
-    
+
     @Override
     public void addDefault(String path, Object value) {
         Validate.notNull(path, "Path can't be null");
-        if(defaults == null)
+        if (defaults == null)
             defaults = new MemoryConfiguration();
         defaults.set(path, value);
     }
-    
+
     @Override
     public ConfigurationSection getParent() {
         return null;
@@ -58,7 +58,7 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
 
     @Override
     public ConfigurationOptions options() {
-        if(options == null)
+        if (options == null)
             options = new ConfigurationOptions(this);
         return options;
     }

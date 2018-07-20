@@ -11,7 +11,8 @@ public class Packet11PickupItem extends Packet {
     private long itemEntityID;
     private long playerEntityID;
 
-    public Packet11PickupItem() {}
+    public Packet11PickupItem() {
+    }
 
     public Packet11PickupItem(long itemEntityID, long playerEntityID) {
         this.itemEntityID = itemEntityID;

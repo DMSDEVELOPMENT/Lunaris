@@ -92,13 +92,13 @@ public class TimingsExport {
             request.close();
 
             String response = getResponse(sender, con);
-            if(con.getResponseCode() != 302) {
+            if (con.getResponseCode() != 302) {
                 sender.sendMessage(ChatColor.RED + "Timings upload ended with unknown response code: " + con.getResponseCode() + " (" + con.getResponseMessage() + ")");
                 return;
             }
             String location = con.getHeaderField("Location");
             sender.sendMessage(ChatColor.GREEN + "Timings have been uploaded to " + ChatColor.WHITE + location);
-        }catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }

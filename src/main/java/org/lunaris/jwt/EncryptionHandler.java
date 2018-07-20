@@ -27,8 +27,8 @@ public class EncryptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(EncryptionHandler.class);
 
     // Packet counters
-    private AtomicLong sendingCounter = new AtomicLong( 0 );
-    private AtomicLong receiveCounter = new AtomicLong( 0 );
+    private AtomicLong sendingCounter = new AtomicLong(0);
+    private AtomicLong receiveCounter = new AtomicLong(0);
 
     // Client Side:
     private ECPublicKey clientPublicKey;
@@ -47,7 +47,7 @@ public class EncryptionHandler {
      *
      * @param keyFactory The keyFactory which created the server keypair
      */
-    public EncryptionHandler( EncryptionKeyFactory keyFactory ) {
+    public EncryptionHandler(EncryptionKeyFactory keyFactory) {
         this.keyFactory = keyFactory;
     }
 
@@ -56,7 +56,7 @@ public class EncryptionHandler {
      *
      * @param key The key which should be used to encrypt traffic
      */
-    public void supplyClientKey( ECPublicKey key ) {
+    public void supplyClientKey(ECPublicKey key) {
         this.clientPublicKey = key;
     }
 
@@ -66,28 +66,28 @@ public class EncryptionHandler {
      * @return Whether or not the setup completed successfully
      */
     public boolean beginClientsideEncryption() {
-        if ( this.clientEncryptor != null && this.clientDecryptor != null ) {
+        if (this.clientEncryptor != null && this.clientDecryptor != null) {
             // Already initialized:
             return true;
         }
 
         // Generate a random salt:
         SecureRandom secureRandom = new SecureRandom();
-        this.clientSalt = secureRandom.generateSeed( 16 );
+        this.clientSalt = secureRandom.generateSeed(16);
 
         // Generate shared secret from ECDH keys:
-        byte[] secret = this.generateECDHSecret( this.keyFactory.getKeyPair().getPrivate(), this.clientPublicKey );
-        if ( secret == null ) {
+        byte[] secret = this.generateECDHSecret(this.keyFactory.getKeyPair().getPrivate(), this.clientPublicKey);
+        if (secret == null) {
             return false;
         }
 
         // Derive key as salted SHA-256 hash digest:
-        this.key = this.hashSHA256( this.clientSalt, secret );
-        byte[] iv = this.takeBytesFromArray( this.key, 0, 16 );
+        this.key = this.hashSHA256(this.clientSalt, secret);
+        byte[] iv = this.takeBytesFromArray(this.key, 0, 16);
 
         // Initialize BlockCiphers:
-        this.clientEncryptor = this.createCipher( true, this.key, iv );
-        this.clientDecryptor = this.createCipher( false, this.key, iv );
+        this.clientEncryptor = this.createCipher(true, this.key, iv);
+        this.clientDecryptor = this.createCipher(false, this.key, iv);
         return true;
     }
 
@@ -97,19 +97,19 @@ public class EncryptionHandler {
      * @param input RAW packet data from RakNet
      * @return Either null when the data was corrupted or the decrypted data
      */
-    public byte[] decryptInputFromClient( byte[] input ) {
-        byte[] output = this.processCipher( this.clientDecryptor, input );
-        if ( output == null ) {
+    public byte[] decryptInputFromClient(byte[] input) {
+        byte[] output = this.processCipher(this.clientDecryptor, input);
+        if (output == null) {
             return null;
         }
 
         byte[] outputChunked = new byte[input.length - 8];
 
-        System.arraycopy( output, 0, outputChunked, 0, outputChunked.length );
+        System.arraycopy(output, 0, outputChunked, 0, outputChunked.length);
 
-        byte[] hashBytes = calcHash( outputChunked, this.receiveCounter );
-        for ( int i = output.length - 8; i < output.length; i++ ) {
-            if ( hashBytes[i - (output.length - 8)] != output[i] ) {
+        byte[] hashBytes = calcHash(outputChunked, this.receiveCounter);
+        for (int i = output.length - 8; i < output.length; i++) {
+            if (hashBytes[i - (output.length - 8)] != output[i]) {
                 return null;
             }
         }
@@ -123,14 +123,14 @@ public class EncryptionHandler {
      * @param input zlib compressed data
      * @return data ready to be sent directly to the client
      */
-    public byte[] encryptInputForClient( byte[] input ) {
-        byte[] hashBytes = calcHash( input, this.sendingCounter );
+    public byte[] encryptInputForClient(byte[] input) {
+        byte[] hashBytes = calcHash(input, this.sendingCounter);
         byte[] finalInput = new byte[hashBytes.length + input.length];
 
-        System.arraycopy( input, 0, finalInput, 0, input.length );
-        System.arraycopy( hashBytes, 0, finalInput, input.length, 8 );
+        System.arraycopy(input, 0, finalInput, 0, input.length);
+        System.arraycopy(hashBytes, 0, finalInput, input.length, 8);
 
-        return this.processCipher( this.clientEncryptor, finalInput );
+        return this.processCipher(this.clientEncryptor, finalInput);
     }
 
 
@@ -140,7 +140,7 @@ public class EncryptionHandler {
      * @return BASE64 encoded public key
      */
     public String getServerPublic() {
-        return Base64.getEncoder().encodeToString( this.keyFactory.getKeyPair().getPublic().getEncoded() );
+        return Base64.getEncoder().encodeToString(this.keyFactory.getKeyPair().getPublic().getEncoded());
     }
 
     /**
@@ -152,29 +152,29 @@ public class EncryptionHandler {
         return this.keyFactory.getKeyPair().getPrivate();
     }
 
-    private byte[] calcHash( byte[] input, AtomicLong counter ) {
+    private byte[] calcHash(byte[] input, AtomicLong counter) {
         SHA256Digest digest = new SHA256Digest();
 
         byte[] result = new byte[digest.getDigestSize()];
-        digest.update( ByteBuffer.allocate(8).order( ByteOrder.LITTLE_ENDIAN ).putLong( counter.getAndIncrement() ).array(), 0, 8 );
-        digest.update( input, 0, input.length );
-        digest.update( this.key, 0, this.key.length );
-        digest.doFinal( result, 0 );
+        digest.update(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(counter.getAndIncrement()).array(), 0, 8);
+        digest.update(input, 0, input.length);
+        digest.update(this.key, 0, this.key.length);
+        digest.doFinal(result, 0);
 
         return Arrays.copyOf(result, 8);
     }
 
-    private byte[] processCipher( BufferedBlockCipher cipher, byte[] input ) {
-        byte[] output = new byte[cipher.getOutputSize( input.length )];
-        int cursor = cipher.processBytes( input, 0, input.length, output, 0 );
+    private byte[] processCipher(BufferedBlockCipher cipher, byte[] input) {
+        byte[] output = new byte[cipher.getOutputSize(input.length)];
+        int cursor = cipher.processBytes(input, 0, input.length, output, 0);
 
         try {
             // cursor += cipher.doFinal( output, cursor );
-            if ( cursor != output.length ) {
-                throw new InvalidCipherTextException( "Output size did not match cursor" );
+            if (cursor != output.length) {
+                throw new InvalidCipherTextException("Output size did not match cursor");
             }
-        } catch ( InvalidCipherTextException e ) {
-            LOGGER.error( "Could not encrypt/decrypt to/from cipher-text", e );
+        } catch (InvalidCipherTextException e) {
+            LOGGER.error("Could not encrypt/decrypt to/from cipher-text", e);
             return null;
         }
 
@@ -183,40 +183,40 @@ public class EncryptionHandler {
 
     // ========================================== Utility Methods
 
-    private byte[] generateECDHSecret( PrivateKey privateKey, PublicKey publicKey ) {
+    private byte[] generateECDHSecret(PrivateKey privateKey, PublicKey publicKey) {
         try {
-            KeyAgreement ka = KeyAgreement.getInstance( "ECDH", "BC" );
-            ka.init( privateKey );
-            ka.doPhase( publicKey, true );
+            KeyAgreement ka = KeyAgreement.getInstance("ECDH", "BC");
+            ka.init(privateKey);
+            ka.doPhase(publicKey, true);
             return ka.generateSecret();
-        } catch ( NoSuchAlgorithmException | InvalidKeyException | NoSuchProviderException e ) {
-            LOGGER.error( "Failed to generate Elliptic-Curve-Diffie-Hellman Shared Secret for clientside encryption", e );
+        } catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchProviderException e) {
+            LOGGER.error("Failed to generate Elliptic-Curve-Diffie-Hellman Shared Secret for clientside encryption", e);
             return null;
         }
     }
 
-    private byte[] takeBytesFromArray( byte[] buffer, int offset, int length ) {
+    private byte[] takeBytesFromArray(byte[] buffer, int offset, int length) {
         byte[] result = new byte[length];
-        System.arraycopy( buffer, offset, result, 0, length );
+        System.arraycopy(buffer, offset, result, 0, length);
         return result;
     }
 
-    private byte[] hashSHA256( byte[]... message ) {
+    private byte[] hashSHA256(byte[]... message) {
         SHA256Digest digest = new SHA256Digest();
 
         byte[] result = new byte[digest.getDigestSize()];
-        for ( byte[] bytes : message ) {
-            digest.update( bytes, 0, bytes.length );
+        for (byte[] bytes : message) {
+            digest.update(bytes, 0, bytes.length);
         }
 
-        digest.doFinal( result, 0 );
+        digest.doFinal(result, 0);
 
         return result;
     }
 
-    private BufferedBlockCipher createCipher( boolean encryptor, byte[] key, byte[] iv ) {
-        BufferedBlockCipher cipher = new BufferedBlockCipher( new CFBBlockCipher( new AESFastEngine(), 8 ) );
-        cipher.init( encryptor, new ParametersWithIV( new KeyParameter( key ), iv ) );
+    private BufferedBlockCipher createCipher(boolean encryptor, byte[] key, byte[] iv) {
+        BufferedBlockCipher cipher = new BufferedBlockCipher(new CFBBlockCipher(new AESFastEngine(), 8));
+        cipher.init(encryptor, new ParametersWithIV(new KeyParameter(key), iv));
         return cipher;
     }
 

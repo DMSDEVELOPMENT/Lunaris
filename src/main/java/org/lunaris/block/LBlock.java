@@ -126,7 +126,7 @@ public class LBlock implements Block {
     }
 
     public AxisAlignedBB getBoundingBox() {
-        if(this.boundingBox == null)
+        if (this.boundingBox == null)
             this.boundingBox = getHandle().recalculateBoundingBox(this);
         return this.boundingBox;
     }

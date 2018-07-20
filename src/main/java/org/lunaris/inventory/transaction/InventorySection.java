@@ -21,7 +21,7 @@ public enum InventorySection {
     private final static Map<Byte, InventorySection> byIds = new HashMap<>();
 
     static {
-        for(InventorySection section : values())
+        for (InventorySection section : values())
             byIds.put(section.id, section);
     }
 

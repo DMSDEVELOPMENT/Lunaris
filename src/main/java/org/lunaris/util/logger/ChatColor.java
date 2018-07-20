@@ -165,7 +165,7 @@ public enum ChatColor {
         }
         return new String(b);
     }
-    
+
     public static String colored(String text) {
         return translateAlternateColorCodes('&', text);
     }

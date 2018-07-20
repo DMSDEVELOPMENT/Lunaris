@@ -55,14 +55,14 @@ public class InventoryManager {
 
     public int addInventory(LInventory inventory, Integer forceId, boolean permament) {
         int id = getInventoryId(inventory);
-        if(id != -1)
+        if (id != -1)
             return id;
         id = forceId == null ? this.idIncrementor = Math.max(4, ++this.idIncrementor % 99) : forceId;
         this.inventories.put(inventory, id);
         this.reverted.put(id, inventory);
-        if(permament)
+        if (permament)
             this.permamentInventories.add(id);
-        if(inventory.open(this.player))
+        if (inventory.open(this.player))
             return id;
         else {
             removeInventory(inventory);
@@ -73,7 +73,7 @@ public class InventoryManager {
     public void removeInventory(LInventory inventory) {
         inventory.close(this.player);
         Integer id = this.inventories.remove(inventory);
-        if(id != null)
+        if (id != null)
             this.reverted.remove(id);
     }
 
@@ -87,7 +87,7 @@ public class InventoryManager {
 
     public void closeInventory(int inventoryID) {
         LInventory inventory = this.reverted.get(inventoryID);
-        if(inventory == null)
+        if (inventory == null)
             return;
         removeInventory(inventory);
     }

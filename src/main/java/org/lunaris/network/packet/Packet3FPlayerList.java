@@ -16,7 +16,8 @@ public class Packet3FPlayerList extends Packet {
     public Type type;
     public Entry[] entries = new Entry[0];
 
-    public Packet3FPlayerList() {}
+    public Packet3FPlayerList() {
+    }
 
     public Packet3FPlayerList(Type type, Entry... entries) {
         this.type = type;

@@ -12,13 +12,13 @@ package org.lunaris.jwt;
  * @version 1.0
  */
 public class JwtSignatureException extends Exception {
-	
-	public JwtSignatureException( String what ) {
-		super( what );
-	}
-	
-	public JwtSignatureException( String what, Throwable cause ) {
-		super( what, cause );
-	}
-	
+
+    public JwtSignatureException(String what) {
+        super(what);
+    }
+
+    public JwtSignatureException(String what, Throwable cause) {
+        super(what, cause);
+    }
+
 }

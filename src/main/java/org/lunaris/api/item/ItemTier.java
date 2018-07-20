@@ -19,6 +19,7 @@ public enum ItemTier {
 
     /**
      * Get max durability of items of that tier.
+     *
      * @return max durability of items of that tier.
      */
     public int getMaxDurability() {

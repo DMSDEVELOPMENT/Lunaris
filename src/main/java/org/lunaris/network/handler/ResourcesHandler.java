@@ -26,9 +26,9 @@ public class ResourcesHandler extends PacketHandler {
                 break;
             }
             case Packet08ResourcePackResponse.STATUS_SEND_PACKS: {
-                for(String id : packet.getPackIds()) {
+                for (String id : packet.getPackIds()) {
                     ResourcePack resourcePack = getServer().getResourcePackManager().getResourcePack(id);
-                    if(resourcePack == null) {
+                    if (resourcePack == null) {
                         player.disconnect("Unknown resource pack requested");
                         break;
                     }

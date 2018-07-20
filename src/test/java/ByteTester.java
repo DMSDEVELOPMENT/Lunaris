@@ -40,7 +40,7 @@ public class ByteTester {
         }
 
         void set(int x, int y, int z, short id, byte data) {
-            if(id > 0)
+            if (id > 0)
                 this.empty = false;
             int i = i(x, y, z);
             this.ids[i << 1] = (byte) (id & 0xff);
@@ -53,7 +53,9 @@ public class ByteTester {
         }
 
         private int i(int x, int y, int z) {
-            x &= 0xf; y &= 0xf; z &= 0xf;
+            x &= 0xf;
+            y &= 0xf;
+            z &= 0xf;
             return y << 8 | z << 4 | x;
         }
 

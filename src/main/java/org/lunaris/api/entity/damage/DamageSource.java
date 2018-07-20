@@ -48,6 +48,7 @@ public enum DamageSource {
 
     /**
      * Check whether this damage source ignores armor.
+     *
      * @return if this damage source ignores armor.
      */
     public boolean isBypassesArmor() {
@@ -56,6 +57,7 @@ public enum DamageSource {
 
     /**
      * Check whether this damage source ignores potion effects & enchantments resistance.
+     *
      * @return if this damage source ignores potion effects & enchantments resistance.
      */
     public boolean isPure() {
@@ -64,6 +66,7 @@ public enum DamageSource {
 
     /**
      * Check whether this damage source is fire-based.
+     *
      * @return if this damage source is related to fire in any way.
      */
     public boolean isFireBased() {
@@ -72,6 +75,7 @@ public enum DamageSource {
 
     /**
      * Check whether this damage source if magic-based.
+     *
      * @return if this damage source if magic-based.
      */
     public boolean isMagicBased() {
@@ -80,6 +84,7 @@ public enum DamageSource {
 
     /**
      * Check whether players in creative gamemode will still take damage of this source type.
+     *
      * @return if players in creative gamemode will still take damage of this source type.
      */
     public boolean isBypassesCreative() {

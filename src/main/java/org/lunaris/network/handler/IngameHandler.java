@@ -33,12 +33,12 @@ public class IngameHandler extends PacketHandler {
 
     private final LunarisServer server;
     private final NetworkManager networkManager;
-    
+
     public IngameHandler() {
         this.server = LunarisServer.getInstance();
         this.networkManager = LunarisServer.getInstance().getNetworkManager();
     }
-    
+
     @Override
     protected void registerPacketHandlers() {
         addHandler(Packet05Disconnect.class, this::handleDisconnect);
@@ -54,11 +54,11 @@ public class IngameHandler extends PacketHandler {
         addHandler(Packet45RequestChunkRadius.class, this::handleChunkRadiusRequest);
         addHandler(Packet4DCommandRequest.class, this::handleCommandRequest);
     }
-    
+
     private void handleDisconnect(Packet05Disconnect packet, long time) {
         packet.getConnection().disconnect("Disconnected");
     }
-    
+
     private void handleText(Packet09Text packet, long time) {
         if (packet.getType() == Packet09Text.MessageType.CHAT) {
             for (String message : packet.getMessage().split("\n")) {
@@ -85,7 +85,7 @@ public class IngameHandler extends PacketHandler {
             to.setYaw(packet.getYaw());
             to.setHeadYaw(packet.getHeadYaw());
             to.setPitch(packet.getPitch());
-            if(to.getX() - from.getX() == 0 &&
+            if (to.getX() - from.getX() == 0 &&
                     to.getY() - from.getY() == 0 &&
                     to.getZ() - from.getZ() == 0 &&
                     to.getYaw() - from.getYaw() == 0 &&
@@ -94,9 +94,9 @@ public class IngameHandler extends PacketHandler {
                 return;
             PlayerMoveEvent event = new PlayerMoveEvent(player, to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
             this.server.getEventManager().call(event);
-            if(event.isCancelled())
+            if (event.isCancelled())
                 to = from;
-            if(to.getX() != packet.getX() || to.getY() != packet.getY() - player.getEyeHeight() || to.getZ() != packet.getZ() ||
+            if (to.getX() != packet.getX() || to.getY() != packet.getY() - player.getEyeHeight() || to.getZ() != packet.getZ() ||
                     to.getYaw() != packet.getYaw() || to.getHeadYaw() != packet.getHeadYaw() || to.getPitch() != packet.getPitch()) {
                 player.teleport(to);
             }
@@ -113,7 +113,7 @@ public class IngameHandler extends PacketHandler {
             boolean changeWorld = !to.getWorld().equals(from.getWorld());
             boolean changeXZ = (int) from.getX() != (int) to.getX() || (int) from.getZ() != (int) to.getZ();
             boolean changeY = (int) from.getY() != (int) to.getY();
-            if(changeWorld || changeXZ || changeY) {
+            if (changeWorld || changeXZ || changeY) {
                 Block block = from.getWorld().getBlockAt(from.getBlockX(), from.getBlockY(), from.getBlockZ());
                 block.getHandle().onStepOff(block, player);
                 block = to.getWorld().getBlockAt(to.getBlockX(), to.getBlockY(), to.getBlockZ());
@@ -131,7 +131,7 @@ public class IngameHandler extends PacketHandler {
             LPlayer p = packet.getConnection().getPlayer();
             ItemStack given = packet.getItem();
             ItemStack has = p.getInventory().getItem(packet.getHotbarSlot());
-            if(!has.isSimilar(given)) {
+            if (!has.isSimilar(given)) {
                 this.server.getLogger().warn("%s tried to equip item that is not in slot %d in inventory %d: %s vs %s", p.getName(), packet.getHotbarSlot(), packet.getInventoryId(), given.toString(), has.toString());
                 p.getInventory().sendContents(p);
                 return;
@@ -146,7 +146,7 @@ public class IngameHandler extends PacketHandler {
 
     private void handlePlayerAction(Packet24PlayerAction packet, long time) {
         LPlayer p = packet.getConnection().getPlayer();
-        switch(packet.getAction()) {
+        switch (packet.getAction()) {
             case START_SNEAK: {
                 sync(() -> {
                     p.setState(packet);
@@ -155,7 +155,8 @@ public class IngameHandler extends PacketHandler {
                     this.server.getEventManager().call(event);
                 });
                 break;
-            }case STOP_SNEAK: {
+            }
+            case STOP_SNEAK: {
                 sync(() -> {
                     p.setState(packet);
                     p.setDataFlag(false, EntityDataFlag.SNEAKING, false, true);
@@ -163,7 +164,8 @@ public class IngameHandler extends PacketHandler {
                     this.server.getEventManager().call(event);
                 });
                 break;
-            }case START_SPRINT: {
+            }
+            case START_SPRINT: {
                 sync(() -> {
                     p.setState(packet);
                     p.setDataFlag(false, EntityDataFlag.SPRINTING, true, true);
@@ -171,7 +173,8 @@ public class IngameHandler extends PacketHandler {
                     this.server.getEventManager().call(event);
                 });
                 break;
-            }case STOP_SPRINT: {
+            }
+            case STOP_SPRINT: {
                 sync(() -> {
                     p.setState(packet);
                     p.setDataFlag(false, EntityDataFlag.SPRINTING, false, true);
@@ -179,26 +182,32 @@ public class IngameHandler extends PacketHandler {
                     this.server.getEventManager().call(event);
                 });
                 break;
-            }case JUMP: {
+            }
+            case JUMP: {
                 sync(() -> {
                     p.sendPacketToWatchers(packet);
                     PlayerJumpEvent event = new PlayerJumpEvent(p);
                     this.server.getEventManager().call(event);
                 });
                 break;
-            }case START_BREAK: {
+            }
+            case START_BREAK: {
                 sync(() -> this.server.getWorldProvider().getBlockMaster().onBlockStartBreak(packet));
                 break;
-            }case CONTINUE_BREAK: {
+            }
+            case CONTINUE_BREAK: {
                 sync(() -> this.server.getWorldProvider().getBlockMaster().onBlockContinueBreak(packet));
                 break;
-            }case ABORT_BREAK: {
+            }
+            case ABORT_BREAK: {
                 sync(() -> this.server.getWorldProvider().getBlockMaster().onBlockAbortBreak(packet));
                 break;
-            }case STOP_BREAK: {
+            }
+            case STOP_BREAK: {
                 sync(() -> this.server.getWorldProvider().getBlockMaster().onBlockStopBreak(packet));
                 break;
-            }case RESPAWN: {
+            }
+            case RESPAWN: {
                 //somewhy never happens
                 sync(() -> {
                     PlayerRespawnEvent respawn = new PlayerRespawnEvent(p, p.getWorld().getSpawnLocation());
@@ -223,7 +232,7 @@ public class IngameHandler extends PacketHandler {
     }
 
     private void handlePlayerHotbar(Packet30PlayerHotbar packet, long time) {
-        if(packet.getInventoryId() != InventorySection.INVENTORY.getId())
+        if (packet.getInventoryId() != InventorySection.INVENTORY.getId())
             return;
         sync(() -> packet.getConnection().getPlayer().getInventory().equipItem0(packet.getActiveSlot()));
     }
@@ -272,24 +281,25 @@ public class IngameHandler extends PacketHandler {
                 }
                 case USE_ITEM: {
                     UseItemData data = (UseItemData) packet.getData();
-                    switch(data.getType()) {
+                    switch (data.getType()) {
                         case CLICK_BLOCK: {
                             player.setDataFlag(false, EntityDataFlag.ACTION, false, true);
                             this.server.getWorldProvider().getBlockMaster().onRightClickBlock(player, data.getBlockPosition(), data.getBlockFace(), data.getClickPosition());
                             return;
-                        }case BREAK_BLOCK: {
+                        }
+                        case BREAK_BLOCK: {
                             BlockVector vec = data.getBlockPosition();
                             LBlock block = player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ());
-                            if(player.getGamemode() == Gamemode.CREATIVE)
+                            if (player.getGamemode() == Gamemode.CREATIVE)
                                 this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, block, false);
                             else {
-                                if(!player.isBreakingBlock())
+                                if (!player.isBreakingBlock())
                                     player.sendPacket(new Packet15UpdateBlock(player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ())));
                                 else {
                                     BlockBreakingData bdata = player.getBlockBreakingData();
                                     long passed = time - bdata.getBreakStartTime() + bdata.getOvertime();
                                     long delta = bdata.getBlockBreakingTime() - passed;
-                                    if(delta <= 100)
+                                    if (delta <= 100)
                                         this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, block, true);
                                     else
                                         player.sendPacket(new Packet15UpdateBlock(block));
@@ -297,7 +307,8 @@ public class IngameHandler extends PacketHandler {
                             }
                             player.getBlockBreakingData().clear();
                             return;
-                        }case CLICK_AIR: {
+                        }
+                        case CLICK_AIR: {
 
                             return;
                         }
@@ -307,37 +318,38 @@ public class IngameHandler extends PacketHandler {
                 case USE_ITEM_ON_ENTITY: {
                     UseItemOnEntityData data = (UseItemOnEntityData) packet.getData();
                     LEntity entity = player.getWorld().getEntityById(data.getEntityID());
-                    if(entity == null)
+                    if (entity == null)
                         return;
-                    if(!data.getItemInHand().equals(player.getInventory().getItemInHand())) {
+                    if (!data.getItemInHand().equals(player.getInventory().getItemInHand())) {
                         player.getInventory().sendContents(player);
                         return;
                     }
-                    if(player.getGamemode() == Gamemode.SPECTATOR)
+                    if (player.getGamemode() == Gamemode.SPECTATOR)
                         return;
                     if (time - player.getLastUseTime() < PLAYER_USE_DELAY)
                         return;
                     player.setLastUseTime(time);
                     ItemStack item = player.getInventory().getItemInHand();
-                    switch(data.getType()) {
+                    switch (data.getType()) {
                         case INTERACT: {
                             PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(player, entity);
                             event.call();
-                            if(event.isCancelled())
+                            if (event.isCancelled())
                                 return;
                             LItemHandle handle = item.getHandle().isBlock() ? null : (LItemHandle) item.getItemHandle();
-                            if(handle != null && handle.canBeUsed() && handle.useOn(entity, item, player)) {
-                                if(handle.getMaxDurability() > 0) {
+                            if (handle != null && handle.canBeUsed() && handle.useOn(entity, item, player)) {
+                                if (handle.getMaxDurability() > 0) {
                                     item.setData(item.getData() + 1);
-                                    if(item.getData() >= handle.getMaxDurability())
+                                    if (item.getData() >= handle.getMaxDurability())
                                         player.getInventory().setItemInHand(null);
                                     else
                                         player.getInventory().setItemInHand(item);
                                 }
                             }
                             break;
-                        }case ATTACK: {
-                            if(!(entity instanceof LLivingEntity))
+                        }
+                        case ATTACK: {
+                            if (!(entity instanceof LLivingEntity))
                                 return;
                             double itemDamage = item.getHandle().getAttackDamage();
                             //check enchantments

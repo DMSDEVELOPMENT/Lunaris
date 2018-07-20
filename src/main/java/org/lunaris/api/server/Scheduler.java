@@ -28,6 +28,7 @@ public class Scheduler {
 
     /**
      * Invoke runnable synchronously with main world thread.
+     *
      * @param runnable the runnable to be executed.
      * @return task, corresponding to described execution.
      */
@@ -39,9 +40,10 @@ public class Scheduler {
 
     /**
      * Invoke runnable synchronously with main world thread, but delay it for given amount of time.
+     *
      * @param runnable the runnable to be executed.
-     * @param delay amount of time for execution delay.
-     * @param unit unit of time.
+     * @param delay    amount of time for execution delay.
+     * @param unit     unit of time.
      * @return task, corresponding to described execution.
      */
     public Task schedule(Runnable runnable, long delay, TimeUnit unit) {
@@ -53,10 +55,11 @@ public class Scheduler {
     /**
      * Invoke runnable synchronously with main world thread.
      * Delay it for given amount of time and run it repeatedly with given repeat delay.
-     * @param runnable the runnable to be executed.
-     * @param delay amount of time for execution delay.
+     *
+     * @param runnable    the runnable to be executed.
+     * @param delay       amount of time for execution delay.
      * @param repeatDelay amount of time for repeatedly execution delay.
-     * @param unit unit of time.
+     * @param unit        unit of time.
      * @return task, corresponding to described execution.
      */
     public Task scheduleRepeatable(Runnable runnable, long delay, long repeatDelay, TimeUnit unit) {
@@ -67,6 +70,7 @@ public class Scheduler {
 
     /**
      * Invoke runnable asynchronously.
+     *
      * @param runnable the runnable to be executed.
      * @return task, corresponding to described execution.
      */
@@ -82,11 +86,12 @@ public class Scheduler {
 
     /**
      * Invoke runnable asynchronously with given delay.
-     * @see Scheduler#schedule(Runnable, long, TimeUnit)
+     *
      * @param runnable the runnable to be executed.
-     * @param delay amount of time for execution delay.
-     * @param unit unit of time.
+     * @param delay    amount of time for execution delay.
+     * @param unit     unit of time.
      * @return task, corresponding to described execution.
+     * @see Scheduler#schedule(Runnable, long, TimeUnit)
      */
     public Task scheduleAsync(Runnable runnable, long delay, TimeUnit unit) {
         Task task = new Task(runnable);
@@ -96,12 +101,13 @@ public class Scheduler {
 
     /**
      * Invoke runnable asynchronously with given delay and repeat-delay.
-     * @see Scheduler#scheduleRepeatable(Runnable, long, long, TimeUnit)
-     * @param runnable the runnable to be executed.
-     * @param delay amount of time for execution delay.
+     *
+     * @param runnable    the runnable to be executed.
+     * @param delay       amount of time for execution delay.
      * @param repeatDelay amount of time for repeatedly execution delay.
-     * @param unit unit of time.
+     * @param unit        unit of time.
      * @return task, corresponding to described execution.
+     * @see Scheduler#scheduleRepeatable(Runnable, long, long, TimeUnit)
      */
     public Task scheduleRepeatableAsync(Runnable runnable, long delay, long repeatDelay, TimeUnit unit) {
         Task task = new Task(runnable);
@@ -148,6 +154,7 @@ public class Scheduler {
 
         /**
          * Get this task id.
+         *
          * @return this task id.
          */
         public int getId() {
@@ -156,6 +163,7 @@ public class Scheduler {
 
         /**
          * Check whether this task is finished.
+         *
          * @return if this task is finished.
          */
         public boolean isFinished() {
@@ -164,6 +172,7 @@ public class Scheduler {
 
         /**
          * Check whether this task corresponds to repeatable executions.
+         *
          * @return if this task corresponds to repeatable executions.
          */
         public boolean isRepeatable() {
@@ -172,6 +181,7 @@ public class Scheduler {
 
         /**
          * Cancels the task.
+         *
          * @return false, whether the task is already finished or is in progress; true otherwise.
          */
         public boolean cancel() {

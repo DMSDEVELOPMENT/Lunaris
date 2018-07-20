@@ -14,7 +14,8 @@ public class Packet02PlayStatus extends Packet {
         this.status = status;
     }
 
-    public Packet02PlayStatus() {}
+    public Packet02PlayStatus() {
+    }
 
     @Override
     public byte getID() {

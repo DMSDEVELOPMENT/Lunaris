@@ -29,7 +29,7 @@ public class ChunksFollowerTask {
             this.world.getPlayers().forEach(this::updatePlayer);
         }
     }
-    
+
     public void updatePlayer(LPlayer player) {
         int cx = player.getLocation().getBlockX() >> 4, cz = player.getLocation().getBlockZ() >> 4;
         int r = player.getChunksView();

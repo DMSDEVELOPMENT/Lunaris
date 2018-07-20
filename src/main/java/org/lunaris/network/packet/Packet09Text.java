@@ -17,7 +17,8 @@ public class Packet09Text extends Packet {
     private String sourceThirdPartyName = "";
     private int sourcePlatform = 0;
 
-    public Packet09Text() {}
+    public Packet09Text() {
+    }
 
     public Packet09Text(MessageType type, String sender, String message, String... parameters) {
         this.type = type;
@@ -35,7 +36,7 @@ public class Packet09Text extends Packet {
     public void read(PacketBuffer buffer) {
         this.type = MessageType.values()[buffer.readByte()];
         buffer.readBoolean(); //unspecified
-        switch(type) {
+        switch (type) {
             case POPUP: {
                 this.message = buffer.readString();
                 this.sender = buffer.readString();
@@ -76,7 +77,7 @@ public class Packet09Text extends Packet {
     public void write(PacketBuffer buffer) {
         buffer.writeByte((byte) this.type.ordinal());
         buffer.writeBoolean(false);
-        switch(this.type) {
+        switch (this.type) {
             case CHAT:
             case WHISPER:
             case ANNOUNCEMENT: {

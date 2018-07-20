@@ -12,7 +12,7 @@ import org.lunaris.util.logger.ChatColor;
  */
 public class CommandTimings extends Command {
     private static final String[] SUB_COMMANDS = {
-        "on", "off", "report", "paste"
+            "on", "off", "report", "paste"
     };
 
     public CommandTimings() {

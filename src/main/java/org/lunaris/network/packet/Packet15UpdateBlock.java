@@ -10,7 +10,9 @@ import org.lunaris.network.Packet;
 import org.lunaris.network.util.SerializationUtil;
 import org.lunaris.world.BlockVector;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +35,8 @@ public class Packet15UpdateBlock extends Packet {
     private int x, y, z;
     private int id, flag, data;
 
-    public Packet15UpdateBlock() {}
+    public Packet15UpdateBlock() {
+    }
 
     public Packet15UpdateBlock(LBlock block) {
         this.x = block.getX();
@@ -75,7 +78,7 @@ public class Packet15UpdateBlock extends Packet {
     }
 
     static {
-        try (InputStream inputStream = Packet15UpdateBlock.class.getResourceAsStream( "/block_ids.json" );
+        try (InputStream inputStream = Packet15UpdateBlock.class.getResourceAsStream("/block_ids.json");
              InputStreamReader reader = new InputStreamReader(inputStream)) {
             JsonParser parser = new JsonParser();
             JsonArray blocks = parser.parse(reader).getAsJsonArray();

@@ -98,12 +98,12 @@ public class PlayerProvider {
         player.getAdventureSettings().update();
         player.sendAvailableCommands();
         player.sendPacket(new Packet1DUpdateAttributes(
-            player.getEntityID(),
-            player.getAttribute(Attribute.MAX_HEALTH),
-            player.getAttribute(Attribute.MAX_HUNGER),
-            player.getAttribute(Attribute.MOVEMENT_SPEED),
-            player.getAttribute(Attribute.EXPERIENCE_LEVEL),
-            player.getAttribute(Attribute.EXPERIENCE)
+                player.getEntityID(),
+                player.getAttribute(Attribute.MAX_HEALTH),
+                player.getAttribute(Attribute.MAX_HUNGER),
+                player.getAttribute(Attribute.MOVEMENT_SPEED),
+                player.getAttribute(Attribute.EXPERIENCE_LEVEL),
+                player.getAttribute(Attribute.EXPERIENCE)
         ));
         this.server.getPlayerList().addPlayer(player);
         player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));

@@ -5,14 +5,12 @@ import io.gomint.jraknet.EncapsulatedPacket;
 import io.gomint.jraknet.PacketBuffer;
 import io.gomint.jraknet.PacketReliability;
 import org.lunaris.LunarisServer;
-import org.lunaris.api.event.player.PlayerDisconnectEvent;
 import org.lunaris.api.server.Scheduler;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.event.network.PacketReceivedAsyncEvent;
 import org.lunaris.jwt.EncryptionHandler;
 import org.lunaris.network.executor.PostProcessExecutor;
 import org.lunaris.network.packet.Packet05Disconnect;
-import org.lunaris.network.packet.PacketFEBatch;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -121,7 +119,8 @@ public class PlayerConnection {
                 for (int i = 0; i < 60; ++i) {
                     try {
                         Thread.sleep(50L);
-                    } catch (InterruptedException ex) {}
+                    } catch (InterruptedException ex) {
+                    }
                     if (!this.connection.isConnected()) {
                         return;
                     }

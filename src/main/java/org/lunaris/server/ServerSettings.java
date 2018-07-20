@@ -86,7 +86,7 @@ public class ServerSettings {
             this.encryptedConnection = config.getOrSetBoolean("use-encrypted-connection", true);
             this.onlineMode = config.getOrSetBoolean("online-mode", true);
             config.save(configFile);
-        }catch(Exception ex) {
+        } catch (Exception ex) {
             throw new IllegalArgumentException("Server Settings file can not be loaded", ex);
         }
     }

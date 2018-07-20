@@ -9,6 +9,7 @@ public interface ContainerInventory extends Inventory {
 
     /**
      * Get tile entity, corresponding to this inventory.
+     *
      * @return tile entity, corresponding to this inventory.
      */
     ContainerTileEntity getHolder();

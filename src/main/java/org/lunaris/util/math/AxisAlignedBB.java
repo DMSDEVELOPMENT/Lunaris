@@ -24,7 +24,7 @@ public class AxisAlignedBB {
      * @param maxY Maximum Y Coordinate
      * @param maxZ Maximum Z Coordinate
      */
-    public AxisAlignedBB( float minX, float minY, float minZ, float maxX, float maxY, float maxZ ) {
+    public AxisAlignedBB(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
         this.minX = minX;
         this.minY = minY;
         this.minZ = minZ;
@@ -68,7 +68,7 @@ public class AxisAlignedBB {
      * @param maxZ Maximum Z Coordinate
      * @return the Bounding Box with new bounds
      */
-    public AxisAlignedBB setBounds( float minX, float minY, float minZ, float maxX, float maxY, float maxZ ) {
+    public AxisAlignedBB setBounds(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
         this.minX = minX;
         this.minY = minY;
         this.minZ = minZ;
@@ -84,7 +84,7 @@ public class AxisAlignedBB {
      * @param other the other Bounding Box from which we should copy
      * @return the Bounding Box with new bounds
      */
-    public AxisAlignedBB setBounds( AxisAlignedBB other ) {
+    public AxisAlignedBB setBounds(AxisAlignedBB other) {
         this.minX = other.minX;
         this.minY = other.minY;
         this.minZ = other.minZ;
@@ -102,7 +102,7 @@ public class AxisAlignedBB {
      * @param z the Z coordinate which should be added
      * @return a new Bounding Box which contains the addition of the coordinates
      */
-    public AxisAlignedBB addCoordinates( float x, float y, float z ) {
+    public AxisAlignedBB addCoordinates(float x, float y, float z) {
         float minX = this.minX;
         float minY = this.minY;
         float minZ = this.minZ;
@@ -111,27 +111,27 @@ public class AxisAlignedBB {
         float maxZ = this.maxZ;
 
         // Manipulate x axis
-        if ( x < 0 ) {
+        if (x < 0) {
             minX += x;
-        } else if ( x > 0 ) {
+        } else if (x > 0) {
             maxX += x;
         }
 
         // Manipulate y axis
-        if ( y < 0 ) {
+        if (y < 0) {
             minY += y;
-        } else if ( y > 0 ) {
+        } else if (y > 0) {
             maxY += y;
         }
 
         // Manipulate z axis
-        if ( z < 0 ) {
+        if (z < 0) {
             minZ += z;
-        } else if ( z > 0 ) {
+        } else if (z > 0) {
             maxZ += z;
         }
 
-        return new AxisAlignedBB( minX, minY, minZ, maxX, maxY, maxZ );
+        return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
     /**
@@ -142,8 +142,8 @@ public class AxisAlignedBB {
      * @param z the Z coordinate to grow in both directions
      * @return a new Bounding Box which has been grown by the amount given
      */
-    public AxisAlignedBB grow( float x, float y, float z ) {
-        return new AxisAlignedBB( this.minX - x, this.minY - y, this.minZ - z, this.maxX + x, this.maxY + y, this.maxZ + z );
+    public AxisAlignedBB grow(float x, float y, float z) {
+        return new AxisAlignedBB(this.minX - x, this.minY - y, this.minZ - z, this.maxX + x, this.maxY + y, this.maxZ + z);
     }
 
     /**
@@ -154,7 +154,7 @@ public class AxisAlignedBB {
      * @param z the Z coordinate to expand in both directions
      * @return this modified Bounding Box
      */
-    public AxisAlignedBB expand( float x, float y, float z ) {
+    public AxisAlignedBB expand(float x, float y, float z) {
         this.minX -= x;
         this.minY -= y;
         this.minZ -= z;
@@ -172,7 +172,7 @@ public class AxisAlignedBB {
      * @param z the Z coordinate for how much we should offset
      * @return this modified Bounding Box
      */
-    public AxisAlignedBB offset( float x, float y, float z ) {
+    public AxisAlignedBB offset(float x, float y, float z) {
         this.minX += x;
         this.minY += y;
         this.minZ += z;
@@ -190,8 +190,8 @@ public class AxisAlignedBB {
      * @param z the Z coordinate to shrink in both directions
      * @return a new Bounding Box which has been grown by the amount given
      */
-    public AxisAlignedBB shrink( float x, float y, float z ) {
-        return new AxisAlignedBB( this.minX + x, this.minY + y, this.minZ + z, this.maxX - x, this.maxY - y, this.maxZ - z );
+    public AxisAlignedBB shrink(float x, float y, float z) {
+        return new AxisAlignedBB(this.minX + x, this.minY + y, this.minZ + z, this.maxX - x, this.maxY - y, this.maxZ - z);
     }
 
     /**
@@ -202,7 +202,7 @@ public class AxisAlignedBB {
      * @param z the Z coordinate to contract in both directions
      * @return this modified Bounding Box
      */
-    public AxisAlignedBB contract( float x, float y, float z ) {
+    public AxisAlignedBB contract(float x, float y, float z) {
         this.minX += x;
         this.minY += y;
         this.minZ += z;
@@ -220,8 +220,8 @@ public class AxisAlignedBB {
      * @param z the Z coordinate for how much we should offset
      * @return a new Bounding Box which has been offset
      */
-    public AxisAlignedBB getOffsetBoundingBox( float x, float y, float z ) {
-        return new AxisAlignedBB( this.minX + x, this.minY + y, this.minZ + z, this.maxX + x, this.maxY + y, this.maxZ + z );
+    public AxisAlignedBB getOffsetBoundingBox(float x, float y, float z) {
+        return new AxisAlignedBB(this.minX + x, this.minY + y, this.minZ + z, this.maxX + x, this.maxY + y, this.maxZ + z);
     }
 
     /**
@@ -231,31 +231,31 @@ public class AxisAlignedBB {
      * @param x  default or maximum offset allowed
      * @return offset or capped value
      */
-    public float calculateXOffset( AxisAlignedBB bb, float x ) {
+    public float calculateXOffset(AxisAlignedBB bb, float x) {
         // Check if we are outside of Y bounds
-        if ( bb.maxY <= this.minY || bb.minY >= this.maxY ) {
+        if (bb.maxY <= this.minY || bb.minY >= this.maxY) {
             return x;
         }
 
         // Check if we are outside of Z bounds
-        if ( bb.maxZ <= this.minZ || bb.minZ >= this.maxZ ) {
+        if (bb.maxZ <= this.minZ || bb.minZ >= this.maxZ) {
             return x;
         }
 
         // Check if we have a positive default offset
-        if ( x > 0 && bb.maxX <= this.minX ) {
+        if (x > 0 && bb.maxX <= this.minX) {
             // Get the real offset and cap it at the default offset
             float x1 = this.minX - bb.maxX;
-            if ( x1 < x ) {
+            if (x1 < x) {
                 x = x1;
             }
         }
 
         // Check if we have a negative default offset
-        if ( x < 0 && bb.minX >= this.maxX ) {
+        if (x < 0 && bb.minX >= this.maxX) {
             // Get the real offset and cap it at the default offset
             float x2 = this.maxX - bb.minX;
-            if ( x2 > x ) {
+            if (x2 > x) {
                 x = x2;
             }
         }
@@ -270,31 +270,31 @@ public class AxisAlignedBB {
      * @param y  default or maximum offset allowed
      * @return offset or capped value
      */
-    public float calculateYOffset( AxisAlignedBB bb, float y ) {
+    public float calculateYOffset(AxisAlignedBB bb, float y) {
         // Check if we are outside of X bounds
-        if ( bb.maxX <= this.minX || bb.minX >= this.maxX ) {
+        if (bb.maxX <= this.minX || bb.minX >= this.maxX) {
             return y;
         }
 
         // Check if we are outside of Z bounds
-        if ( bb.maxZ <= this.minZ || bb.minZ >= this.maxZ ) {
+        if (bb.maxZ <= this.minZ || bb.minZ >= this.maxZ) {
             return y;
         }
 
         // Check if we have a positive default offset
-        if ( y > 0 && bb.maxY <= this.minY ) {
+        if (y > 0 && bb.maxY <= this.minY) {
             // Get the real offset and cap it at the default offset
             float y1 = this.minY - bb.maxY;
-            if ( y1 < y ) {
+            if (y1 < y) {
                 y = y1;
             }
         }
 
         // Check if we have a negative default offset
-        if ( y < 0 && bb.minY >= this.maxY ) {
+        if (y < 0 && bb.minY >= this.maxY) {
             // Get the real offset and cap it at the default offset
             float y2 = this.maxY - bb.minY;
-            if ( y2 > y ) {
+            if (y2 > y) {
                 y = y2;
             }
         }
@@ -309,31 +309,31 @@ public class AxisAlignedBB {
      * @param z  default or maximum offset allowed
      * @return offset or capped value
      */
-    public float calculateZOffset( AxisAlignedBB bb, float z ) {
+    public float calculateZOffset(AxisAlignedBB bb, float z) {
         // Check if we are outside of X bounds
-        if ( bb.maxX <= this.minX || bb.minX >= this.maxX ) {
+        if (bb.maxX <= this.minX || bb.minX >= this.maxX) {
             return z;
         }
 
         // Check if we are outside of Y bounds
-        if ( bb.maxY <= this.minY || bb.minY >= this.maxY ) {
+        if (bb.maxY <= this.minY || bb.minY >= this.maxY) {
             return z;
         }
 
         // Check if we have a positive default offset
-        if ( z > 0 && bb.maxZ <= this.minZ ) {
+        if (z > 0 && bb.maxZ <= this.minZ) {
             // Get the real offset and cap it at the default offset
             float z1 = this.minZ - bb.maxZ;
-            if ( z1 < z ) {
+            if (z1 < z) {
                 z = z1;
             }
         }
 
         // Check if we have a negative default offset
-        if ( z < 0 && bb.minZ >= this.maxZ ) {
+        if (z < 0 && bb.minZ >= this.maxZ) {
             // Get the real offset and cap it at the default offset
             float z2 = this.maxZ - bb.minZ;
-            if ( z2 > z ) {
+            if (z2 > z) {
                 z = z2;
             }
         }
@@ -347,9 +347,9 @@ public class AxisAlignedBB {
      * @param bb the other bounding box we want to check for intersection with
      * @return true when the given Bounding Box intersects with this one, false when not
      */
-    public boolean intersectsWith( AxisAlignedBB bb ) {
-        if ( bb.maxX > this.minX && bb.minX < this.maxX ) {
-            if ( bb.maxY > this.minY && bb.minY < this.maxY ) {
+    public boolean intersectsWith(AxisAlignedBB bb) {
+        if (bb.maxX > this.minX && bb.minX < this.maxX) {
+            if (bb.maxY > this.minY && bb.minY < this.maxY) {
                 return bb.maxZ > this.minZ && bb.minZ < this.maxZ;
             }
         }
@@ -363,10 +363,10 @@ public class AxisAlignedBB {
      * @param vector the vector which may or may not be in this Bounding Box
      * @return true when the vector is inside this Bounding Box, false when not
      */
-    public boolean isVectorInside(Vector3d vector ) {
-        return !( vector.x <= this.minX || vector.x >= this.maxX ) &&
-                !( vector.y <= this.minY || vector.y >= this.maxY ) &&
-                ( vector.z > this.minZ || vector.z < this.maxZ );
+    public boolean isVectorInside(Vector3d vector) {
+        return !(vector.x <= this.minX || vector.x >= this.maxX) &&
+                !(vector.y <= this.minY || vector.y >= this.maxY) &&
+                (vector.z > this.minZ || vector.z < this.maxZ);
     }
 
     /**
@@ -375,16 +375,16 @@ public class AxisAlignedBB {
      * @return the average edge length
      */
     public float getAverageEdgeLength() {
-        return ( this.maxX - this.minX + this.maxY - this.minY + this.maxZ - this.minZ ) / 3;
+        return (this.maxX - this.minX + this.maxY - this.minY + this.maxZ - this.minZ) / 3;
     }
 
     @Override
     public AxisAlignedBB clone() {
         try {
             AxisAlignedBB clone = (AxisAlignedBB) super.clone();
-            return clone.setBounds( this );
-        } catch ( CloneNotSupportedException e ) {
-            return new AxisAlignedBB( this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ );
+            return clone.setBounds(this);
+        } catch (CloneNotSupportedException e) {
+            return new AxisAlignedBB(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
         }
     }
 

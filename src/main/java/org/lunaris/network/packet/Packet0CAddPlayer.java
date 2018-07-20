@@ -45,7 +45,8 @@ public class Packet0CAddPlayer extends Packet {
     private int playerPermission;
     private int customFlags;
 
-    public Packet0CAddPlayer() {}
+    public Packet0CAddPlayer() {
+    }
 
     public Packet0CAddPlayer(LPlayer player) {
         this.uuid = player.getUUID();

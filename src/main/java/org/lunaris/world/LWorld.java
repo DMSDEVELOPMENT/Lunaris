@@ -24,7 +24,10 @@ import org.lunaris.util.math.MathHelper;
 import org.lunaris.world.format.test.TestChunk;
 import org.lunaris.world.tileentity.LTileEntity;
 import org.lunaris.world.tracker.EntityTracker;
-import org.lunaris.world.util.*;
+import org.lunaris.world.util.BlockUpdateScheduler;
+import org.lunaris.world.util.ChunkUnloaderTask;
+import org.lunaris.world.util.ChunksFollowerTask;
+import org.lunaris.world.util.LongHash;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -205,7 +208,7 @@ public class LWorld implements World {
 
     private void tickEntities(long current, float dT) {
         Timings.getEntitiesTickTimer().startTiming();
-        for(LEntity entity : new ArrayList<>(this.entities.values()))
+        for (LEntity entity : new ArrayList<>(this.entities.values()))
             entity.tick(current, dT);
         entityTracker.tick();
         Timings.getEntitiesTickTimer().stopTiming();
@@ -222,7 +225,7 @@ public class LWorld implements World {
 
     @Override
     public void dropItem(ItemStack itemStack, Vector3d position) {
-        if(itemStack == null || itemStack.getType() == Material.AIR)
+        if (itemStack == null || itemStack.getType() == Material.AIR)
             throw new IllegalArgumentException("You can not drop air itemstack as item entity!");
         this.server.getEntityProvider().spawnItem(
                 position instanceof Location
@@ -248,8 +251,8 @@ public class LWorld implements World {
     @Override
     public <T extends Entity> Collection<T> getNearbyEntitiesByClass(Class<T> entityClass, Vector3d location, double radius) {
         Set<T> result = new HashSet<>();
-        for(LEntity entity : this.entities.values()) {
-            if(entityClass.isAssignableFrom(entity.getClass()) && entity.getLocation().distance(location) <= radius)
+        for (LEntity entity : this.entities.values()) {
+            if (entityClass.isAssignableFrom(entity.getClass()) && entity.getLocation().distance(location) <= radius)
                 result.add((T) entity);
         }
         return result;
@@ -258,11 +261,11 @@ public class LWorld implements World {
     public <T extends Entity> Collection<T> getNearbyEntitiesByClass(Class<T> entityClass, Location location, double radiusXZ, double radiusY) {
         Set<T> result = new HashSet<>();
         radiusXZ *= radiusXZ;
-        for(LEntity entity : this.entities.values()) {
-            if(!entityClass.isAssignableFrom(entity.getClass()))
+        for (LEntity entity : this.entities.values()) {
+            if (!entityClass.isAssignableFrom(entity.getClass()))
                 continue;
             Location loc = entity.getLocation();
-            if(Math.abs(loc.getY() - location.getY()) <= radiusY && LMath.pow2(loc.getX() - location.getX()) + LMath.pow2(loc.getZ() - location.getZ()) <= radiusXZ)
+            if (Math.abs(loc.getY() - location.getY()) <= radiusY && LMath.pow2(loc.getX() - location.getX()) + LMath.pow2(loc.getZ() - location.getZ()) <= radiusXZ)
                 result.add((T) entity);
         }
         return result;
@@ -304,8 +307,8 @@ public class LWorld implements World {
 
     public boolean isInRangeOfView(Vector3d location, int x, int z, int range) {
         return MathHelper.pow2((location.getBlockX() >> 4) - x)
-            + MathHelper.pow2((location.getBlockZ() >> 4) - z)
-            <= MathHelper.pow2(range);
+                + MathHelper.pow2((location.getBlockZ() >> 4) - z)
+                <= MathHelper.pow2(range);
     }
 
     private long hash(int x, int z) {
@@ -335,7 +338,7 @@ public class LWorld implements World {
     public Location getSpawnLocation() {
         return this.spawnLocation.clone();
     }
-    
+
     public EntityTracker getEntityTracker() {
         return entityTracker;
     }
@@ -374,9 +377,9 @@ public class LWorld implements World {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o)
+        if (this == o)
             return true;
-        if(!(o instanceof LWorld))
+        if (!(o instanceof LWorld))
             return false;
         return this.name.equals(((LWorld) o).name);
     }

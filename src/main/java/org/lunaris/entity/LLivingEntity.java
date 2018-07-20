@@ -68,39 +68,39 @@ public abstract class LLivingEntity extends LEntity implements LivingEntity {
     }
 
     public void damage(DamageSource source, double damage) {
-        if(isInvulnerable())
+        if (isInvulnerable())
             return;
-        if(getEntityType() == EntityType.PLAYER) {
+        if (getEntityType() == EntityType.PLAYER) {
             LPlayer p = (LPlayer) this;
-            if(p.getGamemode() == Gamemode.CREATIVE)
+            if (p.getGamemode() == Gamemode.CREATIVE)
                 return;
         }
         EntityDamageEvent event = new EntityDamageEvent(this, source, damage);
         event.call();
-        if(event.isCancelled())
+        if (event.isCancelled())
             return;
         damage0(event.getFinalDamage());
     }
 
     public void damage(Entity damager, double damage) {
-        if(isInvulnerable())
+        if (isInvulnerable())
             return;
-        if(getEntityType() == EntityType.PLAYER) {
+        if (getEntityType() == EntityType.PLAYER) {
             LPlayer p = (LPlayer) this;
-            if(p.getGamemode() == Gamemode.CREATIVE)
+            if (p.getGamemode() == Gamemode.CREATIVE)
                 return;
         }
         EntityDamageEvent event1 = new EntityDamageEvent(this, DamageSource.ENTITY_ATTACK, damage);
         event1.call();
-        if(event1.isCancelled())
+        if (event1.isCancelled())
             return;
         EntityDamageByEntityEvent event2 = new EntityDamageByEntityEvent(damager, this, event1.getFinalDamage());
         event2.call();
-        if(event2.isCancelled())
+        if (event2.isCancelled())
             return;
-        if(damager.getEntityType() == EntityType.PLAYER)
+        if (damager.getEntityType() == EntityType.PLAYER)
             ((LPlayer) damager).getInventory().decreaseHandDurability();
-        if(getEntityType() == EntityType.PLAYER)
+        if (getEntityType() == EntityType.PLAYER)
             ((LPlayer) this).getInventory().decreaseArmorDurability();
         changeMotion(event2.getVictimVelocity());
         damage0(event2.getDamage());
@@ -143,7 +143,7 @@ public abstract class LLivingEntity extends LEntity implements LivingEntity {
     public void fall() {
 //        Lunaris.getInstance().broadcastMessage(getFallDistance() + "");
         double damage = getFallDistance() - 3;
-        if(damage > 0D)
+        if (damage > 0D)
             damage(DamageSource.FALL, damage);
     }
 

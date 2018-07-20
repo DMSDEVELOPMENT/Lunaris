@@ -11,18 +11,21 @@ public interface TileEntity {
 
     /**
      * Get this tile entity's block.
+     *
      * @return this tile entity's block.
      */
     Block getBlock();
 
     /**
      * Get this tile entity's location.
+     *
      * @return this tile entity's location.
      */
     Location getLocation();
 
     /**
      * Get this tile entity's world.
+     *
      * @return this tile entity's world.
      */
     World getWorld();

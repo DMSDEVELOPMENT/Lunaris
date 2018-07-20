@@ -29,12 +29,12 @@ public abstract class Metadatable {
     }
 
     public void setDataFlag(boolean playerFlags, EntityDataFlag flag, boolean value, boolean send) {
-        if(getDataFlag(playerFlags, flag) != value) {
-            if(playerFlags) {
+        if (getDataFlag(playerFlags, flag) != value) {
+            if (playerFlags) {
                 byte flags = (byte) getDataPropertyByte(27);
                 flags ^= 1 << flag.getID();
                 setDataProperty(new ByteEntityData(27, flags), send);
-            }else {
+            } else {
                 long flags = getDataPropertyLong(EntityDataOption.FLAGS);
                 flags ^= 1L << flag.getID();
                 setDataProperty(new LongEntityData(0, flags), send);
@@ -43,12 +43,12 @@ public abstract class Metadatable {
     }
 
     public boolean setDataProperty(EntityData data, boolean send) {
-        if(!Objects.equals(data, this.getDataProperties().get(data.getId()))) {
+        if (!Objects.equals(data, this.getDataProperties().get(data.getId()))) {
             this.getDataProperties().put(data);
-            if(send) {
+            if (send) {
                 EntityMetadata metadata = new EntityMetadata().put(this.dataProperties.get(data.getId()));
                 ((LEntity) this).sendPacketToWatchersAndMe(new Packet27SetEntityData(getEntityID(), metadata));
-            }else
+            } else
                 this.dirtyMetadata = true;
             return true;
         }

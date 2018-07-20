@@ -55,7 +55,10 @@ public class PluginManager {
                 ex.printStackTrace();
             } finally {
                 if (zip != null)
-                    try { zip.close(); } catch (IOException ignored) {}
+                    try {
+                        zip.close();
+                    } catch (IOException ignored) {
+                    }
             }
         }
         for (Plugin plugin : plugins.values()) {
@@ -105,7 +108,8 @@ public class PluginManager {
         for (Plugin plugin : plugins.values()) {
             try {
                 result = plugin.classLoader.findClass0(name, false);
-            } catch (ClassNotFoundException ignored) {}
+            } catch (ClassNotFoundException ignored) {
+            }
             if (result != null)
                 return result;
         }

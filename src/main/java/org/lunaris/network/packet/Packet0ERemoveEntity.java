@@ -10,7 +10,8 @@ public class Packet0ERemoveEntity extends Packet {
 
     private long entityId;
 
-    public Packet0ERemoveEntity() {}
+    public Packet0ERemoveEntity() {
+    }
 
     public Packet0ERemoveEntity(long entityId) {
         this.entityId = entityId;

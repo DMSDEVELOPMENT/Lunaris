@@ -20,7 +20,7 @@ import java.util.List;
  * Created by k.shandurenko on 19.07.2018
  */
 public class PostProcessWorker implements Runnable {
-    private static final NativeCode<ZLib> ZLIB = new NativeCode<>( "zlib", JavaZLib.class, NativeZLib.class );
+    private static final NativeCode<ZLib> ZLIB = new NativeCode<>("zlib", JavaZLib.class, NativeZLib.class);
     private static final ThreadLocal<ZLib> COMPRESSOR = new ThreadLocal<>();
 
     static {
@@ -44,10 +44,10 @@ public class PostProcessWorker implements Runnable {
     }
 
     private ZLib getCompressor() {
-        if ( COMPRESSOR.get() == null ) {
+        if (COMPRESSOR.get() == null) {
             ZLib zLib = ZLIB.newInstance();
             zLib.init(true, LunarisServer.getInstance().getServerSettings().getNetworkCompressionLevel());
-            COMPRESSOR.set( zLib );
+            COMPRESSOR.set(zLib);
             return zLib;
         }
 
@@ -66,11 +66,11 @@ public class PostProcessWorker implements Runnable {
         }
 
         ZLib compressor = this.getCompressor();
-        ByteBuf outBuf = PooledByteBufAllocator.DEFAULT.directBuffer( 8192 ); // We will write at least once so ensureWrite will realloc to 8192 so or so
+        ByteBuf outBuf = PooledByteBufAllocator.DEFAULT.directBuffer(8192); // We will write at least once so ensureWrite will realloc to 8192 so or so
 
         try {
-            compressor.process( inBuf, outBuf );
-        } catch ( Exception e ) {
+            compressor.process(inBuf, outBuf);
+        } catch (Exception e) {
             e.printStackTrace();
             outBuf.release();
             return;
@@ -79,18 +79,18 @@ public class PostProcessWorker implements Runnable {
         }
 
         byte[] data = new byte[outBuf.readableBytes()];
-        outBuf.readBytes( data );
+        outBuf.readBytes(data);
         outBuf.release();
 
         PacketFEBatch batch = new PacketFEBatch();
-        batch.setPayload( data );
+        batch.setPayload(data);
 
         EncryptionHandler encryptionHandler = this.connection.getEncryptionHandler();
-        if ( encryptionHandler != null && ( this.connection.getConnectionState() == PlayerConnectionState.LOGIN || this.connection.getConnectionState() == PlayerConnectionState.PLAYING ) ) {
-            batch.setPayload( encryptionHandler.encryptInputForClient( batch.getPayload() ) );
+        if (encryptionHandler != null && (this.connection.getConnectionState() == PlayerConnectionState.LOGIN || this.connection.getConnectionState() == PlayerConnectionState.PLAYING)) {
+            batch.setPayload(encryptionHandler.encryptInputForClient(batch.getPayload()));
         }
 
-        this.connection.sendPacketImmediately( batch );
+        this.connection.sendPacketImmediately(batch);
     }
 
     private void writeToBuffer(ByteBuf inBuf, Packet packet) {
@@ -102,15 +102,15 @@ public class PostProcessWorker implements Runnable {
         inBuf.writeBytes(buffer.getBuffer(), buffer.getBufferOffset(), buffer.getPosition() - buffer.getBufferOffset());
     }
 
-    private void writeVarInt( int value, ByteBuf stream ) {
+    private void writeVarInt(int value, ByteBuf stream) {
         int copyValue = value;
 
-        while ( ( copyValue & -128 ) != 0 ) {
-            stream.writeByte( copyValue & 127 | 128 );
+        while ((copyValue & -128) != 0) {
+            stream.writeByte(copyValue & 127 | 128);
             copyValue >>>= 7;
         }
 
-        stream.writeByte( copyValue );
+        stream.writeByte(copyValue);
     }
 
 }

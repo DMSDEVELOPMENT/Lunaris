@@ -28,17 +28,17 @@ public class DamageCalculus {
     }
 
     public static Vector3d calculateAttackVelocity(Entity damager, LivingEntity victim) {
-        if(damager.getWorld() != victim.getWorld())
+        if (damager.getWorld() != victim.getWorld())
             return new Vector3d(0D, 0D, 0D);
         int knockbackLevel = 5;
         int sprinting = 0;
-        if(damager.getEntityType() == EntityType.PLAYER) {
+        if (damager.getEntityType() == EntityType.PLAYER) {
             LPlayer p = (LPlayer) damager;
             ItemStack hand = p.getInventory().getItemInHand();
-            if(hand != null && hand.getType() != Material.AIR) {
+            if (hand != null && hand.getType() != Material.AIR) {
                 //check if hand has knockback enchantment
             }
-            if(p.isSprinting())
+            if (p.isSprinting())
                 sprinting = 1;
         }
         double amplitude = sprinting + knockbackLevel;
@@ -49,13 +49,13 @@ public class DamageCalculus {
     }
 
     private static double applyArmorModifiers(LivingEntity victim, DamageSource source, double damage) {
-        if(source.isBypassesArmor())
+        if (source.isBypassesArmor())
             return damage;
         int armor = 0;
-        if(victim.getEntityType() == EntityType.PLAYER) {
+        if (victim.getEntityType() == EntityType.PLAYER) {
             LPlayerInventory inventory = ((LPlayer) victim).getInventory();
-            for(ItemStack is : inventory.getArmorContents()) {
-                if(is != null && is.isItem())
+            for (ItemStack is : inventory.getArmorContents()) {
+                if (is != null && is.isItem())
                     armor += is.getItemHandle().getArmorPoints();
             }
         }
@@ -63,7 +63,7 @@ public class DamageCalculus {
     }
 
     private static double applyPotionModifiers(LivingEntity v, DamageSource source, double damage) {
-        if(source.isPure())
+        if (source.isPure())
             return damage;
         LLivingEntity victim = (LLivingEntity) v;
         PotionEffect effect = victim.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
@@ -73,31 +73,31 @@ public class DamageCalculus {
     }
 
     private static double applyEnchantmentsModifiers(LivingEntity victim, DamageSource source, double damage) {
-        if(source.isPure())
+        if (source.isPure())
             return damage;
         int modifier = Math.min(20, getEnchantmentModifier(victim, source));
         return modifier > 0 ? damage * (25F - modifier) / 25F : damage;
     }
 
     private static int getEnchantmentModifier(LivingEntity victim, DamageSource source) {
-        if(victim.getEntityType() == EntityType.PLAYER)
+        if (victim.getEntityType() == EntityType.PLAYER)
             return getEnchantmentModifier(((LPlayer) victim).getInventory().getArmorContents(), source);
         return 0;
     }
 
     private static int getEnchantmentModifier(ItemStack[] armor, DamageSource source) {
         int modifier = 0;
-        for(ItemStack item : armor)
+        for (ItemStack item : armor)
             modifier += getEnchantmentModifier(item, source);
-        if(modifier > 25)
+        if (modifier > 25)
             modifier = 25;
-        else if(modifier < 0)
+        else if (modifier < 0)
             modifier = 0;
         return (modifier + 1 >> 1) + ThreadLocalRandom.current().nextInt((modifier >> 1) + 1);
     }
 
     private static int getEnchantmentModifier(ItemStack item, DamageSource source) {
-        if(item == null || item.getType() == Material.AIR)
+        if (item == null || item.getType() == Material.AIR)
             return 0;
         //TODO:
         return 0;

@@ -46,7 +46,7 @@ public class PlayerMovementData extends MovementData {
         double x = super.x, y = super.y, z = super.z;
 //        if(LMath.pow2(px - x) + LMath.pow2(py - y) + LMath.pow2(pz - z) >= 1)
 //            this.player.sendPacketImmediately(new Packet13MovePlayer(this.player).mode(Packet13MovePlayer.MODE_RESET)); //teleporting when lagging
-        if(this.mx != 0F || this.my != 0F || this.mz != 0F) {
+        if (this.mx != 0F || this.my != 0F || this.mz != 0F) {
             this.player.sendPacket(new Packet28SetEntityMotion(this.player.getEntityID(), this.mx, this.my, this.mz));
             this.mx = this.my = this.mz = 0F;
         }

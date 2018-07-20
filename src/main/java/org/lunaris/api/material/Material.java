@@ -91,7 +91,7 @@ public enum Material {
     //milk?
     BRICK(LItemHandle.class, 336),
     CLAY_BALL(LItemHandle.class, 337),
-//    SUGAR_CANE(ItemHandle.class, "reeds", 338),
+    //    SUGAR_CANE(ItemHandle.class, "reeds", 338),
     PAPER(LItemHandle.class, 339),
     BOOK(LItemHandle.class, 340),
     SLIME_BALL(LItemHandle.class, 341),
@@ -141,30 +141,33 @@ public enum Material {
             BY_ID.put(material.id, material);
             try {
                 constructorCycle:
-                for(Constructor<?> constructor : material.handleClass.getDeclaredConstructors()) {
-                    switch(constructor.getParameterCount()) {
+                for (Constructor<?> constructor : material.handleClass.getDeclaredConstructors()) {
+                    switch (constructor.getParameterCount()) {
                         case 0: {
                             constructor.setAccessible(true);
                             material.handle = (LMaterialHandle) constructor.newInstance();
                             break constructorCycle;
-                        }case 1: {
-                            if(constructor.getParameterTypes()[0] == String.class) {
+                        }
+                        case 1: {
+                            if (constructor.getParameterTypes()[0] == String.class) {
                                 constructor.setAccessible(true);
                                 material.handle = (LMaterialHandle) constructor.newInstance(material.vanillaMaterialName);
                                 break constructorCycle;
-                            }else if(constructor.getParameterTypes()[0] == Material.class) {
+                            } else if (constructor.getParameterTypes()[0] == Material.class) {
                                 constructor.setAccessible(true);
                                 material.handle = (LMaterialHandle) constructor.newInstance(material);
                                 break constructorCycle;
                             }
-                        }case 2: {
+                        }
+                        case 2: {
                             Class<?>[] types = constructor.getParameterTypes();
-                            if(types[0] == Material.class && types[1] == String.class) {
+                            if (types[0] == Material.class && types[1] == String.class) {
                                 constructor.setAccessible(true);
                                 material.handle = (LMaterialHandle) constructor.newInstance(material, material.vanillaMaterialName);
                                 break constructorCycle;
                             }
-                        }default:
+                        }
+                        default:
                             break;
                     }
                     throw new IllegalStateException("Can not find valid constructor for material handle");
@@ -206,6 +209,7 @@ public enum Material {
 
     /**
      * Get this material id.
+     *
      * @return this material id.
      */
     public int getId() {
@@ -214,6 +218,7 @@ public enum Material {
 
     /**
      * Check whether this material has meta values (if it's max durability is not -1).
+     *
      * @return if this material has meta values.
      */
     public boolean hasMeta() {
@@ -222,6 +227,7 @@ public enum Material {
 
     /**
      * Get this material's handle.
+     *
      * @return this material's handle.
      */
     public MaterialHandle getHandle() {

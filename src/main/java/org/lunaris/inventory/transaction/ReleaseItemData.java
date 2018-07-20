@@ -14,7 +14,8 @@ public class ReleaseItemData implements TransactionData {
     private ItemStack itemInHand;
     private Vector3f playerPosition;
 
-    public ReleaseItemData() {}
+    public ReleaseItemData() {
+    }
 
     public ReleaseItemData(Packet1EInventoryTransaction.ReleaseItemActionType type, int hotbarSlot, ItemStack itemInHand, Vector3f playerPosition) {
         this.type = type;

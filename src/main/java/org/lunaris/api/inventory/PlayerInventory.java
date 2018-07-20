@@ -7,6 +7,7 @@ public interface PlayerInventory extends Inventory, EquipmentInventory {
 
     /**
      * Check whether given slot index is in hotbat.
+     *
      * @param index slot index.
      * @return if given slot index is in hotbat.
      */
@@ -14,6 +15,7 @@ public interface PlayerInventory extends Inventory, EquipmentInventory {
 
     /**
      * Get slot index of the item in hand.
+     *
      * @return index of the item in hand.
      */
     int getItemInHandIndex();

@@ -20,6 +20,8 @@ import java.util.Set;
  * @author xtrafrancyz
  */
 public class TrackedEntity {
+
+    private final EntityTracker tracker;
     private final LEntity entity;
     private final int updatePeriod;
     private final int viewDistanceSquared;
@@ -27,7 +29,8 @@ public class TrackedEntity {
     private Location sentLocation;
     private int tickCounter = 0;
 
-    public TrackedEntity(LEntity entity, int updatePeriod, int viewDistance) {
+    TrackedEntity(EntityTracker tracker, LEntity entity, int updatePeriod, int viewDistance) {
+        this.tracker = tracker;
         this.entity = entity;
         this.updatePeriod = updatePeriod;
         this.viewDistanceSquared = viewDistance * viewDistance;
@@ -71,8 +74,8 @@ public class TrackedEntity {
             return;
         if (isInViewRange(player)) {
             if (!trackingPlayers.contains(player) && entity.getWorld().isInRangeOfView(player, entity.getLocation().getChunk())) {
-                //System.out.println(entity + " to " + player);
-                trackingPlayers.add(player);
+                this.trackingPlayers.add(player);
+                this.tracker.trackedEntityLinks.computeIfAbsent(player, p -> new HashSet<>()).add(this);
                 player.sendPacket(entity.createSpawnPacket());
                 if (entity.getMotionX() != 0 || entity.getMotionY() != 0 || entity.getMotionZ() != 0) {
                     player.sendPacket(new Packet28SetEntityMotion(entity));
@@ -92,8 +95,8 @@ public class TrackedEntity {
 
                 // Potion effects
             }
-        } else {
-            trackingPlayers.remove(player);
+        } else if (this.trackingPlayers.remove(player)) {
+            this.tracker.trackedEntityLinks.get(player).remove(this);
             player.sendPacket(new Packet0ERemoveEntity(entity.getEntityID()));
         }
     }

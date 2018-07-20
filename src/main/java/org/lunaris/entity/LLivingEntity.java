@@ -113,18 +113,18 @@ public abstract class LLivingEntity extends LEntity implements LivingEntity {
     @Override
     public void tick(long current, float dT) {
         super.tick(current, dT);
-        if(getHealth() < 1F) {
-            if(this instanceof LPlayer) {
+        if (getHealth() < 1F) {
+            if (this instanceof LPlayer) {
                 LPlayer p = (LPlayer) this;
                 PlayerDeathEvent event = new PlayerDeathEvent(p);
                 event.call();
-                if(event.isCancelled()) {
+                if (event.isCancelled()) {
                     setHealth(1F);
                     return;
                 }
                 Location loc = p.getWorld().getSpawnLocation();
                 p.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ())); //чтобы кнопка респавна в клиенте отсылала пакет на сервер
-            }else {
+            } else {
                 EntityDeathEvent event = new EntityDeathEvent(this);
                 event.call();
                 remove();

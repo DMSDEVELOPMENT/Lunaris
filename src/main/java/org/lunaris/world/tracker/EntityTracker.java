@@ -2,6 +2,8 @@ package org.lunaris.world.tracker;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.lunaris.LunarisServer;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
@@ -18,11 +20,13 @@ public class EntityTracker {
     private final LunarisServer server;
     private final LWorld world;
     private Long2ObjectMap<TrackedEntity> entities;
+    Object2ObjectMap<LPlayer, Set<TrackedEntity>> trackedEntityLinks;
 
     public EntityTracker(LunarisServer server, LWorld world) {
         this.server = server;
         this.world = world;
         this.entities = new Long2ObjectOpenHashMap<>();
+        this.trackedEntityLinks = new Object2ObjectOpenHashMap<>();
     }
 
     public void track(LEntity entity) {
@@ -35,8 +39,22 @@ public class EntityTracker {
 
     public void untrack(LEntity entity) {
         TrackedEntity tracked = entities.remove(entity.getEntityID());
-        if (tracked != null)
+        if (tracked != null) {
             tracked.sendPacket(new Packet0ERemoveEntity(entity.getEntityID()));
+            tracked.getTrackingPlayers().forEach(player -> {
+                Set<TrackedEntity> set = this.trackedEntityLinks.get(player);
+                if (set != null) {
+                    set.remove(tracked);
+                }
+            });
+        }
+        if (entity instanceof LPlayer) {
+            LPlayer casted = (LPlayer) entity;
+            Set<TrackedEntity> trackedEntities = this.trackedEntityLinks.remove(casted);
+            if (trackedEntities != null) {
+                trackedEntities.forEach(trackedEntity -> trackedEntity.updatePlayer(casted));
+            }
+        }
     }
 
     private void registerEntity(LEntity entity, int viewDistance, int updateFrequency) {
@@ -48,7 +66,7 @@ public class EntityTracker {
             for (TrackedEntity tracked : entities.values())
                 tracked.updatePlayer((LPlayer) entity);
         }
-        TrackedEntity tracked = new TrackedEntity(entity, updateFrequency, viewDistance);
+        TrackedEntity tracked = new TrackedEntity(this, entity, updateFrequency, viewDistance);
         entities.put(entity.getEntityID(), tracked);
         tracked.updatePlayers(world.getPlayers());
     }

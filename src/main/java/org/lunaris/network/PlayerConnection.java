@@ -142,10 +142,16 @@ public class PlayerConnection {
     }
 
     void sendPacket(Packet packet) {
+        if (this.connectionState == PlayerConnectionState.DISCONNECTED) {
+            return;
+        }
         this.sendingQueue.offer(packet);
     }
 
     public void sendPacketImmediately(Packet packet) {
+        if (this.connectionState == PlayerConnectionState.DISCONNECTED) {
+            return;
+        }
         if (packet.getID() != PACKET_BATCH) {
             this.postProcessExecutor.addWork(this, packet);
         } else {

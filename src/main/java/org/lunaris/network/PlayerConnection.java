@@ -67,13 +67,6 @@ public class PlayerConnection {
     }
 
     void close() {
-        LPlayer player = getPlayer();
-        if (player != null) {
-            LunarisServer.getInstance().getPlayerProvider().removePlayer(player);
-        }
-        if (this.postProcessExecutor != null) {
-            this.networkManager.getPostProcessExecutorService().releaseExecutor(this.postProcessExecutor);
-        }
         disconnect(null);
     }
 
@@ -123,8 +116,7 @@ public class PlayerConnection {
 
     public void disconnect(String reason) {
         if (reason != null && !reason.isEmpty()) {
-            Packet05Disconnect packet = new Packet05Disconnect(reason);
-            sendPacketImmediately(packet);
+            sendPacketImmediately(new Packet05Disconnect(reason));
             LunarisServer.getInstance().getScheduler().runAsync(() -> {
                 for (int i = 0; i < 60; ++i) {
                     try {
@@ -228,6 +220,13 @@ public class PlayerConnection {
     }
 
     private void internalClose(String reason) {
+        LPlayer player = getPlayer();
+        if (player != null) {
+            LunarisServer.getInstance().getPlayerProvider().removePlayer(player);
+        }
+        if (this.postProcessExecutor != null) {
+            this.networkManager.getPostProcessExecutorService().releaseExecutor(this.postProcessExecutor);
+        }
         if (this.connection.isConnected() && !this.connection.isDisconnecting()) {
             this.connection.disconnect(reason);
             this.connectionState = PlayerConnectionState.DISCONNECTED;

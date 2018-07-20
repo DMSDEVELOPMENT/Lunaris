@@ -11367,3 +11367,466 @@
 05:07:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
 05:07:44 [INFO] Disabling Lunaris version DEV..
 05:07:48 [INFO] Good bye!
+00:52:04 [INFO] Starting Lunaris version DEV for 1.5.0 clients..
+00:52:04 [INFO] Loading configuration..
+00:52:05 [INFO] Loading defaults..
+00:52:05 [SEVERE] Exception in thread "main" 
+00:52:05 [SEVERE] java.lang.ExceptionInInitializerError
+00:52:05 [SEVERE] 	at org.lunaris.network.PacketRegistry.registerPackets(PacketRegistry.java:111)
+00:52:05 [SEVERE] 	at org.lunaris.network.PacketRegistry.<init>(PacketRegistry.java:17)
+00:52:05 [SEVERE] 	at org.lunaris.network.NetworkManager.<init>(NetworkManager.java:43)
+00:52:05 [SEVERE] 	at org.lunaris.LunarisServer.loadDefaults(LunarisServer.java:137)
+00:52:05 [SEVERE] 	at org.lunaris.LunarisServer.<init>(LunarisServer.java:67)
+00:52:05 [SEVERE] 	at org.lunaris.Bootstrap.initializeLogger(Bootstrap.java:35)
+00:52:05 [SEVERE] 	at org.lunaris.Bootstrap.main(Bootstrap.java:18)
+00:52:05 [SEVERE] Caused by: java.lang.NullPointerException
+00:52:05 [SEVERE] 	at java.base/java.io.Reader.<init>(Reader.java:82)
+00:52:05 [SEVERE] 	at java.base/java.io.InputStreamReader.<init>(InputStreamReader.java:72)
+00:52:05 [SEVERE] 	at org.lunaris.network.packet.Packet15UpdateBlock.<clinit>(Packet15UpdateBlock.java:79)
+00:52:05 [SEVERE] 	... 7 more
+00:53:15 [INFO] Starting Lunaris version DEV for 1.5.0 clients..
+00:53:15 [INFO] Loading configuration..
+00:53:15 [INFO] Loading defaults..
+00:53:15 [SEVERE] Exception in thread "main" 
+00:53:15 [SEVERE] java.lang.ExceptionInInitializerError
+00:53:15 [SEVERE] 	at org.lunaris.network.PacketRegistry.registerPackets(PacketRegistry.java:111)
+00:53:15 [SEVERE] 	at org.lunaris.network.PacketRegistry.<init>(PacketRegistry.java:17)
+00:53:15 [SEVERE] 	at org.lunaris.network.NetworkManager.<init>(NetworkManager.java:43)
+00:53:15 [SEVERE] 	at org.lunaris.LunarisServer.loadDefaults(LunarisServer.java:137)
+00:53:15 [SEVERE] 	at org.lunaris.LunarisServer.<init>(LunarisServer.java:67)
+00:53:15 [SEVERE] 	at org.lunaris.Bootstrap.initializeLogger(Bootstrap.java:35)
+00:53:15 [SEVERE] 	at org.lunaris.Bootstrap.main(Bootstrap.java:18)
+00:53:15 [SEVERE] Caused by: java.lang.ArrayIndexOutOfBoundsException: 0
+00:53:15 [SEVERE] 	at org.lunaris.network.packet.Packet15UpdateBlock.<clinit>(Packet15UpdateBlock.java:98)
+00:53:15 [SEVERE] 	... 7 more
+00:54:12 [INFO] Starting Lunaris version DEV for 1.5.0 clients..
+00:54:12 [INFO] Loading configuration..
+00:54:12 [INFO] Loading defaults..
+00:54:29 [INFO] Done (17.817 seconds)! For list of commands type "help".
+00:54:29 [INFO] Unknown command. Type /help to see list of them.
+00:54:29 [INFO] Disabling Lunaris version DEV..
+00:54:33 [INFO] Good bye!
+00:54:36 [INFO] Starting Lunaris version DEV for 1.5.0 clients..
+00:54:36 [INFO] Loading configuration..
+00:54:37 [INFO] Loading defaults..
+00:54:39 [INFO] Done (2.933 seconds)! For list of commands type "help".
+00:55:14 [INFO] Received packet Packet01Login from ---
+00:55:14 [INFO] RinesThaix (192.168.0.31) is logging in..
+00:55:14 [INFO] Sent packet Packet02PlayStatus to RinesThaix
+00:55:14 [INFO] Sent packet Packet06ResourcePacksInfo to RinesThaix
+00:55:14 [INFO] Received packet Packet08ResourcePackResponse from RinesThaix
+00:55:14 [INFO] Sent packet Packet07ResourcePackStack to RinesThaix
+00:55:15 [INFO] Received packet Packet08ResourcePackResponse from RinesThaix
+00:55:15 [INFO] Sent packet Packet13MovePlayer to RinesThaix
+00:55:15 [INFO] Sent packet Packet0BStartGame to RinesThaix
+00:55:15 [INFO] Sent packet Packet02PlayStatus to RinesThaix
+00:55:15 [INFO] Sent packet Packet27SetEntityData to RinesThaix
+00:55:15 [INFO] Sent packet Packet2DRespawn to RinesThaix
+00:55:15 [INFO] Sent packet Packet0AWorldTime to RinesThaix
+00:55:15 [INFO] Sent packet Packet3CSetDifficulty to RinesThaix
+00:55:15 [INFO] Sent packet Packet3BSetCommandsEnabled to RinesThaix
+00:55:15 [INFO] Sent packet Packet37AdventureSettings to RinesThaix
+00:55:15 [INFO] Sent packet Packet37AdventureSettings to RinesThaix
+00:55:15 [INFO] Sent packet Packet4CAvailableCommands to RinesThaix
+00:55:15 [INFO] Sent packet Packet1DUpdateAttributes to RinesThaix
+00:55:15 [INFO] Sent packet Packet3FPlayerList to RinesThaix
+00:55:15 [INFO] Sent packet Packet28SetEntityMotion to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Received packet Packet45RequestChunkRadius from RinesThaix
+00:55:15 [INFO] Sent packet Packet46ChunkRadiusUpdate to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:15 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:16 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:16 [INFO] Received packet of unknown id: 0x25
+00:55:16 [WARNING] Could not read packet 0x25: remaining 6 bytes
+00:55:16 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:16 [INFO] Sent packet Packet1DUpdateAttributes to RinesThaix
+00:55:16 [INFO] Sent packet Packet1BEntityEvent to RinesThaix
+00:55:20 [INFO] Received packet of unknown id: 0x70
+00:55:20 [WARNING] Could not read packet 0x70: remaining 1 bytes
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:32 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:34 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:36 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:36 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:36 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:36 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:39 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:39 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:39 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:39 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:40 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:40 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:41 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:41 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:41 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:42 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:42 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:42 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:42 [INFO] Received packet Packet1EInventoryTransaction from RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:42 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:42 [INFO] Sent packet Packet15UpdateBlock to RinesThaix
+00:55:42 [INFO] Sent packet Packet15UpdateBlock to RinesThaix
+00:55:42 [INFO] Sent packet Packet0FAddItem to RinesThaix
+00:55:42 [INFO] Sent packet Packet12MoveEntity to RinesThaix
+00:55:42 [INFO] Sent packet Packet28SetEntityMotion to RinesThaix
+00:55:42 [INFO] Sent packet Packet12MoveEntity to RinesThaix
+00:55:42 [INFO] Sent packet Packet28SetEntityMotion to RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Sent packet Packet12MoveEntity to RinesThaix
+00:55:42 [INFO] Sent packet Packet28SetEntityMotion to RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Sent packet Packet12MoveEntity to RinesThaix
+00:55:42 [INFO] Sent packet Packet28SetEntityMotion to RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:42 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:42 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:42 [INFO] Sent packet Packet12MoveEntity to RinesThaix
+00:55:42 [INFO] Sent packet Packet28SetEntityMotion to RinesThaix
+00:55:43 [INFO] Sent packet Packet15UpdateBlock to RinesThaix
+00:55:43 [INFO] Sent packet Packet15UpdateBlock to RinesThaix
+00:55:43 [INFO] Sent packet Packet15UpdateBlock to RinesThaix
+00:55:43 [INFO] Sent packet Packet15UpdateBlock to RinesThaix
+00:55:43 [INFO] Sent packet Packet15UpdateBlock to RinesThaix
+00:55:45 [INFO] Sent packet Packet32InventorySlot to RinesThaix
+00:55:45 [INFO] Sent packet Packet11PickupItem to RinesThaix
+00:55:45 [INFO] Sent packet Packet0ERemoveEntity to RinesThaix
+00:55:46 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:46 [INFO] Received packet Packet1FMobEquipment from RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Sent packet Packet3AFullChunkData to RinesThaix
+00:55:47 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:47 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:50 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:50 [INFO] Received packet Packet1EInventoryTransaction from RinesThaix
+00:55:50 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:50 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:50 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:50 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:50 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:50 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:50 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:50 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:50 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:50 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:50 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:50 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:50 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:50 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:50 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:50 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:50 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:50 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:50 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:50 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:53 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet1EInventoryTransaction from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:53 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:53 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:53 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:57 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:57 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:57 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:57 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:57 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:57 [INFO] Received packet Packet18LevelSoundEvent from RinesThaix
+00:55:57 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:57 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:57 [INFO] Received packet Packet2CAnimate from RinesThaix
+00:55:57 [INFO] Received packet Packet24PlayerAction from RinesThaix
+00:55:57 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:55:57 [INFO] Sent packet Packet19LevelEvent to RinesThaix
+00:56:09 [INFO] RinesThaix disconnected: Just disconnected
+00:56:21 [INFO] Disabling Lunaris version DEV..
+00:56:26 [INFO] Good bye!
+00:57:28 [INFO] Starting Lunaris version DEV for 1.5.0 clients..
+00:57:28 [INFO] Loading configuration..
+00:57:28 [INFO] Loading defaults..
+00:57:44 [INFO] Done (17.420 seconds)! For list of commands type "help".
+00:58:06 [INFO] Disabling Lunaris version DEV..
+00:58:11 [INFO] Good bye!

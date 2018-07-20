@@ -19,3 +19,6 @@ buildNumber.properties
 
 ### User
 run/
+*.log.*
+*.yml
+*.json

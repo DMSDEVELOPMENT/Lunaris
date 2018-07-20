@@ -58,7 +58,6 @@ public class PlayerProvider {
             player.disconnect();
             return;
         }
-        player.setIngameState(LPlayer.IngameState.ONLINE);
         this.playersByNames.put(player.getName().toLowerCase(), player);
         this.playersByUUIDs.put(player.getUUID(), player);
         Packet0BStartGame startGame = new Packet0BStartGame();
@@ -123,7 +122,6 @@ public class PlayerProvider {
 
     public LPlayer removePlayer(LPlayer player) {
         boolean wasOnline = player.isOnline();
-        player.setIngameState(LPlayer.IngameState.DISCONNECTING);
         this.scheduler.run(() -> {
             new PlayerDisconnectEvent(player).call();
             this.server.getPlayerList().removePlayer(player);

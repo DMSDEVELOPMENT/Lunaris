@@ -19,6 +19,7 @@ import org.lunaris.inventory.LInventory;
 import org.lunaris.inventory.LPlayerInventory;
 import org.lunaris.network.Packet;
 import org.lunaris.network.PlayerConnection;
+import org.lunaris.network.PlayerConnectionState;
 import org.lunaris.network.packet.*;
 import org.lunaris.util.logger.ChatColor;
 import org.lunaris.world.LWorld;
@@ -44,8 +45,6 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     private final Skin skin;
     private final String skinGeometryName;
     private final byte[] skinGeometry;
-
-    private IngameState ingameState = IngameState.LOGIN;
 
     private String disconnectingReason = "Just disconnected";
 
@@ -100,7 +99,7 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     }
 
     public boolean isOnline() {
-        return this.ingameState == IngameState.ONLINE;
+        return this.connection.getConnectionState() == PlayerConnectionState.PLAYING;
     }
 
     public String getIp() {
@@ -109,14 +108,6 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
 
     public String getAddress() {
         return this.ip;
-    }
-
-    public IngameState getIngameState() {
-        return ingameState;
-    }
-
-    public void setIngameState(IngameState ingameState) {
-        this.ingameState = ingameState;
     }
 
     public String getName() {
@@ -213,13 +204,10 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     }
 
     public void disconnect(String reason) {
-        if(this.ingameState == IngameState.DISCONNECTING)
-            throw new IllegalStateException("Disconnected player can't be disconnected");
-        sendPacket(new Packet05Disconnect(reason));
-        if(reason == null)
-            reason = "Unknown reason";
-        this.disconnectingReason = reason.replace("\n", "\\n");
-        this.ingameState = IngameState.DISCONNECTING;
+        if (reason != null && !reason.isEmpty()) {
+            this.disconnectingReason = reason;
+        }
+        this.connection.disconnect(reason);
     }
 
     public void kick() {
@@ -453,10 +441,6 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     @Override
     protected MovementData generateEntityMovement() {
         return new PlayerMovementData(this);
-    }
-
-    public enum IngameState {
-        LOGIN, ONLINE, DISCONNECTING
     }
 
     @Override

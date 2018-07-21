@@ -19,7 +19,6 @@ import java.util.Map;
 /**
  * Created by RINES on 24.09.17.
  */
-//TODO: отличается от мяты
 public class Packet15UpdateBlock extends Packet {
 
     public static final int FLAG_NONE = 0b0000;

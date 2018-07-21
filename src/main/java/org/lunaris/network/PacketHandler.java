@@ -15,9 +15,9 @@ import java.util.Map;
  */
 public abstract class PacketHandler {
 
-    public final static PacketHandler HANDSHAKE_HANDLER = new HandshakeHandler();
-    public final static PacketHandler ENCRYPTION_HANDLER = new EncryptionHandler();
-    public final static PacketHandler RESOURCES_HANDLER = new ResourcesHandler();
+    final static PacketHandler HANDSHAKE_HANDLER = new HandshakeHandler();
+    protected final static PacketHandler ENCRYPTION_HANDLER = new EncryptionHandler();
+    protected final static PacketHandler RESOURCES_HANDLER = new ResourcesHandler();
 
     private final Map<Class<? extends Packet>, List<Handler<Packet>>> handlers = new HashMap<>();
 

@@ -69,7 +69,7 @@ public class BlockMaster {
                         return;
                     }
                     if (blockHandle.place(hand, sider, target, blockFace, clickPosition.getX(), clickPosition.getY(), clickPosition.getZ(), player)) {
-                        sider.getChunk().sendPacket(new Packet18LevelSoundEvent(Sound.PLACE, sider.getLocation(), hand.getType().getId(), 1, false, false));
+                        sider.getChunk().sendPacketImmediately(new Packet18LevelSoundEvent(Sound.PLACE, sider.getLocation(), hand.getType().getId(), 1, false, false));
                         if (player.getGamemode() != Gamemode.CREATIVE) {
                             hand.setAmount(hand.getAmount() - 1);
                             player.getInventory().setItemInHand(hand.getAmount() <= 0 ? null : hand);
@@ -104,7 +104,7 @@ public class BlockMaster {
         switch (player.getGamemode()) {
             case SURVIVAL: {
                 double breakTime = getBreakTimeInTicks(block, player);
-                block.getChunk().sendPacket(new Packet19LevelEvent(
+                block.getChunk().sendPacketImmediately(new Packet19LevelEvent(
                         Packet19LevelEvent.EVENT_BLOCK_START_BREAK,
                         (float) position.x, (float) position.y, (float) position.z,
                         (int) (65535 / breakTime)
@@ -162,7 +162,7 @@ public class BlockMaster {
 //            ));
         }
         BlockFace face = BlockFace.fromIndex(packet.getFace());
-        new PunchBlockParticle(player.getWorld().getBlockAt(position), face).sendToNearbyPlayers();
+        new PunchBlockParticle(player.getWorld().getBlockAt(position), face).sendToNearbyPlayersImmediately();
     }
 
     public void processBlockBreak(LPlayer player, LBlock block) {
@@ -174,7 +174,7 @@ public class BlockMaster {
         BlockBreakEvent event = new BlockBreakEvent(player, block);
         this.server.getEventManager().call(event);
         if (event.isCancelled()) {
-            player.sendPacket(new Packet15UpdateBlock(block)); //restore block to players
+            player.sendPacketImmediately(new Packet15UpdateBlock(block)); //restore block to players
             return;
         }
         ItemStack hand = player.getInventory().getItemInHand();

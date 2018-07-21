@@ -5,12 +5,15 @@ import org.lunaris.api.util.math.Vector3d;
 import org.lunaris.entity.data.*;
 import org.lunaris.network.packet.Packet27SetEntityData;
 
+import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 /**
- * Created by RINES on 30.09.17.
+ * Created by k.shandurenko on 21.07.2018
  */
-public abstract class Metadatable {
+public final class EntityMetadataHolder {
+
+    private final WeakReference<LEntity> entityWeakReference;
 
     private final EntityMetadata dataProperties = new EntityMetadata()
             .putLong(EntityDataOption.FLAGS, 0)
@@ -22,7 +25,9 @@ public abstract class Metadatable {
 
     private boolean dirtyMetadata = true;
 
-    public abstract long getEntityID();
+    EntityMetadataHolder(LEntity entity) {
+        this.entityWeakReference = new WeakReference<>(entity);
+    }
 
     public boolean getDataFlag(boolean playerFlags, EntityDataFlag flag) {
         return ((playerFlags ? getDataPropertyByte(27) & 0xff : getDataPropertyLong(EntityDataOption.FLAGS)) & (1L << flag.getID())) > 0;
@@ -46,10 +51,14 @@ public abstract class Metadatable {
         if (!Objects.equals(data, this.getDataProperties().get(data.getId()))) {
             this.getDataProperties().put(data);
             if (send) {
-                EntityMetadata metadata = new EntityMetadata().put(this.dataProperties.get(data.getId()));
-                ((LEntity) this).sendPacketToWatchersAndMe(new Packet27SetEntityData(getEntityID(), metadata));
-            } else
+                LEntity entity = getEntity();
+                if (entity != null) {
+                    EntityMetadata metadata = new EntityMetadata().put(this.dataProperties.get(data.getId()));
+                    entity.sendPacketToWatchersAndMe(new Packet27SetEntityData(entity.getEntityID(), metadata));
+                }
+            } else {
                 this.dirtyMetadata = true;
+            }
             return true;
         }
         return false;
@@ -141,6 +150,10 @@ public abstract class Metadatable {
     protected void setDataProperty(EntityDataOption option, float value) {
         this.getDataProperties().putFloat(option, value);
         this.dirtyMetadata = true;
+    }
+
+    private LEntity getEntity() {
+        return this.entityWeakReference.get();
     }
 
     public boolean isDirtyMetadata() {

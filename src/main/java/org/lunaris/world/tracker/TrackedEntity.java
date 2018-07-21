@@ -42,24 +42,25 @@ public class TrackedEntity {
      * Отпраляет пакет всем игрокам, смотрящим за этим ентити
      */
     public void sendPacket(Packet packet) {
-        LunarisServer.getInstance().getNetworkManager().sendPacket(trackingPlayers, packet);
+        LunarisServer.getInstance().getNetworkManager().sendPacket(this.trackingPlayers, packet);
     }
 
     public void update() {
         sendMetadata();
-        if (entity.hasJustMoved()) {
-            sendPacket(new Packet12MoveEntity(entity));
-            sendPacket(new Packet28SetEntityMotion(entity));
+        if (this.entity.hasJustMoved()) {
+            sendPacket(new Packet12MoveEntity(this.entity));
+            sendPacket(new Packet28SetEntityMotion(this.entity));
         }
-        tickCounter++;
+        this.tickCounter++;
     }
 
     private void sendMetadata() {
-        if (entity.isDirtyMetadata()) {
-            entity.setDirtyMetadata(false);
-            sendPacket(new Packet27SetEntityData(this.entity.getEntityID(), entity.getDataProperties()));
-            if (entity instanceof LPlayer)
-                ((LPlayer) entity).sendPacket(new Packet27SetEntityData(this.entity.getEntityID(), entity.getDataProperties()));
+        if (this.entity.getMetadata().isDirtyMetadata()) {
+            this.entity.getMetadata().setDirtyMetadata(false);
+            sendPacket(new Packet27SetEntityData(this.entity.getEntityID(), this.entity.getMetadata().getDataProperties()));
+            if (this.entity instanceof LPlayer) {
+                ((LPlayer) this.entity).sendPacket(new Packet27SetEntityData(this.entity.getEntityID(), this.entity.getMetadata().getDataProperties()));
+            }
         }
     }
 
@@ -73,15 +74,15 @@ public class TrackedEntity {
         if (player == entity)
             return;
         if (isInViewRange(player)) {
-            if (!trackingPlayers.contains(player) && entity.getWorld().isInRangeOfView(player, entity.getLocation().getChunk())) {
+            if (!this.trackingPlayers.contains(player) && this.entity.getWorld().isInRangeOfView(player, this.entity.getLocation().getChunk())) {
                 this.trackingPlayers.add(player);
                 this.tracker.trackedEntityLinks.computeIfAbsent(player, p -> new HashSet<>()).add(this);
                 player.sendPacket(entity.createSpawnPacket());
-                if (entity.getMotionX() != 0 || entity.getMotionY() != 0 || entity.getMotionZ() != 0) {
-                    player.sendPacket(new Packet28SetEntityMotion(entity));
+                if (this.entity.getMotionX() != 0 || this.entity.getMotionY() != 0 || this.entity.getMotionZ() != 0) {
+                    player.sendPacket(new Packet28SetEntityMotion(this.entity));
                 }
-                if (entity instanceof LPlayer) {
-                    LPlayerInventory inv = ((LPlayer) entity).getInventory();
+                if (this.entity instanceof LPlayer) {
+                    LPlayerInventory inv = ((LPlayer) this.entity).getInventory();
                     boolean hasArmor = false;
                     ItemStack[] armor = new ItemStack[4];
                     for (int i = 0; i < 4; i++) {
@@ -90,14 +91,14 @@ public class TrackedEntity {
                             hasArmor = true;
                     }
                     if (hasArmor)
-                        player.sendPacket(new Packet20MobArmorEquipment(entity.getEntityID(), armor));
+                        player.sendPacket(new Packet20MobArmorEquipment(this.entity.getEntityID(), armor));
                 }
 
                 // Potion effects
             }
         } else if (this.trackingPlayers.remove(player)) {
             this.tracker.trackedEntityLinks.get(player).remove(this);
-            player.sendPacket(new Packet0ERemoveEntity(entity.getEntityID()));
+            player.sendPacket(new Packet0ERemoveEntity(this.entity.getEntityID()));
         }
     }
 
@@ -106,11 +107,11 @@ public class TrackedEntity {
     }
 
     public boolean isInViewRange(LPlayer player) {
-        return MathHelper.pow2(entity.getX() - player.getX()) + MathHelper.pow2(entity.getZ() - player.getZ()) < viewDistanceSquared;
+        return MathHelper.pow2(this.entity.getX() - player.getX()) + MathHelper.pow2(this.entity.getZ() - player.getZ()) < this.viewDistanceSquared;
     }
 
     public Set<LPlayer> getTrackingPlayers() {
-        return new HashSet<>(trackingPlayers);
+        return new HashSet<>(this.trackingPlayers);
     }
 
     @Override
@@ -118,12 +119,12 @@ public class TrackedEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TrackedEntity that = (TrackedEntity) o;
-        return Objects.equals(entity, that.entity);
+        return Objects.equals(this.entity, that.entity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(entity);
+        return Objects.hash(this.entity);
     }
 
 }

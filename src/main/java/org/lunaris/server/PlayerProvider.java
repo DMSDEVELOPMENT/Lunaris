@@ -82,14 +82,14 @@ public class PlayerProvider {
         startGame.generator = 1; //0 old 1 infinity 2 flat
         player.setDisplayNameVisible(true, true);
         player.setDisplayName(player.getName());
-        player.setDataFlag(false, EntityDataFlag.CAN_CLIMB, true, false);
-        player.setDataFlag(false, EntityDataFlag.BREATHING, true, false);
-        player.setDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY, true, false);
-        player.setDataFlag(false, EntityDataFlag.HAS_COLLISION, true, false);
-        player.setDirtyMetadata(false);
+        player.getMetadata().setDataFlag(false, EntityDataFlag.CAN_CLIMB, true, false);
+        player.getMetadata().setDataFlag(false, EntityDataFlag.BREATHING, true, false);
+        player.getMetadata().setDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY, true, false);
+        player.getMetadata().setDataFlag(false, EntityDataFlag.HAS_COLLISION, true, false);
+        player.getMetadata().setDirtyMetadata(false);
         player.sendPacket(startGame);
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.RESPAWN));
-        player.sendPacket(new Packet27SetEntityData(player.getEntityID(), player.getDataProperties()));
+        player.sendPacket(new Packet27SetEntityData(player.getEntityID(), player.getMetadata().getDataProperties()));
         player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
         player.sendPacket(new Packet0AWorldTime(player.getWorld().getTime()));
         player.sendPacket(new Packet3CSetDifficulty(((LWorld) loc.getWorld()).getDifficulty()));

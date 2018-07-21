@@ -314,12 +314,12 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
     public void respawn(Location location) {
         this.sprinting = false;
         this.sneaking = false;
-        setDataFlag(false, EntityDataFlag.SPRINTING, false, false);
-        setDataFlag(false, EntityDataFlag.SNEAKING, false, false);
+        getMetadata().setDataFlag(false, EntityDataFlag.SPRINTING, false, false);
+        getMetadata().setDataFlag(false, EntityDataFlag.SNEAKING, false, false);
         Attribute health = getAttribute(Attribute.MAX_HEALTH);
         health.setMaxValue(health.getDefaultValue());
         health.setValue(health.getMaxValue());
-        setDirtyMetadata(false);
+        getMetadata().setDirtyMetadata(false);
         sendPacketToWatchers(new Packet2DRespawn((float) location.getX(), (float) location.getY(), (float) location.getZ()));
         sendPacketToWatchersAndMe(new Packet1DUpdateAttributes(
                 getEntityID(),

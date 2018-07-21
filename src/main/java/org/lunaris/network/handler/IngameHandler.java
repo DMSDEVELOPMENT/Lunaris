@@ -136,7 +136,7 @@ public class IngameHandler extends PacketHandler {
                 p.getInventory().sendContents(p);
                 return;
             }
-            p.setDataFlag(false, EntityDataFlag.ACTION, false, true);
+            p.getMetadata().setDataFlag(false, EntityDataFlag.ACTION, false, true);
             p.getInventory().equipItem0(packet.getHotbarSlot());
             Set<LPlayer> players = new HashSet<>(LunarisServer.getInstance().getOnlinePlayers());
             players.remove(p);
@@ -150,7 +150,7 @@ public class IngameHandler extends PacketHandler {
             case START_SNEAK: {
                 sync(() -> {
                     p.setState(packet);
-                    p.setDataFlag(false, EntityDataFlag.SNEAKING, true, true);
+                    p.getMetadata().setDataFlag(false, EntityDataFlag.SNEAKING, true, true);
                     PlayerSneakEvent event = new PlayerSneakEvent(p, PlayerSneakEvent.State.START_SNEAKING);
                     this.server.getEventManager().call(event);
                 });
@@ -159,7 +159,7 @@ public class IngameHandler extends PacketHandler {
             case STOP_SNEAK: {
                 sync(() -> {
                     p.setState(packet);
-                    p.setDataFlag(false, EntityDataFlag.SNEAKING, false, true);
+                    p.getMetadata().setDataFlag(false, EntityDataFlag.SNEAKING, false, true);
                     PlayerSneakEvent event = new PlayerSneakEvent(p, PlayerSneakEvent.State.STOP_SNEAKING);
                     this.server.getEventManager().call(event);
                 });
@@ -168,7 +168,7 @@ public class IngameHandler extends PacketHandler {
             case START_SPRINT: {
                 sync(() -> {
                     p.setState(packet);
-                    p.setDataFlag(false, EntityDataFlag.SPRINTING, true, true);
+                    p.getMetadata().setDataFlag(false, EntityDataFlag.SPRINTING, true, true);
                     PlayerSprintEvent event = new PlayerSprintEvent(p, PlayerSprintEvent.State.START_SPRINTING);
                     this.server.getEventManager().call(event);
                 });
@@ -177,7 +177,7 @@ public class IngameHandler extends PacketHandler {
             case STOP_SPRINT: {
                 sync(() -> {
                     p.setState(packet);
-                    p.setDataFlag(false, EntityDataFlag.SPRINTING, false, true);
+                    p.getMetadata().setDataFlag(false, EntityDataFlag.SPRINTING, false, true);
                     PlayerSprintEvent event = new PlayerSprintEvent(p, PlayerSprintEvent.State.STOP_SPRINTING);
                     this.server.getEventManager().call(event);
                 });
@@ -283,7 +283,7 @@ public class IngameHandler extends PacketHandler {
                     UseItemData data = (UseItemData) packet.getData();
                     switch (data.getType()) {
                         case CLICK_BLOCK: {
-                            player.setDataFlag(false, EntityDataFlag.ACTION, false, true);
+                            player.getMetadata().setDataFlag(false, EntityDataFlag.ACTION, false, true);
                             this.server.getWorldProvider().getBlockMaster().onRightClickBlock(player, data.getBlockPosition(), data.getBlockFace(), data.getClickPosition());
                             return;
                         }

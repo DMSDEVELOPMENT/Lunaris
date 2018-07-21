@@ -31,7 +31,7 @@ public class Packet0FAddItem extends Packet {
         this.motionX = item.getMotionX();
         this.motionY = item.getMotionY();
         this.motionZ = item.getMotionZ();
-        this.metadata = item.getDataProperties();
+        this.metadata = item.getMetadata().getDataProperties();
     }
 
     @Override

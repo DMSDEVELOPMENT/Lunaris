@@ -63,7 +63,7 @@ public class Packet0CAddPlayer extends Packet {
         this.headYaw = player.getHeadYaw();
         this.pitch = player.getPitch();
         this.itemInHand = player.getInventory().getItemInHand();
-        this.metadata = player.getDataProperties();
+        this.metadata = player.getMetadata().getDataProperties();
     }
 
     @Override

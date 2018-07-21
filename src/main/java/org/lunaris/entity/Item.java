@@ -24,8 +24,8 @@ public class Item extends LEntity {
         super(entityID, EntityType.ITEM_DROP);
         this.itemStack = itemStack;
         setPickupDelay(pickupDelay);
-        setDataFlag(false, EntityDataFlag.IMMOBILE, true, false);
-        setDirtyMetadata(false);
+        getMetadata().setDataFlag(false, EntityDataFlag.IMMOBILE, true, false);
+        getMetadata().setDirtyMetadata(false);
     }
 
     public void setPickupDelay(long millis) {

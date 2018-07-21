@@ -43,7 +43,7 @@ public class Packet0DAddEntity extends Packet {
         int i = 0;
         for (Attribute attribute : attributes)
             this.attributes[i] = attribute;
-        this.metadata = entity.getDataProperties();
+        this.metadata = entity.getMetadata().getDataProperties();
     }
 
     @Override

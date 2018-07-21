@@ -133,7 +133,7 @@ public class MovementData implements Movable {
         this.lastUpdateDt += dT;
         if (this.lastUpdateDt >= TICK_RATE) {
             // Calc motion
-            if (this.entity.getDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY))
+            if (this.entity.getMetadata().getDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY))
                 this.motionY -= GRAVITY;
 
             // Check if we are stuck in a block

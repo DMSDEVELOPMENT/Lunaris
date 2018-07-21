@@ -24,11 +24,12 @@ import java.util.Map;
 /**
  * Created by RINES on 13.09.17.
  */
-public abstract class LEntity extends Metadatable implements Movable, Entity {
+public abstract class LEntity implements Movable, Entity {
 
     private final long entityID;
     private final EntityType entityType;
     private final MovementData movement;
+    private final EntityMetadataHolder metadataHolder;
     private final long creationTime = System.currentTimeMillis();
 
     private LWorld world;
@@ -50,7 +51,8 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
         this.entityID = entityID;
         this.entityType = entityType;
         this.movement = generateEntityMovement();
-        this.setDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY, true, false);
+        this.metadataHolder = new EntityMetadataHolder(this);
+        this.metadataHolder.setDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY, true, false);
     }
 
     @Override
@@ -178,24 +180,24 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
     }
 
     public void setDisplayName(String name) {
-        setDataProperty(EntityDataOption.NAMETAG, name);
+        getMetadata().setDataProperty(EntityDataOption.NAMETAG, name);
     }
 
     public String getDisplayName() {
-        return getDataPropertyString(EntityDataOption.NAMETAG);
+        return getMetadata().getDataPropertyString(EntityDataOption.NAMETAG);
     }
 
     public void setDisplayNameVisible(boolean visible, boolean always) {
-        setDataFlag(false, EntityDataFlag.CAN_SHOW_NAMETAG, visible, false);
-        setDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG, always, false);
+        getMetadata().setDataFlag(false, EntityDataFlag.CAN_SHOW_NAMETAG, visible, false);
+        getMetadata().setDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG, always, false);
     }
 
     public boolean isDisplayNameVisible() {
-        return getDataFlag(false, EntityDataFlag.CAN_SHOW_NAMETAG);
+        return getMetadata().getDataFlag(false, EntityDataFlag.CAN_SHOW_NAMETAG);
     }
 
     public boolean isDisplayNameAlwaysVisible() {
-        return isDisplayNameVisible() && getDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG);
+        return isDisplayNameVisible() && getMetadata().getDataFlag(false, EntityDataFlag.ALWAYS_SHOW_NAMETAG);
     }
 
     public final void remove() {
@@ -207,7 +209,7 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
         if (this.fireTicks > 0) {
             if ((this.fireTicks % 10 == 0 || this.fireTicks == 1) && this instanceof LLivingEntity)
                 ((LLivingEntity) this).damage(DamageSource.ON_FIRE, 1);
-            setDataFlag(false, EntityDataFlag.ONFIRE, this.fireTicks-- > 1, true);
+            getMetadata().setDataFlag(false, EntityDataFlag.ONFIRE, this.fireTicks-- > 1, true);
         }
         if (getY() <= -16) {
             if (this instanceof LLivingEntity) {
@@ -363,6 +365,10 @@ public abstract class LEntity extends Metadatable implements Movable, Entity {
 
     public float getFallDistance() {
         return this.fallDistance;
+    }
+
+    public EntityMetadataHolder getMetadata() {
+        return this.metadataHolder;
     }
 
     protected MovementData generateEntityMovement() {

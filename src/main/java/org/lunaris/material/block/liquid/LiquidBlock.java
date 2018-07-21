@@ -14,6 +14,7 @@ import org.lunaris.entity.LEntity;
 import org.lunaris.entity.LPlayer;
 import org.lunaris.material.block.TransparentBlock;
 import org.lunaris.util.math.AxisAlignedBB;
+import org.lunaris.util.math.Vector3f;
 import org.lunaris.world.particle.GenericParticle;
 import org.lunaris.world.particle.ParticleType;
 
@@ -79,7 +80,7 @@ public abstract class LiquidBlock extends TransparentBlock {
     }
 
     @Override
-    public void addVelocityToEntity(Block block, Entity entity, Vector3d vector) {
+    public void addVelocityToEntity(Block block, Entity entity, Vector3f vector) {
         Vector3d flow = this.getFlowVector(block);
         vector.x += flow.x;
         vector.y += flow.y;

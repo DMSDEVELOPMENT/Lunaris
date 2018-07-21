@@ -12,6 +12,7 @@ import org.lunaris.api.world.BlockFace;
 import org.lunaris.api.world.Location;
 import org.lunaris.block.BlockColor;
 import org.lunaris.util.math.AxisAlignedBB;
+import org.lunaris.util.math.Vector3f;
 import org.lunaris.world.BlockUpdateType;
 
 import java.util.Collections;
@@ -190,7 +191,7 @@ public class LBlockHandle extends LMaterialHandle implements BlockHandle {
 
     }
 
-    public void addVelocityToEntity(Block block, Entity entity, Vector3d vector) {
+    public void addVelocityToEntity(Block block, Entity entity, Vector3f vector) {
 
     }
 

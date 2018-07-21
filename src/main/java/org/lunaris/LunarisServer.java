@@ -4,6 +4,7 @@ import co.aikar.timings.Timings;
 import jline.console.ConsoleReader;
 import org.lunaris.api.event.EventHandler;
 import org.lunaris.api.event.Listener;
+import org.lunaris.api.event.block.BlockBreakEvent;
 import org.lunaris.api.plugin.PluginManager;
 import org.lunaris.api.server.Scheduler;
 import org.lunaris.command.CommandManager;
@@ -146,25 +147,25 @@ public class LunarisServer implements IServer {
 
         this.eventManager.register(new Listener() {
 
+            @EventHandler
+            public void onBreak(BlockBreakEvent e) {
+                broadcastMessage(e.getBlock().toString());
+            }
+
 //            @EventHandler
-//            public void onBreak(BlockBreakEvent e) {
-//                e.getPlayer().setVelocity(new Vector3d(0d, 1d, 0d));
+//            public void onSending(PacketSendingAsyncEvent e) {
+//                logger.info("Sent packet %s to %s", e.getPacket().getClass().getSimpleName(), e.getPlayer().getName());
 //            }
-
-            @EventHandler
-            public void onSending(PacketSendingAsyncEvent e) {
-                logger.info("Sent packet %s to %s", e.getPacket().getClass().getSimpleName(), e.getPlayer().getName());
-            }
-
-            @EventHandler
-            public void onReceiving(PacketReceivedAsyncEvent e) {
-                if (e.getPacket().getID() == 0x13) {
-                    return;
-                }
-                PlayerConnection connection = e.getPacket().getConnection();
-                String name = connection.getPlayer() == null ? "---" : connection.getPlayer().getName();
-                logger.info("Received packet %s from %s", e.getPacket().getClass().getSimpleName(), name);
-            }
+//
+//            @EventHandler
+//            public void onReceiving(PacketReceivedAsyncEvent e) {
+//                if (e.getPacket().getID() == 0x13) {
+//                    return;
+//                }
+//                PlayerConnection connection = e.getPacket().getConnection();
+//                String name = connection.getPlayer() == null ? "---" : connection.getPlayer().getName();
+//                logger.info("Received packet %s from %s", e.getPacket().getClass().getSimpleName(), name);
+//            }
 
         });
     }

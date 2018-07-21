@@ -6,8 +6,10 @@ import org.lunaris.api.world.Location;
 import org.lunaris.block.LBlock;
 import org.lunaris.entity.LEntity;
 import org.lunaris.entity.misc.Movable;
+import org.lunaris.network.packet.Packet28SetEntityMotion;
 import org.lunaris.util.math.AxisAlignedBB;
 import org.lunaris.util.math.LMath;
+import org.lunaris.util.math.Vector3f;
 import org.lunaris.world.LWorld;
 
 import java.util.*;
@@ -18,7 +20,7 @@ import java.util.*;
 public class MovementData implements Movable {
 
     protected final static float TICK_RATE = .05F;
-    protected final static float GRAVITY = 0.04F;
+    protected final static float GRAVITY = 0.08F;
 
     private final LEntity entity;
 
@@ -131,74 +133,34 @@ public class MovementData implements Movable {
     public void tickMovement(long current, float dT) {
         // Check if we need to calc motion
         this.lastUpdateDt += dT;
+
+        // Move by motion amount
+        float movX = this.motionX;
+        float movY = this.motionY;
+        float movZ = this.motionZ;
+
+        float dX = movX;
+        float dY = movY;
+        float dZ = movZ;
+
         if (this.lastUpdateDt >= TICK_RATE) {
-            // Calc motion
-            if (this.entity.getMetadata().getDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY))
-                this.motionY -= GRAVITY;
+            if (!this.entity.getMetadata().getDataFlag(false, EntityDataFlag.IMMOBILE)) {
+                // Calc motion
+                if (this.entity.getMetadata().getDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY))
+                    this.motionY -= GRAVITY;
 
-            // Check if we are stuck in a block
-            checkWhetherInsideBlocks(this.entity.getWorld());
+                // Check if we are stuck in a block
+                checkWhetherInsideBlocks(this.entity.getWorld());
 
-            // Move by motion amount
-            float movX = this.motionX;
-            float movY = this.motionY;
-            float movZ = this.motionZ;
-
-            // Security check so we don't move and collect bounding boxes like crazy
-            if (Math.abs(movX) > 20 || Math.abs(movZ) > 20 || Math.abs(movY) > 20) {
-                return;
-            }
-
-            float dX = movX;
-            float dY = movY;
-            float dZ = movZ;
-
-            AxisAlignedBB oldBoundingBox = this.entity.getBoundingBox().clone();
-
-            // Check if we collide with some blocks when we would move that fast
-            List<AxisAlignedBB> collisionList = getCollisionCubes(this.entity, this.entity.getBoundingBox().getOffsetBoundingBox(dX, dY, dZ), false);
-            if (collisionList != null) {
-                // Check if we would hit a y border block
-                for (AxisAlignedBB axisAlignedBB : collisionList) {
-                    dY = axisAlignedBB.calculateYOffset(this.entity.getBoundingBox(), dY);
+                // Security check so we don't move and collect bounding boxes like crazy
+                if (Math.abs(movX) > 20 || Math.abs(movZ) > 20 || Math.abs(movY) > 20) {
+                    return;
                 }
 
-                this.entity.getBoundingBox().offset(0, dY, 0);
+                AxisAlignedBB oldBoundingBox = this.entity.getBoundingBox().clone();
 
-                // Check if we would hit a x border block
-                for (AxisAlignedBB axisAlignedBB : collisionList) {
-                    dX = axisAlignedBB.calculateXOffset(this.entity.getBoundingBox(), dX);
-                }
-
-                this.entity.getBoundingBox().offset(dX, 0, 0);
-
-                // Check if we would hit a z border block
-                for (AxisAlignedBB axisAlignedBB : collisionList) {
-                    dZ = axisAlignedBB.calculateZOffset(this.entity.getBoundingBox(), dZ);
-                }
-
-                this.entity.getBoundingBox().offset(0, 0, dZ);
-            } else {
-                this.entity.getBoundingBox().offset(dX, dY, dZ);
-            }
-
-            // Check if we can jump
-            boolean notFallingFlag = (this.entity.isOnGround() || (dY != movY && movY < 0));
-            if (this.entity.getStepHeight() > 0 && notFallingFlag && this.jumpingOffset < 0.05 && (movX != dX || movZ != dZ)) {
-                float oldDX = dX;
-                float oldDY = dY;
-                float oldDZ = dZ;
-
-                dX = movX;
-                dY = this.entity.getStepHeight();
-                dZ = movZ;
-
-                // Save and restore old bounding box
-                AxisAlignedBB oldBoundingBox1 = this.entity.getBoundingBox().clone();
-                this.entity.getBoundingBox().setBounds(oldBoundingBox);
-
-                // Check for collision
-                collisionList = getCollisionCubes(this.entity, this.entity.getBoundingBox().addCoordinates(dX, dY, dZ), false);
+                // Check if we collide with some blocks when we would move that fast
+                List<AxisAlignedBB> collisionList = getCollisionCubes(this.entity, this.entity.getBoundingBox().getOffsetBoundingBox(dX, dY, dZ), false);
                 if (collisionList != null) {
                     // Check if we would hit a y border block
                     for (AxisAlignedBB axisAlignedBB : collisionList) {
@@ -220,49 +182,93 @@ public class MovementData implements Movable {
                     }
 
                     this.entity.getBoundingBox().offset(0, 0, dZ);
-                }
-
-                // Check if we moved left or right
-                if (LMath.pow2(oldDX) + LMath.pow2(oldDZ) >= LMath.pow2(dX) + LMath.pow2(dZ)) {
-                    // Revert this decision of moving the bounding box up
-                    dX = oldDX;
-                    dY = oldDY;
-                    dZ = oldDZ;
-                    this.entity.getBoundingBox().setBounds(oldBoundingBox1);
                 } else {
-                    // Move the bounding box up by .5
-                    this.jumpingOffset += 0.5;
+                    this.entity.getBoundingBox().offset(dX, dY, dZ);
                 }
-            }
 
-            // Move by new bounding box
-            if (dX != 0.0 || dY != 0.0 || dZ != 0.0) {
-                AxisAlignedBB bb = this.entity.getBoundingBox();
-                setPosition(
-                        (bb.getMinX() + bb.getMaxX()) / 2,
-                        bb.getMinY() + this.jumpingOffset,
-                        (bb.getMinZ() + bb.getMaxZ()) / 2
-                );
-            }
+                // Check if we can jump
+                boolean notFallingFlag = (this.entity.isOnGround() || (dY != movY && movY < 0));
+                if (this.entity.getStepHeight() > 0 && notFallingFlag && this.jumpingOffset < 0.05 && (movX != dX || movZ != dZ)) {
+                    float oldDX = dX;
+                    float oldDY = dY;
+                    float oldDZ = dZ;
 
-            // Check for grounding states
-            this.entity.setupCollisionFlags(movX, movY, movZ, dX, dY, dZ);
+                    dX = movX;
+                    dY = this.entity.getStepHeight();
+                    dZ = movZ;
+
+                    // Save and restore old bounding box
+                    AxisAlignedBB oldBoundingBox1 = this.entity.getBoundingBox().clone();
+                    this.entity.getBoundingBox().setBounds(oldBoundingBox);
+
+                    // Check for collision
+                    collisionList = getCollisionCubes(this.entity, this.entity.getBoundingBox().addCoordinates(dX, dY, dZ), false);
+                    if (collisionList != null) {
+                        // Check if we would hit a y border block
+                        for (AxisAlignedBB axisAlignedBB : collisionList) {
+                            dY = axisAlignedBB.calculateYOffset(this.entity.getBoundingBox(), dY);
+                        }
+
+                        this.entity.getBoundingBox().offset(0, dY, 0);
+
+                        // Check if we would hit a x border block
+                        for (AxisAlignedBB axisAlignedBB : collisionList) {
+                            dX = axisAlignedBB.calculateXOffset(this.entity.getBoundingBox(), dX);
+                        }
+
+                        this.entity.getBoundingBox().offset(dX, 0, 0);
+
+                        // Check if we would hit a z border block
+                        for (AxisAlignedBB axisAlignedBB : collisionList) {
+                            dZ = axisAlignedBB.calculateZOffset(this.entity.getBoundingBox(), dZ);
+                        }
+
+                        this.entity.getBoundingBox().offset(0, 0, dZ);
+                    }
+
+                    // Check if we moved left or right
+                    if (LMath.pow2(oldDX) + LMath.pow2(oldDZ) >= LMath.pow2(dX) + LMath.pow2(dZ)) {
+                        // Revert this decision of moving the bounding box up
+                        dX = oldDX;
+                        dY = oldDY;
+                        dZ = oldDZ;
+                        this.entity.getBoundingBox().setBounds(oldBoundingBox1);
+                    } else {
+                        // Move the bounding box up by .5
+                        this.jumpingOffset += 0.5;
+                    }
+                }
+
+                // Move by new bounding box
+                if (dX != 0.0 || dY != 0.0 || dZ != 0.0) {
+                    AxisAlignedBB bb = this.entity.getBoundingBox();
+                    setPosition(
+                            (bb.getMinX() + bb.getMaxX()) / 2,
+                            bb.getMinY() + this.jumpingOffset,
+                            (bb.getMinZ() + bb.getMaxZ()) / 2
+                    );
+                }
+
+                // Check for grounding states
+                this.entity.setupCollisionFlags(movX, movY, movZ, dX, dY, dZ);
+
+                // We did not move so we collided, set motion to 0 to escape hell
+                if (movX != dX) {
+                    this.motionX = 0F;
+                }
+
+                if (movY != dY) {
+                    this.motionY = 0F;
+                }
+
+                if (movZ != dZ) {
+                    this.motionZ = 0F;
+                }
+
+                // Reset last update
+            }
+            checkBlockCollisions();
             setupFallDistance(dY);
-
-            // We did not move so we collided, set motion to 0 to escape hell
-            if (movX != dX) {
-                this.motionX = 0F;
-            }
-
-            if (movY != dY) {
-                this.motionY = 0F;
-            }
-
-            if (movZ != dZ) {
-                this.motionZ = 0F;
-            }
-
-            // Reset last update
             this.lastUpdateDt = 0;
         }
 
@@ -278,6 +284,48 @@ public class MovementData implements Movable {
                     this.z + hwidth
             );
             this.dirty = true;
+        }
+    }
+
+    private void checkBlockCollisions() {
+        List<LBlock> blocks = null;
+        LWorld world = this.entity.getWorld();
+        AxisAlignedBB bb = this.entity.getBoundingBox().grow(.1F, .1F, .1F);
+        int minX = LMath.fastFloor(bb.getMinX());
+        int minY = LMath.fastFloor(bb.getMinY());
+        int minZ = LMath.fastFloor(bb.getMinZ());
+        int maxX = LMath.fastCeil(bb.getMaxX());
+        int maxY = LMath.fastCeil(bb.getMaxY());
+        int maxZ = LMath.fastCeil(bb.getMaxZ());
+
+        for (int z = minZ; z < maxZ; ++z) {
+            for (int x = minX; x < maxX; ++x) {
+                for (int y = minY; y < maxY; ++y) {
+                    LBlock block = world.getBlockAt(x, y, z);
+                    AxisAlignedBB blockBox = block.getBoundingBox();
+                    if (blockBox.intersectsWith(bb)) {
+                        if (blocks == null) {
+                            blocks = new ArrayList<>();
+                        }
+                        blocks.add(block);
+                    }
+                }
+            }
+        }
+        if (blocks == null) {
+            return;
+        }
+        Vector3f push = new Vector3f();
+        for (LBlock block : blocks) {
+            block.getHandle().onEntityCollide(block, this.entity);
+            block.getHandle().addVelocityToEntity(block, this.entity, push);
+        }
+        if (push.length() > 0) {
+            push = push.normalize().multiply(.014F);
+            this.motionX += push.x;
+            this.motionY += push.y;
+            this.motionZ += push.z;
+            this.entity.sendPacketToWatchers(new Packet28SetEntityMotion(this.entity));
         }
     }
 

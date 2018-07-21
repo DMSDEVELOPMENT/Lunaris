@@ -104,7 +104,7 @@ public class Packet15UpdateBlock extends Packet {
         }
     }
 
-    private static int getBlockRuntimeID(int blockID, int blockData) {
+    public static int getBlockRuntimeID(int blockID, int blockData) {
         if (blockID >= RUNTIME_BLOCK_IDS.length) {
             return 0;
         }

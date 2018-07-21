@@ -1,6 +1,7 @@
 package org.lunaris.world.particle;
 
 import org.lunaris.block.LBlock;
+import org.lunaris.network.packet.Packet15UpdateBlock;
 import org.lunaris.network.packet.Packet19LevelEvent;
 
 /**
@@ -9,7 +10,7 @@ import org.lunaris.network.packet.Packet19LevelEvent;
 public class DestroyBlockParticle extends Particle {
 
     public DestroyBlockParticle(LBlock block) {
-        super(Packet19LevelEvent.EVENT_PARTICLE_DESTROY, null, block.getLocation(), block.getTypeId() | (block.getData() << 8));
+        super(Packet19LevelEvent.EVENT_PARTICLE_DESTROY, null, block.getLocation(), Packet15UpdateBlock.getBlockRuntimeID(block.getTypeId(), block.getData()));
     }
 
 }

@@ -293,9 +293,9 @@ public class IngameHandler extends PacketHandler {
                             if (player.getGamemode() == Gamemode.CREATIVE)
                                 this.server.getWorldProvider().getBlockMaster().processBlockBreak(player, block, false);
                             else {
-                                if (!player.isBreakingBlock())
+                                if (!player.isBreakingBlock()) {
                                     player.sendPacket(new Packet15UpdateBlock(player.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ())));
-                                else {
+                                } else {
                                     BlockBreakingData bdata = player.getBlockBreakingData();
                                     long passed = time - bdata.getBreakStartTime() + bdata.getOvertime();
                                     long delta = bdata.getBlockBreakingTime() - passed;

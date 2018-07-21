@@ -123,6 +123,8 @@ public class BlockMaster {
     }
 
     public void onBlockAbortBreak(Packet24PlayerAction packet) {
+        LPlayer player = packet.getConnection().getPlayer();
+        player.getBlockBreakingData().clear();
         onBlockStopBreak(packet);
     }
 
@@ -137,7 +139,6 @@ public class BlockMaster {
                     )
             );
         }
-        //clear breaking block data?
     }
 
     public void onBlockContinueBreak(Packet24PlayerAction packet) {

@@ -9,6 +9,8 @@ public class BlockBreakingData {
 
     public void clear() {
         this.blockBreakingTime = 0L;
+        this.breakStartTime = 0L;
+        this.passed = 0L;
     }
 
     public void startBreak(long time) {

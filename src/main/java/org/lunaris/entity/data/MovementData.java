@@ -31,8 +31,6 @@ public class MovementData implements Movable {
     protected boolean dirty;
     protected float lastUpdateDt;
 
-    protected float jumpingOffset;
-
     public MovementData(LEntity entity) {
         this.entity = entity;
     }
@@ -135,25 +133,23 @@ public class MovementData implements Movable {
         this.lastUpdateDt += dT;
 
         // Move by motion amount
-        float movX = this.motionX;
-        float movY = this.motionY;
-        float movZ = this.motionZ;
 
-        float dX = movX;
-        float dY = movY;
-        float dZ = movZ;
+        float dX = this.motionX;
+        float dY = this.motionY;
+        float dZ = this.motionZ;
 
         if (this.lastUpdateDt >= TICK_RATE) {
-            if (!this.entity.getMetadata().getDataFlag(false, EntityDataFlag.IMMOBILE)) {
+            if (!this.entity.getMetadata().getDataFlag(false, EntityDataFlag.IMMOBILE) || true) {
                 // Calc motion
-                if (this.entity.getMetadata().getDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY))
+                if (this.entity.getMetadata().getDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY)) {
                     this.motionY -= GRAVITY;
+                }
 
                 // Check if we are stuck in a block
                 checkWhetherInsideBlocks(this.entity.getWorld());
 
                 // Security check so we don't move and collect bounding boxes like crazy
-                if (Math.abs(movX) > 20 || Math.abs(movZ) > 20 || Math.abs(movY) > 20) {
+                if (Math.abs(this.motionX) > 20 || Math.abs(this.motionZ) > 20 || Math.abs(this.motionY) > 20) {
                     return;
                 }
 
@@ -186,16 +182,15 @@ public class MovementData implements Movable {
                     this.entity.getBoundingBox().offset(dX, dY, dZ);
                 }
 
-                // Check if we can jump
-                boolean notFallingFlag = (this.entity.isOnGround() || (dY != movY && movY < 0));
-                if (this.entity.getStepHeight() > 0 && notFallingFlag && this.jumpingOffset < 0.05 && (movX != dX || movZ != dZ)) {
+                boolean notFallingFlag = (this.entity.isOnGround() || (dY != this.motionY && this.motionY < 0));
+                if (this.entity.getStepHeight() > 0 && notFallingFlag && (this.motionX != dX || this.motionZ != dZ)) {
                     float oldDX = dX;
                     float oldDY = dY;
                     float oldDZ = dZ;
 
-                    dX = movX;
+                    dX = this.motionX;
                     dY = this.entity.getStepHeight();
-                    dZ = movZ;
+                    dZ = this.motionZ;
 
                     // Save and restore old bounding box
                     AxisAlignedBB oldBoundingBox1 = this.entity.getBoundingBox().clone();
@@ -233,9 +228,6 @@ public class MovementData implements Movable {
                         dY = oldDY;
                         dZ = oldDZ;
                         this.entity.getBoundingBox().setBounds(oldBoundingBox1);
-                    } else {
-                        // Move the bounding box up by .5
-                        this.jumpingOffset += 0.5;
                     }
                 }
 
@@ -244,24 +236,24 @@ public class MovementData implements Movable {
                     AxisAlignedBB bb = this.entity.getBoundingBox();
                     setPosition(
                             (bb.getMinX() + bb.getMaxX()) / 2,
-                            bb.getMinY() + this.jumpingOffset,
+                            bb.getMinY(),
                             (bb.getMinZ() + bb.getMaxZ()) / 2
                     );
                 }
 
                 // Check for grounding states
-                this.entity.setupCollisionFlags(movX, movY, movZ, dX, dY, dZ);
+                this.entity.setupCollisionFlags(this.motionX, this.motionY, this.motionZ, dX, dY, dZ);
 
                 // We did not move so we collided, set motion to 0 to escape hell
-                if (movX != dX) {
+                if (this.motionX != dX) {
                     this.motionX = 0F;
                 }
 
-                if (movY != dY) {
+                if (this.motionY != dY) {
                     this.motionY = 0F;
                 }
 
-                if (movZ != dZ) {
+                if (this.motionZ != dZ) {
                     this.motionZ = 0F;
                 }
 

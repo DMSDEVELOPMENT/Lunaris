@@ -1,4 +1,4 @@
-package org.lunaris.server;
+package org.lunaris.entity;
 
 import org.lunaris.LunarisServer;
 import org.lunaris.api.event.player.PlayerDisconnectEvent;
@@ -24,11 +24,9 @@ public class PlayerProvider {
     private final Map<String, LPlayer> playersByNames = new HashMap<>();
     private final Map<UUID, LPlayer> playersByUUIDs = new HashMap<>();
     private final LunarisServer server;
-    private final Scheduler scheduler;
 
     public PlayerProvider(LunarisServer server) {
         this.server = server;
-        this.scheduler = server.getScheduler();
     }
 
     public LPlayer createPlayer(Packet01Login packet, PlayerConnection connection) {
@@ -60,41 +58,15 @@ public class PlayerProvider {
         }
         this.playersByNames.put(player.getName().toLowerCase(), player);
         this.playersByUUIDs.put(player.getUUID(), player);
-        Packet0BStartGame startGame = new Packet0BStartGame();
-        startGame.entityId = startGame.runtimeEntityId = player.getEntityID();
-        startGame.gamemode = startGame.worldGamemode = this.server.getServerSettings().getDefaultGamemode().ordinal();
-        startGame.spawn = loc;
-        startGame.seed = -1;
-        startGame.dimension = loc.getWorld().getDimension().getId();
-        startGame.difficulty = ((LWorld) loc.getWorld()).getDifficulty().ordinal();
-        Location spawn = loc.getWorld().getSpawnLocation();
-        startGame.worldSpawnX = spawn.getBlockX();
-        startGame.worldSpawnY = spawn.getBlockY();
-        startGame.worldSpawnZ = spawn.getBlockZ();
-        startGame.hasAchievementsDisabled = true;
-        startGame.dayCycleStopTime = -1;
-        startGame.eduMode = false;
-        startGame.rainLevel = 0;
-        startGame.lightningLevel = 0;
-        startGame.commandsEnabled = true;
-        startGame.levelId = "";
-        startGame.worldName = this.server.getServerSettings().getServerName();
-        startGame.generator = 1; //0 old 1 infinity 2 flat
-        player.setDisplayNameVisible(true, true);
-        player.setDisplayName(player.getName());
-        player.getMetadata().setDataFlag(false, EntityDataFlag.CAN_CLIMB, true, false);
-        player.getMetadata().setDataFlag(false, EntityDataFlag.BREATHING, true, false);
-        player.getMetadata().setDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY, true, false);
-        player.getMetadata().setDataFlag(false, EntityDataFlag.HAS_COLLISION, true, false);
-        player.getMetadata().setDirtyMetadata(false);
-        player.sendPacket(startGame);
+
+        setupPlayerMetadata(player);
+        sendStartGamePacket(player, loc);
         player.sendPacket(new Packet02PlayStatus(Packet02PlayStatus.Status.RESPAWN));
         player.sendPacket(new Packet27SetEntityData(player.getEntityID(), player.getMetadata().getDataProperties()));
         player.sendPacket(new Packet2DRespawn((float) loc.getX(), (float) loc.getY(), (float) loc.getZ()));
         player.sendPacket(new Packet0AWorldTime(player.getWorld().getTime()));
         player.sendPacket(new Packet3CSetDifficulty(((LWorld) loc.getWorld()).getDifficulty()));
         player.sendPacket(new Packet3BSetCommandsEnabled(true));
-        player.sendPacket(new Packet37AdventureSettings());
         player.getAdventureSettings().update();
         player.sendAvailableCommands();
         player.sendPacket(new Packet1DUpdateAttributes(
@@ -106,7 +78,6 @@ public class PlayerProvider {
                 player.getAttribute(Attribute.EXPERIENCE)
         ));
         this.server.getPlayerList().addPlayer(player);
-        player.sendPacket(new Packet28SetEntityMotion(player.getEntityID(), 0F, 0F, 0F));
         player.getWorld().addPlayerToWorld(player);
         PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
         this.server.getEventManager().call(joinEvent);
@@ -122,7 +93,7 @@ public class PlayerProvider {
 
     public LPlayer removePlayer(LPlayer player) {
         boolean wasOnline = player.isOnline();
-        this.scheduler.run(() -> {
+        this.server.getScheduler().run(() -> {
             new PlayerDisconnectEvent(player).call();
             this.server.getPlayerList().removePlayer(player);
             this.playersByNames.remove(player.getName().toLowerCase());
@@ -148,6 +119,41 @@ public class PlayerProvider {
 
     public Collection<LPlayer> getAllPlayers() {
         return this.playersByUUIDs.values();
+    }
+
+    private void setupPlayerMetadata(LPlayer player) {
+        player.setDisplayNameVisible(true, true);
+        player.setDisplayName(player.getName());
+        EntityMetadataHolder metadata = player.getMetadata();
+        metadata.setDataFlag(false, EntityDataFlag.CAN_CLIMB, true, false);
+        metadata.setDataFlag(false, EntityDataFlag.BREATHING, true, false);
+        metadata.setDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY, true, false);
+        metadata.setDataFlag(false, EntityDataFlag.HAS_COLLISION, true, false);
+        metadata.setDirtyMetadata(false);
+    }
+
+    private void sendStartGamePacket(LPlayer player, Location spawnLocation) {
+        Packet0BStartGame startGame = new Packet0BStartGame();
+        startGame.entityId = startGame.runtimeEntityId = player.getEntityID();
+        startGame.gamemode = startGame.worldGamemode = this.server.getServerSettings().getDefaultGamemode().ordinal();
+        startGame.spawn = spawnLocation;
+        startGame.seed = -1;
+        startGame.dimension = spawnLocation.getWorld().getDimension().getId();
+        startGame.difficulty = ((LWorld) spawnLocation.getWorld()).getDifficulty().ordinal();
+        Location spawn = spawnLocation.getWorld().getSpawnLocation();
+        startGame.worldSpawnX = spawn.getBlockX();
+        startGame.worldSpawnY = spawn.getBlockY();
+        startGame.worldSpawnZ = spawn.getBlockZ();
+        startGame.hasAchievementsDisabled = true;
+        startGame.dayCycleStopTime = -1;
+        startGame.eduMode = false;
+        startGame.rainLevel = 0;
+        startGame.lightningLevel = 0;
+        startGame.commandsEnabled = true;
+        startGame.levelId = "";
+        startGame.worldName = this.server.getServerSettings().getServerName();
+        startGame.generator = 1; //0 old 1 infinity 2 flat
+        player.sendPacket(startGame);
     }
 
 }

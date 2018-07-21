@@ -9,6 +9,7 @@ import org.lunaris.api.server.Scheduler;
 import org.lunaris.command.CommandManager;
 import org.lunaris.entity.EntityProvider;
 import org.lunaris.entity.LPlayer;
+import org.lunaris.entity.PlayerProvider;
 import org.lunaris.event.EventManager;
 import org.lunaris.event.network.PacketReceivedAsyncEvent;
 import org.lunaris.event.network.PacketSendingAsyncEvent;

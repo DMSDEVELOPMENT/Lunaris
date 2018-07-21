@@ -44,4 +44,16 @@ public abstract class Particle {
         send((Collection<LPlayer>) this.location.getWorld().getWatcherPlayers(this.location));
     }
 
+    public void sendImmediately(LPlayer player) {
+        player.sendPacket(createPacket());
+    }
+
+    public void sendImmediately(Collection<LPlayer> players) {
+        LunarisServer.getInstance().getNetworkManager().sendPacketImmediately(players, createPacket());
+    }
+
+    public void sendToNearbyPlayersImmediately() {
+        sendImmediately((Collection<LPlayer>) this.location.getWorld().getWatcherPlayers(this.location));
+    }
+
 }

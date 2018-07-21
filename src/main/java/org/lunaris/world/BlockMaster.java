@@ -179,7 +179,7 @@ public class BlockMaster {
         }
         ItemStack hand = player.getInventory().getItemInHand();
         List<ItemStack> drops = withDrops ? block.getHandle().getDrops(block, hand) : Collections.emptyList();
-        new DestroyBlockParticle(block).sendToNearbyPlayers();
+        new DestroyBlockParticle(block).sendToNearbyPlayersImmediately();
         block.setType(Material.AIR);
         if (drops != null)
             drops.forEach(drop -> block.getWorld().dropItem(drop.clone(), block.getLocation().add(.5D, .5D, .5D)));

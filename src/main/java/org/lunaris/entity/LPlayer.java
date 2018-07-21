@@ -193,6 +193,10 @@ public class LPlayer extends LLivingEntity implements CommandSender, Player {
         LunarisServer.getInstance().getNetworkManager().sendPacket(this, packet);
     }
 
+    public void sendPacketImmediately(Packet packet) {
+        LunarisServer.getInstance().getNetworkManager().sendPacketImmediately(this, packet);
+    }
+
     @Override
     public void sendPacketToWatchersAndMe(Packet packet) {
         Collection<LPlayer> watchers = getWatchers();

@@ -134,29 +134,71 @@ public class MovementData implements Movable {
 
         // Move by motion amount
 
-        float dX = this.motionX;
-        float dY = this.motionY;
-        float dZ = this.motionZ;
+        float dX, dY, dZ;
 
         if (this.lastUpdateDt >= TICK_RATE) {
-            if (!this.entity.getMetadata().getDataFlag(false, EntityDataFlag.IMMOBILE) || true) {
-                // Calc motion
-                if (this.entity.getMetadata().getDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY)) {
-                    this.motionY -= GRAVITY;
+            // Calc motion
+            if (this.entity.getMetadata().getDataFlag(false, EntityDataFlag.AFFECTED_BY_GRAVITY)) {
+                this.motionY -= GRAVITY;
+            }
+
+            // Check if we are stuck in a block
+            checkWhetherInsideBlocks(this.entity.getWorld());
+
+            dX = this.motionX;
+            dY = this.motionY;
+            dZ = this.motionZ;
+
+            // Security check so we don't move and collect bounding boxes like crazy
+            if (Math.abs(this.motionX) > 20 || Math.abs(this.motionZ) > 20 || Math.abs(this.motionY) > 20) {
+                return;
+            }
+
+            AxisAlignedBB oldBoundingBox = this.entity.getBoundingBox().clone();
+
+            // Check if we collide with some blocks when we would move that fast
+            List<AxisAlignedBB> collisionList = getCollisionCubes(this.entity, this.entity.getBoundingBox().getOffsetBoundingBox(dX, dY, dZ), false);
+            if (collisionList != null) {
+                // Check if we would hit a y border block
+                for (AxisAlignedBB axisAlignedBB : collisionList) {
+                    dY = axisAlignedBB.calculateYOffset(this.entity.getBoundingBox(), dY);
                 }
 
-                // Check if we are stuck in a block
-                checkWhetherInsideBlocks(this.entity.getWorld());
+                this.entity.getBoundingBox().offset(0, dY, 0);
 
-                // Security check so we don't move and collect bounding boxes like crazy
-                if (Math.abs(this.motionX) > 20 || Math.abs(this.motionZ) > 20 || Math.abs(this.motionY) > 20) {
-                    return;
+                // Check if we would hit a x border block
+                for (AxisAlignedBB axisAlignedBB : collisionList) {
+                    dX = axisAlignedBB.calculateXOffset(this.entity.getBoundingBox(), dX);
                 }
 
-                AxisAlignedBB oldBoundingBox = this.entity.getBoundingBox().clone();
+                this.entity.getBoundingBox().offset(dX, 0, 0);
 
-                // Check if we collide with some blocks when we would move that fast
-                List<AxisAlignedBB> collisionList = getCollisionCubes(this.entity, this.entity.getBoundingBox().getOffsetBoundingBox(dX, dY, dZ), false);
+                // Check if we would hit a z border block
+                for (AxisAlignedBB axisAlignedBB : collisionList) {
+                    dZ = axisAlignedBB.calculateZOffset(this.entity.getBoundingBox(), dZ);
+                }
+
+                this.entity.getBoundingBox().offset(0, 0, dZ);
+            } else {
+                this.entity.getBoundingBox().offset(dX, dY, dZ);
+            }
+
+            boolean notFallingFlag = (this.entity.isOnGround() || (dY != this.motionY && this.motionY < 0));
+            if (this.entity.getStepHeight() > 0 && notFallingFlag && (this.motionX != dX || this.motionZ != dZ)) {
+                float oldDX = dX;
+                float oldDY = dY;
+                float oldDZ = dZ;
+
+                dX = this.motionX;
+                dY = this.entity.getStepHeight();
+                dZ = this.motionZ;
+
+                // Save and restore old bounding box
+                AxisAlignedBB oldBoundingBox1 = this.entity.getBoundingBox().clone();
+                this.entity.getBoundingBox().setBounds(oldBoundingBox);
+
+                // Check for collision
+                collisionList = getCollisionCubes(this.entity, this.entity.getBoundingBox().addCoordinates(dX, dY, dZ), false);
                 if (collisionList != null) {
                     // Check if we would hit a y border block
                     for (AxisAlignedBB axisAlignedBB : collisionList) {
@@ -178,86 +220,42 @@ public class MovementData implements Movable {
                     }
 
                     this.entity.getBoundingBox().offset(0, 0, dZ);
-                } else {
-                    this.entity.getBoundingBox().offset(dX, dY, dZ);
                 }
 
-                boolean notFallingFlag = (this.entity.isOnGround() || (dY != this.motionY && this.motionY < 0));
-                if (this.entity.getStepHeight() > 0 && notFallingFlag && (this.motionX != dX || this.motionZ != dZ)) {
-                    float oldDX = dX;
-                    float oldDY = dY;
-                    float oldDZ = dZ;
-
-                    dX = this.motionX;
-                    dY = this.entity.getStepHeight();
-                    dZ = this.motionZ;
-
-                    // Save and restore old bounding box
-                    AxisAlignedBB oldBoundingBox1 = this.entity.getBoundingBox().clone();
-                    this.entity.getBoundingBox().setBounds(oldBoundingBox);
-
-                    // Check for collision
-                    collisionList = getCollisionCubes(this.entity, this.entity.getBoundingBox().addCoordinates(dX, dY, dZ), false);
-                    if (collisionList != null) {
-                        // Check if we would hit a y border block
-                        for (AxisAlignedBB axisAlignedBB : collisionList) {
-                            dY = axisAlignedBB.calculateYOffset(this.entity.getBoundingBox(), dY);
-                        }
-
-                        this.entity.getBoundingBox().offset(0, dY, 0);
-
-                        // Check if we would hit a x border block
-                        for (AxisAlignedBB axisAlignedBB : collisionList) {
-                            dX = axisAlignedBB.calculateXOffset(this.entity.getBoundingBox(), dX);
-                        }
-
-                        this.entity.getBoundingBox().offset(dX, 0, 0);
-
-                        // Check if we would hit a z border block
-                        for (AxisAlignedBB axisAlignedBB : collisionList) {
-                            dZ = axisAlignedBB.calculateZOffset(this.entity.getBoundingBox(), dZ);
-                        }
-
-                        this.entity.getBoundingBox().offset(0, 0, dZ);
-                    }
-
-                    // Check if we moved left or right
-                    if (LMath.pow2(oldDX) + LMath.pow2(oldDZ) >= LMath.pow2(dX) + LMath.pow2(dZ)) {
-                        // Revert this decision of moving the bounding box up
-                        dX = oldDX;
-                        dY = oldDY;
-                        dZ = oldDZ;
-                        this.entity.getBoundingBox().setBounds(oldBoundingBox1);
-                    }
+                // Check if we moved left or right
+                if (LMath.pow2(oldDX) + LMath.pow2(oldDZ) >= LMath.pow2(dX) + LMath.pow2(dZ)) {
+                    // Revert this decision of moving the bounding box up
+                    dX = oldDX;
+                    dY = oldDY;
+                    dZ = oldDZ;
+                    this.entity.getBoundingBox().setBounds(oldBoundingBox1);
                 }
+            }
 
-                // Move by new bounding box
-                if (dX != 0.0 || dY != 0.0 || dZ != 0.0) {
-                    AxisAlignedBB bb = this.entity.getBoundingBox();
-                    setPosition(
-                            (bb.getMinX() + bb.getMaxX()) / 2,
-                            bb.getMinY(),
-                            (bb.getMinZ() + bb.getMaxZ()) / 2
-                    );
-                }
+            // Move by new bounding box
+            if (dX != 0.0 || dY != 0.0 || dZ != 0.0) {
+                AxisAlignedBB bb = this.entity.getBoundingBox();
+                setPosition(
+                        (bb.getMinX() + bb.getMaxX()) / 2,
+                        bb.getMinY(),
+                        (bb.getMinZ() + bb.getMaxZ()) / 2
+                );
+            }
 
-                // Check for grounding states
-                this.entity.setupCollisionFlags(this.motionX, this.motionY, this.motionZ, dX, dY, dZ);
+            // Check for grounding states
+            this.entity.setupCollisionFlags(this.motionX, this.motionY, this.motionZ, dX, dY, dZ);
 
-                // We did not move so we collided, set motion to 0 to escape hell
-                if (this.motionX != dX) {
-                    this.motionX = 0F;
-                }
+            // We did not move so we collided, set motion to 0 to escape hell
+            if (this.motionX != dX) {
+                this.motionX = 0F;
+            }
 
-                if (this.motionY != dY) {
-                    this.motionY = 0F;
-                }
+            if (this.motionY != dY) {
+                this.motionY = 0F;
+            }
 
-                if (this.motionZ != dZ) {
-                    this.motionZ = 0F;
-                }
-
-                // Reset last update
+            if (this.motionZ != dZ) {
+                this.motionZ = 0F;
             }
             checkBlockCollisions();
             setupFallDistance(dY);
@@ -325,9 +323,9 @@ public class MovementData implements Movable {
         this.entity.setupFallDistance(dy);
     }
 
-    protected void checkWhetherInsideBlocks(LWorld world) {
+    protected boolean checkWhetherInsideBlocks(LWorld world) {
         if (this.entity.getEntityType() == EntityType.PLAYER)
-            return;
+            return false;
         AxisAlignedBB bb = this.entity.getBoundingBox();
         int bx = LMath.fastFloor(this.x);
         int by = LMath.fastFloor(this.y);
@@ -349,7 +347,9 @@ public class MovementData implements Movable {
             push.check(freeMinusZ, 4, diffZ);
             push.check(freePlusZ, 5, 1 - diffZ);
             push.accept(this);
+            return true;
         }
+        return false;
     }
 
     protected static class DirectionPushData {
